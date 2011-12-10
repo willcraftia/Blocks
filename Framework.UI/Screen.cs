@@ -9,6 +9,8 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public class Screen : Control, IInputReceiver
     {
+        public Control FocusedControl { get; set; }
+
         // I/F
         public void NotifyMouseMoved(int x, int y)
         {
@@ -16,13 +18,15 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         // I/F
-        public void NotifyMouseButtonPressed(MouseButtons buttons)
+        public void NotifyMouseButtonPressed(MouseButtons button)
         {
+            ProcessMouseButtonPressed(button);
         }
 
         // I/F
-        public void NotifyMouseButtonReleased(MouseButtons buttons)
+        public void NotifyMouseButtonReleased(MouseButtons button)
         {
+            ProcessMouseButtonReleased(button);
         }
 
         // I/F

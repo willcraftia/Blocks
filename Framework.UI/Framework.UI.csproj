@@ -93,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Appearance.cs" />
-    <Compile Include="ButtonControl.cs" />
+    <Compile Include="Button.cs" />
     <Compile Include="DefaultInputCapturer.cs" />
     <Compile Include="IInputCapturer.cs" />
     <Compile Include="IInputReceiver.cs" />
@@ -103,6 +103,7 @@
     <Compile Include="Control.cs" />
     <Compile Include="ControlCollection.cs" />
     <Compile Include="Screen.cs" />
+    <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework.Input\Framework.Input.csproj">

@@ -43,27 +43,27 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             var screen = new Screen();
             screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
-            var control_0 = new ButtonControl();
+            var control_0 = new Window();
             control_0.Bounds = new Rectangle(16, 16, 256, 256);
-            control_0.Appearance = new PlainColorButtonAppearance(Services);
+            control_0.Appearance = new PlainColorWindowAppearance(Services);
             screen.Children.Add(control_0);
 
-            var control_1 = new ButtonControl();
+            var control_1 = new Window();
             control_1.Bounds = new Rectangle(32, 32, 256, 256);
-            control_1.Appearance = new PlainColorButtonAppearance(Services);
+            control_1.Appearance = new PlainColorWindowAppearance(Services);
             screen.Children.Add(control_1);
 
-            var control_3 = new ButtonControl();
+            var control_3 = new Window();
             control_3.Bounds = new Rectangle(64, 64, 256, 256);
-            control_3.Appearance = new PlainColorButtonAppearance(Services);
+            control_3.Appearance = new PlainColorWindowAppearance(Services);
             screen.Children.Add(control_3);
 
-            var control_3_0 = new ButtonControl();
+            var control_3_0 = new Button();
             control_3_0.Bounds = new Rectangle(16, 16, 32, 32);
             control_3_0.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_0);
 
-            var control_3_1 = new ButtonControl();
+            var control_3_1 = new Button();
             control_3_1.Bounds = new Rectangle(16 + 32, 16, 32, 32);
             control_3_1.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_1);

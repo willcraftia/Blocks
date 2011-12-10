@@ -7,14 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Demo
 {
-    public class PlainColorAppearance : Appearance
+    public class PlainColorWindowAppearance : Appearance
     {
-        public Color BackgroundColor;
+        public Color BackgroundColor = Color.Blue;
 
-        public PlainColorAppearance(GameServiceContainer container, Color backgroundColor)
+        public PlainColorWindowAppearance(GameServiceContainer container)
             : base(container)
         {
-            BackgroundColor = backgroundColor;
         }
 
         public override void Draw(Control control)

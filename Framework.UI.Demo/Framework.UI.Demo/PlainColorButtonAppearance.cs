@@ -9,9 +9,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 {
     public class PlainColorButtonAppearance : Appearance
     {
-        public Color BackgroundColor = Color.Blue;
+        public Color BackgroundColor = Color.Gray;
 
         public Color HoverColor = Color.Red;
+
+        public Color PressedColor = Color.Yellow;
 
         public PlainColorButtonAppearance(GameServiceContainer container)
             : base(container)
@@ -20,7 +22,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         public override void Draw(Control control)
         {
-            var button = control as ButtonControl;
+            var button = control as Button;
             if (button == null) return;
 
             var bounds = control.GetAbsoluteBounds();
@@ -35,6 +37,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             if (button.MouseHovering)
             {
                 bgColor = HoverColor;
+            }
+            if (button.Pressed)
+            {
+                bgColor = PressedColor;
             }
 
             SpriteBatch.Begin();

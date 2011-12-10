@@ -10,9 +10,9 @@ namespace Willcraftia.Xna.Framework.UI
     {
         void NotifyMouseMoved(int x, int y);
 
-        void NotifyMouseButtonPressed(MouseButtons buttons);
+        void NotifyMouseButtonPressed(MouseButtons button);
         
-        void NotifyMouseButtonReleased(MouseButtons buttons);
+        void NotifyMouseButtonReleased(MouseButtons button);
         
         void NotifyMouseWheelRotated(int ticks);
     }

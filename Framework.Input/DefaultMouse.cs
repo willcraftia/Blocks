@@ -39,6 +39,7 @@ namespace Willcraftia.Xna.Framework.Input
 
         public void Update()
         {
+            previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
 
             // マウス カーソルの位置が前回から移動したかどうか
@@ -49,46 +50,39 @@ namespace Willcraftia.Xna.Framework.Input
             }
 
             // ボタン押下状態の判定
-            MouseButtons pressedButtons = 0;
-            MouseButtons releasedButtons = 0;
             // 左ボタン判定
             if (previousMouseState.LeftButton == ButtonState.Released)
             {
                 // 押されたかどうか
-                if (currentMouseState.LeftButton == ButtonState.Pressed) pressedButtons |= MouseButtons.Left;
+                if (currentMouseState.LeftButton == ButtonState.Pressed) RaiseMouseButtonPressed(MouseButtons.Left);
             }
             else
             {
                 // 離されたかどうか
-                if (currentMouseState.LeftButton == ButtonState.Released) releasedButtons |= MouseButtons.Left;
+                if (currentMouseState.LeftButton == ButtonState.Released) RaiseMouseButtonReleased(MouseButtons.Left);
             }
             // 右ボタン判定
             if (previousMouseState.RightButton == ButtonState.Released)
             {
                 // 押されたかどうか
-                if (currentMouseState.RightButton == ButtonState.Pressed) pressedButtons |= MouseButtons.Right;
+                if (currentMouseState.RightButton == ButtonState.Pressed) RaiseMouseButtonPressed(MouseButtons.Right);
             }
             else
             {
                 // 離されたかどうか
-                if (currentMouseState.RightButton == ButtonState.Released) releasedButtons |= MouseButtons.Right;
+                if (currentMouseState.RightButton == ButtonState.Released) RaiseMouseButtonReleased(MouseButtons.Right);
             }
             // 中央ボタン判定
             if (previousMouseState.MiddleButton == ButtonState.Released)
             {
                 // 押されたかどうか
-                if (currentMouseState.MiddleButton == ButtonState.Pressed) pressedButtons |= MouseButtons.Middle;
+                if (currentMouseState.MiddleButton == ButtonState.Pressed) RaiseMouseButtonPressed(MouseButtons.Middle);
             }
             else
             {
                 // 離されたかどうか
-                if (currentMouseState.MiddleButton == ButtonState.Released) releasedButtons |= MouseButtons.Middle;
+                if (currentMouseState.MiddleButton == ButtonState.Released) RaiseMouseButtonReleased(MouseButtons.Middle);
             }
-
-            // いずれかのボタンが押されたならばイベント発生
-            if (pressedButtons != 0) RaiseMouseButtonPressed(pressedButtons);
-            // いずれかのボタンが離されたならばイベント発生
-            if (releasedButtons != 0) RaiseMouseButtonReleased(releasedButtons);
 
             // マウス ホイールの回転量から前回から変化したかどうか
             if (previousMouseState.ScrollWheelValue != currentMouseState.ScrollWheelValue)
@@ -103,14 +97,14 @@ namespace Willcraftia.Xna.Framework.Input
             if (MouseMoved != null) MouseMoved(x, y);
         }
 
-        void RaiseMouseButtonPressed(MouseButtons buttons)
+        void RaiseMouseButtonPressed(MouseButtons button)
         {
-            if (MouseButtonPressed != null) MouseButtonPressed(buttons);
+            if (MouseButtonPressed != null) MouseButtonPressed(button);
         }
 
-        void RaiseMouseButtonReleased(MouseButtons buttons)
+        void RaiseMouseButtonReleased(MouseButtons button)
         {
-            if (MouseButtonReleased != null) MouseButtonReleased(buttons);
+            if (MouseButtonReleased != null) MouseButtonReleased(button);
         }
 
         void RaiseMouseWheelRotated(int ticks)
