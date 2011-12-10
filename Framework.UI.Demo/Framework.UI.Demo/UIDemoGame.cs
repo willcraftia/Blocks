@@ -68,6 +68,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             control_3_1.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_1);
 
+            //control_3.Visible = false;
+
             uiManager.Screen = screen;
         }
 

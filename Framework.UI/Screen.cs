@@ -9,7 +9,10 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public class Screen : Control, IInputReceiver
     {
-        public Control FocusedControl { get; set; }
+        /// <summary>
+        /// フォーカスを得ている Control を取得あるいは設定します。
+        /// </summary>
+        internal Control FocusedControl { get; set; }
 
         // I/F
         public void NotifyMouseMoved(int x, int y)

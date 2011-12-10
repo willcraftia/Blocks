@@ -36,6 +36,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="item"></param>
         public void MoveToTopMost(Control item)
         {
+            if (item == null) throw new ArgumentNullException("item");
             if (!Contains(item)) throw new ArgumentException("Collection dose not contain the specified control.", "item");
 
             base.RemoveAt(IndexOf(item));

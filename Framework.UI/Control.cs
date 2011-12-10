@@ -14,6 +14,16 @@ namespace Willcraftia.Xna.Framework.UI
     public class Control
     {
         /// <summary>
+        /// Enabled プロパティが変更された時に発生します。
+        /// </summary>
+        public event EventHandler EnabledChanged;
+
+        /// <summary>
+        /// Visible プロパティが変更された時に発生します。
+        /// </summary>
+        public event EventHandler VisibleChanged;
+
+        /// <summary>
         /// Screen。
         /// </summary>
         Screen screen;
@@ -29,6 +39,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (Control が有効な場合)、false (それ以外の場合)。
         /// </summary>
         bool enabled;
+
+        /// <summary>
+        /// true (Control が可視の場合)、false (それ以外の場合)。
+        /// </summary>
+        bool visible;
 
         /// <summary>
         /// 親 Control を取得または設定します。
@@ -73,7 +88,7 @@ namespace Willcraftia.Xna.Framework.UI
                     if (screen.FocusedControl == this) screen.FocusedControl = null;
                 }
 
-                // 子に Screen の状態を伝播させます。
+                // 子に Screen の設定状態を伝播させます。
                 foreach (var child in Children)
                 {
                     child.Screen = screen;
@@ -103,9 +118,10 @@ namespace Willcraftia.Xna.Framework.UI
                 if (enabled == value) return;
 
                 enabled = value;
-
                 // フォーカスを持った状態から無効にしたならば、Screen のフォーカス状態を解除します。
                 if (!enabled && Focused) Screen.FocusedControl = null;
+                // イベントを発生させます。
+                RaiseEnabledChanged();
             }
         }
 
@@ -113,7 +129,20 @@ namespace Willcraftia.Xna.Framework.UI
         /// Control が表示されるかどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control が表示される場合)、false (それ以外の場合)。</value>
-        public bool Visible { get; set; }
+        public bool Visible
+        {
+            get { return visible; }
+            set
+            {
+                if (visible == value) return;
+
+                visible = value;
+                // フォーカスを持った状態から不可視にしたならば、Screen のフォーカス状態を解除します。
+                if (!visible && Focused) Screen.FocusedControl = null;
+                // イベントを発生させます。
+                OnVisibleChanged();
+            }
+        }
 
         /// <summary>
         /// Control がフォーカスを得られるかどうかを取得または設定します。
@@ -138,6 +167,7 @@ namespace Willcraftia.Xna.Framework.UI
         public Control()
         {
             Children = new ControlCollection(this);
+            Visible = true;
         }
 
         /// <summary>
@@ -160,6 +190,9 @@ namespace Willcraftia.Xna.Framework.UI
 
         internal void ProcessMouseMoved(int x, int y)
         {
+            // 不可視の場合は処理しません。
+            if (!Visible) return;
+
             // x と y は親を基準としたカーソルの相対座標です。
 
             // 自分を基準としたカーソルの相対座標を算出します。
@@ -169,10 +202,10 @@ namespace Willcraftia.Xna.Framework.UI
             for (int i = Children.Count - 1; 0 <= i; i--)
             {
                 var child = Children[i];
-                if (child.Bounds.Contains(localX, localY))
+                if (child.Visible && child.Bounds.Contains(localX, localY))
                 {
                     // 子をマウス オーバ状態にします。
-                    switchMouseOverControl(child);
+                    SwitchMouseOverControl(child);
                     // 子にカーソル移動処理を転送します。
                     child.ProcessMouseMoved(localX, localY);
                     return;
@@ -180,12 +213,15 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // マウス オーバ状態にできる子がいないならば、自分をマウス オーバ状態にします。
-            switchMouseOverControl(this);
+            SwitchMouseOverControl(this);
             OnMouseMoved(localX, localY);
         }
 
         internal void ProcessMouseLeft()
         {
+            // 不可視の場合は処理しません。
+            if (!Visible) return;
+
             if (mouseOverControl == null) return;
 
             if (mouseOverControl != this)
@@ -205,6 +241,9 @@ namespace Willcraftia.Xna.Framework.UI
 
         internal bool ProcessMouseButtonPressed(MouseButtons button)
         {
+            // 不可視の場合は処理しません。
+            if (!Visible) return false;
+
             // 子がマウス オーバ状態ならば処理を転送します。
             if (mouseOverControl != this) return mouseOverControl.ProcessMouseButtonPressed(button);
 
@@ -218,6 +257,9 @@ namespace Willcraftia.Xna.Framework.UI
 
         internal void ProcessMouseButtonReleased(MouseButtons button)
         {
+            // 不可視の場合は処理しません。
+            if (!Visible) return;
+
             // 子がマウス オーバ状態ならば処理を転送します。
             if (mouseOverControl != this)
             {
@@ -260,10 +302,20 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void OnMouseButtonReleased(MouseButtons button) { }
 
         /// <summary>
+        /// Enabled プロパティが変更された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnEnabledChanged() { }
+
+        /// <summary>
+        /// Visible プロパティが変更された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnVisibleChanged() { }
+
+        /// <summary>
         /// マウス オーバ状態の Control を新しい Control へ切り替えます。
         /// </summary>
         /// <param name="newControl"></param>
-        void switchMouseOverControl(Control newControl)
+        void SwitchMouseOverControl(Control newControl)
         {
             if (mouseOverControl == newControl) return;
 
@@ -273,6 +325,24 @@ namespace Willcraftia.Xna.Framework.UI
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
             mouseOverControl.OnMouseEntered();
+        }
+
+        /// <summary>
+        /// EnabledChanged イベントを発生させます。
+        /// </summary>
+        void RaiseEnabledChanged()
+        {
+            OnEnabledChanged();
+            if (EnabledChanged != null) EnabledChanged(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// VisibleChanged イベントを発生させます。
+        /// </summary>
+        void RaiseVisibleChanged()
+        {
+            OnVisibleChanged();
+            if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
         }
     }
 }

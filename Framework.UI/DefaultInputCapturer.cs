@@ -32,6 +32,7 @@ namespace Willcraftia.Xna.Framework.UI
         public DefaultInputCapturer(IInputService inputService)
         {
             if (inputService == null) throw new ArgumentNullException("inputService");
+
             this.inputService = inputService;
 
             BindInputDevices();

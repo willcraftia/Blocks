@@ -83,16 +83,22 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (Screen == null) return;
 
+            // Screen を描画します。Screen にある Control は再帰的に描画されます。
             DrawControl(Screen);
         }
 
         void DrawControl(Control control)
         {
+            // 不可視の場合は自分も子も描画しません。
+            if (!control.Visible) return;
+
+            // Appearance を持つならば描画します。
             if (control.Appearance != null)
             {
                 control.Appearance.Draw(control);
             }
 
+            // 子 Control を再帰的に描画します。
             foreach (var child in control.Children)
             {
                 DrawControl(child);
