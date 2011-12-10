@@ -10,7 +10,7 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public abstract class Appearance
     {
-        public IAppearanceService AppearanceService { get; private set; }
+        public IUIService UIService { get; private set; }
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
@@ -20,14 +20,14 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (container == null) throw new ArgumentNullException("container");
 
-            AppearanceService = container.GetService(typeof(IAppearanceService)) as IAppearanceService;
-            if (AppearanceService == null) throw new InvalidOperationException("IAppearanceService not found.");
+            UIService = container.GetService(typeof(IUIService)) as IUIService;
+            if (UIService == null) throw new InvalidOperationException("IUIService not found.");
 
             var graphicsDeviceService = container.GetService(typeof(IGraphicsDeviceService)) as IGraphicsDeviceService;
             if (graphicsDeviceService == null) throw new InvalidOperationException("IGraphicsDeviceService not found.");
 
             GraphicsDevice = graphicsDeviceService.GraphicsDevice;
-            SpriteBatch = AppearanceService.SpriteBatch;
+            SpriteBatch = UIService.SpriteBatch;
         }
 
         public abstract void Draw(Control control);

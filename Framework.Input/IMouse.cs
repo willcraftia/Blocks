@@ -51,12 +51,6 @@ namespace Willcraftia.Xna.Framework.Input
         event MouseWheelDelegate MouseWheelRotated;
 
         /// <summary>
-        /// マウスの現在状態を取得します。
-        /// </summary>
-        /// <returns></returns>
-        MouseState GetState();
-
-        /// <summary>
         /// マウス カーソルを指定の座標へ移動させます。
         /// </summary>
         /// <param name="x">移動先の x 座標。</param>

@@ -17,7 +17,7 @@ namespace Willcraftia.Xna.Framework.Input
         Left = 1,
 
         /// <summary>
-        /// 中マウス ボタン。
+        /// 中央マウス ボタン。
         /// </summary>
         Middle = 2,
 

@@ -1,24 +1,28 @@
 ﻿#region Using
 
+using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Demo
 {
-    public class PlainColorAppearance : Appearance
+    public class PlainColorButtonAppearance : Appearance
     {
-        public Color BackgroundColor;
+        public Color BackgroundColor = Color.Blue;
 
-        public PlainColorAppearance(GameServiceContainer container, Color backgroundColor)
+        public Color HoverColor = Color.Red;
+
+        public PlainColorButtonAppearance(GameServiceContainer container)
             : base(container)
         {
-            BackgroundColor = backgroundColor;
         }
 
         public override void Draw(Control control)
         {
+            var button = control as ButtonControl;
+            if (button == null) return;
+
             var bounds = control.GetAbsoluteBounds();
             var borderBounds = bounds;
             var canvasBounds = bounds;
@@ -27,9 +31,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             canvasBounds.Width -= 4;
             canvasBounds.Height -= 4;
 
+            Color bgColor = BackgroundColor;
+            if (button.MouseHovering)
+            {
+                bgColor = HoverColor;
+            }
+
             SpriteBatch.Begin();
             SpriteBatch.Draw(UIService.FillTexture, borderBounds, Color.White);
-            SpriteBatch.Draw(UIService.FillTexture, canvasBounds, BackgroundColor);
+            SpriteBatch.Draw(UIService.FillTexture, canvasBounds, bgColor);
             SpriteBatch.End();
         }
     }

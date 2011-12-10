@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public interface IAppearanceService
+    public interface IUIService
     {
         SpriteBatch SpriteBatch { get; }
 

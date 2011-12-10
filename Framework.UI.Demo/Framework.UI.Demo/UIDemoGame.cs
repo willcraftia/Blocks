@@ -1,15 +1,11 @@
 #region Using
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+using Willcraftia.Xna.Framework.Input;
 
 #endregion
 
@@ -19,7 +15,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
     {
         GraphicsDeviceManager graphics;
 
-        AppearanceManager appearanceManager;
+        InputManager inputManager;
+
+        UIManager uiManager;
 
         public UIDemoGame()
         {
@@ -29,8 +27,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void Initialize()
         {
-            appearanceManager = new AppearanceManager(this);
-            Components.Add(appearanceManager);
+            inputManager = new InputManager(this);
+            Components.Add(inputManager);
+
+            uiManager = new UIManager(this);
+            Components.Add(uiManager);
+
+            IsMouseVisible = true;
 
             base.Initialize();
         }
@@ -40,32 +43,32 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             var screen = new Screen();
             screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
-            var control_0 = new Control();
+            var control_0 = new ButtonControl();
             control_0.Bounds = new Rectangle(16, 16, 256, 256);
-            control_0.Appearance = new PlainColorAppearance(Services, Color.Red);
+            control_0.Appearance = new PlainColorButtonAppearance(Services);
             screen.Children.Add(control_0);
 
-            var control_1 = new Control();
+            var control_1 = new ButtonControl();
             control_1.Bounds = new Rectangle(32, 32, 256, 256);
-            control_1.Appearance = new PlainColorAppearance(Services, Color.Blue);
+            control_1.Appearance = new PlainColorButtonAppearance(Services);
             screen.Children.Add(control_1);
 
-            var control_3 = new Control();
+            var control_3 = new ButtonControl();
             control_3.Bounds = new Rectangle(64, 64, 256, 256);
-            control_3.Appearance = new PlainColorAppearance(Services, Color.Gray);
+            control_3.Appearance = new PlainColorButtonAppearance(Services);
             screen.Children.Add(control_3);
 
-            var control_3_0 = new Control();
+            var control_3_0 = new ButtonControl();
             control_3_0.Bounds = new Rectangle(16, 16, 32, 32);
-            control_3_0.Appearance = new PlainColorAppearance(Services, Color.Green);
+            control_3_0.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_0);
 
-            var control_3_1 = new Control();
+            var control_3_1 = new ButtonControl();
             control_3_1.Bounds = new Rectangle(16 + 32, 16, 32, 32);
-            control_3_1.Appearance = new PlainColorAppearance(Services, Color.Yellow);
+            control_3_1.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_1);
 
-            appearanceManager.Screen = screen;
+            uiManager.Screen = screen;
         }
 
         protected override void UnloadContent()
