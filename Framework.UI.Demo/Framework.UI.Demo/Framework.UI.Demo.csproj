@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OldStylePixelWindowAppearance.cs" />
     <Compile Include="PlainColorWindowAppearance.cs" />
     <Compile Include="PlainColorButtonAppearance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

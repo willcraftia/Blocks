@@ -14,6 +14,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         internal Control FocusedControl { get; set; }
 
+        public Screen()
+        {
+            // Control としての自分の Screen に自身を設定しておきます。
+            Screen = this;
+        }
+
         // I/F
         public void NotifyMouseMoved(int x, int y)
         {

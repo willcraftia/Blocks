@@ -40,31 +40,42 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void LoadContent()
         {
+            var oldPixelWindowAppearance = new OldStylePixelWindowAppearance(Services);
+            oldPixelWindowAppearance.TopLeft = Content.Load<Texture2D>("Textures/FFWinTopLeft");
+            oldPixelWindowAppearance.TopRight = Content.Load<Texture2D>("Textures/FFWinTopRight");
+            oldPixelWindowAppearance.BottomLeft = Content.Load<Texture2D>("Textures/FFWinBottomLeft");
+            oldPixelWindowAppearance.BottomRight = Content.Load<Texture2D>("Textures/FFWinBottomRight");
+            oldPixelWindowAppearance.Top = Content.Load<Texture2D>("Textures/FFWinTop");
+            oldPixelWindowAppearance.Bottom = Content.Load<Texture2D>("Textures/FFWinBottom");
+            oldPixelWindowAppearance.Left = Content.Load<Texture2D>("Textures/FFWinLeft");
+            oldPixelWindowAppearance.Right = Content.Load<Texture2D>("Textures/FFWinRight");
+            oldPixelWindowAppearance.Fill = Content.Load<Texture2D>("Textures/FFWinFill");
+
             var screen = new Screen();
             screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
             var control_0 = new Window();
-            control_0.Bounds = new Rectangle(16, 16, 256, 256);
-            control_0.Appearance = new PlainColorWindowAppearance(Services);
+            control_0.Bounds = new Rectangle(32, 32, 32 * 10, 32 * 10);
+            control_0.Appearance = oldPixelWindowAppearance;
             screen.Children.Add(control_0);
 
             var control_1 = new Window();
-            control_1.Bounds = new Rectangle(32, 32, 256, 256);
-            control_1.Appearance = new PlainColorWindowAppearance(Services);
+            control_1.Bounds = new Rectangle(32 * 3, 32 * 3, 32 * 10, 32 * 10);
+            control_1.Appearance = oldPixelWindowAppearance;
             screen.Children.Add(control_1);
 
             var control_3 = new Window();
-            control_3.Bounds = new Rectangle(64, 64, 256, 256);
-            control_3.Appearance = new PlainColorWindowAppearance(Services);
+            control_3.Bounds = new Rectangle(32 * 4, 32 * 4, 32 * 10, 32 * 10);
+            control_3.Appearance = oldPixelWindowAppearance;
             screen.Children.Add(control_3);
 
             var control_3_0 = new Button();
-            control_3_0.Bounds = new Rectangle(16, 16, 32, 32);
+            control_3_0.Bounds = new Rectangle(32, 32, 32 * 3, 32);
             control_3_0.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_0);
 
             var control_3_1 = new Button();
-            control_3_1.Bounds = new Rectangle(16 + 32, 16, 32, 32);
+            control_3_1.Bounds = new Rectangle(32 * 4, 32, 32 * 3, 32);
             control_3_1.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_1);
 

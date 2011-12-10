@@ -95,6 +95,7 @@
     <Compile Include="Appearance.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="DefaultInputCapturer.cs" />
+    <Compile Include="Desktop.cs" />
     <Compile Include="IInputCapturer.cs" />
     <Compile Include="IInputReceiver.cs" />
     <Compile Include="UIManager.cs" />

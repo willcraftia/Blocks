@@ -80,13 +80,13 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (screen == value) return;
 
-                screen = value;
-
-                if (screen == null)
+                if (screen != null && value == null)
                 {
                     // フォーカスが設定されていたならば解除します。
                     if (screen.FocusedControl == this) screen.FocusedControl = null;
                 }
+
+                screen = value;
 
                 // 子に Screen の設定状態を伝播させます。
                 foreach (var child in Children)
@@ -168,6 +168,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             Children = new ControlCollection(this);
             Visible = true;
+            Focusable = true;
         }
 
         /// <summary>
