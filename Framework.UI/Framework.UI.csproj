@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IControlLaf.cs" />
+    <Compile Include="IUIContext.cs" />
     <Compile Include="Visuals\Appearance.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="DefaultInputCapturer.cs" />

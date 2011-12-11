@@ -60,7 +60,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         {
             int unit = 32;
 
-            var oldPixelWindowAppearance = new OldStylePixelWindowAppearance(Services);
+            var oldPixelWindowAppearance = new OldStylePixelWindowAppearance(uiManager);
             oldPixelWindowAppearance.Unit = unit;
             oldPixelWindowAppearance.TopLeft = Content.Load<Texture2D>("Textures/FF6WinTopLeft");
             oldPixelWindowAppearance.TopRight = Content.Load<Texture2D>("Textures/FF6WinTopRight");
@@ -92,12 +92,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             var control_3_0 = new Button();
             control_3_0.Bounds = new Rectangle(unit, unit, unit * 3, unit);
-            control_3_0.Appearance = new PlainColorButtonAppearance(Services);
+            control_3_0.Appearance = new PlainColorButtonAppearance(uiManager);
             control_3.Children.Add(control_3_0);
 
             var control_3_1 = new Button();
             control_3_1.Bounds = new Rectangle(unit * 4, unit, unit * 3, unit);
-            control_3_1.Appearance = new PlainColorButtonAppearance(Services);
+            control_3_1.Appearance = new PlainColorButtonAppearance(uiManager);
             control_3.Children.Add(control_3_1);
 
             //control_3.Visible = false;

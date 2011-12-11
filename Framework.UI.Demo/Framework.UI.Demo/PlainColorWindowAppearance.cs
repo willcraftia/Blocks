@@ -13,8 +13,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
     {
         public Color BackgroundColor = Color.Blue;
 
-        public PlainColorWindowAppearance(GameServiceContainer container)
-            : base(container)
+        public PlainColorWindowAppearance(IUIContext uiContext)
+            : base(uiContext)
         {
         }
 
@@ -29,8 +29,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             canvasBounds.Height -= 4;
 
             SpriteBatch.Begin();
-            SpriteBatch.Draw(UIService.FillTexture, borderBounds, Color.White);
-            SpriteBatch.Draw(UIService.FillTexture, canvasBounds, BackgroundColor);
+            SpriteBatch.Draw(UIContext.FillTexture, borderBounds, Color.White);
+            SpriteBatch.Draw(UIContext.FillTexture, canvasBounds, BackgroundColor);
             SpriteBatch.End();
         }
     }

@@ -9,15 +9,8 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public class Screen : Control, IInputReceiver
     {
-        /// <summary>
-        /// フォーカスを得ている Control を取得あるいは設定します。
-        /// </summary>
-        internal Control FocusedControl { get; set; }
-
         public Screen()
         {
-            // Control としての自分の Screen に自身を設定しておきます。
-            Screen = this;
         }
 
         // I/F

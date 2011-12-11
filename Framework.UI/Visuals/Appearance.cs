@@ -11,21 +11,19 @@ namespace Willcraftia.Xna.Framework.UI.Visuals
 {
     public abstract class Appearance
     {
-        public GraphicsDevice GraphicsDevice { get; private set; }
+        public IUIContext UIContext { get; private set; }
 
-        public IUIService UIService { get; private set; }
+        public GraphicsDevice GraphicsDevice { get; private set; }
 
         public SpriteBatch SpriteBatch { get; private set; }
 
-        public Appearance(GameServiceContainer container)
+        public Appearance(IUIContext uiContext)
         {
-            if (container == null) throw new ArgumentNullException("container");
+            if (uiContext == null) throw new ArgumentNullException("uiContext");
 
-            var graphicsDeviceService = container.GetRequiredService<IGraphicsDeviceService>();
-            GraphicsDevice = graphicsDeviceService.GraphicsDevice;
-
-            UIService = container.GetRequiredService<IUIService>();
-            SpriteBatch = UIService.SpriteBatch;
+            UIContext = uiContext;
+            GraphicsDevice = uiContext.GraphicsDevice;
+            SpriteBatch = uiContext.SpriteBatch;
         }
 
         public abstract void Draw(Control control);

@@ -17,8 +17,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         public Color PressedColor = Color.Yellow;
 
-        public PlainColorButtonAppearance(GameServiceContainer container)
-            : base(container)
+        public PlainColorButtonAppearance(IUIContext uiContext)
+            : base(uiContext)
         {
         }
 
@@ -46,8 +46,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             }
 
             SpriteBatch.Begin();
-            SpriteBatch.Draw(UIService.FillTexture, borderBounds, Color.White);
-            SpriteBatch.Draw(UIService.FillTexture, canvasBounds, bgColor);
+            SpriteBatch.Draw(UIContext.FillTexture, borderBounds, Color.White);
+            SpriteBatch.Draw(UIContext.FillTexture, canvasBounds, bgColor);
             SpriteBatch.End();
         }
     }

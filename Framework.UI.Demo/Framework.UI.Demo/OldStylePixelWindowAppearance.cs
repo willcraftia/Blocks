@@ -23,8 +23,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         public Texture2D Fill;
         public int Unit = 16;
 
-        public OldStylePixelWindowAppearance(GameServiceContainer services)
-            : base(services)
+        public OldStylePixelWindowAppearance(IUIContext uiContext)
+            : base(uiContext)
         {
         }
 

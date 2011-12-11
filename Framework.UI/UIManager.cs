@@ -11,7 +11,7 @@ using Willcraftia.Xna.Framework.Input;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public class UIManager : DrawableGameComponent, IUIService
+    public class UIManager : DrawableGameComponent, IUIService, IUIContext
     {
         IInputService inputService;
 
@@ -21,18 +21,39 @@ namespace Willcraftia.Xna.Framework.UI
 
         List<Control> visibleControls;
 
-        // I/F
+        /// <summary>
+        /// フォーカスを得ている Control を取得あるいは設定します。
+        /// </summary>
+        internal Control FocusedControl { get; private set; }
+
+        /// <summary>
+        /// Screen を取得または設定します。
+        /// </summary>
         public Screen Screen
         {
+            // I/F
             get { return screen; }
             set
             {
                 if (screen == value) return;
 
+                if (screen != null)
+                {
+                    // UIContext をアンバインドします。
+                    Unbind(screen);
+                    // InputReceiver から Screen をアンバインドします。
+                    inputCapturer.InputReceiver = null;
+                }
+
                 screen = value;
 
-                // InputReceiver にバインド
-                if (inputCapturer != null && screen != null) inputCapturer.InputReceiver = screen;
+                if (screen != null)
+                {
+                    // UIContext をバインドします。
+                    Bind(screen);
+                    // InputReceiver に Screen をバインドします。
+                    if (inputCapturer != null) inputCapturer.InputReceiver = screen;
+                }
             }
         }
 
@@ -49,13 +70,13 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (inputCapturer == value) return;
 
-                // 旧 InputCapturer から Screen をアンバインド
+                // InputCapturer から Screen をアンバインドします。
                 if (inputCapturer != null) inputCapturer.InputReceiver = null;
 
                 inputCapturer = value;
 
-                // 新 InputCapturer に Screen をバインド
-                if (inputCapturer != null && screen != null) inputCapturer.InputReceiver = screen;
+                // InputCapturer に Screen をバインドします。
+                if (inputCapturer != null && Screen != null) inputCapturer.InputReceiver = Screen;
             }
         }
 
@@ -82,6 +103,16 @@ namespace Willcraftia.Xna.Framework.UI
             FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
             base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            SpriteBatch.Dispose();
+            FillTexture.Dispose();
+
+            Screen = null;
+
+            base.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -124,6 +155,97 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 PushControlToVisibleControlStack(child);
             }
+        }
+
+        public void Bind(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+
+            // Control が既にこの UIContext にバインドされているならばスキップします。
+            if (control.UIContext == this) return;
+
+            // Control が他の UIContext にバインドされているならばアンバインドします。
+            if (control.UIContext != null && control.UIContext != this) control.UIContext.Unbind(control);
+
+            control.UIContext = this;
+            control.EnabledChanged += new EventHandler(OnControlEnabledChanged);
+            control.VisibleChanged += new EventHandler(OnControlVisibleChanged);
+
+            // 子にバインド処理を伝播します。
+            foreach (var child in control.Children)
+            {
+                Bind(child);
+            }
+        }
+
+        void OnControlEnabledChanged(object sender, EventArgs e)
+        {
+            var control = sender as Control;
+
+            // 無効になったならばフォーカス解除を試行します。
+            if (!control.Enabled) Defocus(control);
+        }
+
+        void OnControlVisibleChanged(object sender, EventArgs e)
+        {
+            var control = sender as Control;
+
+            // 不可視になったならばフォーカス解除を試行します。
+            if (!control.Visible) Defocus(control);
+        }
+
+        public void Unbind(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            ensureControlContext(control);
+
+            // 子から先にアンバインドします。
+            foreach (var child in control.Children)
+            {
+                Bind(child);
+            }
+
+            Defocus(control);
+            control.EnabledChanged -= new EventHandler(OnControlEnabledChanged);
+            control.VisibleChanged -= new EventHandler(OnControlVisibleChanged);
+
+            if (visibleControls.Contains(control)) visibleControls.Remove(control);
+
+            control.UIContext = null;
+        }
+
+
+        public bool HasFocus(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            ensureControlContext(control);
+
+            return FocusedControl == control;
+        }
+
+        public void Focus(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            ensureControlContext(control);
+
+            if (Screen == null || !control.Enabled || !control.Visible || !control.Focusable) return;
+
+            FocusedControl = control;
+        }
+
+        public void Defocus(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            ensureControlContext(control);
+
+            if (Screen == null) return;
+
+            if (HasFocus(control)) FocusedControl = null;
+        }
+
+        void ensureControlContext(Control control)
+        {
+            if (control.UIContext != this) throw new InvalidOperationException("Control is in another context.");
         }
     }
 }

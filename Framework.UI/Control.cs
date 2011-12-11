@@ -26,11 +26,6 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
-        /// Screen。
-        /// </summary>
-        Screen screen;
-
-        /// <summary>
         /// 親 Control。
         /// </summary>
         Control parent;
@@ -61,42 +56,21 @@ namespace Willcraftia.Xna.Framework.UI
 
                 if (parent != null)
                 {
-                    // 親 Control の Screen に一致させます。
-                    if (Screen != parent.Screen) Screen = parent.Screen;
+                    // 親と同じ UIContext にバインドします。
+                    if (parent.UIContext != null) parent.UIContext.Bind(this);
                 }
                 else
                 {
-                    // 親を失ったので Screen から切り離します。
-                    Screen = null;
+                    // 親を失ったので UIContext からアンバインドします。
+                    if (UIContext != null) UIContext.Unbind(this);
                 }
             }
         }
 
         /// <summary>
-        /// Screen を取得または設定します。
+        /// UIContext を取得します。
         /// </summary>
-        public Screen Screen
-        {
-            get { return screen; }
-            internal set
-            {
-                if (screen == value) return;
-
-                if (screen != null && value == null)
-                {
-                    // フォーカスが設定されていたならば解除します。
-                    if (screen.FocusedControl == this) screen.FocusedControl = null;
-                }
-
-                screen = value;
-
-                // 子に Screen の設定状態を伝播させます。
-                foreach (var child in Children)
-                {
-                    child.Screen = screen;
-                }
-            }
-        }
+        public IUIContext UIContext { get; internal set; }
 
         /// <summary>
         /// 子 Control のコレクションを取得します。
@@ -120,8 +94,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if (enabled == value) return;
 
                 enabled = value;
-                // フォーカスを持った状態から無効にしたならば、Screen のフォーカス状態を解除します。
-                if (!enabled && Focused) Screen.FocusedControl = null;
+
                 // イベントを発生させます。
                 RaiseEnabledChanged();
             }
@@ -139,8 +112,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if (visible == value) return;
 
                 visible = value;
-                // フォーカスを持った状態から不可視にしたならば、Screen のフォーカス状態を解除します。
-                if (!visible && Focused) Screen.FocusedControl = null;
+
                 // イベントを発生させます。
                 OnVisibleChanged();
             }
@@ -158,7 +130,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <value>true (Control がフォーカスを得ている場合)、false (それ以外の場合)。</value>
         public bool Focused
         {
-            get { return Screen != null && Screen.FocusedControl == this; }
+            get { return UIContext != null && UIContext.HasFocus(this); }
         }
 
         public Appearance Appearance { get; set; }
@@ -189,6 +161,20 @@ namespace Willcraftia.Xna.Framework.UI
             absoluteBounds.Y += parentAbsoluteBounds.Y;
 
             return absoluteBounds;
+        }
+
+        public void Focus()
+        {
+            if (UIContext == null || !Enabled || !Visible || !Focusable) return;
+
+            UIContext.Focus(this);
+        }
+
+        public void Defocus()
+        {
+            if (UIContext == null || !UIContext.HasFocus(this)) return;
+
+            UIContext.Defocus(this);
         }
 
         internal void ProcessMouseMoved(int x, int y)
@@ -250,8 +236,8 @@ namespace Willcraftia.Xna.Framework.UI
             // 子がマウス オーバ状態ならば処理を転送します。
             if (mouseOverControl != this) return mouseOverControl.ProcessMouseButtonPressed(button);
 
-            // フォーカス設定可能ならば、Screen に現在フォーカスを得ている Control として設定します。
-            if (Enabled && Focusable) Screen.FocusedControl = this;
+            // フォーカスを得ます。
+            Focus();
 
             // マウス ボタンが押されたことを通知します。
             OnMouseButtonPressed(button);
