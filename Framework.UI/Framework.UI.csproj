@@ -92,7 +92,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IVisualizer.cs" />
+    <Compile Include="IControlLaf.cs" />
     <Compile Include="Visuals\Appearance.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="DefaultInputCapturer.cs" />
@@ -110,6 +110,10 @@
     <ProjectReference Include="..\Framework.Input\Framework.Input.csproj">
       <Project>{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}</Project>
       <Name>Framework.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Framework\Framework.csproj">
+      <Project>{FA23868B-0454-4B81-B5AA-F270F987ECC7}</Project>
+      <Name>Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

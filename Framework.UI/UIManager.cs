@@ -1,7 +1,10 @@
 #region Using
 
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 
 #endregion
@@ -15,6 +18,8 @@ namespace Willcraftia.Xna.Framework.UI
         IInputCapturer inputCapturer;
 
         Screen screen;
+
+        List<Control> visibleControls;
 
         // I/F
         public Screen Screen
@@ -59,11 +64,13 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // サービスとして登録
             Game.Services.AddService(typeof(IUIService), this);
+
+            visibleControls = new List<Control>();
         }
 
         public override void Initialize()
         {
-            inputService = Game.Services.GetService(typeof(IInputService)) as IInputService;
+            inputService = Game.Services.GetRequiredService<IInputService>();
             InputCapturer = new DefaultInputCapturer(inputService);
 
             base.Initialize();
@@ -72,22 +79,36 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            FillTexture = new Texture2D(GraphicsDevice, 1, 1);
-            FillTexture.SetData<Color>(new Color[] { Color.White });
+            FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
             base.LoadContent();
         }
 
-        public override void Draw(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
+            visibleControls.Clear();
+
             if (Screen == null) return;
 
-            // Screen を描画します。Screen にある Control は再帰的に描画されます。
-            DrawControl(Screen);
+            PushControlToVisibleControlStack(Screen);
+
+            base.Update(gameTime);
         }
 
-        void DrawControl(Control control)
+        public override void Draw(GameTime gameTime)
+        {
+            // 描画用リストにある Control を描画します。
+            foreach (var control in visibleControls)
+            {
+                control.Appearance.Draw(control);
+            }
+        }
+
+        /// <summary>
+        /// Control が描画対象であるかどうかを判定し、描画対象であるならば描画用リストに追加します。
+        /// </summary>
+        /// <param name="control">Control。</param>
+        void PushControlToVisibleControlStack(Control control)
         {
             // 不可視の場合は自分も子も描画しません。
             if (!control.Visible) return;
@@ -95,13 +116,13 @@ namespace Willcraftia.Xna.Framework.UI
             // Appearance を持つならば描画します。
             if (control.Appearance != null)
             {
-                control.Appearance.Draw(control);
+                visibleControls.Add(control);
             }
 
             // 子 Control を再帰的に描画します。
             foreach (var child in control.Children)
             {
-                DrawControl(child);
+                PushControlToVisibleControlStack(child);
             }
         }
     }

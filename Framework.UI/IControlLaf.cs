@@ -6,7 +6,7 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public interface IVisualizer
+    public interface IControlLaf
     {
         void Draw(Control control);
     }

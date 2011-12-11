@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
@@ -10,9 +11,9 @@ namespace Willcraftia.Xna.Framework.UI.Visuals
 {
     public abstract class Appearance
     {
-        public IUIService UIService { get; private set; }
-
         public GraphicsDevice GraphicsDevice { get; private set; }
+
+        public IUIService UIService { get; private set; }
 
         public SpriteBatch SpriteBatch { get; private set; }
 
@@ -20,13 +21,10 @@ namespace Willcraftia.Xna.Framework.UI.Visuals
         {
             if (container == null) throw new ArgumentNullException("container");
 
-            UIService = container.GetService(typeof(IUIService)) as IUIService;
-            if (UIService == null) throw new InvalidOperationException("IUIService not found.");
-
-            var graphicsDeviceService = container.GetService(typeof(IGraphicsDeviceService)) as IGraphicsDeviceService;
-            if (graphicsDeviceService == null) throw new InvalidOperationException("IGraphicsDeviceService not found.");
-
+            var graphicsDeviceService = container.GetRequiredService<IGraphicsDeviceService>();
             GraphicsDevice = graphicsDeviceService.GraphicsDevice;
+
+            UIService = container.GetRequiredService<IUIService>();
             SpriteBatch = UIService.SpriteBatch;
         }
 
