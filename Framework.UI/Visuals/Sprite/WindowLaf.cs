@@ -39,10 +39,8 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             var window = control as Window;
             if (window == null) return;
 
-            var bounds = control.GetAbsoluteBounds();
-
-            var color = new Color(255, 255, 255, 1.0f);
-
+            var bounds = window.GetAbsoluteBounds();
+            var color = window.BackgroundColor;
             var unit = Source.SpriteSize;
 
             SpriteBatch.Begin();

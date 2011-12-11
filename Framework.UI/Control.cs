@@ -26,6 +26,16 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
+        /// 矩形サイズ (矩形座標は親 Control の矩形座標からの相対位置)。
+        /// </summary>
+        public Rectangle Bounds;
+
+        /// <summary>
+        /// 背景色。
+        /// </summary>
+        public Color BackgroundColor = Color.White;
+
+        /// <summary>
         /// 親 Control。
         /// </summary>
         Control parent;
@@ -79,11 +89,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// 子 Control のコレクションを取得します。
         /// </summary>
         public ControlCollection Children { get; private set; }
-
-        /// <summary>
-        /// 矩形サイズ (矩形座標は親 Control の矩形座標からの相対位置)。
-        /// </summary>
-        public Rectangle Bounds;
 
         /// <summary>
         /// Control が有効かどうかを取得または設定します。

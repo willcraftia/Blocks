@@ -26,6 +26,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
             if (button.MouseHovering)
             {
+                // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
                 SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, Color.FromNonPremultiplied(255, 255, 255, 50));
             }
 

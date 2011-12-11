@@ -27,6 +27,29 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         public UIDemoGame()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            //
+            // REFERENCE: http://creators.xna.com/ja-jp/education/bestpractices
+            //            http://social.msdn.microsoft.com/Forums/ja-JP/xnagameja/thread/60a6d9d9-1ede-4657-a77c-9ff65edd563a
+            //
+            // Xbox360:
+            // 640x480
+            // 720x480
+            // 1280x720 (720p)
+            // 1980x1080
+            // 
+            graphics.PreferredBackBufferWidth = 720;
+            graphics.PreferredBackBufferHeight = 480;
+            //graphics.PreferredBackBufferWidth = 1280;
+            //graphics.PreferredBackBufferHeight = 720;
+            // for recording settings
+            //graphics.PreferredBackBufferWidth = 640;
+            //graphics.PreferredBackBufferHeight = 480;
+            //graphics.PreferredBackBufferWidth = 320;
+            //graphics.PreferredBackBufferHeight = 240;
+
+            graphics.PreferMultiSampling = true;
+
             Content.RootDirectory = "Content";
         }
 
@@ -52,54 +75,90 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             spriteControlLafSource.LoadContent();
 
+            //LoadSimpleGameDemoGui();
             LoadSimpleWindowDemoGui();
         }
 
-        void LoadSimpleWindowDemoGui()
+        void LoadSimpleGameDemoGui()
         {
-            int unit = 32;
-
-            //var oldPixelWindowAppearance = new OldStylePixelWindowAppearance(uiManager);
-            //oldPixelWindowAppearance.Unit = unit;
-            //oldPixelWindowAppearance.TopLeft = Content.Load<Texture2D>("Textures/FF6WinTopLeft");
-            //oldPixelWindowAppearance.TopRight = Content.Load<Texture2D>("Textures/FF6WinTopRight");
-            //oldPixelWindowAppearance.BottomLeft = Content.Load<Texture2D>("Textures/FF6WinBottomLeft");
-            //oldPixelWindowAppearance.BottomRight = Content.Load<Texture2D>("Textures/FF6WinBottomRight");
-            //oldPixelWindowAppearance.Top = Content.Load<Texture2D>("Textures/FF6WinTop");
-            //oldPixelWindowAppearance.Bottom = Content.Load<Texture2D>("Textures/FF6WinBottom");
-            //oldPixelWindowAppearance.Left = Content.Load<Texture2D>("Textures/FF6WinLeft");
-            //oldPixelWindowAppearance.Right = Content.Load<Texture2D>("Textures/FF6WinRight");
-            //oldPixelWindowAppearance.Fill = Content.Load<Texture2D>("Textures/FF6WinFill");
+            // Unit size.
+            int u = 32;
 
             var screen = new Screen();
             screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
-            var control_0 = new Window();
-            control_0.Bounds = new Rectangle(unit, unit, unit * 10, unit * 10);
-            //control_0.Appearance = oldPixelWindowAppearance;
-            screen.Children.Add(control_0);
+            var window = new Window();
+            {
+                window.Bounds = new Rectangle(0, 0, u * 10, u * 4);
+                window.Bounds.X = (int) ((screen.Bounds.Width - window.Bounds.Width) * 0.5f);
+                window.Bounds.Y = (int) ((screen.Bounds.Height - window.Bounds.Height) * 0.5f);
+                screen.Children.Add(window);
 
-            var control_1 = new Window();
-            control_1.Bounds = new Rectangle(unit * 3, unit * 3, unit * 10, unit * 10);
-            //control_1.Appearance = oldPixelWindowAppearance;
-            screen.Children.Add(control_1);
+                {
+                    var button = new Button();
+                    button.Bounds = new Rectangle(0, 0, u * 8, u);
+                    button.Bounds.X = (int) ((window.Bounds.Width - button.Bounds.Width) * 0.5f);
+                    button.Bounds.Y = u * 1;
+                    button.Text = "NEW GAME";
+                    button.FontColor = Color.White;
+                    window.Children.Add(button);
+                }
+                {
+                    var button = new Button();
+                    button.Bounds = new Rectangle(0, 0, u * 8, u);
+                    button.Bounds.X = (int) ((window.Bounds.Width - button.Bounds.Width) * 0.5f);
+                    button.Bounds.Y = u * 2;
+                    button.Text = "EXIT";
+                    button.FontColor = Color.White;
+                    window.Children.Add(button);
+                }
+            }
 
-            var control_3 = new Window();
-            control_3.Bounds = new Rectangle(unit * 4, unit * 4, unit * 10, unit * 10);
-            //control_3.Appearance = oldPixelWindowAppearance;
-            screen.Children.Add(control_3);
+            uiManager.Screen = screen;
+        }
 
-            var control_3_0 = new Button();
-            control_3_0.Text = "Button #0";
-            control_3_0.FontColor = Color.White;
-            control_3_0.Bounds = new Rectangle(unit, unit, unit * 3, unit);
-            control_3.Children.Add(control_3_0);
+        void LoadSimpleWindowDemoGui()
+        {
+            // Unit size.
+            int u = 32;
 
-            var control_3_1 = new Button();
-            control_3_1.Text = "Button #1";
-            control_3_1.FontColor = Color.White;
-            control_3_1.Bounds = new Rectangle(unit * 4, unit, unit * 3, unit);
-            control_3.Children.Add(control_3_1);
+            var screen = new Screen();
+            screen.Bounds = GraphicsDevice.Viewport.Bounds;
+
+            var window_0 = new Window();
+            {
+                window_0.Bounds = new Rectangle(u, u, u * 10, u * 10);
+                window_0.BackgroundColor = Color.White * 0.5f;
+                screen.Children.Add(window_0);
+            }
+
+            var window_1 = new Window();
+            {
+                window_1.Bounds = new Rectangle(u * 3, u * 3, u * 10, u * 10);
+                window_1.BackgroundColor = Color.Yellow * 0.8f;
+                screen.Children.Add(window_1);
+            }
+
+            var window_2 = new Window();
+            {
+                window_2.Bounds = new Rectangle(u * 4, u * 4, u * 10, u * 10);
+                screen.Children.Add(window_2);
+
+                {
+                    var button = new Button();
+                    button.Text = "Button #0";
+                    button.FontColor = Color.White;
+                    button.Bounds = new Rectangle(u, u, u * 3, u);
+                    window_2.Children.Add(button);
+                }
+                {
+                    var button = new Button();
+                    button.Text = "Button #1";
+                    button.FontColor = Color.White;
+                    button.Bounds = new Rectangle(u * 4, u, u * 3, u);
+                    window_2.Children.Add(button);
+                }
+            }
 
             //control_3.Visible = false;
 
