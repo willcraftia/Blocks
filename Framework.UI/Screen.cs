@@ -9,9 +9,10 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public class Screen : Control, IInputReceiver
     {
-        public Screen()
-        {
-        }
+        /// <summary>
+        /// コンストラクタ。
+        /// </summary>
+        public Screen() { }
 
         // I/F
         public void NotifyMouseMoved(int x, int y)

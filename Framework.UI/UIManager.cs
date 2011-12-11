@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
@@ -21,10 +22,30 @@ namespace Willcraftia.Xna.Framework.UI
 
         List<Control> visibleControls;
 
-        /// <summary>
-        /// フォーカスを得ている Control を取得あるいは設定します。
-        /// </summary>
-        internal Control FocusedControl { get; private set; }
+        IControlLafSource controlLafSource;
+
+        // I/F
+        public SpriteBatch SpriteBatch { get; private set; }
+
+        // I/F
+        public Texture2D FillTexture { get; private set; }
+
+        public IInputCapturer InputCapturer
+        {
+            get { return inputCapturer; }
+            set
+            {
+                if (inputCapturer == value) return;
+
+                // InputCapturer から Screen をアンバインドします。
+                if (inputCapturer != null) inputCapturer.InputReceiver = null;
+
+                inputCapturer = value;
+
+                // InputCapturer に Screen をバインドします。
+                if (inputCapturer != null && Screen != null) inputCapturer.InputReceiver = Screen;
+            }
+        }
 
         /// <summary>
         /// Screen を取得または設定します。
@@ -57,28 +78,27 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
-        // I/F
-        public SpriteBatch SpriteBatch { get; private set; }
-
-        // I/F
-        public Texture2D FillTexture { get; private set; }
-
-        public IInputCapturer InputCapturer
+        /// <summary>
+        /// IControlLafSource を取得あるいは設定します。
+        /// </summary>
+        public IControlLafSource ControlLafSource
         {
-            get { return inputCapturer; }
+            get { return controlLafSource; }
             set
             {
-                if (inputCapturer == value) return;
+                if (controlLafSource == value) return;
 
-                // InputCapturer から Screen をアンバインドします。
-                if (inputCapturer != null) inputCapturer.InputReceiver = null;
+                if (controlLafSource != null) controlLafSource.UIContext = null;
 
-                inputCapturer = value;
-
-                // InputCapturer に Screen をバインドします。
-                if (inputCapturer != null && Screen != null) inputCapturer.InputReceiver = Screen;
+                controlLafSource = value;
+                controlLafSource.UIContext = this;
             }
         }
+
+        /// <summary>
+        /// フォーカスを得ている Control を取得あるいは設定します。
+        /// </summary>
+        internal Control FocusedControl { get; private set; }
 
         public UIManager(Game game)
             : base(game)
@@ -102,6 +122,8 @@ namespace Willcraftia.Xna.Framework.UI
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
+            if (ControlLafSource != null) ControlLafSource.LoadContent();
+
             base.LoadContent();
         }
 
@@ -109,6 +131,8 @@ namespace Willcraftia.Xna.Framework.UI
         {
             SpriteBatch.Dispose();
             FillTexture.Dispose();
+
+            if (ControlLafSource != null) ControlLafSource.UnloadContent();
 
             Screen = null;
 
@@ -131,7 +155,7 @@ namespace Willcraftia.Xna.Framework.UI
             // 描画用リストにある Control を描画します。
             foreach (var control in visibleControls)
             {
-                control.Appearance.Draw(control);
+                control.Draw();
             }
         }
 
@@ -144,11 +168,7 @@ namespace Willcraftia.Xna.Framework.UI
             // 不可視の場合は自分も子も描画しません。
             if (!control.Visible) return;
 
-            // Appearance を持つならば描画します。
-            if (control.Appearance != null)
-            {
-                visibleControls.Add(control);
-            }
+            visibleControls.Add(control);
 
             // 子 Control を再帰的に描画します。
             foreach (var child in control.Children)
@@ -157,6 +177,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        // I/F
         public void Bind(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
@@ -194,6 +215,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (!control.Visible) Defocus(control);
         }
 
+        // I/F
         public void Unbind(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
@@ -214,7 +236,7 @@ namespace Willcraftia.Xna.Framework.UI
             control.UIContext = null;
         }
 
-
+        // I/F
         public bool HasFocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
@@ -223,6 +245,7 @@ namespace Willcraftia.Xna.Framework.UI
             return FocusedControl == control;
         }
 
+        // I/F
         public void Focus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
@@ -233,6 +256,7 @@ namespace Willcraftia.Xna.Framework.UI
             FocusedControl = control;
         }
 
+        // I/F
         public void Defocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
@@ -241,6 +265,23 @@ namespace Willcraftia.Xna.Framework.UI
             if (Screen == null) return;
 
             if (HasFocus(control)) FocusedControl = null;
+        }
+
+        // I/F
+        public ContentManager CreateContentManager()
+        {
+            return new ContentManager(Game.Services);
+        }
+
+        // I/F
+        public IControlLaf GetControlLaf(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            ensureControlContext(control);
+
+            if (ControlLafSource == null) return null;
+
+            return ControlLafSource.GetControlLaf(control);
         }
 
         void ensureControlContext(Control control)

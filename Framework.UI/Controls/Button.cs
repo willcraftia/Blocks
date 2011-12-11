@@ -1,6 +1,8 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 
 #endregion
@@ -13,6 +15,16 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// Button がクリックされた時に発生します。
         /// </summary>
         public event EventHandler Clicked;
+
+        public string Text;
+
+        public HorizontalAlignment TextHorizontalAlignment = HorizontalAlignment.Center;
+
+        public VerticalAlignment TextVerticalAlignment = VerticalAlignment.Center;
+
+        public Color FontColor = Color.Black;
+
+        public SpriteFont Font;
 
         bool pressedByMouse;
 
@@ -30,6 +42,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             }
         }
 
+        /// <summary>
+        /// コンストラクタ。
+        /// </summary>
         public Button()
         {
             Enabled = true;

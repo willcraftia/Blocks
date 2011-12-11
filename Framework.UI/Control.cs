@@ -30,6 +30,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         Control parent;
 
+        /// <summary>
+        /// 自身あるいは子についてのマウス オーバ状態の Control。
+        /// </summary>
         Control mouseOverControl;
 
         /// <summary>
@@ -133,8 +136,6 @@ namespace Willcraftia.Xna.Framework.UI
             get { return UIContext != null && UIContext.HasFocus(this); }
         }
 
-        public Appearance Appearance { get; set; }
-
         /// <summary>
         /// コンストラクタ。
         /// </summary>
@@ -175,6 +176,20 @@ namespace Willcraftia.Xna.Framework.UI
             if (UIContext == null || !UIContext.HasFocus(this)) return;
 
             UIContext.Defocus(this);
+        }
+
+        public virtual void Draw()
+        {
+            // ここでは IControlLaf のみで描画します。
+            // 異なる方法で Control を描画したい場合には、そのための Control のサブクラスと IControlLaf の実装を作るか、
+            // あるいは Draw メソッドをオーバライドして描画ロジックを記述します。
+
+            if (UIContext == null || !Visible) return;
+
+            // IControlLaf を取得します。
+            var laf = UIContext.GetControlLaf(this);
+            // IControlLaf に描画を委譲します。
+            if (laf != null) laf.Draw(this);
         }
 
         internal void ProcessMouseMoved(int x, int y)

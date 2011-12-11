@@ -13,6 +13,11 @@ namespace Willcraftia.Xna.Framework.UI
     public class Window : Control
     {
         /// <summary>
+        /// コンストラクタ。
+        /// </summary>
+        public Window() { }
+
+        /// <summary>
         /// Window を閉じます。
         /// </summary>
         public void Close()

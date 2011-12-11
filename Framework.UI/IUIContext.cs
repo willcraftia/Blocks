@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
@@ -26,5 +27,9 @@ namespace Willcraftia.Xna.Framework.UI
         void Focus(Control control);
 
         void Defocus(Control control);
+
+        ContentManager CreateContentManager();
+
+        IControlLaf GetControlLaf(Control control);
     }
 }

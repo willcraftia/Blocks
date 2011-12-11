@@ -6,7 +6,10 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public interface IUIService
+    public enum VerticalAlignment
     {
+        Top,
+        Bottom,
+        Center
     }
 }
