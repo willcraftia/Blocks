@@ -146,9 +146,27 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                 {
                     var button = new Button();
-                    button.Text = "Button #0";
+                    button.Text = "Open Dialog";
                     button.FontColor = Color.White;
                     button.Bounds = new Rectangle(u, u, u * 3, u);
+                    button.Clicked += delegate(object s, EventArgs e)
+                    {
+                        var dialog = new Window();
+                        dialog.Bounds = new Rectangle(u * 5, u * 5, u * 4, u * 3);
+                        dialog.BackgroundColor = Color.Green * 0.8f;
+                        screen.Children.Add(dialog);
+                        {
+                            var b = new Button();
+                            b.Text = "Close";
+                            b.FontColor = Color.White;
+                            b.Bounds = new Rectangle(u, u, u * 2, u);
+                            b.Clicked += delegate(object bs, EventArgs be)
+                            {
+                                dialog.Close();
+                            };
+                            dialog.Children.Add(b);
+                        }
+                    };
                     window_2.Children.Add(button);
                 }
                 {
