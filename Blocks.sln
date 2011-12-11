@@ -17,7 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Input", "Framewor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.UI.Demo", "Framework.UI.Demo\Framework.UI.Demo\Framework.UI.Demo.csproj", "{028223E3-B7C3-4752-B13E-9D5173B2047F}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Framework.UI.DemoContent", "Framework.UI.Demo\Framework.UI.DemoContent\Framework.UI.DemoContent.contentproj", "{CD57FAA1-0B4B-404C-AC7C-B8F0F70D9968}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.UI.DemoContent", "Framework.UI.Demo\Framework.UI.DemoContent\Framework.UI.DemoContent.contentproj", "{CD57FAA1-0B4B-404C-AC7C-B8F0F70D9968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Content.Pipeline", "Framework.Content.Pipeline\Framework.Content.Pipeline.csproj", "{44FCDED7-AE50-41BA-A09A-7165E967E171}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{028223E3-B7C3-4752-B13E-9D5173B2047F}.Release|x86.Build.0 = Release|x86
 		{CD57FAA1-0B4B-404C-AC7C-B8F0F70D9968}.Debug|x86.ActiveCfg = Debug|x86
 		{CD57FAA1-0B4B-404C-AC7C-B8F0F70D9968}.Release|x86.ActiveCfg = Release|x86
+		{44FCDED7-AE50-41BA-A09A-7165E967E171}.Debug|x86.ActiveCfg = Debug|x86
+		{44FCDED7-AE50-41BA-A09A-7165E967E171}.Debug|x86.Build.0 = Debug|x86
+		{44FCDED7-AE50-41BA-A09A-7165E967E171}.Release|x86.ActiveCfg = Debug|x86
+		{44FCDED7-AE50-41BA-A09A-7165E967E171}.Release|x86.Build.0 = Debug|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

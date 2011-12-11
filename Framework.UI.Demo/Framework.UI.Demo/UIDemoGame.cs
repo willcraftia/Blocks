@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Framework.UI.Visuals;
 
 #endregion
 
@@ -40,42 +42,61 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void LoadContent()
         {
+            //LoadGameDemoGui();
+            LoadSimpleWindowDemoGui();
+        }
+
+        void LoadGameDemoGui()
+        {
+            var screen = new Screen();
+            screen.Bounds = GraphicsDevice.Viewport.Bounds;
+
+            {
+                var button = new Button();
+            }
+        }
+
+        void LoadSimpleWindowDemoGui()
+        {
+            int unit = 32;
+
             var oldPixelWindowAppearance = new OldStylePixelWindowAppearance(Services);
-            oldPixelWindowAppearance.TopLeft = Content.Load<Texture2D>("Textures/FFWinTopLeft");
-            oldPixelWindowAppearance.TopRight = Content.Load<Texture2D>("Textures/FFWinTopRight");
-            oldPixelWindowAppearance.BottomLeft = Content.Load<Texture2D>("Textures/FFWinBottomLeft");
-            oldPixelWindowAppearance.BottomRight = Content.Load<Texture2D>("Textures/FFWinBottomRight");
-            oldPixelWindowAppearance.Top = Content.Load<Texture2D>("Textures/FFWinTop");
-            oldPixelWindowAppearance.Bottom = Content.Load<Texture2D>("Textures/FFWinBottom");
-            oldPixelWindowAppearance.Left = Content.Load<Texture2D>("Textures/FFWinLeft");
-            oldPixelWindowAppearance.Right = Content.Load<Texture2D>("Textures/FFWinRight");
-            oldPixelWindowAppearance.Fill = Content.Load<Texture2D>("Textures/FFWinFill");
+            oldPixelWindowAppearance.Unit = unit;
+            oldPixelWindowAppearance.TopLeft = Content.Load<Texture2D>("Textures/FF6WinTopLeft");
+            oldPixelWindowAppearance.TopRight = Content.Load<Texture2D>("Textures/FF6WinTopRight");
+            oldPixelWindowAppearance.BottomLeft = Content.Load<Texture2D>("Textures/FF6WinBottomLeft");
+            oldPixelWindowAppearance.BottomRight = Content.Load<Texture2D>("Textures/FF6WinBottomRight");
+            oldPixelWindowAppearance.Top = Content.Load<Texture2D>("Textures/FF6WinTop");
+            oldPixelWindowAppearance.Bottom = Content.Load<Texture2D>("Textures/FF6WinBottom");
+            oldPixelWindowAppearance.Left = Content.Load<Texture2D>("Textures/FF6WinLeft");
+            oldPixelWindowAppearance.Right = Content.Load<Texture2D>("Textures/FF6WinRight");
+            oldPixelWindowAppearance.Fill = Content.Load<Texture2D>("Textures/FF6WinFill");
 
             var screen = new Screen();
             screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
             var control_0 = new Window();
-            control_0.Bounds = new Rectangle(32, 32, 32 * 10, 32 * 10);
+            control_0.Bounds = new Rectangle(unit, unit, unit * 10, unit * 10);
             control_0.Appearance = oldPixelWindowAppearance;
             screen.Children.Add(control_0);
 
             var control_1 = new Window();
-            control_1.Bounds = new Rectangle(32 * 3, 32 * 3, 32 * 10, 32 * 10);
+            control_1.Bounds = new Rectangle(unit * 3, unit * 3, unit * 10, unit * 10);
             control_1.Appearance = oldPixelWindowAppearance;
             screen.Children.Add(control_1);
 
             var control_3 = new Window();
-            control_3.Bounds = new Rectangle(32 * 4, 32 * 4, 32 * 10, 32 * 10);
+            control_3.Bounds = new Rectangle(unit * 4, unit * 4, unit * 10, unit * 10);
             control_3.Appearance = oldPixelWindowAppearance;
             screen.Children.Add(control_3);
 
             var control_3_0 = new Button();
-            control_3_0.Bounds = new Rectangle(32, 32, 32 * 3, 32);
+            control_3_0.Bounds = new Rectangle(unit, unit, unit * 3, unit);
             control_3_0.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_0);
 
             var control_3_1 = new Button();
-            control_3_1.Bounds = new Rectangle(32 * 4, 32, 32 * 3, 32);
+            control_3_1.Bounds = new Rectangle(unit * 4, unit, unit * 3, unit);
             control_3_1.Appearance = new PlainColorButtonAppearance(Services);
             control_3.Children.Add(control_3_1);
 

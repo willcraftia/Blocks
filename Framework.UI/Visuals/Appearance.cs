@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI
+namespace Willcraftia.Xna.Framework.UI.Visuals
 {
     public abstract class Appearance
     {

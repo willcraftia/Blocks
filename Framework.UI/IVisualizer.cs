@@ -1,4 +1,4 @@
-﻿#region Using
+﻿#region Uging
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,8 @@ using System.Text;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public class Desktop : Control
+    public interface IVisualizer
     {
+        void Draw(Screen screen);
     }
 }

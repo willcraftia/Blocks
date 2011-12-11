@@ -2,6 +2,8 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Framework.UI.Visuals;
 
 #endregion
 

@@ -92,10 +92,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Appearance.cs" />
-    <Compile Include="Button.cs" />
+    <Compile Include="IVisualizer.cs" />
+    <Compile Include="Visuals\Appearance.cs" />
+    <Compile Include="Controls\Button.cs" />
     <Compile Include="DefaultInputCapturer.cs" />
-    <Compile Include="Desktop.cs" />
     <Compile Include="IInputCapturer.cs" />
     <Compile Include="IInputReceiver.cs" />
     <Compile Include="UIManager.cs" />
@@ -112,6 +112,7 @@
       <Name>Framework.Input</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

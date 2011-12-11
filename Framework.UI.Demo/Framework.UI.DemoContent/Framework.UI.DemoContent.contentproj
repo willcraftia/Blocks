@@ -42,51 +42,66 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\FFWinBottom.png">
-      <Name>FFWinBottom</Name>
+    <Compile Include="Textures\FF6WinBottom.png">
+      <Name>FF6WinBottom</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinBottomLeft.png">
-      <Name>FFWinBottomLeft</Name>
+    <Compile Include="Textures\FF6WinBottomLeft.png">
+      <Name>FF6WinBottomLeft</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinBottomRight.png">
-      <Name>FFWinBottomRight</Name>
+    <Compile Include="Textures\FF6WinBottomRight.png">
+      <Name>FF6WinBottomRight</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinFill.png">
-      <Name>FFWinFill</Name>
+    <Compile Include="Textures\FF6WinFill.png">
+      <Name>FF6WinFill</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinLeft.png">
-      <Name>FFWinLeft</Name>
+    <Compile Include="Textures\FF6WinLeft.png">
+      <Name>FF6WinLeft</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinRight.png">
-      <Name>FFWinRight</Name>
+    <Compile Include="Textures\FF6WinRight.png">
+      <Name>FF6WinRight</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinTop.png">
-      <Name>FFWinTop</Name>
+    <Compile Include="Textures\FF6WinTop.png">
+      <Name>FF6WinTop</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinTopLeft.png">
-      <Name>FFWinTopLeft</Name>
+    <Compile Include="Textures\FF6WinTopLeft.png">
+      <Name>FF6WinTopLeft</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
-    <Compile Include="Textures\FFWinTopRight.png">
-      <Name>FFWinTopRight</Name>
+    <Compile Include="Textures\FF6WinTopRight.png">
+      <Name>FF6WinTopRight</Name>
       <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework.Content.Pipeline\Framework.Content.Pipeline.csproj">
+      <Project>{44FCDED7-AE50-41BA-A09A-7165E967E171}</Project>
+      <Name>Framework.Content.Pipeline</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
