@@ -77,7 +77,13 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 pressedByMouse = false;
 
                 // Button の上でマウス ボタンが離されたのならば、Clicked イベントを発生させます。
-                if (Enabled && !Pressed) RaiseClicked();
+                if (Enabled && !Pressed)
+                {
+                    RaiseClicked();
+
+                    // MouseHovering 状態を解除します。
+                    MouseHovering = false;
+                }
             }
         }
 

@@ -256,6 +256,7 @@ namespace Willcraftia.Xna.Framework.UI
             // 不可視の場合は処理しません。
             if (!Visible) return;
 
+            // マウス オーバ状態の Control がなければ処理しません。
             if (mouseOverControl == null) return;
 
             if (mouseOverControl != this)
@@ -278,6 +279,9 @@ namespace Willcraftia.Xna.Framework.UI
             // 不可視の場合は処理しません。
             if (!Visible) return false;
 
+            // マウス オーバ状態の Control がなければ処理しません。
+            if (mouseOverControl == null) return false;
+
             // 子がマウス オーバ状態ならば処理を転送します。
             if (mouseOverControl != this) return mouseOverControl.ProcessMouseButtonPressed(button);
 
@@ -294,6 +298,9 @@ namespace Willcraftia.Xna.Framework.UI
             // 不可視の場合は処理しません。
             if (!Visible) return;
 
+            // マウス オーバ状態の Control がなければ処理しません。
+            if (mouseOverControl == null) return;
+
             // 子がマウス オーバ状態ならば処理を転送します。
             if (mouseOverControl != this)
             {
@@ -304,6 +311,9 @@ namespace Willcraftia.Xna.Framework.UI
                 // マウス ボタンが離されたことを通知します。
                 OnMouseButtonReleased(button);
             }
+
+            // マウス オーバ状態を解除します。
+            mouseOverControl = null;
         }
 
         /// <summary>
