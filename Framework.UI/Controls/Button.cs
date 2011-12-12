@@ -82,6 +82,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                     RaiseClicked();
 
                     // MouseHovering 状態を解除します。
+                    // これは、クリック後に解除しておかないと、ボタンを覆う Control を生成した場合に、
+                    // ボタンの MouseHovering 状態が解除されないまま残ってしまうためです。
                     MouseHovering = false;
                 }
             }
