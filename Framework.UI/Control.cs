@@ -41,6 +41,11 @@ namespace Willcraftia.Xna.Framework.UI
         Control parent;
 
         /// <summary>
+        /// IUIContext。
+        /// </summary>
+        IUIContext uiContext;
+
+        /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
         /// </summary>
         Control mouseOverControl;
@@ -70,12 +75,12 @@ namespace Willcraftia.Xna.Framework.UI
                 if (parent != null)
                 {
                     // 親と同じ UIContext にバインドします。
-                    if (parent.UIContext != null) parent.UIContext.Bind(this);
+                    if (parent.UIContext != null) UIContext = parent.UIContext;
                 }
                 else
                 {
                     // 親を失ったので UIContext からアンバインドします。
-                    if (UIContext != null) UIContext.Unbind(this);
+                    UIContext = null;
                 }
             }
         }
@@ -83,7 +88,21 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// UIContext を取得します。
         /// </summary>
-        public IUIContext UIContext { get; internal set; }
+        public IUIContext UIContext
+        {
+            get { return uiContext; }
+            internal set
+            {
+                if (uiContext == value) return;
+
+                uiContext = value;
+
+                foreach (var child in Children)
+                {
+                    child.UIContext = uiContext;
+                }
+            }
+        }
 
         /// <summary>
         /// 子 Control のコレクションを取得します。
@@ -103,6 +122,9 @@ namespace Willcraftia.Xna.Framework.UI
 
                 enabled = value;
 
+                // フォーカスを解除します。
+                Defocus();
+
                 // イベントを発生させます。
                 RaiseEnabledChanged();
             }
@@ -121,6 +143,9 @@ namespace Willcraftia.Xna.Framework.UI
 
                 visible = value;
 
+                // フォーカスを解除します。
+                Defocus();
+
                 // イベントを発生させます。
                 OnVisibleChanged();
             }
@@ -138,7 +163,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <value>true (Control がフォーカスを得ている場合)、false (それ以外の場合)。</value>
         public bool Focused
         {
-            get { return UIContext != null && UIContext.HasFocus(this); }
+            get { return UIContext != null && UIContext.Screen.HasFocus(this); }
         }
 
         /// <summary>
@@ -173,14 +198,14 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (UIContext == null || !Enabled || !Visible || !Focusable) return;
 
-            UIContext.Focus(this);
+            UIContext.Screen.Focus(this);
         }
 
         public void Defocus()
         {
-            if (UIContext == null || !UIContext.HasFocus(this)) return;
+            if (!Focused) return;
 
-            UIContext.Defocus(this);
+            UIContext.Screen.Defocus(this);
         }
 
         public virtual void Draw()

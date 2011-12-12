@@ -60,20 +60,20 @@ namespace Willcraftia.Xna.Framework.UI
 
                 if (screen != null)
                 {
-                    // UIContext をアンバインドします。
-                    Unbind(screen);
                     // InputReceiver から Screen をアンバインドします。
                     inputCapturer.InputReceiver = null;
+                    // Screen から自分をアンバインドします。
+                    screen.UIContext = null;
                 }
 
                 screen = value;
 
                 if (screen != null)
                 {
-                    // UIContext をバインドします。
-                    Bind(screen);
                     // InputReceiver に Screen をバインドします。
                     if (inputCapturer != null) inputCapturer.InputReceiver = screen;
+                    // Screen に自分をバインドします。
+                    screen.UIContext = this;
                 }
             }
         }
@@ -94,11 +94,6 @@ namespace Willcraftia.Xna.Framework.UI
                 controlLafSource.UIContext = this;
             }
         }
-
-        /// <summary>
-        /// フォーカスを得ている Control を取得あるいは設定します。
-        /// </summary>
-        internal Control FocusedControl { get; private set; }
 
         public UIManager(Game game)
             : base(game)
@@ -175,96 +170,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 PushControlToVisibleControlStack(child);
             }
-        }
-
-        // I/F
-        public void Bind(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-
-            // Control が既にこの UIContext にバインドされているならばスキップします。
-            if (control.UIContext == this) return;
-
-            // Control が他の UIContext にバインドされているならばアンバインドします。
-            if (control.UIContext != null && control.UIContext != this) control.UIContext.Unbind(control);
-
-            control.UIContext = this;
-            control.EnabledChanged += new EventHandler(OnControlEnabledChanged);
-            control.VisibleChanged += new EventHandler(OnControlVisibleChanged);
-
-            // 子にバインド処理を伝播します。
-            foreach (var child in control.Children)
-            {
-                Bind(child);
-            }
-        }
-
-        void OnControlEnabledChanged(object sender, EventArgs e)
-        {
-            var control = sender as Control;
-
-            // 無効になったならばフォーカス解除を試行します。
-            if (!control.Enabled) Defocus(control);
-        }
-
-        void OnControlVisibleChanged(object sender, EventArgs e)
-        {
-            var control = sender as Control;
-
-            // 不可視になったならばフォーカス解除を試行します。
-            if (!control.Visible) Defocus(control);
-        }
-
-        // I/F
-        public void Unbind(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
-
-            // 子から先にアンバインドします。
-            foreach (var child in control.Children)
-            {
-                Bind(child);
-            }
-
-            Defocus(control);
-            control.EnabledChanged -= new EventHandler(OnControlEnabledChanged);
-            control.VisibleChanged -= new EventHandler(OnControlVisibleChanged);
-
-            if (visibleControls.Contains(control)) visibleControls.Remove(control);
-
-            control.UIContext = null;
-        }
-
-        // I/F
-        public bool HasFocus(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
-
-            return FocusedControl == control;
-        }
-
-        // I/F
-        public void Focus(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
-
-            if (Screen == null || !control.Enabled || !control.Visible || !control.Focusable) return;
-
-            FocusedControl = control;
-        }
-
-        // I/F
-        public void Defocus(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
-
-            if (Screen == null) return;
-
-            if (HasFocus(control)) FocusedControl = null;
         }
 
         // I/F
