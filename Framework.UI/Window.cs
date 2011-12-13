@@ -17,6 +17,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public Window() { }
 
+        public void Show(Screen screen)
+        {
+            screen.Children.Add(this);
+            screen.NotifyWindowShown();
+        }
+
         /// <summary>
         /// Window を閉じます。
         /// </summary>

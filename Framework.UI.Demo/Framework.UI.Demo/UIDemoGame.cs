@@ -154,7 +154,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         var dialog = new Window();
                         dialog.Bounds = new Rectangle(u * 5, u * 5, u * 4, u * 3);
                         dialog.BackgroundColor = Color.Green * 0.8f;
-                        screen.Children.Add(dialog);
                         {
                             var b = new Button();
                             b.Text = "Close";
@@ -166,6 +165,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             };
                             dialog.Children.Add(b);
                         }
+                        // Window は Show メソッドで表示させるようにします。
+                        dialog.Show(screen);
                     };
                     window_2.Children.Add(button);
                 }

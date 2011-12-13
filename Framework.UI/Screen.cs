@@ -10,6 +10,16 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : Control, IInputReceiver
     {
         /// <summary>
+        /// NotifyMouseMoved で受けたマウス カーソルの X 座標。
+        /// </summary>
+        int mouseX;
+
+        /// <summary>
+        /// NotifyMouseMoved で受けたマウス カーソルの Y 座標。
+        /// </summary>
+        int mouseY;
+
+        /// <summary>
         /// フォーカスを得ている Control。
         /// </summary>
         Control focusedControl;
@@ -22,6 +32,8 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void NotifyMouseMoved(int x, int y)
         {
+            this.mouseX = x;
+            this.mouseY = y;
             ProcessMouseMoved(x, y);
         }
 
@@ -42,7 +54,17 @@ namespace Willcraftia.Xna.Framework.UI
         {
         }
 
-        public bool HasFocus(Control control)
+        /// <summary>
+        /// 新たな Window が表示されたことを通知します。
+        /// </summary>
+        internal void NotifyWindowShown()
+        {
+            // NotifyMouseMoved で記録しておいたマウス カーソル位置で状態の再計算を試みます。
+            // これは、新規 Window の表示によるマウス オーバ状態の変化に対応するためです。
+            ProcessMouseMoved(mouseX, mouseY);
+        }
+
+        internal bool HasFocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
             ensureControlContext(control);
@@ -50,7 +72,7 @@ namespace Willcraftia.Xna.Framework.UI
             return focusedControl == control;
         }
 
-        public void Focus(Control control)
+        internal void Focus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
             ensureControlContext(control);
@@ -60,7 +82,7 @@ namespace Willcraftia.Xna.Framework.UI
             focusedControl = control;
         }
 
-        public void Defocus(Control control)
+        internal void Defocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
             ensureControlContext(control);
