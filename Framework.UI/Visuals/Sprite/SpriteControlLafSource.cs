@@ -55,8 +55,8 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             ControlLafBase controlLaf = null;
             if (controlLafs.TryGetValue(type, out controlLaf))
             {
-                controlLaf.Source = null;
                 controlLafs.Remove(type);
+                controlLaf.Dispose();
             }
         }
 

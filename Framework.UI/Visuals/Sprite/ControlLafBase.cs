@@ -58,7 +58,14 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
         {
             if (!disposed)
             {
-                if (disposing) UnloadContent();
+                if (disposing)
+                {
+                    UnloadContent();
+                    Source = null;
+                    Content = null;
+                    GraphicsDevice = null;
+                    SpriteBatch = null;
+                }
                 disposed = true;
             }
         }
