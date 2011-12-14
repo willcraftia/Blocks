@@ -6,13 +6,11 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public interface IControlLafSource
+    public interface IControlLafSource : IDisposable
     {
         IUIContext UIContext { get; set; }
 
-        void LoadContent();
-
-        void UnloadContent();
+        void Initialize();
 
         IControlLaf GetControlLaf(Control control);
     }

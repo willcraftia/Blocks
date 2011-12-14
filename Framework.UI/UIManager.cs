@@ -117,17 +117,16 @@ namespace Willcraftia.Xna.Framework.UI
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
-            if (ControlLafSource != null) ControlLafSource.LoadContent();
+            if (ControlLafSource != null) ControlLafSource.Initialize();
 
             base.LoadContent();
         }
 
         protected override void UnloadContent()
         {
-            SpriteBatch.Dispose();
-            FillTexture.Dispose();
-
-            if (ControlLafSource != null) ControlLafSource.UnloadContent();
+            if (SpriteBatch != null) SpriteBatch.Dispose();
+            if (FillTexture != null) FillTexture.Dispose();
+            if (ControlLafSource != null) ControlLafSource.Dispose();
 
             Screen = null;
 

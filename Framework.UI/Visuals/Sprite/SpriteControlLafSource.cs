@@ -10,57 +10,80 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 {
-    public class SpriteControlLafSource : IControlLafSource
+    public class SpriteControlLafSource : IControlLafSource, IDisposable
     {
-        bool contentLoaded;
+        string contentRootDirectory;
 
-        Dictionary<Type, IControlLaf> controlLafs;
+        Dictionary<Type, ControlLafBase> controlLafs;
 
         // I/F
         public IUIContext UIContext { get; set; }
 
-        public ContentManager Content { get; set; }
+        public ContentManager Content { get; private set; }
 
         public int SpriteSize { get; set; }
 
         public SpriteFont Font { get; private set; }
 
-        public SpriteControlLafSource()
+        public SpriteControlLafSource() : this(null) { }
+
+        public SpriteControlLafSource(string contentRootDirectory)
         {
-            controlLafs = new Dictionary<Type, IControlLaf>();
+            this.contentRootDirectory = contentRootDirectory;
             SpriteSize = 16;
+
+            controlLafs = new Dictionary<Type, ControlLafBase>();
+
+            // デフォルトの ControlLafBase を設定しておきます。
+            RegisterControlLaf(typeof(Window), new WindowLaf());
+            RegisterControlLaf(typeof(Controls.Button), new ButtonLaf());
         }
 
-        public void LoadContent()
+        public void RegisterControlLaf(Type type, ControlLafBase controlLaf)
         {
-            if (contentLoaded) return;
+            if (type == null) throw new ArgumentNullException("type");
+            if (controlLaf == null) throw new ArgumentNullException("controlLaf");
 
-            // この LaF のための ContentManager が未設定ならば生成します。
-            if (Content == null) Content = UIContext.CreateContentManager();
+            controlLafs[type] = controlLaf;
+            controlLaf.Source = this;
+        }
 
+        public void DeregisterControlLaf(Type type)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+
+            ControlLafBase controlLaf = null;
+            if (controlLafs.TryGetValue(type, out controlLaf))
+            {
+                controlLaf.Source = null;
+                controlLafs.Remove(type);
+            }
+        }
+
+        // I/F
+        public void Initialize()
+        {
+            // この LaF のための ContentManager を生成します。
+            Content = UIContext.CreateContentManager();
+            if (!string.IsNullOrEmpty(contentRootDirectory)) Content.RootDirectory = contentRootDirectory;
+
+            LoadContent();
+        }
+
+        protected void LoadContent()
+        {
             // UI のデフォルト フォントをロードします。
             Font = Content.Load<SpriteFont>("Default");
 
-            // WindowLaf
-            var windowLaf = new WindowLaf(this);
-            controlLafs[typeof(Window)] = windowLaf;
-
-            // ButtonLaf
-            var buttonLaf = new ButtonLaf(this);
-            controlLafs[typeof(Controls.Button)] = buttonLaf;
-
-            contentLoaded = true;
+            foreach (var controlLaf in controlLafs.Values) controlLaf.Initialize();
         }
 
-        public void UnloadContent()
+        protected void UnloadContent()
         {
-            if (!contentLoaded) return;
-
+            foreach (var controlLaf in controlLafs.Values) controlLaf.Dispose();
             controlLafs.Clear();
 
-            Content.Unload();
-
-            contentLoaded = false;
+            if (Content != null) Content.Unload();
         }
 
         public IControlLaf GetControlLaf(Control control)
@@ -69,7 +92,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
             var type = control.GetType();
 
-            IControlLaf controlLaf = null;
+            ControlLafBase controlLaf = null;
             while (type != typeof(object))
             {
                 if (controlLafs.TryGetValue(type, out controlLaf)) break;
@@ -138,5 +161,31 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
             return new Vector2(x, y);
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        bool disposed;
+
+        ~SpriteControlLafSource()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing) UnloadContent();
+                disposed = true;
+            }
+        }
+
+        #endregion
     }
 }

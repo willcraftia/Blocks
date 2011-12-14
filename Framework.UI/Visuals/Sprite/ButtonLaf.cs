@@ -10,11 +10,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 {
     public class ButtonLaf : ControlLafBase
     {
-        public ButtonLaf(SpriteControlLafSource source)
-            : base(source)
-        {
-        }
-
         public override void Draw(Control control)
         {
             var button = control as Controls.Button;

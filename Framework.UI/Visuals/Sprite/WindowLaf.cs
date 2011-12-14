@@ -20,18 +20,34 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
         Texture2D bottom;
         Texture2D fill;
 
-        public WindowLaf(SpriteControlLafSource source)
-            : base(source)
+        protected override void LoadContent()
         {
-            topLeft = source.Content.Load<Texture2D>("WindowTopLeft");
-            topRight = source.Content.Load<Texture2D>("WindowTopRight");
-            bottomLeft = source.Content.Load<Texture2D>("WindowBottomLeft");
-            bottomRight = source.Content.Load<Texture2D>("WindowBottomRight");
-            left = source.Content.Load<Texture2D>("WindowLeft");
-            right = source.Content.Load<Texture2D>("WindowRight");
-            top = source.Content.Load<Texture2D>("WindowTop");
-            bottom = source.Content.Load<Texture2D>("WindowBottom");
-            fill = source.Content.Load<Texture2D>("WindowFill");
+            topLeft = Content.Load<Texture2D>("WindowTopLeft");
+            topRight = Content.Load<Texture2D>("WindowTopRight");
+            bottomLeft = Content.Load<Texture2D>("WindowBottomLeft");
+            bottomRight = Content.Load<Texture2D>("WindowBottomRight");
+            left = Content.Load<Texture2D>("WindowLeft");
+            right = Content.Load<Texture2D>("WindowRight");
+            top = Content.Load<Texture2D>("WindowTop");
+            bottom = Content.Load<Texture2D>("WindowBottom");
+            fill = Content.Load<Texture2D>("WindowFill");
+
+            base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            topLeft = null;
+            topRight = null;
+            bottomLeft = null;
+            bottomRight = null;
+            left = null;
+            right = null;
+            top = null;
+            bottom = null;
+            fill = null;
+
+            base.UnloadContent();
         }
 
         public override void Draw(Control control)

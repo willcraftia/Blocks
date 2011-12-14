@@ -61,6 +61,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             uiManager = new UIManager(this);
             Components.Add(uiManager);
 
+            spriteControlLafSource = new SpriteControlLafSource("Content/UI/Sprite");
+            spriteControlLafSource.SpriteSize = 32;
+            uiManager.ControlLafSource = spriteControlLafSource;
+
             IsMouseVisible = true;
 
             base.Initialize();
@@ -68,13 +72,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void LoadContent()
         {
-            spriteControlLafSource = new SpriteControlLafSource();
-            spriteControlLafSource.Content = new ContentManager(Services, "Content/UI/Sprite");
-            spriteControlLafSource.SpriteSize = 32;
-            uiManager.ControlLafSource = spriteControlLafSource;
-
-            spriteControlLafSource.LoadContent();
-
             //LoadSimpleGameDemoGui();
             LoadSimpleWindowDemoGui();
         }
@@ -186,7 +183,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void UnloadContent()
         {
-            spriteControlLafSource.UnloadContent();
+            spriteControlLafSource.Dispose();
         }
 
         protected override void Update(GameTime gameTime)
