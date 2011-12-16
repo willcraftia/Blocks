@@ -96,6 +96,7 @@
     <Compile Include="IControlLaf.cs" />
     <Compile Include="IControlLafSource.cs" />
     <Compile Include="IUIContext.cs" />
+    <Compile Include="Overlay.cs" />
     <Compile Include="VerticalAlignment.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="DefaultInputCapturer.cs" />

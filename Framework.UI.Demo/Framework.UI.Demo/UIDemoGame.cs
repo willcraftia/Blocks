@@ -82,14 +82,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             int u = 32;
 
             var screen = new Screen();
-            screen.Bounds = GraphicsDevice.Viewport.Bounds;
+            screen.Container.Bounds = GraphicsDevice.Viewport.Bounds;
 
             var window = new Window();
             {
                 window.Bounds = new Rectangle(0, 0, u * 10, u * 4);
-                window.Bounds.X = (int) ((screen.Bounds.Width - window.Bounds.Width) * 0.5f);
-                window.Bounds.Y = (int) ((screen.Bounds.Height - window.Bounds.Height) * 0.5f);
-                screen.Children.Add(window);
+                window.Bounds.X = (int) ((screen.Container.Bounds.Width - window.Bounds.Width) * 0.5f);
+                window.Bounds.Y = (int) ((screen.Container.Bounds.Height - window.Bounds.Height) * 0.5f);
+                window.Show(screen);
 
                 {
                     var button = new Button();
@@ -120,26 +120,26 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             int u = 32;
 
             var screen = new Screen();
-            screen.Bounds = GraphicsDevice.Viewport.Bounds;
+            screen.Container.Bounds = GraphicsDevice.Viewport.Bounds;
 
             var window_0 = new Window();
             {
                 window_0.Bounds = new Rectangle(u, u, u * 10, u * 10);
                 window_0.BackgroundColor = Color.White * 0.5f;
-                screen.Children.Add(window_0);
+                window_0.Show(screen);
             }
 
             var window_1 = new Window();
             {
                 window_1.Bounds = new Rectangle(u * 3, u * 3, u * 10, u * 10);
                 window_1.BackgroundColor = Color.Yellow * 0.8f;
-                screen.Children.Add(window_1);
+                window_1.Show(screen);
             }
 
             var window_2 = new Window();
             {
                 window_2.Bounds = new Rectangle(u * 4, u * 4, u * 10, u * 10);
-                screen.Children.Add(window_2);
+                window_2.Show(screen);
 
                 {
                     var button = new Button();

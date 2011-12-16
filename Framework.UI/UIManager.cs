@@ -139,7 +139,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (Screen == null) return;
 
-            PushControlToVisibleControlStack(Screen);
+            PushControlToVisibleControlStack(Screen.Container);
 
             base.Update(gameTime);
         }

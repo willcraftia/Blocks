@@ -7,8 +7,13 @@ using Willcraftia.Xna.Framework.Input;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public class Screen : Control, IInputReceiver
+    public class Screen : IInputReceiver
     {
+        /// <summary>
+        /// IUIContext。
+        /// </summary>
+        IUIContext uiContext;
+
         /// <summary>
         /// NotifyMouseMoved で受けたマウス カーソルの X 座標。
         /// </summary>
@@ -25,28 +30,52 @@ namespace Willcraftia.Xna.Framework.UI
         Control focusedControl;
 
         /// <summary>
+        /// UIContext を取得します。
+        /// </summary>
+        public IUIContext UIContext
+        {
+            get { return uiContext; }
+            internal set
+            {
+                if (uiContext == value) return;
+
+                uiContext = value;
+
+                Container.UIContext = uiContext;
+            }
+        }
+
+        /// <summary>
+        /// Control のルート コンテナを取得します。
+        /// </summary>
+        public Control Container { get; private set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Screen() { }
+        public Screen()
+        {
+            Container = new Control();
+        }
 
         // I/F
         public void NotifyMouseMoved(int x, int y)
         {
             this.mouseX = x;
             this.mouseY = y;
-            ProcessMouseMoved(x, y);
+            Container.ProcessMouseMoved(x, y);
         }
 
         // I/F
         public void NotifyMouseButtonPressed(MouseButtons button)
         {
-            ProcessMouseButtonPressed(button);
+            Container.ProcessMouseButtonPressed(button);
         }
 
         // I/F
         public void NotifyMouseButtonReleased(MouseButtons button)
         {
-            ProcessMouseButtonReleased(button);
+            Container.ProcessMouseButtonReleased(button);
         }
 
         // I/F
@@ -61,13 +90,13 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // NotifyMouseMoved で記録しておいたマウス カーソル位置で状態の再計算を試みます。
             // これは、新規 Window の表示によるマウス オーバ状態の変化に対応するためです。
-            ProcessMouseMoved(mouseX, mouseY);
+            Container.ProcessMouseMoved(mouseX, mouseY);
         }
 
         internal bool HasFocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
+            EnsureControlContext(control);
 
             return focusedControl == control;
         }
@@ -75,7 +104,7 @@ namespace Willcraftia.Xna.Framework.UI
         internal void Focus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
+            EnsureControlContext(control);
 
             if (!control.Enabled || !control.Visible || !control.Focusable) return;
 
@@ -85,12 +114,12 @@ namespace Willcraftia.Xna.Framework.UI
         internal void Defocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
+            EnsureControlContext(control);
 
             if (HasFocus(control)) focusedControl = null;
         }
 
-        void ensureControlContext(Control control)
+        void EnsureControlContext(Control control)
         {
             if (control.UIContext != UIContext) throw new InvalidOperationException("Control is in another context.");
         }

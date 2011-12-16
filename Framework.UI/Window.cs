@@ -13,6 +13,55 @@ namespace Willcraftia.Xna.Framework.UI
     public class Window : Control
     {
         /// <summary>
+        /// Window が閉じる前に発生します。
+        /// </summary>
+        public event EventHandler Closing;
+
+        /// <summary>
+        /// Window が閉じた後に発生します。
+        /// </summary>
+        public event EventHandler Closed;
+
+        Window owner;
+
+        /// <summary>
+        /// この Window を所有する Window を取得あるいは設定します。
+        /// </summary>
+        /// <remarks>
+        /// Window は、Owner で設定した Window が閉じられると自動的に閉じます。
+        /// </remarks>
+        public Window Owner
+        {
+            get { return owner; }
+            set
+            {
+                if (owner == value) return;
+
+                if (owner != null)
+                {
+                    owner.Closing -= new EventHandler(OnOwnerClosing);
+                }
+
+                owner = value;
+
+                if (owner != null)
+                {
+                    owner.Closing += new EventHandler(OnOwnerClosing);
+                }
+            }
+        }
+
+        /// <summary>
+        /// この Window を所有する Window が閉じられる前に呼び出され、この Window を閉じます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnOwnerClosing(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Window() { }
@@ -36,7 +85,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="screen"></param>
         public void Show(Screen screen)
         {
-            screen.Children.Add(this);
+            screen.Container.Children.Add(this);
             screen.NotifyWindowShown();
         }
 
@@ -45,13 +94,33 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void Close()
         {
+            // Closing イベントを発生させます。
+            RaiseClosing();
             // 親のリストから削除します。
             Parent.Children.Remove(this);
+            // Closed イベントを発生させます。
+            RaiseClosed();
         }
 
         protected override void OnMouseButtonPressed(MouseButtons button)
         {
             Parent.Children.MoveToTopMost(this);
+        }
+
+        /// <summary>
+        /// Closing イベントを発生させます。
+        /// </summary>
+        void RaiseClosing()
+        {
+            if (Closing != null) Closing(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Closed イベントを発生させます。
+        /// </summary>
+        void RaiseClosed()
+        {
+            if (Closed != null) Closed(this, EventArgs.Empty);
         }
     }
 }
