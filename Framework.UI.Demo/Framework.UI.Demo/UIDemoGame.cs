@@ -82,13 +82,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             int u = 32;
 
             var screen = new Screen();
-            screen.Container.Bounds = GraphicsDevice.Viewport.Bounds;
+            screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
             var window = new Window();
             {
                 window.Bounds = new Rectangle(0, 0, u * 10, u * 4);
-                window.Bounds.X = (int) ((screen.Container.Bounds.Width - window.Bounds.Width) * 0.5f);
-                window.Bounds.Y = (int) ((screen.Container.Bounds.Height - window.Bounds.Height) * 0.5f);
+                window.Bounds.X = (int) ((screen.Bounds.Width - window.Bounds.Width) * 0.5f);
+                window.Bounds.Y = (int) ((screen.Bounds.Height - window.Bounds.Height) * 0.5f);
                 window.Show(screen);
 
                 {
@@ -120,7 +120,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             int u = 32;
 
             var screen = new Screen();
-            screen.Container.Bounds = GraphicsDevice.Viewport.Bounds;
+            screen.Bounds = GraphicsDevice.Viewport.Bounds;
 
             var window_0 = new Window();
             {
@@ -143,27 +143,54 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                 {
                     var button = new Button();
-                    button.Text = "Open Dialog";
+                    button.Text = "Open new dialog";
                     button.FontColor = Color.White;
-                    button.Bounds = new Rectangle(u, u, u * 3, u);
+                    button.Bounds = new Rectangle(u, u, u * 5, u);
                     button.Clicked += delegate(object s, EventArgs e)
                     {
                         var dialog = new Window();
-                        dialog.Bounds = new Rectangle(u * 5, u * 5, u * 4, u * 3);
+                        dialog.Bounds = new Rectangle(u * 4, u * 6, u * 7, u * 4);
                         dialog.BackgroundColor = Color.Green * 0.8f;
                         {
                             var b = new Button();
-                            b.Text = "Close";
+                            b.Text = "Open new dialog";
+                            b.TextHorizontalAlignment = HorizontalAlignment.Left;
                             b.FontColor = Color.White;
-                            b.Bounds = new Rectangle(u, u, u * 2, u);
+                            b.Bounds = new Rectangle(u, u, u * 5, u);
+                            b.Clicked += delegate(object bs, EventArgs be)
+                            {
+                                var subDialog = new Window();
+                                subDialog.Bounds = new Rectangle(u * 1, u * 4, u * 7, u * 3);
+                                subDialog.BackgroundColor = Color.Brown * 0.8f;
+                                {
+                                    var subB = new Button();
+                                    subB.Text = "Close";
+                                    subB.TextHorizontalAlignment = HorizontalAlignment.Left;
+                                    subB.FontColor = Color.White;
+                                    subB.Bounds = new Rectangle(u, u * 1, u * 2, u);
+                                    subB.Clicked += delegate(object subBs, EventArgs subBe)
+                                    {
+                                        subDialog.Close();
+                                    };
+                                    subDialog.Children.Add(subB);
+                                }
+                                subDialog.ShowDialog(screen);
+                            };
+                            dialog.Children.Add(b);
+                        }
+                        {
+                            var b = new Button();
+                            b.Text = "Close";
+                            b.TextHorizontalAlignment = HorizontalAlignment.Left;
+                            b.FontColor = Color.White;
+                            b.Bounds = new Rectangle(u, u * 2, u * 2, u);
                             b.Clicked += delegate(object bs, EventArgs be)
                             {
                                 dialog.Close();
                             };
                             dialog.Children.Add(b);
                         }
-                        // Window は Show メソッドで表示させるようにします。
-                        dialog.Show(screen);
+                        dialog.ShowDialog(screen);
                     };
                     window_2.Children.Add(button);
                 }
@@ -171,7 +198,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     var button = new Button();
                     button.Text = "Button #1";
                     button.FontColor = Color.White;
-                    button.Bounds = new Rectangle(u * 4, u, u * 3, u);
+                    button.Bounds = new Rectangle(u * 6, u, u * 3, u);
                     window_2.Children.Add(button);
                 }
             }

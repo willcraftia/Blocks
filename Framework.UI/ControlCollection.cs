@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// コレクションのインデックスは、画面における Control の前後関係を表します。
     /// インデックス 0 は、その親 Control 内での最背面を表します。
     /// </remarks>
-    public class ControlCollection : Collection<Control>
+    public class ControlCollection : ObservableCollection<Control>
     {
         Control parent;
 
@@ -66,6 +66,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // 子として追加可能かどうかを検査
             validateControl(item);
+
             // 除去される Control の親をリセット
             base[index].Parent = null;
             

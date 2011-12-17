@@ -22,6 +22,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public event EventHandler Closed;
 
+        /// <summary>
+        /// この Window を所有する Window。
+        /// </summary>
         Window owner;
 
         /// <summary>
@@ -52,14 +55,12 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// この Window を所有する Window が閉じられる前に呼び出され、この Window を閉じます。
+        /// モーダル Window であるかどうかを判定します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void OnOwnerClosing(object sender, EventArgs e)
-        {
-            Close();
-        }
+        /// <value>
+        /// true (モーダル Window である場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Modal { get; private set; }
 
         /// <summary>
         /// コンストラクタ。
@@ -69,24 +70,23 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// Window を表示します。
         /// </summary>
-        /// <remarks>
-        /// 親 Control に追加するだけでも Window は表示対象になりますが、
-        /// その場合にはマウス カーソルの再判定処理が発生しません。
-        /// マウス カーソルの再判定処理を伴わせないと、
-        /// Window により覆われたにも関わらず Control がマウス オーバ状態を維持し続ける場合があります。
-        /// この時、本来マウス入力を受けるべき Window ではなく、
-        /// 不正にマウス オーバ状態を維持している Control にマウス入力が奪われます。
-        /// この問題を避けるために、Show メソッドの呼び出しで Window を表示します。
-        /// Show メソッドは、親 Control に Window を追加すると共に、
-        /// Screen に対してマウス カーソルの再判定処理を実行させます。
-        /// これにより、マウス オーバ状態の Control を覆うように Window が表示された場合に、
-        /// 覆われた Control のマウス オーバ状態が正しく開放されます。
-        /// </remarks>
         /// <param name="screen"></param>
         public void Show(Screen screen)
         {
-            screen.Container.Children.Add(this);
-            screen.NotifyWindowShown();
+            // Screen へ登録します。
+            screen.Children.Add(this);
+        }
+
+        /// <summary>
+        /// モーダル Window を表示します。
+        /// </summary>
+        /// <param name="screen"></param>
+        public void ShowDialog(Screen screen)
+        {
+            // モーダルに設定します。
+            Modal = true;
+            // Screen へ登録します。
+            screen.Children.Add(this);
         }
 
         /// <summary>
@@ -96,15 +96,32 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // Closing イベントを発生させます。
             RaiseClosing();
-            // 親のリストから削除します。
-            Parent.Children.Remove(this);
+            // Screen から登録を解除します。
+            Screen.Children.Remove(this);
             // Closed イベントを発生させます。
             RaiseClosed();
         }
 
+        /// <summary>
+        /// マウス ボタンがこの Control で押された時に呼び出されます。
+        /// </summary>
+        /// <remarks>
+        /// Window 上でマウス ボタンが押下されると、Window は自身を最前面へ移動させます。
+        /// </remarks>
+        /// <param name="button"></param>
         protected override void OnMouseButtonPressed(MouseButtons button)
         {
             Parent.Children.MoveToTopMost(this);
+        }
+
+        /// <summary>
+        /// この Window を所有する Window が閉じられる前に呼び出され、この Window を閉じます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnOwnerClosing(object sender, EventArgs e)
+        {
+            Close();
         }
 
         /// <summary>

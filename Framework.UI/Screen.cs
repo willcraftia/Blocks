@@ -1,13 +1,18 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using Willcraftia.Xna.Framework.Input;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public class Screen : IInputReceiver
+    /// <summary>
+    /// Screen を表す Control です。
+    /// </summary>
+    public class Screen : Control, IInputReceiver
     {
         /// <summary>
         /// IUIContext。
@@ -15,19 +20,14 @@ namespace Willcraftia.Xna.Framework.UI
         IUIContext uiContext;
 
         /// <summary>
-        /// NotifyMouseMoved で受けたマウス カーソルの X 座標。
-        /// </summary>
-        int mouseX;
-
-        /// <summary>
-        /// NotifyMouseMoved で受けたマウス カーソルの Y 座標。
-        /// </summary>
-        int mouseY;
-
-        /// <summary>
         /// フォーカスを得ている Control。
         /// </summary>
         Control focusedControl;
+
+        /// <summary>
+        /// モーダル Window のリスト (先頭が最背面)。
+        /// </summary>
+        List<Window> modalWindows = new List<Window>();
 
         /// <summary>
         /// UIContext を取得します。
@@ -40,42 +40,43 @@ namespace Willcraftia.Xna.Framework.UI
                 if (uiContext == value) return;
 
                 uiContext = value;
-
-                Container.UIContext = uiContext;
             }
         }
-
-        /// <summary>
-        /// Control のルート コンテナを取得します。
-        /// </summary>
-        public Control Container { get; private set; }
 
         /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Screen()
         {
-            Container = new Control();
+            Screen = this;
+            Children.CollectionChanged += new NotifyCollectionChangedEventHandler(OnChildrenCollectionChanged);
         }
 
         // I/F
         public void NotifyMouseMoved(int x, int y)
         {
-            this.mouseX = x;
-            this.mouseY = y;
-            Container.ProcessMouseMoved(x, y);
+            // モーダル Window があるならば、モーダル Window 上にないマウス カーソルの移動情報を破棄します。
+            if (modalWindows.Count != 0)
+            {
+                int localX = x - Bounds.X;
+                int localY = y - Bounds.Y;
+                var modalWindow = modalWindows[modalWindows.Count - 1];
+                if (!modalWindow.Bounds.Contains(localX, localY)) return;
+            }
+
+            ProcessMouseMoved(x, y);
         }
 
         // I/F
         public void NotifyMouseButtonPressed(MouseButtons button)
         {
-            Container.ProcessMouseButtonPressed(button);
+            ProcessMouseButtonPressed(button);
         }
 
         // I/F
         public void NotifyMouseButtonReleased(MouseButtons button)
         {
-            Container.ProcessMouseButtonReleased(button);
+            ProcessMouseButtonReleased(button);
         }
 
         // I/F
@@ -84,44 +85,80 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 新たな Window が表示されたことを通知します。
+        /// 指定の Control がフォーカスを持つかどうかを判定します。
         /// </summary>
-        internal void NotifyWindowShown()
-        {
-            // NotifyMouseMoved で記録しておいたマウス カーソル位置で状態の再計算を試みます。
-            // これは、新規 Window の表示によるマウス オーバ状態の変化に対応するためです。
-            Container.ProcessMouseMoved(mouseX, mouseY);
-        }
-
+        /// <param name="control">フォーカスを持つかどうかを判定したい Control。</param>
+        /// <returns>
+        /// true (指定の Control がフォーカスを持つ場合)、false (それ以外の場合)。
+        /// </returns>
         internal bool HasFocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            EnsureControlContext(control);
+            EnsureControlState(control);
 
             return focusedControl == control;
         }
 
+        /// <summary>
+        /// 指定の Control にフォーカスを与えます。
+        /// </summary>
+        /// <param name="control">フォーカスを与えたい Control。</param>
         internal void Focus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            EnsureControlContext(control);
+            EnsureControlState(control);
 
             if (!control.Enabled || !control.Visible || !control.Focusable) return;
 
             focusedControl = control;
         }
 
+        /// <summary>
+        /// 指定の Control のフォーカスを解除します。
+        /// </summary>
+        /// <param name="control">フォーカスを解除したい Control。</param>
         internal void Defocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            EnsureControlContext(control);
+            EnsureControlState(control);
 
             if (HasFocus(control)) focusedControl = null;
         }
 
-        void EnsureControlContext(Control control)
+        /// <summary>
+        /// Children が変更された場合に呼び出されます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (control.UIContext != UIContext) throw new InvalidOperationException("Control is in another context.");
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    var window = item as Window;
+                    // モーダル Window が追加されたならばモーダル Window リストに追加します。
+                    if (window != null && window.Modal) modalWindows.Add(window);
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    var window = item as Window;
+                    // モーダル Window が削除されたならばモーダル Window リストから削除します。
+                    if (window != null && window.Modal) modalWindows.Remove(window);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 指定の Control がこの Screen で操作できる状態であるかどうかを保証します。
+        /// </summary>
+        /// <param name="control"></param>
+        void EnsureControlState(Control control)
+        {
+            if (control.Screen != Screen) throw new InvalidOperationException("Control is in another screen.");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -41,9 +42,9 @@ namespace Willcraftia.Xna.Framework.UI
         Control parent;
 
         /// <summary>
-        /// IUIContext。
+        /// 属する Screen。
         /// </summary>
-        IUIContext uiContext;
+        Screen screen;
 
         /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
@@ -74,33 +75,34 @@ namespace Willcraftia.Xna.Framework.UI
 
                 if (parent != null)
                 {
-                    // 親と同じ UIContext にバインドします。
-                    if (parent.UIContext != null) UIContext = parent.UIContext;
+                    // 親と同じ Screen を設定します。
+                    if (parent.Screen != null) Screen = parent.Screen;
                 }
                 else
                 {
-                    // 親を失ったので UIContext からアンバインドします。
-                    UIContext = null;
+                    // 親を失ったので Screen をリセットします。
+                    Screen = null;
                 }
             }
         }
 
         /// <summary>
-        /// UIContext を取得します。
+        /// Screen を取得します。
         /// </summary>
-        public IUIContext UIContext
+        public Screen Screen
         {
-            get { return uiContext; }
+            get { return screen; }
             internal set
             {
-                if (uiContext == value) return;
+                if (screen == value) return;
 
-                uiContext = value;
+                // 古い Screen でフォーカスを得ていたならば解除します。
+                if (screen != null) Defocus();
 
-                foreach (var child in Children)
-                {
-                    child.UIContext = uiContext;
-                }
+                screen = value;
+
+                // 子にも同じ Screen を設定します。
+                foreach (var child in Children) child.Screen = screen;
             }
         }
 
@@ -163,7 +165,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <value>true (Control がフォーカスを得ている場合)、false (それ以外の場合)。</value>
         public bool Focused
         {
-            get { return UIContext != null && UIContext.Screen.HasFocus(this); }
+            get { return Screen != null && Screen.HasFocus(this); }
         }
 
         /// <summary>
@@ -172,6 +174,8 @@ namespace Willcraftia.Xna.Framework.UI
         public Control()
         {
             Children = new ControlCollection(this);
+            Children.CollectionChanged += new NotifyCollectionChangedEventHandler(OnChildrenCollectionChanged);
+
             Visible = true;
             Focusable = true;
         }
@@ -194,34 +198,48 @@ namespace Willcraftia.Xna.Framework.UI
             return absoluteBounds;
         }
 
+        /// <summary>
+        /// フォーカスを得ます。
+        /// </summary>
         public void Focus()
         {
-            if (UIContext == null || !Enabled || !Visible || !Focusable) return;
+            if (Screen == null || !Enabled || !Visible || !Focusable) return;
 
-            UIContext.Screen.Focus(this);
+            Screen.Focus(this);
         }
 
+        /// <summary>
+        /// フォーカスを解除します。
+        /// </summary>
         public void Defocus()
         {
             if (!Focused) return;
 
-            UIContext.Screen.Defocus(this);
+            Screen.Defocus(this);
         }
 
+        /// <summary>
+        /// Control を描画します。
+        /// </summary>
         public virtual void Draw()
         {
             // ここでは IControlLaf のみで描画します。
             // 異なる方法で Control を描画したい場合には、そのための Control のサブクラスと IControlLaf の実装を作るか、
             // あるいは Draw メソッドをオーバライドして描画ロジックを記述します。
 
-            if (UIContext == null || !Visible) return;
+            if (Screen == null || !Visible) return;
 
             // IControlLaf を取得します。
-            var laf = UIContext.GetControlLaf(this);
+            var laf = Screen.UIContext.GetControlLaf(this);
             // IControlLaf に描画を委譲します。
             if (laf != null) laf.Draw(this);
         }
 
+        /// <summary>
+        /// マウス カーソル移動を処理します。
+        /// </summary>
+        /// <param name="x">親 Control の矩形位置を基準としたカーソルの X 座標。</param>
+        /// <param name="y">親 Control の矩形位置を基準としたカーソルの Y 座標。</param>
         internal void ProcessMouseMoved(int x, int y)
         {
             // 不可視の場合は処理しません。
@@ -251,6 +269,9 @@ namespace Willcraftia.Xna.Framework.UI
             OnMouseMoved(localX, localY);
         }
 
+        /// <summary>
+        /// マウス カーソルが Control の矩形領域の外に移動したことを処理します。
+        /// </summary>
         internal void ProcessMouseLeft()
         {
             // 不可視の場合は処理しません。
@@ -274,6 +295,11 @@ namespace Willcraftia.Xna.Framework.UI
             mouseOverControl = null;
         }
 
+        /// <summary>
+        /// マウス ボタン押下を処理します。
+        /// </summary>
+        /// <param name="button">押下されたマウス ボタン。</param>
+        /// <returns></returns>
         internal bool ProcessMouseButtonPressed(MouseButtons button)
         {
             // 不可視の場合は処理しません。
@@ -293,6 +319,10 @@ namespace Willcraftia.Xna.Framework.UI
             return true;
         }
 
+        /// <summary>
+        /// マウス ボタン押下の解除を処理します。
+        /// </summary>
+        /// <param name="button"></param>
         internal void ProcessMouseButtonReleased(MouseButtons button)
         {
             // 不可視の場合は処理しません。
@@ -369,6 +399,34 @@ namespace Willcraftia.Xna.Framework.UI
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
             mouseOverControl.OnMouseEntered();
+        }
+
+        /// <summary>
+        /// 子がマウス オーバ状態ならばそれを解除し、自身をマウス オーバ状態にします。
+        /// マウス オーバ状態の Control が存在しなければ何もしません。
+        /// </summary>
+        void ResetChildMouseOverControl()
+        {
+            if (mouseOverControl == null) return;
+
+            // 子がマウス オーバ状態ならばリセットします。
+            if (mouseOverControl != this)
+            {
+                // これまでマウス オーバ状態にあった Control に変更を通知します。
+                mouseOverControl.ProcessMouseLeft();
+                // 自分をマウス オーバ状態にします。
+                mouseOverControl = this;
+            }
+        }
+
+        /// <summary>
+        /// Children が変更された場合に呼び出されます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ResetChildMouseOverControl();
         }
 
         /// <summary>

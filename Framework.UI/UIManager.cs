@@ -139,7 +139,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (Screen == null) return;
 
-            PushControlToVisibleControlStack(Screen.Container);
+            PushControlToVisibleControlStack(Screen);
 
             base.Update(gameTime);
         }
@@ -181,16 +181,10 @@ namespace Willcraftia.Xna.Framework.UI
         public IControlLaf GetControlLaf(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            ensureControlContext(control);
 
             if (ControlLafSource == null) return null;
 
             return ControlLafSource.GetControlLaf(control);
-        }
-
-        void ensureControlContext(Control control)
-        {
-            if (control.UIContext != this) throw new InvalidOperationException("Control is in another context.");
         }
     }
 }
