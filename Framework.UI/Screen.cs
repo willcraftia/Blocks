@@ -69,6 +69,15 @@ namespace Willcraftia.Xna.Framework.UI
         {
         }
 
+        public override void Arrange()
+        {
+            // Screen は自分で自分に設定されたサイズを描画時のサイズとして設定します。
+            ActualWidth = Width;
+            ActualHeight = Height;
+            
+            base.Arrange();
+        }
+
         /// <summary>
         /// 指定の Control がフォーカスを持つかどうかを判定します。
         /// </summary>

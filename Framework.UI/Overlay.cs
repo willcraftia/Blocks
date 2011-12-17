@@ -34,7 +34,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="screen"></param>
         public void Show(Screen screen)
         {
-            Bounds = screen.Bounds;
+            Margin = screen.Margin;
+            Width = screen.Width;
+            Height = screen.Height;
             screen.Children.Add(this);
         }
 

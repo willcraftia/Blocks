@@ -74,6 +74,8 @@ namespace Willcraftia.Xna.Framework.UI
                     if (inputCapturer != null) inputCapturer.InputReceiver = screen;
                     // Screen に自分をバインドします。
                     screen.UIContext = this;
+                    // Control の描画位置を計算します。
+                    screen.Arrange();
                 }
             }
         }
@@ -139,6 +141,10 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (Screen == null) return;
 
+            // Control の Update メソッドを再帰的に呼び出します。
+            UpdateControl(Screen);
+
+            // 可視 Control を探索し、可視 Control リストに追加します。
             PushControlToVisibleControlStack(Screen);
 
             base.Update(gameTime);
@@ -147,10 +153,26 @@ namespace Willcraftia.Xna.Framework.UI
         public override void Draw(GameTime gameTime)
         {
             // 描画用リストにある Control を描画します。
-            foreach (var control in visibleControls)
-            {
-                control.Draw();
-            }
+            foreach (var control in visibleControls) control.Draw();
+        }
+
+        /// <summary>
+        /// Control の Update メソッドを呼び出します。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドは、Control の Update メソッドを呼び出した後、その子 Control の Update メソッドを再帰的に呼び出します。
+        /// Enabled が false の場合、Update メソッドは呼び出されません。
+        /// </remarks>
+        /// <param name="control"></param>
+        void UpdateControl(Control control)
+        {
+            if (!control.Enabled) return;
+
+            // Control を更新します。
+            control.Update();
+
+            // 子 Control を再帰的に更新します。
+            foreach (var child in control.Children) UpdateControl(child);
         }
 
         /// <summary>
@@ -165,10 +187,7 @@ namespace Willcraftia.Xna.Framework.UI
             visibleControls.Add(control);
 
             // 子 Control を再帰的に描画します。
-            foreach (var child in control.Children)
-            {
-                PushControlToVisibleControlStack(child);
-            }
+            foreach (var child in control.Children) PushControlToVisibleControlStack(child);
         }
 
         // I/F

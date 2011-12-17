@@ -27,14 +27,19 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
-        /// 矩形サイズ (矩形座標は親 Control の矩形座標からの相対位置)。
-        /// </summary>
-        public Rectangle Bounds;
-
-        /// <summary>
         /// 背景色。
         /// </summary>
         public Color BackgroundColor = Color.White;
+
+        /// <summary>
+        /// Control の描画時の幅。
+        /// </summary>
+        float actualWidth = float.NaN;
+
+        /// <summary>
+        /// Control の描画時の高さ。
+        /// </summary>
+        float actualHeight = float.NaN;
 
         /// <summary>
         /// 親 Control。
@@ -60,6 +65,69 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (Control が可視の場合)、false (それ以外の場合)。
         /// </summary>
         bool visible;
+
+        /// <summary>
+        /// Control の外側の余白を取得または設定します。
+        /// </summary>
+        public Thickness Margin { get; set; }
+
+        /// <summary>
+        /// Control の幅の下限を取得または設定します。
+        /// </summary>
+        public float MinWidth { get; set; }
+
+        /// <summary>
+        /// Control の高さの下限を取得または設定します。
+        /// </summary>
+        public float MinHeight { get; set; }
+        
+        /// <summary>
+        /// Control の幅の上限を取得または設定します。
+        /// </summary>
+        public float MaxWidth { get; set; }
+        
+        /// <summary>
+        /// Control の高さの上限を取得または設定します。
+        /// </summary>
+        public float MaxHeight { get; set; }
+
+        /// <summary>
+        /// Control の幅を取得または設定します。
+        /// </summary>
+        public float Width { get; set; }
+
+        /// <summary>
+        /// Controln の高さを取得または設定します。
+        /// </summary>
+        public float Height { get; set; }
+
+        /// <summary>
+        /// Control の描画時の幅を取得します。
+        /// </summary>
+        public float ActualWidth
+        {
+            get { return actualWidth; }
+            protected set
+            {
+                actualWidth = value;
+                if (actualWidth < MinWidth) actualWidth = MinWidth;
+                if (MaxWidth < actualWidth) actualWidth = MaxWidth;
+            }
+        }
+
+        /// <summary>
+        /// Control の描画時の高さを取得します。
+        /// </summary>
+        public float ActualHeight
+        {
+            get { return actualHeight; }
+            protected set
+            {
+                actualHeight = value;
+                if (actualHeight < MinHeight) actualHeight = MinHeight;
+                if (MaxHeight < actualHeight) actualHeight = MaxHeight;
+            }
+        }
 
         /// <summary>
         /// 親 Control を取得または設定します。
@@ -176,8 +244,66 @@ namespace Willcraftia.Xna.Framework.UI
             Children = new ControlCollection(this);
             Children.CollectionChanged += new NotifyCollectionChangedEventHandler(OnChildrenCollectionChanged);
 
+            Width = float.NaN;
+            Height = float.NaN;
+            MaxWidth = float.PositiveInfinity;
+            MaxHeight = float.PositiveInfinity;
+
             Visible = true;
             Focusable = true;
+        }
+
+        public virtual void Arrange()
+        {
+            // 親から描画時サイズが設定されていないならば、まだ処理を行いません。
+            if (ActualWidth == float.NaN || ActualHeight == float.NaN) return;
+
+            foreach (var child in Children)
+            {
+                var childMargin = child.Margin;
+
+                var childMarginWidth = childMargin.Left + childMargin.Right;
+                if (child.Width == float.NaN)
+                {
+                    // 子の幅が未設定ならば自分の幅に収まる最大サイズで調整を試みます。
+                    child.ActualWidth = ActualWidth - childMarginWidth;
+                }
+                else
+                {
+                    if (ActualWidth < child.Width + childMarginWidth)
+                    {
+                        // 子に幅が設定されていて自分の幅を越えるようならば、自分の幅に収まる最大サイズで調整を試みます。
+                        child.ActualWidth = ActualWidth - childMarginWidth;
+                    }
+                    else
+                    {
+                        // それ以外は子に設定された幅をそのまま設定するように試みます。
+                        child.ActualWidth = child.Width;
+                    }
+                }
+
+                var childMarginHeight = childMargin.Top + childMargin.Bottom;
+                if (child.Height == float.NaN)
+                {
+                    // 子の高さが未設定ならば自分の高さに収まる最大サイズで調整を試みます。
+                    child.ActualHeight = ActualHeight - childMarginHeight;
+                }
+                else
+                {
+                    if (ActualHeight < child.Height + childMarginHeight)
+                    {
+                        // 子に高さが設定されていて自分の幅を越えるようならば、自分の高さに収まる最大サイズで調整を試みます。
+                        child.ActualHeight = ActualHeight - childMarginHeight;
+                    }
+                    else
+                    {
+                        // それ以外は子に設定された高さをそのまま設定するように試みます。
+                        child.ActualHeight = child.Height;
+                    }
+                }
+
+                child.Arrange();
+            }
         }
 
         /// <summary>
@@ -186,12 +312,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>スクリーン上の絶対座標。</returns>
         public Rectangle GetAbsoluteBounds()
         {
-            if (parent == null) return Bounds;
+            if (parent == null) return new Rectangle(0, 0, (int) ActualWidth, (int) ActualHeight);
 
             var parentAbsoluteBounds = parent.GetAbsoluteBounds();
 
-            var absoluteBounds = Bounds;
-
+            var absoluteBounds = new Rectangle((int) Margin.Left, (int) Margin.Top, (int) ActualWidth, (int) ActualHeight);
             absoluteBounds.X += parentAbsoluteBounds.X;
             absoluteBounds.Y += parentAbsoluteBounds.Y;
 
@@ -219,8 +344,16 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Control を更新します。
+        /// </summary>
+        public virtual void Update() { }
+
+        /// <summary>
         /// Control を描画します。
         /// </summary>
+        /// <remarks>
+        /// Visible が false の場合、Draw メソッドは呼び出されません。
+        /// </remarks>
         public virtual void Draw()
         {
             // ここでは IControlLaf のみで描画します。
@@ -240,7 +373,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="x">親 Control の矩形位置を基準としたカーソルの X 座標。</param>
         /// <param name="y">親 Control の矩形位置を基準としたカーソルの Y 座標。</param>
-        internal void ProcessMouseMoved(int x, int y)
+        internal void ProcessMouseMoved(float x, float y)
         {
             // 不可視の場合は処理しません。
             if (!Visible) return;
@@ -248,20 +381,25 @@ namespace Willcraftia.Xna.Framework.UI
             // x と y は親を基準としたカーソルの相対座標です。
 
             // 自分を基準としたカーソルの相対座標を算出します。
-            int localX = x - Bounds.X;
-            int localY = y - Bounds.Y;
+            float localX = x - Margin.Left;
+            float localY = y - Margin.Top;
 
             for (int i = Children.Count - 1; 0 <= i; i--)
             {
                 var child = Children[i];
-                if (child.Visible && child.Bounds.Contains(localX, localY))
-                {
-                    // 子をマウス オーバ状態にします。
-                    SwitchMouseOverControl(child);
-                    // 子にカーソル移動処理を転送します。
-                    child.ProcessMouseMoved(localX, localY);
-                    return;
-                }
+
+                // 不可視ならばスキップします。
+                if (!child.Visible) continue;
+
+                // 描画領域の外ならばスキップします。
+                if (localX < child.Margin.Left || child.Margin.Left + child.ActualWidth < localX) continue;
+                if (localY < child.Margin.Top || child.Margin.Top + child.ActualHeight < localY) continue;
+
+                // 子をマウス オーバ状態にします。
+                SwitchMouseOverControl(child);
+                // 子にカーソル移動処理を転送します。
+                child.ProcessMouseMoved(localX, localY);
+                return;
             }
 
             // マウス オーバ状態にできる子がいないならば、自分をマウス オーバ状態にします。
@@ -351,7 +489,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="x">この Control の矩形位置を基準としたカーソルの X 座標。</param>
         /// <param name="y">この Control の矩形位置を基準としたカーソルの Y 座標。</param>
-        protected virtual void OnMouseMoved(int x, int y) { }
+        protected virtual void OnMouseMoved(float x, float y) { }
 
         /// <summary>
         /// マウス カーソルがこの Control に入った時 (この Control がマウス オーバ状態になった時) に呼び出されます。
@@ -427,6 +565,7 @@ namespace Willcraftia.Xna.Framework.UI
         void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             ResetChildMouseOverControl();
+            Arrange();
         }
 
         /// <summary>

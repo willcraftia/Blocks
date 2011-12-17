@@ -180,11 +180,10 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
         void Dispose(bool disposing)
         {
-            if (!disposed)
-            {
-                if (disposing) UnloadContent();
-                disposed = true;
-            }
+            if (disposed) return;
+
+            if (disposing) UnloadContent();
+            disposed = true;
         }
 
         #endregion

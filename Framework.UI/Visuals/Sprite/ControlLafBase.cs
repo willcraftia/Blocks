@@ -33,11 +33,11 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             LoadContent();
         }
 
+        public abstract void Draw(Control control);
+
         protected virtual void LoadContent() { }
 
         protected virtual void UnloadContent() { }
-
-        public abstract void Draw(Control control);
 
         #region IDisposable
 
