@@ -148,9 +148,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     button.Bounds = new Rectangle(u, u, u * 5, u);
                     button.Clicked += delegate(object s, EventArgs e)
                     {
-                        var dialog = new Window();
-                        dialog.Bounds = new Rectangle(u * 4, u * 6, u * 7, u * 4);
-                        dialog.BackgroundColor = Color.Green * 0.8f;
+                        var overlay = new Overlay();
+                        overlay.BackgroundColor = Color.White * 0.0f;
+
+                        var window = new Window();
+                        window.Bounds = new Rectangle(u * 4, u * 6, u * 7, u * 4);
+                        window.BackgroundColor = Color.Green * 0.8f;
                         {
                             var b = new Button();
                             b.Text = "Open new dialog";
@@ -159,9 +162,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             b.Bounds = new Rectangle(u, u, u * 5, u);
                             b.Clicked += delegate(object bs, EventArgs be)
                             {
-                                var subDialog = new Window();
-                                subDialog.Bounds = new Rectangle(u * 1, u * 4, u * 7, u * 3);
-                                subDialog.BackgroundColor = Color.Brown * 0.8f;
+                                var subOverlay = new Overlay();
+                                subOverlay.BackgroundColor = Color.Black * 0.5f;
+
+                                var subWindow = new Window();
+                                subWindow.Bounds = new Rectangle(u * 1, u * 4, u * 7, u * 3);
+                                subWindow.BackgroundColor = Color.Brown * 0.8f;
                                 {
                                     var subB = new Button();
                                     subB.Text = "Close";
@@ -170,13 +176,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                     subB.Bounds = new Rectangle(u, u * 1, u * 2, u);
                                     subB.Clicked += delegate(object subBs, EventArgs subBe)
                                     {
-                                        subDialog.Close();
+                                        subOverlay.Close();
                                     };
-                                    subDialog.Children.Add(subB);
+                                    subWindow.Children.Add(subB);
                                 }
-                                subDialog.ShowDialog(screen);
+                                subOverlay.Children.Add(subWindow);
+                                subOverlay.Show(screen);
                             };
-                            dialog.Children.Add(b);
+                            window.Children.Add(b);
                         }
                         {
                             var b = new Button();
@@ -186,11 +193,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             b.Bounds = new Rectangle(u, u * 2, u * 2, u);
                             b.Clicked += delegate(object bs, EventArgs be)
                             {
-                                dialog.Close();
+                                overlay.Close();
                             };
-                            dialog.Children.Add(b);
+                            window.Children.Add(b);
                         }
-                        dialog.ShowDialog(screen);
+                        overlay.Children.Add(window);
+                        overlay.Show(screen);
                     };
                     window_2.Children.Add(button);
                 }

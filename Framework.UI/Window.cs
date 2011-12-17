@@ -55,14 +55,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// モーダル Window であるかどうかを判定します。
-        /// </summary>
-        /// <value>
-        /// true (モーダル Window である場合)、false (それ以外の場合)。
-        /// </value>
-        public bool Modal { get; private set; }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Window() { }
@@ -73,18 +65,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="screen"></param>
         public void Show(Screen screen)
         {
-            // Screen へ登録します。
-            screen.Children.Add(this);
-        }
-
-        /// <summary>
-        /// モーダル Window を表示します。
-        /// </summary>
-        /// <param name="screen"></param>
-        public void ShowDialog(Screen screen)
-        {
-            // モーダルに設定します。
-            Modal = true;
             // Screen へ登録します。
             screen.Children.Add(this);
         }

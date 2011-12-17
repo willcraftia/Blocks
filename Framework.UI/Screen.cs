@@ -25,11 +25,6 @@ namespace Willcraftia.Xna.Framework.UI
         Control focusedControl;
 
         /// <summary>
-        /// モーダル Window のリスト (先頭が最背面)。
-        /// </summary>
-        List<Window> modalWindows = new List<Window>();
-
-        /// <summary>
         /// UIContext を取得します。
         /// </summary>
         public IUIContext UIContext
@@ -49,21 +44,11 @@ namespace Willcraftia.Xna.Framework.UI
         public Screen()
         {
             Screen = this;
-            Children.CollectionChanged += new NotifyCollectionChangedEventHandler(OnChildrenCollectionChanged);
         }
 
         // I/F
         public void NotifyMouseMoved(int x, int y)
         {
-            // モーダル Window があるならば、モーダル Window 上にないマウス カーソルの移動情報を破棄します。
-            if (modalWindows.Count != 0)
-            {
-                int localX = x - Bounds.X;
-                int localY = y - Bounds.Y;
-                var modalWindow = modalWindows[modalWindows.Count - 1];
-                if (!modalWindow.Bounds.Contains(localX, localY)) return;
-            }
-
             ProcessMouseMoved(x, y);
         }
 
@@ -123,33 +108,6 @@ namespace Willcraftia.Xna.Framework.UI
             EnsureControlState(control);
 
             if (HasFocus(control)) focusedControl = null;
-        }
-
-        /// <summary>
-        /// Children が変更された場合に呼び出されます。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var window = item as Window;
-                    // モーダル Window が追加されたならばモーダル Window リストに追加します。
-                    if (window != null && window.Modal) modalWindows.Add(window);
-                }
-            }
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var window = item as Window;
-                    // モーダル Window が削除されたならばモーダル Window リストから削除します。
-                    if (window != null && window.Modal) modalWindows.Remove(window);
-                }
-            }
         }
 
         /// <summary>

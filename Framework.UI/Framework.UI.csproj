@@ -110,6 +110,7 @@
     <Compile Include="Screen.cs" />
     <Compile Include="Visuals\Sprite\ButtonLaf.cs" />
     <Compile Include="Visuals\Sprite\ControlLafBase.cs" />
+    <Compile Include="Visuals\Sprite\OverlayLaf.cs" />
     <Compile Include="Visuals\Sprite\SpriteControlLafSource.cs" />
     <Compile Include="Visuals\Sprite\WindowLaf.cs" />
     <Compile Include="Window.cs" />
