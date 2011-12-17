@@ -77,7 +77,7 @@ namespace Willcraftia.Xna.Framework.UI
             // Closing イベントを発生させます。
             RaiseClosing();
             // Screen から登録を解除します。
-            Screen.Children.Remove(this);
+            Parent.Children.Remove(this);
             // Closed イベントを発生させます。
             RaiseClosed();
         }
