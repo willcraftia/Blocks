@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Content.Pipeline"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTemplate", "CodeTemplate\CodeTemplate.csproj", "{29F1B080-1D4F-41EC-862D-1B6D5894D389}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Graphics", "Framework.Graphics\Framework.Graphics.csproj", "{931DFA90-506B-4F28-A5F9-92CCE2BCBE8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -67,6 +69,10 @@ Global
 		{29F1B080-1D4F-41EC-862D-1B6D5894D389}.Debug|x86.Build.0 = Debug|x86
 		{29F1B080-1D4F-41EC-862D-1B6D5894D389}.Release|x86.ActiveCfg = Release|x86
 		{29F1B080-1D4F-41EC-862D-1B6D5894D389}.Release|x86.Build.0 = Release|x86
+		{931DFA90-506B-4F28-A5F9-92CCE2BCBE8F}.Debug|x86.ActiveCfg = Debug|x86
+		{931DFA90-506B-4F28-A5F9-92CCE2BCBE8F}.Debug|x86.Build.0 = Debug|x86
+		{931DFA90-506B-4F28-A5F9-92CCE2BCBE8F}.Release|x86.ActiveCfg = Release|x86
+		{931DFA90-506B-4F28-A5F9-92CCE2BCBE8F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
