@@ -130,6 +130,16 @@ namespace Willcraftia.Xna.Framework.UI
         public Color BackgroundColor { get; set; }
 
         /// <summary>
+        /// 親 Control で配置される際に適用される、水平方向の配置方法を取得または設定します。
+        /// </summary>
+        public HorizontalAlignment HorizontalAlignment { get; set; }
+
+        /// <summary>
+        /// 親 Control で配置される際に適用される、垂直方向の配置方法を取得または設定します。
+        /// </summary>
+        public VerticalAlignment VerticalAlignment { get; set; }
+
+        /// <summary>
         /// 親 Control を取得または設定します。
         /// </summary>
         public Control Parent
@@ -237,10 +247,10 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 親 Control により有効な描画時サイズが設定されているかどうかを判定します。
+        /// 子 Control の描画時サイズに有効な値が設定されているかどうかを判定します。
         /// </summary>
         /// <value>
-        /// true (親 Control により有効な描画時サイズが設定されている場合)、false (それ以外の場合)。
+        /// true (子 Control の描画時サイズに有効な値が設定されている場合)、false (それ以外の場合)。
         /// </value>
         public bool Arranged { get; protected internal set; }
 
@@ -274,6 +284,8 @@ namespace Willcraftia.Xna.Framework.UI
             MaxWidth = float.PositiveInfinity;
             MaxHeight = float.PositiveInfinity;
             BackgroundColor = Color.White;
+            HorizontalAlignment = HorizontalAlignment.Center;
+            VerticalAlignment = VerticalAlignment.Center;
 
             Focusable = true;
         }
@@ -318,7 +330,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// Control を更新します。
         /// </summary>
-        public virtual void Update() { }
+        public virtual void Update()
+        {
+            if (!Enabled) return;
+
+            if (!Arranged) Arrange();
+        }
 
         /// <summary>
         /// Control を描画します。
@@ -499,7 +516,7 @@ namespace Willcraftia.Xna.Framework.UI
                 var childMargin = child.Margin;
 
                 var childMarginWidth = childMargin.Left + childMargin.Right;
-                if (child.Width == float.NaN)
+                if (float.IsNaN(child.Width))
                 {
                     // 子の幅が未設定ならば自分の幅に収まる最大サイズで調整を試みます。
                     child.ActualWidth = ActualWidth - childMarginWidth;
@@ -520,7 +537,7 @@ namespace Willcraftia.Xna.Framework.UI
                 }
 
                 var childMarginHeight = childMargin.Top + childMargin.Bottom;
-                if (child.Height == float.NaN)
+                if (float.IsNaN(child.Height))
                 {
                     // 子の高さが未設定ならば自分の高さに収まる最大サイズで調整を試みます。
                     child.ActualHeight = ActualHeight - childMarginHeight;

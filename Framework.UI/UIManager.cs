@@ -74,8 +74,6 @@ namespace Willcraftia.Xna.Framework.UI
                     if (inputCapturer != null) inputCapturer.InputReceiver = screen;
                     // Screen に自分をバインドします。
                     screen.UIContext = this;
-                    // Control の描画位置を計算します。
-                    screen.Arrange();
                 }
             }
         }
@@ -144,9 +142,6 @@ namespace Willcraftia.Xna.Framework.UI
             // Control の Update を再帰的に呼び出します。
             UpdateControl(Screen);
 
-            // Control の Arrange を再帰的に呼び出します。
-            ArrangeControl(Screen);
-
             // 可視 Control を探索し、可視 Control リストに追加します。
             PushControlToVisibleControlStack(Screen);
 
@@ -176,15 +171,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 子 Control を再帰的に更新します。
             foreach (var child in control.Children) UpdateControl(child);
-        }
-
-        void ArrangeControl(Control control)
-        {
-            if (!control.Enabled) return;
-
-            if (!control.Arranged) control.Arrange();
-
-            foreach (var child in control.Children) ArrangeControl(child);
         }
 
         /// <summary>

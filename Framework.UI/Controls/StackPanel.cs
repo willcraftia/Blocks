@@ -17,6 +17,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected internal override void Arrange()
         {
+            if (Arranged) return;
+
             if (Orientation == Orientation.Horizontal)
             {
                 ArrangeHorizontalDirection();
@@ -26,44 +28,85 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 ArrangeVerticalDirection();
             }
 
-            base.Arrange();
+            Arranged = true;
         }
 
         protected virtual void ArrangeHorizontalDirection()
         {
-            // 親から描画時サイズが設定されていないならば、まだ処理を行いません。
-            if (!Arranged) return;
-
             // シンプルに実装します。
-            float right = 0;
+            float left = 0;
             foreach (var child in Children)
             {
-                // 幅は指定された値をそのまま使うことにします。
+                // 幅も高さも指定された値をそのまま使うことにします。
                 child.ActualWidth = child.ClampedWidth;
-                // 左マージンを調整します。
+                child.ActualHeight = child.ClampedHeight;
+
+                // マージンを調整します。
                 var childMargin = child.Margin;
-                child.Margin = new Thickness(right, childMargin.Top, childMargin.Right, childMargin.Bottom);
-                
-                // 高さは描画領域に収まるように調整します。
-                var childMarginHeight = childMargin.Top + childMargin.Bottom;
-                var childHeight = child.ClampedHeight;
-                if (ActualHeight < childHeight + childMarginHeight)
+                float top = 0.0f;
+                switch (child.VerticalAlignment)
                 {
-                    // 子に高さが設定されていて自分の幅を越えるようならば、自分の高さに収まる最大サイズで調整を試みます。
-                    child.ActualHeight = ActualHeight - childMarginHeight;
-                }
-                else
-                {
-                    // それ以外は子に設定された高さをそのまま設定するように試みます。
-                    child.ActualHeight = childHeight;
+                    case VerticalAlignment.Top:
+                        {
+                            top = childMargin.Top;
+                            break;
+                        }
+                    case VerticalAlignment.Bottom:
+                        {
+                            top = ActualHeight - childMargin.Bottom - childMargin.Top - child.ActualHeight;
+                            break;
+                        }
+                    case VerticalAlignment.Center:
+                    default:
+                        {
+                            top = (ActualHeight - child.ActualHeight) * 0.5f + childMargin.Top;
+                            break;
+                        }
                 }
 
-                right += childMargin.Left + childMargin.Right + child.ActualWidth;
+                child.Margin = new Thickness(left, top, childMargin.Right, childMargin.Bottom);
+                
+                left += childMargin.Left + childMargin.Right + child.ActualWidth;
             }
         }
 
         protected virtual void ArrangeVerticalDirection()
         {
+            // シンプルに実装します。
+            float top = 0;
+            foreach (var child in Children)
+            {
+                // 幅も高さも指定された値をそのまま使うことにします。
+                child.ActualWidth = child.ClampedWidth;
+                child.ActualHeight = child.ClampedHeight;
+
+                // マージンを調整します。
+                var childMargin = child.Margin;
+                float left = 0.0f;
+                switch (child.HorizontalAlignment)
+                {
+                    case HorizontalAlignment.Left:
+                        {
+                            left = childMargin.Left;
+                            break;
+                        }
+                    case HorizontalAlignment.Right:
+                        {
+                            left = ActualWidth - childMargin.Right - childMargin.Left - child.ActualWidth;
+                            break;
+                        }
+                    case HorizontalAlignment.Center:
+                    default:
+                        {
+                            left = (ActualWidth - child.ActualWidth) * 0.5f + childMargin.Left;
+                            break;
+                        }
+                }
+
+                child.Margin = new Thickness(left, top, childMargin.Right, childMargin.Bottom);
+
+                top += childMargin.Top + childMargin.Bottom + child.ActualHeight;
+            }
         }
     }
 }

@@ -180,6 +180,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         subWindow.Height = u * 4;
                         subWindow.Margin = new Thickness(u * 4, u * 6, 0, 0);
                         subWindow.BackgroundColor = Color.Green * 0.8f;
+
+                        var subStackPanel = new StackPanel();
+                        subStackPanel.Margin = new Thickness(8, 8, 8, 8);
+                        subStackPanel.Orientation = Orientation.Vertical;
                         {
                             var subButton = new Button();
                             subButton.Text = "Open new dialog";
@@ -187,7 +191,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subButton.FontColor = Color.White;
                             subButton.Width = u * 5;
                             subButton.Height = u;
-                            subButton.Margin = new Thickness(u, u, 0, 0);
+                            subButton.HorizontalAlignment = HorizontalAlignment.Left;
+                            //subButton.Margin = new Thickness(u, u, 0, 0);
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 var subOverlay = new Overlay();
@@ -215,22 +220,26 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 subOverlay.Children.Add(subSubWindow);
                                 subOverlay.Show(screen);
                             };
-                            subWindow.Children.Add(subButton);
+                            subStackPanel.Children.Add(subButton);
+                            //subWindow.Children.Add(subButton);
                         }
                         {
-                            var b = new Button();
-                            b.Text = "Close";
-                            b.TextHorizontalAlignment = HorizontalAlignment.Left;
-                            b.FontColor = Color.White;
-                            b.Width = u * 2;
-                            b.Height = u;
-                            b.Margin = new Thickness(u, u * 2, 0, 0);
-                            b.Clicked += delegate(object bs, EventArgs be)
+                            var subButton = new Button();
+                            subButton.Text = "Close";
+                            subButton.TextHorizontalAlignment = HorizontalAlignment.Left;
+                            subButton.FontColor = Color.White;
+                            subButton.Width = u * 2;
+                            subButton.Height = u;
+                            subButton.HorizontalAlignment = HorizontalAlignment.Left;
+                            //subButton.Margin = new Thickness(u, u * 2, 0, 0);
+                            subButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 overlay.Close();
                             };
-                            subWindow.Children.Add(b);
+                            subStackPanel.Children.Add(subButton);
+                            //subWindow.Children.Add(b);
                         }
+                        subWindow.Children.Add(subStackPanel);
                         overlay.Children.Add(subWindow);
                         overlay.Show(screen);
                     };
@@ -243,7 +252,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     button.FontColor = Color.White;
                     button.Width = u * 5;
                     button.Height = u;
-                    button.Margin = new Thickness(u * 6, u, 0, 0);
+                    //button.Margin = new Thickness(u * 6, u, 0, 0);
                     stackPanel.Children.Add(button);
                     //window.Children.Add(button);
                 }
