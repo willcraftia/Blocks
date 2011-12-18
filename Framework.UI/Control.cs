@@ -47,6 +47,11 @@ namespace Willcraftia.Xna.Framework.UI
         Screen screen;
 
         /// <summary>
+        /// 自身あるいは子のうちのアクティブな Control。
+        /// </summary>
+        Control activatedControl;
+
+        /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
         /// </summary>
         Control mouseOverControl;
@@ -54,12 +59,17 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// true (Control が有効な場合)、false (それ以外の場合)。
         /// </summary>
-        bool enabled;
+        bool enabled = true;
 
         /// <summary>
         /// true (Control が可視の場合)、false (それ以外の場合)。
         /// </summary>
-        bool visible;
+        bool visible = true;
+
+        /// <summary>
+        /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
+        /// </summary>
+        bool affectsOrdering;
 
         /// <summary>
         /// Control の外側の余白を取得または設定します。
@@ -232,10 +242,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <value>
         /// true (親 Control により有効な描画時サイズが設定されている場合)、false (それ以外の場合)。
         /// </value>
-        public bool Arranged
-        {
-            get { return ActualWidth != float.NaN && ActualHeight != float.NaN; }
-        }
+        public bool Arranged { get; protected internal set; }
 
         protected internal float ClampedWidth
         {
@@ -250,8 +257,15 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Control()
+        public Control() : this(false) { }
+
+        /// <summary>
+        /// コンストラクタ。
+        /// </summary>
+        public Control(bool affectsOrdering)
         {
+            this.affectsOrdering = affectsOrdering;
+
             Children = new ControlCollection(this);
             Children.CollectionChanged += new NotifyCollectionChangedEventHandler(OnChildrenCollectionChanged);
 
@@ -261,63 +275,7 @@ namespace Willcraftia.Xna.Framework.UI
             MaxHeight = float.PositiveInfinity;
             BackgroundColor = Color.White;
 
-            Visible = true;
             Focusable = true;
-        }
-
-        public virtual void Arrange()
-        {
-            // 親から描画時サイズが設定されていないならば、まだ処理を行いません。
-            if (!Arranged) return;
-
-            foreach (var child in Children)
-            {
-                var childMargin = child.Margin;
-
-                var childMarginWidth = childMargin.Left + childMargin.Right;
-                if (child.Width == float.NaN)
-                {
-                    // 子の幅が未設定ならば自分の幅に収まる最大サイズで調整を試みます。
-                    child.ActualWidth = ActualWidth - childMarginWidth;
-                }
-                else
-                {
-                    var childWidth = child.ClampedWidth;
-                    if (ActualWidth < childWidth + childMarginWidth)
-                    {
-                        // 子に幅が設定されていて自分の幅を越えるようならば、自分の幅に収まる最大サイズで調整を試みます。
-                        child.ActualWidth = ActualWidth - childMarginWidth;
-                    }
-                    else
-                    {
-                        // それ以外は子に設定された幅をそのまま設定するように試みます。
-                        child.ActualWidth = childWidth;
-                    }
-                }
-
-                var childMarginHeight = childMargin.Top + childMargin.Bottom;
-                if (child.Height == float.NaN)
-                {
-                    // 子の高さが未設定ならば自分の高さに収まる最大サイズで調整を試みます。
-                    child.ActualHeight = ActualHeight - childMarginHeight;
-                }
-                else
-                {
-                    var childHeight = child.ClampedHeight;
-                    if (ActualHeight < childHeight + childMarginHeight)
-                    {
-                        // 子に高さが設定されていて自分の幅を越えるようならば、自分の高さに収まる最大サイズで調整を試みます。
-                        child.ActualHeight = ActualHeight - childMarginHeight;
-                    }
-                    else
-                    {
-                        // それ以外は子に設定された高さをそのまま設定するように試みます。
-                        child.ActualHeight = childHeight;
-                    }
-                }
-
-                child.Arrange();
-            }
         }
 
         /// <summary>
@@ -398,6 +356,19 @@ namespace Willcraftia.Xna.Framework.UI
             float localX = x - Margin.Left;
             float localY = y - Margin.Top;
 
+            if (activatedControl != null)
+            {
+                if (activatedControl != this)
+                {
+                    // アクティブな子 Control へ通知します。
+                    activatedControl.ProcessMouseMoved(localX, localY);
+                }
+                else
+                {
+                    OnMouseMoved(localX, localY);
+                }
+            }
+
             for (int i = Children.Count - 1; 0 <= i; i--)
             {
                 var child = Children[i];
@@ -411,18 +382,32 @@ namespace Willcraftia.Xna.Framework.UI
 
                 // 子をマウス オーバ状態にします。
                 SwitchMouseOverControl(child);
-                // 子にカーソル移動処理を転送します。
-                child.ProcessMouseMoved(localX, localY);
+
+                // アクティブな子 Control は先の処理で通知を受けているので、その他ならば通知します。
+                if (mouseOverControl != activatedControl)
+                {
+                    child.ProcessMouseMoved(localX, localY);
+                }
                 return;
             }
 
-            // マウス オーバ状態にできる子がいないならば、自分をマウス オーバ状態にします。
-            SwitchMouseOverControl(this);
-            OnMouseMoved(localX, localY);
+            // マウス オーバ状態にできる子がなく、
+            if (0 <= localX && localX <= ActualWidth && 0 <= localY && localY <= ActualHeight)
+            {
+                // 自分の領域内ならば、自分をマウス オーバ状態にします。
+                SwitchMouseOverControl(this);
+                // 自身がアクティブの場合は先の処理で通知を受けているので、非アクティブならば通知します。
+                if (activatedControl == null) OnMouseMoved(localX, localY);
+            }
+            else
+            {
+                // 自分の領域外ならばマウスが外にでたことを通知します。
+                ProcessMouseLeft();
+            }
         }
 
         /// <summary>
-        /// マウス カーソルが Control の矩形領域の外に移動したことを処理します。
+        /// マウス カーソルが Control の領域外に移動したことを処理します。
         /// </summary>
         internal void ProcessMouseLeft()
         {
@@ -457,11 +442,19 @@ namespace Willcraftia.Xna.Framework.UI
             // 不可視の場合は処理しません。
             if (!Visible) return false;
 
-            // マウス オーバ状態の Control がなければ処理しません。
-            if (mouseOverControl == null) return false;
+            if (activatedControl == null)
+            {
+                // マウス オーバ状態の Control をアクティブにします。
+                activatedControl = mouseOverControl;
+                // アクティブな Control がなければ処理を終えます。
+                if (activatedControl == null) return false;
 
-            // 子がマウス オーバ状態ならば処理を転送します。
-            if (mouseOverControl != this) return mouseOverControl.ProcessMouseButtonPressed(button);
+                // 子がアクティブならば、子リストの中で最前面への移動を試みます。
+                if (activatedControl != this && activatedControl.affectsOrdering) Children.MoveToTopMost(activatedControl);
+            }
+
+            // 子がアクティブならばマウス ボタンが押されたことを通知します。
+            if (activatedControl != this) return activatedControl.ProcessMouseButtonPressed(button);
 
             // フォーカスを得ます。
             Focus();
@@ -478,21 +471,79 @@ namespace Willcraftia.Xna.Framework.UI
         internal void ProcessMouseButtonReleased(MouseButtons button)
         {
             // 不可視の場合は処理しません。
-            if (!Visible) return;
+            //if (!Visible) return;
 
-            // マウス オーバ状態の Control がなければ処理しません。
-            if (mouseOverControl == null) return;
+            // アクティブな Control がなければ処理しません。
+            if (activatedControl == null) return;
 
-            // 子がマウス オーバ状態ならば処理を転送します。
-            if (mouseOverControl != this)
+            // 子がアクティブならばマウス ボタン押下の解除を通知します。
+            if (activatedControl != this)
             {
-                mouseOverControl.ProcessMouseButtonReleased(button);
+                activatedControl.ProcessMouseButtonReleased(button);
             }
             else
             {
-                // マウス ボタンが離されたことを通知します。
+                // マウス ボタン押下の解除を通知します。
                 OnMouseButtonReleased(button);
             }
+
+            activatedControl = null;
+        }
+
+        protected internal virtual void Arrange()
+        {
+            if (Arranged) return;
+
+            foreach (var child in Children)
+            {
+                var childMargin = child.Margin;
+
+                var childMarginWidth = childMargin.Left + childMargin.Right;
+                if (child.Width == float.NaN)
+                {
+                    // 子の幅が未設定ならば自分の幅に収まる最大サイズで調整を試みます。
+                    child.ActualWidth = ActualWidth - childMarginWidth;
+                }
+                else
+                {
+                    var childWidth = child.ClampedWidth;
+                    if (ActualWidth < childWidth + childMarginWidth)
+                    {
+                        // 子に幅が設定されていて自分の幅を越えるようならば、自分の幅に収まる最大サイズで調整を試みます。
+                        child.ActualWidth = ActualWidth - childMarginWidth;
+                    }
+                    else
+                    {
+                        // それ以外は子に設定された幅をそのまま設定するように試みます。
+                        child.ActualWidth = childWidth;
+                    }
+                }
+
+                var childMarginHeight = childMargin.Top + childMargin.Bottom;
+                if (child.Height == float.NaN)
+                {
+                    // 子の高さが未設定ならば自分の高さに収まる最大サイズで調整を試みます。
+                    child.ActualHeight = ActualHeight - childMarginHeight;
+                }
+                else
+                {
+                    var childHeight = child.ClampedHeight;
+                    if (ActualHeight < childHeight + childMarginHeight)
+                    {
+                        // 子に高さが設定されていて自分の幅を越えるようならば、自分の高さに収まる最大サイズで調整を試みます。
+                        child.ActualHeight = ActualHeight - childMarginHeight;
+                    }
+                    else
+                    {
+                        // それ以外は子に設定された高さをそのまま設定するように試みます。
+                        child.ActualHeight = childHeight;
+                    }
+                }
+
+                child.Arrange();
+            }
+
+            Arranged = true;
         }
 
         /// <summary>
@@ -576,7 +627,8 @@ namespace Willcraftia.Xna.Framework.UI
         void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             ResetChildMouseOverControl();
-            Arrange();
+            // 再配置させます。
+            Arranged = false;
         }
 
         /// <summary>

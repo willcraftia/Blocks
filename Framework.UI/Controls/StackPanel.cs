@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Orientation = Orientation.Horizontal;
         }
 
-        public override void Arrange()
+        protected internal override void Arrange()
         {
             if (Orientation == Orientation.Horizontal)
             {

@@ -31,7 +31,7 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 指定の Control を最前面 (インデックス 0) へ移動させます。
+        /// 指定の Control を最前面へ移動させます。
         /// </summary>
         /// <param name="item"></param>
         public void MoveToTopMost(Control item)
@@ -39,8 +39,12 @@ namespace Willcraftia.Xna.Framework.UI
             if (item == null) throw new ArgumentNullException("item");
             if (!Contains(item)) throw new ArgumentException("Collection dose not contain the specified control.", "item");
 
-            base.RemoveAt(IndexOf(item));
-            base.Insert(Count, item);
+            var index = IndexOf(item);
+            // 既に最前面ならばスキップします。
+            if (index == Count - 1) return;
+
+            base.RemoveAt(index);
+            Add(item);
         }
 
         protected override void InsertItem(int index, Control item)

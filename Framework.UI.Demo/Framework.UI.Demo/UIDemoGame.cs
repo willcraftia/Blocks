@@ -139,7 +139,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 window.Width = u * 10;
                 window.Height = u * 10;
                 window.Margin = new Thickness(u, u, 0, 0);
-                window.BackgroundColor = Color.White * 0.5f;
+                window.BackgroundColor = Color.Red;
                 window.Show(screen);
             }
 
@@ -148,7 +148,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 window.Width = u * 10;
                 window.Height = u * 10;
                 window.Margin = new Thickness(u * 3, u * 3, 0, 0);
-                window.BackgroundColor = Color.Yellow * 0.8f;
+                window.BackgroundColor = Color.Green;
                 window.Show(screen);
             }
 
@@ -157,6 +157,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 window.Width = u * 10;
                 window.Height = u * 10;
                 window.Margin = new Thickness(u * 5, u * 5, 0, 0);
+                window.BackgroundColor = Color.Blue;
 
                 var stackPanel = new StackPanel();
                 stackPanel.Margin = new Thickness(8, 8, 8, 8);

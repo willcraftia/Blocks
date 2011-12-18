@@ -57,7 +57,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Window() { }
+        public Window() : base(true) { }
 
         /// <summary>
         /// Window を表示します。
@@ -80,18 +80,6 @@ namespace Willcraftia.Xna.Framework.UI
             Parent.Children.Remove(this);
             // Closed イベントを発生させます。
             RaiseClosed();
-        }
-
-        /// <summary>
-        /// マウス ボタンがこの Control で押された時に呼び出されます。
-        /// </summary>
-        /// <remarks>
-        /// Window 上でマウス ボタンが押下されると、Window は自身を最前面へ移動させます。
-        /// </remarks>
-        /// <param name="button"></param>
-        protected override void OnMouseButtonPressed(MouseButtons button)
-        {
-            Parent.Children.MoveToTopMost(this);
         }
 
         /// <summary>
