@@ -336,6 +336,11 @@ namespace Willcraftia.Xna.Framework.UI
             if (!Enabled) return;
 
             if (!Arranged) Arrange();
+
+            foreach (var child in Children)
+            {
+                if (child.Enabled) child.Update(gameTime);
+            }
         }
 
         /// <summary>
@@ -357,6 +362,12 @@ namespace Willcraftia.Xna.Framework.UI
             var laf = Screen.UIContext.GetControlLaf(this);
             // IControlLaf に描画を委譲します。
             if (laf != null) laf.Draw(this);
+
+            // 子を描画します。
+            foreach (var child in Children)
+            {
+                if (child.Visible) child.Draw(gameTime);
+            }
         }
 
         /// <summary>

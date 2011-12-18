@@ -20,8 +20,6 @@ namespace Willcraftia.Xna.Framework.UI
 
         Screen screen;
 
-        List<Control> visibleControls;
-
         IControlLafSource controlLafSource;
 
         // I/F
@@ -100,8 +98,21 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // サービスとして登録
             Game.Services.AddService(typeof(IUIService), this);
+        }
 
-            visibleControls = new List<Control>();
+        // I/F
+        public ContentManager CreateContentManager()
+        {
+            return new ContentManager(Game.Services);
+        }
+
+        // I/F
+        public IControlLaf GetControlLaf(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            if (ControlLafSource == null) return null;
+
+            return ControlLafSource.GetControlLaf(control);
         }
 
         public override void Initialize()
@@ -110,6 +121,24 @@ namespace Willcraftia.Xna.Framework.UI
             InputCapturer = new DefaultInputCapturer(inputService);
 
             base.Initialize();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (Screen == null) return;
+
+            Screen.Update(gameTime);
+
+            base.Update(gameTime);
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            if (Screen == null) return;
+
+            Screen.Draw(gameTime);
+
+            base.Draw(gameTime);
         }
 
         protected override void LoadContent()
@@ -128,80 +157,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (FillTexture != null) FillTexture.Dispose();
             if (ControlLafSource != null) ControlLafSource.Dispose();
 
-            Screen = null;
-
             base.UnloadContent();
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            visibleControls.Clear();
-
-            if (Screen == null) return;
-
-            // Control の Update を再帰的に呼び出します。
-            UpdateControl(Screen, gameTime);
-
-            // 可視 Control を探索し、可視 Control リストに追加します。
-            PushControlToVisibleControlStack(Screen);
-
-            base.Update(gameTime);
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            // 描画用リストにある Control を描画します。
-            foreach (var control in visibleControls) control.Draw(gameTime);
-        }
-
-        /// <summary>
-        /// Control の Update メソッドを呼び出します。
-        /// </summary>
-        /// <remarks>
-        /// このメソッドは、Control の Update メソッドを呼び出した後、その子 Control の Update メソッドを再帰的に呼び出します。
-        /// Enabled が false の場合、Update メソッドは呼び出されません。
-        /// </remarks>
-        /// <param name="control"></param>
-        void UpdateControl(Control control, GameTime gameTime)
-        {
-            if (!control.Enabled) return;
-
-            // Control を更新します。
-            control.Update(gameTime);
-
-            // 子 Control を再帰的に更新します。
-            foreach (var child in control.Children) UpdateControl(child, gameTime);
-        }
-
-        /// <summary>
-        /// Control が描画対象であるかどうかを判定し、描画対象であるならば描画用リストに追加します。
-        /// </summary>
-        /// <param name="control">Control。</param>
-        void PushControlToVisibleControlStack(Control control)
-        {
-            // 不可視の場合は自分も子も描画しません。
-            if (!control.Visible) return;
-
-            visibleControls.Add(control);
-
-            // 子 Control を再帰的に描画します。
-            foreach (var child in control.Children) PushControlToVisibleControlStack(child);
-        }
-
-        // I/F
-        public ContentManager CreateContentManager()
-        {
-            return new ContentManager(Game.Services);
-        }
-
-        // I/F
-        public IControlLaf GetControlLaf(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-
-            if (ControlLafSource == null) return null;
-
-            return ControlLafSource.GetControlLaf(control);
         }
     }
 }
