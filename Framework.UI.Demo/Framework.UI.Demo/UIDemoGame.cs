@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Visuals;
+using Willcraftia.Xna.Framework.UI.Visuals.Debug;
 using Willcraftia.Xna.Framework.UI.Visuals.Sprite;
 
 #endregion
@@ -21,6 +22,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         InputManager inputManager;
 
         UIManager uiManager;
+
+        DebugControlLafSource debugControlLafSource;
 
         SpriteControlLafSource spriteControlLafSource;
 
@@ -61,9 +64,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             uiManager = new UIManager(this);
             Components.Add(uiManager);
 
+            debugControlLafSource = new DebugControlLafSource("Content/UI/Debug");
+
             spriteControlLafSource = new SpriteControlLafSource("Content/UI/Sprite");
             spriteControlLafSource.SpriteSize = 32;
-            uiManager.ControlLafSource = spriteControlLafSource;
+
+            uiManager.ControlLafSource = debugControlLafSource;
+            //uiManager.ControlLafSource = spriteControlLafSource;
 
             IsMouseVisible = true;
 
@@ -127,83 +134,87 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             screen.Width = viewportBounds.Width;
             screen.Height = viewportBounds.Height;
 
-            var window_0 = new Window();
             {
-                window_0.Width = u * 10;
-                window_0.Height = u * 10;
-                window_0.Margin = new Thickness(u, u, 0, 0);
-                window_0.BackgroundColor = Color.White * 0.5f;
-                window_0.Show(screen);
+                var window = new Window();
+                window.Width = u * 10;
+                window.Height = u * 10;
+                window.Margin = new Thickness(u, u, 0, 0);
+                window.BackgroundColor = Color.White * 0.5f;
+                window.Show(screen);
             }
 
-            var window_1 = new Window();
             {
-                window_1.Width = u * 10;
-                window_1.Height = u * 10;
-                window_1.Margin = new Thickness(u * 3, u * 3, 0, 0);
-                window_1.BackgroundColor = Color.Yellow * 0.8f;
-                window_1.Show(screen);
+                var window = new Window();
+                window.Width = u * 10;
+                window.Height = u * 10;
+                window.Margin = new Thickness(u * 3, u * 3, 0, 0);
+                window.BackgroundColor = Color.Yellow * 0.8f;
+                window.Show(screen);
             }
 
-            var window_2 = new Window();
             {
-                window_2.Width = u * 10;
-                window_2.Height = u * 10;
-                window_2.Margin = new Thickness(u * 5, u * 5, 0, 0);
-                window_2.Show(screen);
+                var window = new Window();
+                window.Width = u * 10;
+                window.Height = u * 10;
+                window.Margin = new Thickness(u * 5, u * 5, 0, 0);
+
+                var stackPanel = new StackPanel();
+                stackPanel.Margin = new Thickness(8, 8, 8, 8);
+                stackPanel.Orientation = Orientation.Horizontal;
+
                 {
                     var button = new Button();
                     button.Text = "Open new dialog";
                     button.FontColor = Color.White;
                     button.Width = u * 5;
                     button.Height = u;
-                    button.Margin = new Thickness(u, u, 0, 0);
+                    //button.Margin = new Thickness(u, u, 0, 0);
                     button.Clicked += delegate(object s, EventArgs e)
                     {
                         var overlay = new Overlay();
                         overlay.BackgroundColor = Color.Black * 0.5f;
 
-                        var window = new Window();
-                        window.Width = u * 7;
-                        window.Height = u * 4;
-                        window.Margin = new Thickness(u * 4, u * 6, 0, 0);
-                        window.BackgroundColor = Color.Green * 0.8f;
+                        var subWindow = new Window();
+                        subWindow.Width = u * 7;
+                        subWindow.Height = u * 4;
+                        subWindow.Margin = new Thickness(u * 4, u * 6, 0, 0);
+                        subWindow.BackgroundColor = Color.Green * 0.8f;
                         {
-                            var b = new Button();
-                            b.Text = "Open new dialog";
-                            b.TextHorizontalAlignment = HorizontalAlignment.Left;
-                            b.FontColor = Color.White;
-                            b.Width = u * 5;
-                            b.Height = u;
-                            b.Margin = new Thickness(u, u, 0, 0);
-                            b.Clicked += delegate(object bs, EventArgs be)
+                            var subButton = new Button();
+                            subButton.Text = "Open new dialog";
+                            subButton.TextHorizontalAlignment = HorizontalAlignment.Left;
+                            subButton.FontColor = Color.White;
+                            subButton.Width = u * 5;
+                            subButton.Height = u;
+                            subButton.Margin = new Thickness(u, u, 0, 0);
+                            subButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 var subOverlay = new Overlay();
                                 subOverlay.BackgroundColor = Color.Black * 0.5f;
 
-                                var subWindow = new Window();
-                                subWindow.Width = u * 7;
-                                subWindow.Height = u * 3;
-                                subWindow.Margin = new Thickness(u * 1, u * 4, 0, 0);
-                                subWindow.BackgroundColor = Color.Brown * 0.8f;
+                                var subSubWindow = new Window();
+                                subSubWindow.Width = u * 7;
+                                subSubWindow.Height = u * 3;
+                                subSubWindow.Margin = new Thickness(u * 1, u * 4, 0, 0);
+                                subSubWindow.BackgroundColor = Color.Brown * 0.8f;
                                 {
-                                    var subB = new Button();
-                                    subB.Text = "Close";
-                                    subB.TextHorizontalAlignment = HorizontalAlignment.Left;
-                                    subB.FontColor = Color.White;
-                                    subB.Width = u * 2;
-                                    subB.Height = u;
-                                    subB.Margin = new Thickness(u, u, 0, 0);
-                                    subB.Clicked += delegate(object subBs, EventArgs subBe)
+                                    var subSubButton = new Button();
+                                    subSubButton.Text = "Close";
+                                    subSubButton.TextHorizontalAlignment = HorizontalAlignment.Left;
+                                    subSubButton.FontColor = Color.White;
+                                    subSubButton.Width = u * 2;
+                                    subSubButton.Height = u;
+                                    subSubButton.Margin = new Thickness(u, u, 0, 0);
+                                    subSubButton.Clicked += delegate(object subBs, EventArgs subBe)
                                     {
                                         subOverlay.Close();
                                     };
-                                    subWindow.Children.Add(subB);
+                                    subSubWindow.Children.Add(subSubButton);
                                 }
-                                subOverlay.Children.Add(subWindow);
+                                subOverlay.Children.Add(subSubWindow);
                                 subOverlay.Show(screen);
                             };
-                            window.Children.Add(b);
+                            subWindow.Children.Add(subButton);
                         }
                         {
                             var b = new Button();
@@ -217,25 +228,27 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             {
                                 overlay.Close();
                             };
-                            window.Children.Add(b);
+                            subWindow.Children.Add(b);
                         }
-                        overlay.Children.Add(window);
+                        overlay.Children.Add(subWindow);
                         overlay.Show(screen);
                     };
-                    window_2.Children.Add(button);
+                    stackPanel.Children.Add(button);
+                    //window.Children.Add(button);
                 }
                 {
                     var button = new Button();
-                    button.Text = "Button #1";
+                    button.Text = "Just Button #1";
                     button.FontColor = Color.White;
-                    button.Width = u * 3;
+                    button.Width = u * 5;
                     button.Height = u;
                     button.Margin = new Thickness(u * 6, u, 0, 0);
-                    window_2.Children.Add(button);
+                    stackPanel.Children.Add(button);
+                    //window.Children.Add(button);
                 }
+                window.Children.Add(stackPanel);
+                window.Show(screen);
             }
-
-            //control_3.Visible = false;
 
             uiManager.Screen = screen;
         }

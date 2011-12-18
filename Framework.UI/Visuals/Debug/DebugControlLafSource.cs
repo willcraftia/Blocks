@@ -2,33 +2,29 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
+namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
 {
-    public class SpriteControlLafSource : ControlLafSourceBase
+    public class DebugControlLafSource : ControlLafSourceBase
     {
         string contentRootDirectory;
 
-        Dictionary<Type, SpriteControlLafBase> controlLafs;
-
-        public int SpriteSize { get; set; }
+        Dictionary<Type, DebugControlLafBase> controlLafs;
 
         public SpriteFont Font { get; private set; }
+        
+        public DebugControlLafSource() : this(null) { }
 
-        public SpriteControlLafSource() : this(null) { }
-
-        public SpriteControlLafSource(string contentRootDirectory)
+        public DebugControlLafSource(string contentRootDirectory)
             : base(contentRootDirectory)
         {
             this.contentRootDirectory = contentRootDirectory;
-            SpriteSize = 16;
 
-            controlLafs = new Dictionary<Type, SpriteControlLafBase>();
+            controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Window), new WindowLaf());
@@ -36,7 +32,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             RegisterControlLaf(typeof(Overlay), new OverlayLaf());
         }
 
-        public void RegisterControlLaf(Type type, SpriteControlLafBase controlLaf)
+        public void RegisterControlLaf(Type type, DebugControlLafBase controlLaf)
         {
             if (type == null) throw new ArgumentNullException("type");
             if (controlLaf == null) throw new ArgumentNullException("controlLaf");
@@ -49,7 +45,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
         {
             if (type == null) throw new ArgumentNullException("type");
 
-            SpriteControlLafBase controlLaf = null;
+            DebugControlLafBase controlLaf = null;
             if (controlLafs.TryGetValue(type, out controlLaf))
             {
                 controlLafs.Remove(type);
@@ -63,7 +59,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
             var type = control.GetType();
 
-            SpriteControlLafBase controlLaf = null;
+            DebugControlLafBase controlLaf = null;
             while (type != typeof(object))
             {
                 if (controlLafs.TryGetValue(type, out controlLaf)) break;

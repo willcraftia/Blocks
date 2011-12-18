@@ -6,8 +6,10 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public interface IControlLaf
+    public interface IControlLaf : IDisposable
     {
+        void Initialize();
+
         void Draw(Control control);
     }
 }

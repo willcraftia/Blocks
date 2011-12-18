@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 {
-    public class WindowLaf : ControlLafBase
+    public class WindowLaf : SpriteControlLafBase
     {
         Texture2D topLeft;
         Texture2D topRight;
@@ -33,21 +33,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             fill = Content.Load<Texture2D>("WindowFill");
 
             base.LoadContent();
-        }
-
-        protected override void UnloadContent()
-        {
-            topLeft = null;
-            topRight = null;
-            bottomLeft = null;
-            bottomRight = null;
-            left = null;
-            right = null;
-            top = null;
-            bottom = null;
-            fill = null;
-
-            base.UnloadContent();
         }
 
         public override void Draw(Control control)

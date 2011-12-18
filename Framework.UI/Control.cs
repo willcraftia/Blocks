@@ -27,11 +27,6 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
-        /// 背景色。
-        /// </summary>
-        public Color BackgroundColor = Color.White;
-
-        /// <summary>
         /// Control の描画時の幅。
         /// </summary>
         float actualWidth = float.NaN;
@@ -107,12 +102,7 @@ namespace Willcraftia.Xna.Framework.UI
         public float ActualWidth
         {
             get { return actualWidth; }
-            protected set
-            {
-                actualWidth = value;
-                if (actualWidth < MinWidth) actualWidth = MinWidth;
-                if (MaxWidth < actualWidth) actualWidth = MaxWidth;
-            }
+            protected internal set { actualWidth = MathHelper.Clamp(value, MinWidth, MaxWidth); }
         }
 
         /// <summary>
@@ -121,13 +111,13 @@ namespace Willcraftia.Xna.Framework.UI
         public float ActualHeight
         {
             get { return actualHeight; }
-            protected set
-            {
-                actualHeight = value;
-                if (actualHeight < MinHeight) actualHeight = MinHeight;
-                if (MaxHeight < actualHeight) actualHeight = MaxHeight;
-            }
+            protected internal set { actualHeight = MathHelper.Clamp(value, MinHeight, MaxHeight); }
         }
+
+        /// <summary>
+        /// 背景色。
+        /// </summary>
+        public Color BackgroundColor { get; set; }
 
         /// <summary>
         /// 親 Control を取得または設定します。
@@ -237,6 +227,27 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 親 Control により有効な描画時サイズが設定されているかどうかを判定します。
+        /// </summary>
+        /// <value>
+        /// true (親 Control により有効な描画時サイズが設定されている場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Arranged
+        {
+            get { return ActualWidth != float.NaN && ActualHeight != float.NaN; }
+        }
+
+        protected internal float ClampedWidth
+        {
+            get { return MathHelper.Clamp(Width, MinWidth, MaxWidth); }
+        }
+
+        protected internal float ClampedHeight
+        {
+            get { return MathHelper.Clamp(Height, MinHeight, MaxHeight); }
+        }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Control()
@@ -248,6 +259,7 @@ namespace Willcraftia.Xna.Framework.UI
             Height = float.NaN;
             MaxWidth = float.PositiveInfinity;
             MaxHeight = float.PositiveInfinity;
+            BackgroundColor = Color.White;
 
             Visible = true;
             Focusable = true;
@@ -256,7 +268,7 @@ namespace Willcraftia.Xna.Framework.UI
         public virtual void Arrange()
         {
             // 親から描画時サイズが設定されていないならば、まだ処理を行いません。
-            if (ActualWidth == float.NaN || ActualHeight == float.NaN) return;
+            if (!Arranged) return;
 
             foreach (var child in Children)
             {
@@ -270,7 +282,8 @@ namespace Willcraftia.Xna.Framework.UI
                 }
                 else
                 {
-                    if (ActualWidth < child.Width + childMarginWidth)
+                    var childWidth = child.ClampedWidth;
+                    if (ActualWidth < childWidth + childMarginWidth)
                     {
                         // 子に幅が設定されていて自分の幅を越えるようならば、自分の幅に収まる最大サイズで調整を試みます。
                         child.ActualWidth = ActualWidth - childMarginWidth;
@@ -278,7 +291,7 @@ namespace Willcraftia.Xna.Framework.UI
                     else
                     {
                         // それ以外は子に設定された幅をそのまま設定するように試みます。
-                        child.ActualWidth = child.Width;
+                        child.ActualWidth = childWidth;
                     }
                 }
 
@@ -290,7 +303,8 @@ namespace Willcraftia.Xna.Framework.UI
                 }
                 else
                 {
-                    if (ActualHeight < child.Height + childMarginHeight)
+                    var childHeight = child.ClampedHeight;
+                    if (ActualHeight < childHeight + childMarginHeight)
                     {
                         // 子に高さが設定されていて自分の幅を越えるようならば、自分の高さに収まる最大サイズで調整を試みます。
                         child.ActualHeight = ActualHeight - childMarginHeight;
@@ -298,7 +312,7 @@ namespace Willcraftia.Xna.Framework.UI
                     else
                     {
                         // それ以外は子に設定された高さをそのまま設定するように試みます。
-                        child.ActualHeight = child.Height;
+                        child.ActualHeight = childHeight;
                     }
                 }
 
@@ -479,9 +493,6 @@ namespace Willcraftia.Xna.Framework.UI
                 // マウス ボタンが離されたことを通知します。
                 OnMouseButtonReleased(button);
             }
-
-            // マウス オーバ状態を解除します。
-            mouseOverControl = null;
         }
 
         /// <summary>

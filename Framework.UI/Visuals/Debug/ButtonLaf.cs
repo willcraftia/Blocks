@@ -2,13 +2,12 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
+namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
 {
-    public class ButtonLaf : SpriteControlLafBase
+    public class ButtonLaf : DebugControlLafBase
     {
         public override void Draw(Control control)
         {
@@ -36,7 +35,8 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
                     bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                SpriteBatch.DrawString(font, button.Text, position, button.FontColor);
+                // Button の Font プロパティを無視して白で描画します (Window を黒ベースにしているので、見やすさのため)。
+                SpriteBatch.DrawString(font, button.Text, position, Color.White);
             }
 
             SpriteBatch.End();
