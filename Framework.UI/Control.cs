@@ -330,7 +330,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// Control を更新します。
         /// </summary>
-        public virtual void Update()
+        /// <param name="gameTime"></param>
+        public virtual void Update(GameTime gameTime)
         {
             if (!Enabled) return;
 
@@ -343,7 +344,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <remarks>
         /// Visible が false の場合、Draw メソッドは呼び出されません。
         /// </remarks>
-        public virtual void Draw()
+        /// <param name="gameTime"></param>
+        public virtual void Draw(GameTime gameTime)
         {
             // ここでは IControlLaf のみで描画します。
             // 異なる方法で Control を描画したい場合には、そのための Control のサブクラスと IControlLaf の実装を作るか、

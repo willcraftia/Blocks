@@ -140,7 +140,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (Screen == null) return;
 
             // Control の Update を再帰的に呼び出します。
-            UpdateControl(Screen);
+            UpdateControl(Screen, gameTime);
 
             // 可視 Control を探索し、可視 Control リストに追加します。
             PushControlToVisibleControlStack(Screen);
@@ -151,7 +151,7 @@ namespace Willcraftia.Xna.Framework.UI
         public override void Draw(GameTime gameTime)
         {
             // 描画用リストにある Control を描画します。
-            foreach (var control in visibleControls) control.Draw();
+            foreach (var control in visibleControls) control.Draw(gameTime);
         }
 
         /// <summary>
@@ -162,15 +162,15 @@ namespace Willcraftia.Xna.Framework.UI
         /// Enabled が false の場合、Update メソッドは呼び出されません。
         /// </remarks>
         /// <param name="control"></param>
-        void UpdateControl(Control control)
+        void UpdateControl(Control control, GameTime gameTime)
         {
             if (!control.Enabled) return;
 
             // Control を更新します。
-            control.Update();
+            control.Update(gameTime);
 
             // 子 Control を再帰的に更新します。
-            foreach (var child in control.Children) UpdateControl(child);
+            foreach (var child in control.Children) UpdateControl(child, gameTime);
         }
 
         /// <summary>
