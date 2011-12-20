@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,7 +20,5 @@ namespace Willcraftia.Xna.Framework.UI
         Screen Screen { get; }
 
         ContentManager CreateContentManager();
-
-        IControlLaf GetControlLaf(Control control);
     }
 }

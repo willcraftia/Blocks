@@ -17,8 +17,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
             var bounds = button.GetAbsoluteBounds();
 
-            SpriteBatch.Begin();
-
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
@@ -38,8 +36,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
                     bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
                 SpriteBatch.DrawString(font, button.Text, position, button.FontColor);
             }
-
-            SpriteBatch.End();
         }
     }
 }

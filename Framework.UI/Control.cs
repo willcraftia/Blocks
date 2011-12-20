@@ -333,7 +333,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         public virtual void Update(GameTime gameTime)
         {
-            if (!Enabled) return;
+            if (!Enabled) throw new InvalidOperationException("This control is disabled.");
 
             if (!Arranged) Arrange();
 
@@ -350,25 +350,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// Visible が false の場合、Draw メソッドは呼び出されません。
         /// </remarks>
         /// <param name="gameTime"></param>
-        public virtual void Draw(GameTime gameTime)
-        {
-            // ここでは IControlLaf のみで描画します。
-            // 異なる方法で Control を描画したい場合には、そのための Control のサブクラスと IControlLaf の実装を作るか、
-            // あるいは Draw メソッドをオーバライドして描画ロジックを記述します。
-
-            if (Screen == null || !Visible) return;
-
-            // IControlLaf を取得します。
-            var laf = Screen.UIContext.GetControlLaf(this);
-            // IControlLaf に描画を委譲します。
-            if (laf != null) laf.Draw(this);
-
-            // 子を描画します。
-            foreach (var child in Children)
-            {
-                if (child.Visible) child.Draw(gameTime);
-            }
-        }
+        public virtual void Draw(GameTime gameTime) { }
 
         /// <summary>
         /// マウス カーソル移動を処理します。

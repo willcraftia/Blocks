@@ -16,9 +16,9 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
 
             var bounds = window.GetAbsoluteBounds();
 
-            SpriteBatch.Begin();
             // 背景色で塗り潰します。
             SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, window.BackgroundColor);
+
             // 少し小さくした領域を半透明黒で覆います (ブレンドしつつ枠を作ります)。
             var inBounds = bounds;
             inBounds.X += 2;
@@ -26,7 +26,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
             inBounds.Width -= 4;
             inBounds.Height -= 4;
             SpriteBatch.Draw(Source.UIContext.FillTexture, inBounds, Color.Black * 0.8f);
-            SpriteBatch.End();
         }
     }
 }

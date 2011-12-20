@@ -44,8 +44,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             var color = window.BackgroundColor;
             var unit = Source.SpriteSize;
 
-            SpriteBatch.Begin();
-
             // Top Lines
             SpriteBatch.Draw(topLeft, new Rectangle(bounds.X, bounds.Y, unit, unit), color);
             for (int x = unit; x < bounds.Width - unit; x += unit)
@@ -72,8 +70,6 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
                 SpriteBatch.Draw(bottom, new Rectangle(bounds.X + x, bounds.Y + bounds.Height - unit, unit, unit), color);
             }
             SpriteBatch.Draw(bottomRight, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y + bounds.Height - unit, unit, unit), color);
-
-            SpriteBatch.End();
         }
     }
 }

@@ -17,10 +17,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
             if (overlay.BackgroundColor.A == 0.0f) return;
 
             var bounds = overlay.GetAbsoluteBounds();
-
-            SpriteBatch.Begin();
             SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, overlay.BackgroundColor);
-            SpriteBatch.End();
         }
     }
 }

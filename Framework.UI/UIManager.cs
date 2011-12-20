@@ -14,6 +14,51 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public class UIManager : DrawableGameComponent, IUIService, IUIContext
     {
+        #region Scissor
+
+        private class Scissor : IDisposable
+        {
+            UIManager uiManager;
+
+            Rectangle previousScissorRectangle;
+
+            public Scissor(UIManager uiManager, ref Rectangle scissorRectangle)
+            {
+                this.uiManager = uiManager;
+                BeginClipping(ref scissorRectangle);
+            }
+
+            public void Dispose()
+            {
+                EndClipping();
+            }
+
+            void BeginClipping(ref Rectangle scissorRectangle)
+            {
+                var spriteBatch = uiManager.SpriteBatch;
+                var graphicsDevice = uiManager.GraphicsDevice;
+
+                spriteBatch.End();
+
+                previousScissorRectangle = graphicsDevice.ScissorRectangle;
+                graphicsDevice.ScissorRectangle = scissorRectangle;
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
+            }
+
+            void EndClipping()
+            {
+                var spriteBatch = uiManager.SpriteBatch;
+                var graphicsDevice = spriteBatch.GraphicsDevice;
+
+                spriteBatch.End();
+
+                graphicsDevice.ScissorRectangle = previousScissorRectangle;
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
+            }
+        }
+
+        #endregion
+
         IInputService inputService;
 
         IInputCapturer inputCapturer;
@@ -21,6 +66,8 @@ namespace Willcraftia.Xna.Framework.UI
         Screen screen;
 
         IControlLafSource controlLafSource;
+
+        RasterizerState scissorTestRasterizerState;
 
         // I/F
         public SpriteBatch SpriteBatch { get; private set; }
@@ -98,21 +145,16 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // サービスとして登録
             Game.Services.AddService(typeof(IUIService), this);
+            scissorTestRasterizerState = new RasterizerState()
+            {
+                ScissorTestEnable = true
+            };
         }
 
         // I/F
         public ContentManager CreateContentManager()
         {
             return new ContentManager(Game.Services);
-        }
-
-        // I/F
-        public IControlLaf GetControlLaf(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            if (ControlLafSource == null) return null;
-
-            return ControlLafSource.GetControlLaf(control);
         }
 
         public override void Initialize()
@@ -136,7 +178,9 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (Screen == null) return;
 
-            Screen.Draw(gameTime);
+            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
+            DrawControl(gameTime, Screen);
+            SpriteBatch.End();
 
             base.Draw(gameTime);
         }
@@ -158,6 +202,39 @@ namespace Willcraftia.Xna.Framework.UI
             if (ControlLafSource != null) ControlLafSource.Dispose();
 
             base.UnloadContent();
+        }
+
+        IControlLaf GetControlLaf(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+            if (ControlLafSource == null) return null;
+
+            return ControlLafSource.GetControlLaf(control);
+        }
+
+        void DrawControl(GameTime gameTime, Control control)
+        {
+            // Control が不可視ならば描画しません。
+            if (!control.Visible) return;
+
+            // IControlLaf を取得します。
+            var laf = GetControlLaf(control);
+            // IControlLaf を描画します。
+            if (laf != null) laf.Draw(control);
+
+            // 独自の描画があるならば描画します。
+            control.Draw(gameTime);
+
+            if (control.Children.Count != 0)
+            {
+                // 子を描画する前に自分の描画領域でクリッピングします。
+                var bounds = control.GetAbsoluteBounds();
+                using (var scissor = new Scissor(this, ref bounds))
+                {
+                    // 子を再帰的に描画します。
+                    foreach (var child in control.Children) DrawControl(gameTime, child);
+                }
+            }
         }
     }
 }

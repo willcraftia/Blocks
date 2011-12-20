@@ -16,10 +16,8 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
 
             var bounds = overlay.GetAbsoluteBounds();
 
-            SpriteBatch.Begin();
             // 常に半透明黒で覆うようにします。
             SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, Color.Black * 0.5f);
-            SpriteBatch.End();
         }
     }
 }
