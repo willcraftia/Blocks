@@ -16,6 +16,19 @@ namespace Willcraftia.Xna.Framework.UI
     {
         #region Scissor
 
+        /// <summary>
+        /// Control 描画のための GraphicsDevice の ScissorRectangle および SpriteBatch の Begin/End 状態を管理するクラスです。
+        /// </summary>
+        /// <remarks>
+        /// Control の描画は再帰的に行うため、スタック的に ScissorRectangle の状態を維持する必要があります。
+        /// ここで、GraphicsDevice の ScissorRectangle は、SpriteBatch の Begin 前に設定しなければ、
+        /// SpriteBatch による描画で有効になりません。
+        /// このため、using 区を用いてこのクラスのインスタンスを管理することを前提に、
+        /// Scissor インスタンス生成で SpriteBatch の状態を End させ、
+        /// GraphicsDevice に新たな ScissorRectangle を設定して SpriteBatch を Begin し、
+        /// using 終了による Dispose 呼び出しにて SpriteBatch を End し、前回の ScissorRectangle を再設定して SpriteBatch を Begin します。
+        /// これにより、GraphicsDevice の ScissorRectangle の状態と SpriteBatch の Begin/End の状態を論理的にスタック化できます。
+        /// </remarks>
         private class Scissor : IDisposable
         {
             UIManager uiManager;
@@ -28,6 +41,7 @@ namespace Willcraftia.Xna.Framework.UI
                 BeginClipping(ref scissorRectangle);
             }
 
+            // I/F
             public void Dispose()
             {
                 EndClipping();
@@ -204,14 +218,14 @@ namespace Willcraftia.Xna.Framework.UI
             base.UnloadContent();
         }
 
-        IControlLaf GetControlLaf(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            if (ControlLafSource == null) return null;
-
-            return ControlLafSource.GetControlLaf(control);
-        }
-
+        /// <summary>
+        /// Control を再帰的に描画します。
+        /// </summary>
+        /// <remarks>
+        /// Control はその親 Control の描画領域でクリッピングされます。
+        /// </remarks>
+        /// <param name="gameTime"></param>
+        /// <param name="control"></param>
         void DrawControl(GameTime gameTime, Control control)
         {
             // Control が不可視ならば描画しません。
@@ -235,6 +249,13 @@ namespace Willcraftia.Xna.Framework.UI
                     foreach (var child in control.Children) DrawControl(gameTime, child);
                 }
             }
+        }
+
+        IControlLaf GetControlLaf(Control control)
+        {
+            if (ControlLafSource == null) return null;
+
+            return ControlLafSource.GetControlLaf(control);
         }
     }
 }
