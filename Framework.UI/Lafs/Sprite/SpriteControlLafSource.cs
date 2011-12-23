@@ -12,9 +12,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     public class SpriteControlLafSource : ControlLafSourceBase
     {
-        string contentRootDirectory;
-
-        Dictionary<Type, SpriteControlLafBase> controlLafs;
+        Dictionary<Type, SpriteControlLafBase> controlLafs = new Dictionary<Type, SpriteControlLafBase>();
 
         public int SpriteSize { get; set; }
 
@@ -25,10 +23,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         public SpriteControlLafSource(string contentRootDirectory)
             : base(contentRootDirectory)
         {
-            this.contentRootDirectory = contentRootDirectory;
             SpriteSize = 16;
-
-            controlLafs = new Dictionary<Type, SpriteControlLafBase>();
 
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Controls.Window), new WindowLaf());

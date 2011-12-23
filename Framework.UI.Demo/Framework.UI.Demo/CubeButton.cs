@@ -44,8 +44,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             effect.Alpha = 1;
             effect.EnableDefaultLighting();
 
-            graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            graphicsDevice.BlendState = BlendState.Opaque;
+            //graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            //graphicsDevice.BlendState = BlendState.Opaque;
 
             CubePrimitive.Draw(effect);
 

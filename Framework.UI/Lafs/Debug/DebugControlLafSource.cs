@@ -11,9 +11,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     public class DebugControlLafSource : ControlLafSourceBase
     {
-        string contentRootDirectory;
-
-        Dictionary<Type, DebugControlLafBase> controlLafs;
+        Dictionary<Type, DebugControlLafBase> controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
         public SpriteFont Font { get; private set; }
         
@@ -22,10 +20,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
         public DebugControlLafSource(string contentRootDirectory)
             : base(contentRootDirectory)
         {
-            this.contentRootDirectory = contentRootDirectory;
-
-            controlLafs = new Dictionary<Type, DebugControlLafBase>();
-
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Controls.Window), new WindowLaf());
             RegisterControlLaf(typeof(Controls.Button), new ButtonLaf());
