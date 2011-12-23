@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI.Controls;
-using Willcraftia.Xna.Framework.UI.Visuals;
-using Willcraftia.Xna.Framework.UI.Visuals.Debug;
-using Willcraftia.Xna.Framework.UI.Visuals.Sprite;
+using Willcraftia.Xna.Framework.UI.Lafs;
+using Willcraftia.Xna.Framework.UI.Lafs.Debug;
+using Willcraftia.Xna.Framework.UI.Lafs.Sprite;
 
 #endregion
 

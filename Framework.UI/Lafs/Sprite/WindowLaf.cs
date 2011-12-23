@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
+namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     public class WindowLaf : SpriteControlLafBase
     {

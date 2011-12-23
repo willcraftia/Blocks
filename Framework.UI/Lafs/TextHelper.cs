@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     public static class TextHelper
     {

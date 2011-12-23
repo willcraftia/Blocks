@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     public abstract class ControlLafBase : IControlLaf
     {

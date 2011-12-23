@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
+namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
-    public abstract class DebugControlLafBase : ControlLafBase
+    public abstract class SpriteControlLafBase : ControlLafBase
     {
-        public DebugControlLafSource Source { get; set; }
+        public SpriteControlLafSource Source { get; set; }
 
         protected ContentManager Content { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
 
         protected SpriteBatch SpriteBatch { get; private set; }
 
-        protected DebugControlLafBase() { }
+        protected SpriteControlLafBase() { }
 
         public override void Initialize()
         {

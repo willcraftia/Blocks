@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Visuals
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     public abstract class ControlLafSourceBase : IControlLafSource
     {

@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI.Controls;
-using Willcraftia.Xna.Framework.UI.Visuals;
+using Willcraftia.Xna.Framework.UI.Lafs;
 
 #endregion
 
