@@ -17,6 +17,8 @@ namespace Willcraftia.Xna.Framework.UI
 
         Texture2D FillTexture { get; }
 
+        BasicEffect BasicEffect { get; }
+
         Screen Screen { get; }
 
         ContentManager CreateContentManager();

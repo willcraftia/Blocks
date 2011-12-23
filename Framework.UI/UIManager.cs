@@ -89,6 +89,9 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public Texture2D FillTexture { get; private set; }
 
+        // I/F
+        public BasicEffect BasicEffect { get; private set; }
+
         public IInputCapturer InputCapturer
         {
             get { return inputCapturer; }
@@ -203,6 +206,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
+            BasicEffect = new BasicEffect(GraphicsDevice);
 
             if (ControlLafSource != null) ControlLafSource.Initialize();
 

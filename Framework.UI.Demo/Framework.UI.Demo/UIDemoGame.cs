@@ -27,6 +27,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         SpriteControlLafSource spriteControlLafSource;
 
+        Graphics.GeometricPrimitive cubePrimitive;
+
         public UIDemoGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -125,6 +127,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         void LoadSimpleWindowDemoGui()
         {
+            var cubePrimitiveFactory = new Graphics.CubePrimitiveFactory();
+            cubePrimitiveFactory.Size = 1;
+            cubePrimitive = cubePrimitiveFactory.Create(GraphicsDevice);
+
             // Unit size.
             int u = 32;
 
@@ -247,8 +253,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     //window.Children.Add(button);
                 }
                 {
-                    var button = new Button();
-                    button.Text = "Just Button #1";
+                    var button = new CubeButton();
+                    button.CubePrimitive = cubePrimitive;
+                    //button.Text = "Just Button #1";
                     button.FontColor = Color.White;
                     button.Width = u * 5;
                     button.Height = u;
@@ -279,6 +286,32 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            //var effect = new BasicEffect(GraphicsDevice);
+
+            //float time = (float) gameTime.TotalGameTime.TotalSeconds;
+
+            //float yaw = time * 0.4f;
+            //float pitch = time * 0.7f;
+            //float roll = time * 1.1f;
+
+            //var cameraPosition = new Vector3(0, 0, 2.5f);
+
+            //var viewport = GraphicsDevice.Viewport;
+
+            //var aspect = viewport.AspectRatio;
+
+            //effect.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
+            //effect.View = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
+            //effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 10);
+            //effect.DiffuseColor = Color.Red.ToVector3();
+            //effect.Alpha = 1;
+            //effect.EnableDefaultLighting();
+
+            //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            //GraphicsDevice.BlendState = BlendState.Opaque;
+
+            //cubePrimitive.Draw(effect);
 
             base.Draw(gameTime);
         }
