@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI
+namespace Willcraftia.Xna.Framework.UI.Controls
 {
     public class Overlay : Control
     {

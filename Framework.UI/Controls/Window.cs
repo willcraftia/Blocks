@@ -5,7 +5,7 @@ using Willcraftia.Xna.Framework.Input;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI
+namespace Willcraftia.Xna.Framework.UI.Controls
 {
     /// <summary>
     /// Window を表す Control です。

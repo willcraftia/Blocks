@@ -1,11 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,61 +10,6 @@ namespace Willcraftia.Xna.Framework.Graphics
 {
     public sealed class Grid
     {
-        #region Fields and Properties
-
-        GraphicsDevice graphicsDevice;
-        BasicEffect basicEffect;
-        VertexPositionColor[] vertices;
-        VertexBuffer vertexBuffer;
-        bool vertexBufferDirty = true;
-
-        int lineCount;
-
-        float cellSize;
-
-        /// <summary>
-        /// セルのサイズ。
-        /// </summary>
-        public float CellSize
-        {
-            get { return cellSize; }
-            set
-            {
-                cellSize = value;
-                vertexBufferDirty = true;
-            }
-        }
-
-        int quadrantCellCount;
-
-        /// <summary>
-        /// 第 1 象限 X 方向のセル数。
-        /// </summary>
-        public int QuadrantCellCount
-        {
-            get { return QuadrantCellCount; }
-            set
-            {
-                QuadrantCellCount = value;
-                vertexBufferDirty = true;
-            }
-        }
-
-        Color gridColor = Color.LightGray;
-
-        /// <summary>
-        /// グリッド色。
-        /// </summary>
-        public Color GridColor
-        {
-            get { return gridColor; }
-            set
-            {
-                gridColor = value;
-                vertexBufferDirty = true;
-            }
-        }
-
         /// <summary>
         /// View 行列。
         /// </summary>
@@ -86,9 +26,62 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// </remarks>
         public Matrix Projection = Matrix.Identity;
 
-        #endregion
+        GraphicsDevice graphicsDevice;
 
-        #region Constructors
+        BasicEffect basicEffect;
+        
+        VertexPositionColor[] vertices;
+        
+        VertexBuffer vertexBuffer;
+        
+        bool vertexBufferDirty = true;
+
+        int lineCount;
+
+        float cellSize;
+
+        int quadrantCellCount;
+
+        Color gridColor = Color.LightGray;
+
+        /// <summary>
+        /// セルのサイズ。
+        /// </summary>
+        public float CellSize
+        {
+            get { return cellSize; }
+            set
+            {
+                cellSize = value;
+                vertexBufferDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// 第 1 象限 X 方向のセル数。
+        /// </summary>
+        public int QuadrantCellCount
+        {
+            get { return QuadrantCellCount; }
+            set
+            {
+                QuadrantCellCount = value;
+                vertexBufferDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// グリッド色。
+        /// </summary>
+        public Color GridColor
+        {
+            get { return gridColor; }
+            set
+            {
+                gridColor = value;
+                vertexBufferDirty = true;
+            }
+        }
 
         /// <summary>
         /// コンストラクタ。
@@ -139,10 +132,7 @@ namespace Willcraftia.Xna.Framework.Graphics
 
                 // Resolve axis color
                 var color = gridColor;
-                if (cursorX == 0.0f)
-                {
-                    color = Color.Blue;
-                }
+                if (cursorX == 0.0f) color = Color.Blue;
 
                 vertices[i] = new VertexPositionColor(v0, color);
                 vertices[i + 1] = new VertexPositionColor(v1, color);
@@ -156,10 +146,7 @@ namespace Willcraftia.Xna.Framework.Graphics
 
                 // Resolve axis color
                 color = gridColor;
-                if (cursorZ == 0.0f)
-                {
-                    color = Color.Red;
-                }
+                if (cursorZ == 0.0f) color = Color.Red;
 
                 vertices[i + 2] = new VertexPositionColor(v2, color);
                 vertices[i + 3] = new VertexPositionColor(v3, color);
@@ -168,10 +155,7 @@ namespace Willcraftia.Xna.Framework.Graphics
                 cursorZ += cellSize;
             }
 
-            if (vertexBuffer != null)
-            {
-                vertexBuffer.Dispose();
-            }
+            if (vertexBuffer != null) vertexBuffer.Dispose();
 
             vertexBuffer = new VertexBuffer(graphicsDevice, typeof(VertexPositionColor), vertices.Length, BufferUsage.None);
             vertexBuffer.SetData<VertexPositionColor>(vertices);
@@ -179,14 +163,9 @@ namespace Willcraftia.Xna.Framework.Graphics
             vertexBufferDirty = false;
         }
 
-        #endregion
-
         public void Draw()
         {
-            if (vertexBufferDirty)
-            {
-                InitializeVertices();
-            }
+            if (vertexBufferDirty) InitializeVertices();
 
             basicEffect.View = View;
             basicEffect.Projection = Projection;

@@ -92,6 +92,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Visuals\ControlLafBase.cs" />
     <Compile Include="Visuals\ControlLafSourceBase.cs" />
     <Compile Include="Controls\Orientation.cs" />
@@ -100,7 +101,7 @@
     <Compile Include="IControlLaf.cs" />
     <Compile Include="IControlLafSource.cs" />
     <Compile Include="IUIContext.cs" />
-    <Compile Include="Overlay.cs" />
+    <Compile Include="Controls\Overlay.cs" />
     <Compile Include="Thickness.cs" />
     <Compile Include="VerticalAlignment.cs" />
     <Compile Include="Controls\Button.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="ControlCollection.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Visuals\Debug\ButtonLaf.cs" />
+    <Compile Include="Visuals\Debug\CanvasLaf.cs" />
     <Compile Include="Visuals\Debug\DebugControlLafBase.cs" />
     <Compile Include="Visuals\Debug\DebugControlLafSource.cs" />
     <Compile Include="Visuals\Debug\OverlayLaf.cs" />
@@ -124,7 +126,7 @@
     <Compile Include="Visuals\Sprite\SpriteControlLafSource.cs" />
     <Compile Include="Visuals\Sprite\WindowLaf.cs" />
     <Compile Include="Visuals\TextHelper.cs" />
-    <Compile Include="Window.cs" />
+    <Compile Include="Controls\Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework.Input\Framework.Input.csproj">

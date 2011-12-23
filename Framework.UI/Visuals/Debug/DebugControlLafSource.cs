@@ -27,9 +27,9 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
             controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
             // デフォルトの ControlLafBase を設定しておきます。
-            RegisterControlLaf(typeof(Window), new WindowLaf());
+            RegisterControlLaf(typeof(Controls.Window), new WindowLaf());
             RegisterControlLaf(typeof(Controls.Button), new ButtonLaf());
-            RegisterControlLaf(typeof(Overlay), new OverlayLaf());
+            RegisterControlLaf(typeof(Controls.Overlay), new OverlayLaf());
         }
 
         public void RegisterControlLaf(Type type, DebugControlLafBase controlLaf)

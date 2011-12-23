@@ -1,16 +1,7 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -19,51 +10,12 @@ namespace Willcraftia.Xna.Framework
     /// <summary>
     /// POV (Point of View) を表すクラスです。
     /// </summary>
-    /// <remarks>
-    /// このクラスはカメラを表しているに等しいです。
-    /// しかし、このライブラリにはシーン内カメラを表す CameraActor があり、
-    /// それとの混同を避けるために、このクラスは Camera クラスではなく Pov クラスと命名しています。
-    /// </remarks>
     public sealed class Pov
     {
-        #region Fields and Properties
-
-        // 座標ベクトル。
-        // アクセス頻度が高いこと、しかし、行列演算を考慮した更新フラグ制御を用いたいことにより、
-        // これは out/ref を用いた getter/setter でアクセスします。
-        Vector3 Position = Vector3.Zero;
-        
-        // 姿勢行列。
-        // アクセス頻度が高いこと、しかし、行列演算を考慮した更新フラグ制御を用いたいことにより、
-        // これは out/ref を用いた getter/setter でアクセスします。
-        Matrix Orientation = Matrix.Identity;
-
         /// <summary>
         /// デフォルトの FOV。
         /// </summary>
         public const float DefaultFov = MathHelper.PiOver4;
-
-        float fov = DefaultFov;
-
-        /// <summary>
-        /// y 方向の視野角 (ラジアン単位)。
-        /// </summary>
-        /// <remarks>
-        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
-        /// </remarks>
-        [DefaultValue(DefaultFov)]
-        public float Fov
-        {
-            get { return fov; }
-            set
-            {
-                if (fov != value)
-                {
-                    fov = value;
-                    projectionDirty = true;
-                }
-            }
-        }
 
         /// <summary>
         /// 1 : 1 のアスペクト比。
@@ -89,149 +41,103 @@ namespace Willcraftia.Xna.Framework
         /// </remarks>
         public const float AspectRatio16x9 = 16.0f / 9.0f;
 
-        float aspectRatio = AspectRatio4x3;
-
-        /// <summary>
-        /// アスペクト比 (ビュー空間の幅を高さで除算して定義)。
-        /// </summary>
-        /// <remarks>
-        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
-        /// 0 以下の値を設定した場合、
-        /// 実行時の Viewport のアスペクト比が自動的に設定されるように制御する必要があります。
-        /// </remarks>
-        [DefaultValue(AspectRatio4x3)]
-        public float AspectRatio
-        {
-            get { return aspectRatio; }
-            set
-            {
-                if (aspectRatio != value)
-                {
-                    aspectRatio = value;
-                    projectionDirty = true;
-                }
-            }
-        }
-
         /// <summary>
         /// 近くのビュー プレーンとの距離のデフォルト。
         /// </summary>
         public const float DefaultNearPlaneDistance = 0.1f;
-
-        float nearPlaneDistance = DefaultNearPlaneDistance;
-
-        /// <summary>
-        /// 近くのビュー プレーンとの距離。
-        /// </summary>
-        /// <remarks>
-        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
-        /// </remarks>
-        [DefaultValue(DefaultNearPlaneDistance)]
-        public float NearPlaneDistance
-        {
-            get { return nearPlaneDistance; }
-            set
-            {
-                if (nearPlaneDistance != value)
-                {
-                    nearPlaneDistance = value;
-                    projectionDirty = true;
-                }
-            }
-        }
 
         /// <summary>
         /// 遠くのビュー プレーンとの距離のデフォルト。
         /// </summary>
         public const float DefaultFarPlaneDistance = 1000.0f;
 
-        float farPlaneDistance = DefaultFarPlaneDistance;
-
-        /// <summary>
-        /// 遠くのビュー プレーンとの距離。
-        /// </summary>
-        /// <remarks>
-        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
-        /// </remarks>
-        [DefaultValue(DefaultFarPlaneDistance)]
-        public float FarPlaneDistance
-        {
-            get { return farPlaneDistance; }
-            set
-            {
-                if (farPlaneDistance != value)
-                {
-                    farPlaneDistance = value;
-                    projectionDirty = true;
-                }
-            }
-        }
-
         /// <summary>
         /// デフォルトの焦点距離。
         /// </summary>
         public const float DefaultFocusDistance = 3.0f;
-
-        float focusDistance = DefaultFocusDistance;
-
-        /// <summary>
-        /// 焦点距離。
-        /// </summary>
-        [DefaultValue(DefaultFocusDistance)]
-        public float FocusDistance
-        {
-            get { return focusDistance; }
-            set
-            {
-                if (focusDistance != value)
-                {
-                    focusDistance = value;
-                    projectionDirty = true;
-                }
-            }
-        }
 
         /// <summary>
         /// デフォルトの焦点範囲。
         /// </summary>
         public const float DefaultFocusRange = 300.0f;
 
-        float focusRange = DefaultFocusRange;
-
-        /// <summary>
-        /// 焦点範囲。
-        /// </summary>
-        [DefaultValue(DefaultFocusRange)]
-        public float FocusRange
-        {
-            get { return focusRange; }
-            set
-            {
-                if (focusRange != value)
-                {
-                    focusRange = value;
-                    projectionDirty = true;
-                }
-            }
-        }
-
         /// <summary>
         /// View 行列。
         /// </summary>
-        [ContentSerializerIgnore]
+        /// <remarks>
+        /// このフィールドには Update メソッドによる View 行列演算結果が設定されます。
+        /// View 行列は極めて頻繁に用いられるため、隠蔽よりも速度を重視して公開フィールドとしています。
+        /// また、このクラス以外のクラスが、この公開フィールドへ直接値を設定しないことを規約としておきます。
+        /// </remarks>
         public Matrix View = Matrix.Identity;
 
         /// <summary>
         /// Projection 行列。
         /// </summary>
-        [ContentSerializerIgnore]
+        /// <remarks>
+        /// このフィールドには Update メソッドによる Projection 行列演算結果が設定されます。
+        /// View 行列は極めて頻繁に用いられるため、隠蔽よりも速度を重視して公開フィールドとしています。
+        /// また、このクラス以外のクラスが、この公開フィールドへ直接値を設定しないことを規約としておきます。
+        /// </remarks>
         public Matrix Projection = Matrix.Identity;
 
         /// <summary>
         /// View * Projection 行列。
         /// </summary>
-        [ContentSerializerIgnore]
+        /// <remarks>
+        /// このフィールドには Update メソッドによる View * Projection 行列演算結果が設定されます。
+        /// View * Projection 行列は極めて頻繁に用いられるため、隠蔽よりも速度を重視して公開フィールドとしています。
+        /// また、このクラス以外のクラスが、この公開フィールドへ直接値を設定しないことを規約としておきます。
+        /// </remarks>
         public Matrix ViewProjection = Matrix.Identity;
+
+        /// <summary>
+        /// 座標ベクトル。
+        /// </summary>
+        /// <remarks>
+        /// このフィールドは極めて頻繁に用いられるものの、行列演算を考慮した更新フラグ制御を行う必要から、
+        /// out/ref を用いた getter/setter メソッドにより取得および設定を行います。
+        /// </remarks>
+        Vector3 Position = Vector3.Zero;
+
+        /// <summary>
+        /// 姿勢行列。
+        /// </summary>
+        /// <remarks>
+        /// このフィールドは極めて頻繁に用いられるものの、行列演算を考慮した更新フラグ制御を行う必要から、
+        /// out/ref を用いた getter/setter メソッドにより取得および設定を行います。
+        /// </remarks>
+        Matrix Orientation = Matrix.Identity;
+
+        /// <summary>
+        ///  y 方向の視野角 (ラジアン単位)。
+        /// </summary>
+        float fov = DefaultFov;
+
+        /// <summary>
+        /// アスペクト比。
+        /// </summary>
+        float aspectRatio = AspectRatio4x3;
+
+        /// <summary>
+        /// 近くのビュー プレーンとの距離。
+        /// </summary>
+        float nearPlaneDistance = DefaultNearPlaneDistance;
+
+        /// <summary>
+        /// 遠くのビュー プレーンとの距離。
+        /// </summary>
+        float farPlaneDistance = DefaultFarPlaneDistance;
+
+        /// <summary>
+        /// 焦点距離。
+        /// </summary>
+        float focusDistance = DefaultFocusDistance;
+
+        /// <summary>
+        /// 焦点範囲。
+        /// </summary>
+        float focusRange = DefaultFocusRange;
 
         // View 更新フラグ。
         bool viewDirty = true;
@@ -239,9 +145,109 @@ namespace Willcraftia.Xna.Framework
         // Projection 更新フラグ。
         bool projectionDirty = true;
 
-        #endregion
+        /// <summary>
+        /// y 方向の視野角 (ラジアン単位)。
+        /// </summary>
+        /// <remarks>
+        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
+        /// </remarks>
+        public float Fov
+        {
+            get { return fov; }
+            set
+            {
+                if (fov == value) return;
 
-        #region Getter/Setter
+                fov = value;
+                projectionDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// アスペクト比。
+        /// </summary>
+        /// <remarks>
+        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
+        /// 0 以下の値を設定した場合、
+        /// 実行時の Viewport のアスペクト比が自動的に設定されるように制御する必要があります。
+        /// </remarks>
+        public float AspectRatio
+        {
+            get { return aspectRatio; }
+            set
+            {
+                if (aspectRatio == value) return;
+
+                aspectRatio = value;
+                projectionDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// 近くのビュー プレーンとの距離。
+        /// </summary>
+        /// <remarks>
+        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
+        /// </remarks>
+        public float NearPlaneDistance
+        {
+            get { return nearPlaneDistance; }
+            set
+            {
+                if (nearPlaneDistance == value) return;
+
+                nearPlaneDistance = value;
+                projectionDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// 遠くのビュー プレーンとの距離。
+        /// </summary>
+        /// <remarks>
+        /// 値を変更した場合、同時に Projection 更新フラグが ON に変更されます。
+        /// </remarks>
+        public float FarPlaneDistance
+        {
+            get { return farPlaneDistance; }
+            set
+            {
+                if (farPlaneDistance == value) return;
+
+                farPlaneDistance = value;
+                projectionDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// 焦点距離。
+        /// </summary>
+        public float FocusDistance
+        {
+            get { return focusDistance; }
+            set
+            {
+                if (focusDistance == value) return;
+
+                focusDistance = value;
+                projectionDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// 焦点範囲。
+        /// </summary>
+        public float FocusRange
+        {
+            get { return focusRange; }
+            set
+            {
+                if (focusRange == value) return;
+
+                focusRange = value;
+                projectionDirty = true;
+            }
+        }
 
         /// <summary>
         /// 位置ベクトルを取得します。
@@ -280,10 +286,6 @@ namespace Willcraftia.Xna.Framework
             Orientation = orientation;
             viewDirty = true;
         }
-
-        #endregion
-
-        #region Update
 
         /// <summary>
         /// View 更新フラグによらず View 行列を更新します。
@@ -378,6 +380,12 @@ namespace Willcraftia.Xna.Framework
             }
         }
 
+        /// <summary>
+        /// View 行列のみを更新します。
+        /// </summary>
+        /// <remarks>
+        /// View 更新フラグの値によらず View 行列を更新した後、View 更新フラグを OFF に設定します。
+        /// </remarks>
         void UpdateViewOnly()
         {
             var target = Position + Orientation.Forward;
@@ -386,17 +394,28 @@ namespace Willcraftia.Xna.Framework
             viewDirty = false;
         }
 
+        /// <summary>
+        /// Projection 行列のみを更新します。
+        /// </summary>
+        /// <remarks>
+        /// Projection 更新フラグの値によらず Projection 行列を更新した後、Projection 更新フラグを OFF に設定します。
+        /// </remarks>
         void UpdateProjectionOnly()
         {
             Matrix.CreatePerspectiveFieldOfView(Fov, AspectRatio, NearPlaneDistance, FarPlaneDistance, out Projection);
             projectionDirty = false;
         }
 
+        /// <summary>
+        /// View * Projection 行列のみを更新します。
+        /// </summary>
+        /// <remarks>
+        /// View 行列と Projection 行列は更新しないため、それらの更新も必要ならば、
+        /// このメソッドの呼び出し前に更新しておく必要があります。
+        /// </remarks>
         void UpdateViewProjectionOnly()
         {
             Matrix.Multiply(ref View, ref Projection, out ViewProjection);
         }
-
-        #endregion
     }
 }

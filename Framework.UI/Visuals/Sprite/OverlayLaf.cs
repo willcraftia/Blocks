@@ -10,7 +10,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
     {
         public override void Draw(Control control)
         {
-            var overlay = control as Overlay;
+            var overlay = control as Controls.Overlay;
             if (overlay == null) return;
 
             // 完全透明ならば描画をスキップします。

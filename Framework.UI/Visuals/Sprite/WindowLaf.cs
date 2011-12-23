@@ -37,7 +37,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Sprite
 
         public override void Draw(Control control)
         {
-            var window = control as Window;
+            var window = control as Controls.Window;
             if (window == null) return;
 
             var bounds = window.GetAbsoluteBounds();

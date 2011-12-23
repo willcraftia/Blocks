@@ -11,7 +11,7 @@ namespace Willcraftia.Xna.Framework.UI.Visuals.Debug
     {
         public override void Draw(Control control)
         {
-            var overlay = control as Overlay;
+            var overlay = control as Controls.Overlay;
             if (overlay == null) return;
 
             var bounds = overlay.GetAbsoluteBounds();
