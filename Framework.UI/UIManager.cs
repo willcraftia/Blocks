@@ -245,12 +245,22 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (control.Children.Count != 0)
             {
-                // 子を描画する前に自分の描画領域でクリッピングします。
-                var bounds = control.GetAbsoluteBounds();
-                using (var scissor = new Scissor(this, ref bounds))
+                // 子を再帰的に描画します。
+                foreach (var child in control.Children)
                 {
-                    // 子を再帰的に描画します。
-                    foreach (var child in control.Children) DrawControl(gameTime, child);
+                    if (child.Clipped)
+                    {
+                        // 描画領域をクリッピングします。
+                        var bounds = control.RenderBounds;
+                        using (var scissor = new Scissor(this, ref bounds))
+                        {
+                            DrawControl(gameTime, child);
+                        }
+                    }
+                    else
+                    {
+                        DrawControl(gameTime, child);
+                    }
                 }
             }
         }

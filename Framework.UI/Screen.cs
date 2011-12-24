@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.Input;
 
 #endregion

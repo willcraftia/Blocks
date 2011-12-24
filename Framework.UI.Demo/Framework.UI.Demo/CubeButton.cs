@@ -12,6 +12,20 @@ namespace Willcraftia.Xna.Framework.UI.Demo
     {
         public Graphics.GeometricPrimitive CubePrimitive { get; set; }
 
+        public float Scale { get; set; }
+
+        public Matrix Orientation { get; set; }
+
+        Matrix view;
+
+        Matrix projection;
+
+        public CubeButton()
+        {
+            Scale = 1;
+            Orientation = Matrix.Identity;
+        }
+
         public override void Draw(GameTime gameTime)
         {
             var graphicsDevice = Screen.UIContext.GraphicsDevice;
@@ -19,15 +33,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             var effect = Screen.UIContext.BasicEffect;
 
-            float time = (float) gameTime.TotalGameTime.TotalSeconds;
-
-            float yaw = time * 0.4f;
-            float pitch = time * 0.7f;
-            float roll = time * 1.1f;
-
-            var cameraPosition = new Vector3(0, 0, 2.5f);
-
-            var bounds = GetAbsoluteBounds();
+            var bounds = RenderBounds;
             var viewport = graphicsDevice.Viewport;
             viewport.X = bounds.X;
             viewport.Y = bounds.Y;
@@ -35,12 +41,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             viewport.Height = bounds.Height;
             graphicsDevice.Viewport = viewport;
 
-            var aspect = ((float) viewport.Width / (float) viewport.Height);
-
-            effect.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-            effect.View = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
-            effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 10);
-            effect.DiffuseColor = Color.White.ToVector3();
+            effect.World = Orientation * Matrix.CreateScale(Scale);
+            effect.View = view;
+            effect.Projection = projection;
+            effect.DiffuseColor = ForegroundColor.ToVector3();
             effect.Alpha = 1;
             effect.EnableDefaultLighting();
 
@@ -52,6 +56,18 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             graphicsDevice.Viewport = previousViewport;
 
             base.Draw(gameTime);
+        }
+
+        protected override void OnRenderBoundsChanged()
+        {
+            var bounds = RenderBounds;
+            var aspect = ((float) bounds.Width / (float) bounds.Height);
+
+            var cameraPosition = new Vector3(0, 0, 2.5f);
+            view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
+            projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 0.1f, 10);
+
+            base.OnRenderBoundsChanged();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             var canvas = control as Controls.Canvas;
             if (canvas == null) return;
 
-            var bounds = canvas.GetAbsoluteBounds();
+            var bounds = canvas.RenderBounds;
             SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, canvas.BackgroundColor);
         }
     }

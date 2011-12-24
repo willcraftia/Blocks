@@ -108,7 +108,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     button.Height = u;
                     button.Margin = new Thickness(u, u, 0, 0);
                     button.Text = "NEW GAME";
-                    button.FontColor = Color.White;
+                    button.ForegroundColor = Color.White;
                     window.Children.Add(button);
                 }
                 {
@@ -117,7 +117,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     button.Height = u;
                     button.Margin = new Thickness(u, u * 2, 0, 0);
                     button.Text = "EXIT";
-                    button.FontColor = Color.White;
+                    button.ForegroundColor = Color.White;
                     window.Children.Add(button);
                 }
             }
@@ -128,7 +128,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         void LoadSimpleWindowDemoGui()
         {
             var cubePrimitiveFactory = new Graphics.CubePrimitiveFactory();
-            cubePrimitiveFactory.Size = 1;
             cubePrimitive = cubePrimitiveFactory.Create(GraphicsDevice);
 
             // Unit size.
@@ -172,7 +171,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 {
                     var button = new Button();
                     button.Text = "Open new dialog";
-                    button.FontColor = Color.White;
+                    button.ForegroundColor = Color.White;
                     button.Width = u * 5;
                     button.Height = u;
                     //button.Margin = new Thickness(u, u, 0, 0);
@@ -194,7 +193,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             var subButton = new Button();
                             subButton.Text = "Open new dialog";
                             subButton.TextHorizontalAlignment = HorizontalAlignment.Left;
-                            subButton.FontColor = Color.White;
+                            subButton.ForegroundColor = Color.White;
                             subButton.Width = u * 5;
                             subButton.Height = u;
                             subButton.HorizontalAlignment = HorizontalAlignment.Left;
@@ -213,7 +212,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                     var subSubButton = new Button();
                                     subSubButton.Text = "Close";
                                     subSubButton.TextHorizontalAlignment = HorizontalAlignment.Left;
-                                    subSubButton.FontColor = Color.White;
+                                    subSubButton.ForegroundColor = Color.White;
                                     subSubButton.Width = u * 2;
                                     subSubButton.Height = u;
                                     subSubButton.Margin = new Thickness(u, u, 0, 0);
@@ -233,7 +232,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             var subButton = new Button();
                             subButton.Text = "Close";
                             subButton.TextHorizontalAlignment = HorizontalAlignment.Left;
-                            subButton.FontColor = Color.White;
+                            subButton.ForegroundColor = Color.White;
                             subButton.Width = u * 2;
                             subButton.Height = u;
                             subButton.HorizontalAlignment = HorizontalAlignment.Left;
@@ -255,13 +254,24 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 {
                     var button = new CubeButton();
                     button.CubePrimitive = cubePrimitive;
+                    button.Clipped = false;
                     //button.Text = "Just Button #1";
-                    button.FontColor = Color.White;
+                    button.ForegroundColor = Color.White;
                     button.Width = u * 5;
                     button.Height = u;
                     //button.Margin = new Thickness(u * 6, u, 0, 0);
                     stackPanel.Children.Add(button);
                     //window.Children.Add(button);
+
+                    button.Animations.Add(new RotateCubeAnimation());
+                    button.MouseEntered += delegate(object s, EventArgs e)
+                    {
+                        button.Scale = 1.5f;
+                    };
+                    button.MouseLeft += delegate(object s, EventArgs e)
+                    {
+                        button.Scale = 1;
+                    };
                 }
                 window.Children.Add(stackPanel);
                 window.Show(screen);

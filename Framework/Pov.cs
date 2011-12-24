@@ -98,7 +98,7 @@ namespace Willcraftia.Xna.Framework
         /// このフィールドは極めて頻繁に用いられるものの、行列演算を考慮した更新フラグ制御を行う必要から、
         /// out/ref を用いた getter/setter メソッドにより取得および設定を行います。
         /// </remarks>
-        Vector3 Position = Vector3.Zero;
+        Vector3 position = Vector3.Zero;
 
         /// <summary>
         /// 姿勢行列。
@@ -107,7 +107,7 @@ namespace Willcraftia.Xna.Framework
         /// このフィールドは極めて頻繁に用いられるものの、行列演算を考慮した更新フラグ制御を行う必要から、
         /// out/ref を用いた getter/setter メソッドにより取得および設定を行います。
         /// </remarks>
-        Matrix Orientation = Matrix.Identity;
+        Matrix orientation = Matrix.Identity;
 
         /// <summary>
         ///  y 方向の視野角 (ラジアン単位)。
@@ -255,7 +255,7 @@ namespace Willcraftia.Xna.Framework
         /// <param name="result">位置ベクトル。</param>
         public void GetPosition(out Vector3 result)
         {
-            result = Position;
+            result = position;
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Willcraftia.Xna.Framework
         /// <param name="position">位置ベクトル。</param>
         public void SetPosition(ref Vector3 position)
         {
-            Position = position;
+            this.position = position;
             viewDirty = true;
         }
 
@@ -274,7 +274,7 @@ namespace Willcraftia.Xna.Framework
         /// <param name="result">姿勢行列。</param>
         public void GetOrientation(out Matrix result)
         {
-            result = Orientation;
+            result = orientation;
         }
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Willcraftia.Xna.Framework
         /// <param name="orientation">姿勢行列。</param>
         public void SetOrientation(ref Matrix orientation)
         {
-            Orientation = orientation;
+            this.orientation = orientation;
             viewDirty = true;
         }
 
@@ -388,9 +388,9 @@ namespace Willcraftia.Xna.Framework
         /// </remarks>
         void UpdateViewOnly()
         {
-            var target = Position + Orientation.Forward;
-            var up = Orientation.Up;
-            Matrix.CreateLookAt(ref Position, ref target, ref up, out View);
+            var target = position + orientation.Forward;
+            var up = orientation.Up;
+            Matrix.CreateLookAt(ref position, ref target, ref up, out View);
             viewDirty = false;
         }
 

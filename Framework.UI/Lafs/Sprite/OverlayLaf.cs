@@ -16,7 +16,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             // 完全透明ならば描画をスキップします。
             if (overlay.BackgroundColor.A == 0.0f) return;
 
-            var bounds = overlay.GetAbsoluteBounds();
+            var bounds = overlay.RenderBounds;
             SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, overlay.BackgroundColor);
         }
     }

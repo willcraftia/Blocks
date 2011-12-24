@@ -92,7 +92,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationCollection.cs" />
     <Compile Include="Controls\Canvas.cs" />
+    <Compile Include="Animation.cs" />
     <Compile Include="Lafs\ControlLafBase.cs" />
     <Compile Include="Lafs\ControlLafSourceBase.cs" />
     <Compile Include="Controls\Orientation.cs" />

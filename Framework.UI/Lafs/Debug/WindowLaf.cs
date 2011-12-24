@@ -14,7 +14,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             var window = control as Controls.Window;
             if (window == null) return;
 
-            var bounds = window.GetAbsoluteBounds();
+            var bounds = window.RenderBounds;
 
             // 背景色で塗り潰します。
             SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, window.BackgroundColor);

@@ -40,7 +40,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var window = control as Controls.Window;
             if (window == null) return;
 
-            var bounds = window.GetAbsoluteBounds();
+            var bounds = window.RenderBounds;
             var color = window.BackgroundColor;
             var unit = Source.SpriteSize;
 

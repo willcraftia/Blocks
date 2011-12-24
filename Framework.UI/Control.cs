@@ -27,6 +27,21 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
+        /// RenderBounds プロパティが変更された時に発生します。
+        /// </summary>
+        public event EventHandler RenderBoundsChanged;
+
+        /// <summary>
+        /// マウス カーソルが Control に入った時に発生します。
+        /// </summary>
+        public event EventHandler MouseEntered;
+
+        /// <summary>
+        /// マウス カーソルが Control から出た時に発生します。
+        /// </summary>
+        public event EventHandler MouseLeft;
+
+        /// <summary>
         /// Control の描画時の幅。
         /// </summary>
         float actualWidth = float.NaN;
@@ -67,9 +82,19 @@ namespace Willcraftia.Xna.Framework.UI
         bool visible = true;
 
         /// <summary>
+        /// true (自身と子 Control の描画サイズに有効な値が設定されている場合)、false (それ以外の場合)。
+        /// </summary>
+        bool arranged;
+
+        /// <summary>
         /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </summary>
         bool affectsOrdering;
+
+        /// <summary>
+        /// 絶対座標としての描画領域。
+        /// </summary>
+        Rectangle renderBounds;
 
         /// <summary>
         /// Control の外側の余白を取得または設定します。
@@ -125,9 +150,22 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 親の描画領域でクリップするかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// <value>
+        /// true (親の描画領域でクリップする場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Clipped { get; set; }
+
+        /// <summary>
         /// 背景色。
         /// </summary>
         public Color BackgroundColor { get; set; }
+
+        /// <summary>
+        /// 前景色
+        /// </summary>
+        public Color ForegroundColor { get; set; }
 
         /// <summary>
         /// 親 Control で配置される際に適用される、水平方向の配置方法を取得または設定します。
@@ -190,6 +228,11 @@ namespace Willcraftia.Xna.Framework.UI
         public ControlCollection Children { get; private set; }
 
         /// <summary>
+        /// Animation コレクションを取得します。
+        /// </summary>
+        public AnimationCollection Animations { get; private set; }
+
+        /// <summary>
         /// Control が有効かどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control が有効な場合)、false (それ以外の場合)。</value>
@@ -204,7 +247,6 @@ namespace Willcraftia.Xna.Framework.UI
 
                 // フォーカスを解除します。
                 Defocus();
-
                 // イベントを発生させます。
                 RaiseEnabledChanged();
             }
@@ -225,9 +267,44 @@ namespace Willcraftia.Xna.Framework.UI
 
                 // フォーカスを解除します。
                 Defocus();
+                // イベントを発生させます。
+                RaiseVisibleChanged();
+            }
+        }
+
+        /// <summary>
+        /// 自身と子 Control の描画サイズに有効な値が設定されているかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// <value>
+        /// true (自身と子 Control の描画サイズに有効な値が設定されている場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Arranged
+        {
+            get { return arranged; }
+            protected set
+            {
+                if (arranged == value) return;
+                arranged = value;
+            }
+        }
+
+        /// <summary>
+        /// 絶対座標としての描画領域を取得します。
+        /// </summary>
+        /// <remarks>
+        /// このプロパティは Arrange の呼び出しで算出されます。
+        /// </remarks>
+        public Rectangle RenderBounds
+        {
+            get { return renderBounds; }
+            protected set
+            {
+                if (renderBounds == value) return;
+
+                renderBounds = value;
 
                 // イベントを発生させます。
-                OnVisibleChanged();
+                RaiseRenderBoundsChanged();
             }
         }
 
@@ -245,14 +322,6 @@ namespace Willcraftia.Xna.Framework.UI
         {
             get { return Screen != null && Screen.HasFocus(this); }
         }
-
-        /// <summary>
-        /// 子 Control の描画時サイズに有効な値が設定されているかどうかを判定します。
-        /// </summary>
-        /// <value>
-        /// true (子 Control の描画時サイズに有効な値が設定されている場合)、false (それ以外の場合)。
-        /// </value>
-        public bool Arranged { get; protected internal set; }
 
         protected internal float ClampedWidth
         {
@@ -272,39 +341,27 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
+        /// <param name="affectsOrdering">
+        /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
+        /// </param>
         public Control(bool affectsOrdering)
         {
             this.affectsOrdering = affectsOrdering;
 
             Children = new ControlCollection(this);
-            Children.CollectionChanged += new NotifyCollectionChangedEventHandler(OnChildrenCollectionChanged);
+            Animations = new AnimationCollection(this);
 
             Width = float.NaN;
             Height = float.NaN;
             MaxWidth = float.PositiveInfinity;
             MaxHeight = float.PositiveInfinity;
-            BackgroundColor = Color.White;
+            Clipped = true;
+            ForegroundColor = Color.White;
+            BackgroundColor = Color.Black;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
 
             Focusable = true;
-        }
-
-        /// <summary>
-        /// スクリーン上の絶対座標による矩形サイズを取得します。
-        /// </summary>
-        /// <returns>スクリーン上の絶対座標。</returns>
-        public Rectangle GetAbsoluteBounds()
-        {
-            if (parent == null) return new Rectangle(0, 0, (int) ActualWidth, (int) ActualHeight);
-
-            var parentAbsoluteBounds = parent.GetAbsoluteBounds();
-
-            var absoluteBounds = new Rectangle((int) Margin.Left, (int) Margin.Top, (int) ActualWidth, (int) ActualHeight);
-            absoluteBounds.X += parentAbsoluteBounds.X;
-            absoluteBounds.Y += parentAbsoluteBounds.Y;
-
-            return absoluteBounds;
         }
 
         /// <summary>
@@ -335,8 +392,16 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (!Enabled) throw new InvalidOperationException("This control is disabled.");
 
+            // 必要ならば Control の描画サイズを計算します。
             if (!Arranged) Arrange();
 
+            // Animation を更新します。
+            foreach (var animation in Animations)
+            {
+                if (animation.Enabled) animation.Update(gameTime);
+            }
+
+            // 再帰的に子 Control を更新します。
             foreach (var child in Children)
             {
                 if (child.Enabled) child.Update(gameTime);
@@ -437,7 +502,7 @@ namespace Willcraftia.Xna.Framework.UI
             else
             {
                 // 自分がマウス オーバ状態なのでイベント ハンドラを呼びます。
-                OnMouseLeft();
+                RaiseMouseLeft();
             }
 
             // マウス オーバ状態を解除します。
@@ -502,10 +567,40 @@ namespace Willcraftia.Xna.Framework.UI
             activatedControl = null;
         }
 
+        /// <summary>
+        /// Children が変更された場合に呼び出されます。
+        /// </summary>
+        internal void ProcessChildrenCollectionChanged()
+        {
+            ResetChildMouseOverControl();
+            // 再配置させます。
+            Arranged = false;
+        }
+
         protected internal virtual void Arrange()
         {
             if (Arranged) return;
 
+            if (parent == null)
+            {
+                RenderBounds = new Rectangle(0, 0, (int) ActualWidth, (int) ActualHeight);
+            }
+            else
+            {
+                var parentBounds = parent.RenderBounds;
+                var bounds = new Rectangle((int) Margin.Left, (int) Margin.Top, (int) ActualWidth, (int) ActualHeight);
+                bounds.X += parentBounds.X;
+                bounds.Y += parentBounds.Y;
+                RenderBounds = bounds;
+            }
+
+            ArrangeChildren();
+
+            Arranged = true;
+        }
+
+        protected virtual void ArrangeChildren()
+        {
             foreach (var child in Children)
             {
                 var childMargin = child.Margin;
@@ -554,9 +649,22 @@ namespace Willcraftia.Xna.Framework.UI
 
                 child.Arrange();
             }
-
-            Arranged = true;
         }
+
+        /// <summary>
+        /// Enabled プロパティが変更された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnEnabledChanged() { }
+
+        /// <summary>
+        /// Visible プロパティが変更された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnVisibleChanged() { }
+
+        /// <summary>
+        /// RenderBounds プロパティが変更された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnRenderBoundsChanged() { }
 
         /// <summary>
         /// マウス カーソルが移動した時に呼び出されます。
@@ -588,16 +696,6 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void OnMouseButtonReleased(MouseButtons button) { }
 
         /// <summary>
-        /// Enabled プロパティが変更された時に呼び出されます。
-        /// </summary>
-        protected virtual void OnEnabledChanged() { }
-
-        /// <summary>
-        /// Visible プロパティが変更された時に呼び出されます。
-        /// </summary>
-        protected virtual void OnVisibleChanged() { }
-
-        /// <summary>
         /// マウス オーバ状態の Control を新しい Control へ切り替えます。
         /// </summary>
         /// <param name="newControl"></param>
@@ -610,7 +708,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
-            mouseOverControl.OnMouseEntered();
+            mouseOverControl.RaiseMouseEntered();
         }
 
         /// <summary>
@@ -632,18 +730,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// Children が変更された場合に呼び出されます。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            ResetChildMouseOverControl();
-            // 再配置させます。
-            Arranged = false;
-        }
-
-        /// <summary>
         /// EnabledChanged イベントを発生させます。
         /// </summary>
         void RaiseEnabledChanged()
@@ -659,6 +745,33 @@ namespace Willcraftia.Xna.Framework.UI
         {
             OnVisibleChanged();
             if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// RenderBoundsChanged イベントを発生させます。
+        /// </summary>
+        void RaiseRenderBoundsChanged()
+        {
+            OnRenderBoundsChanged();
+            if (RenderBoundsChanged != null) RenderBoundsChanged(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// MouseEntered イベントを発生させます。
+        /// </summary>
+        void RaiseMouseEntered()
+        {
+            OnMouseEntered();
+            if (MouseEntered != null) MouseEntered(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// MouseLeft イベントを発生させます。
+        /// </summary>
+        void RaiseMouseLeft()
+        {
+            OnMouseLeft();
+            if (MouseLeft != null) MouseLeft(this, EventArgs.Empty);
         }
     }
 }

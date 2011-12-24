@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// コレクションのインデックスは、画面における Control の前後関係を表します。
     /// インデックス 0 は、その親 Control 内での最背面を表します。
     /// </remarks>
-    public class ControlCollection : ObservableCollection<Control>
+    public class ControlCollection : Collection<Control>
     {
         Control parent;
 
@@ -26,7 +26,6 @@ namespace Willcraftia.Xna.Framework.UI
         public ControlCollection(Control parent)
         {
             if (parent == null) throw new ArgumentNullException("parent");
-
             this.parent = parent;
         }
 
@@ -56,6 +55,9 @@ namespace Willcraftia.Xna.Framework.UI
             
             // 親を設定
             item.Parent = parent;
+
+            // コレクションの変化を通知します。
+            parent.ProcessChildrenCollectionChanged();
         }
 
         protected override void RemoveItem(int index)
@@ -64,6 +66,9 @@ namespace Willcraftia.Xna.Framework.UI
             base[index].Parent = null;
 
             base.RemoveItem(index);
+
+            // コレクションの変化を通知します。
+            parent.ProcessChildrenCollectionChanged();
         }
 
         protected override void SetItem(int index, Control item)
@@ -78,6 +83,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 親を設定
             item.Parent = parent;
+
+            // コレクションの変化を通知します。
+            parent.ProcessChildrenCollectionChanged();
         }
 
         protected override void ClearItems()
@@ -86,6 +94,9 @@ namespace Willcraftia.Xna.Framework.UI
             foreach (var item in this) item.Parent = null;
 
             base.ClearItems();
+
+            // コレクションの変化を通知します。
+            parent.ProcessChildrenCollectionChanged();
         }
 
         /// <summary>

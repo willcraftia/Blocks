@@ -15,10 +15,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Orientation = Orientation.Horizontal;
         }
 
-        protected internal override void Arrange()
+        protected override void ArrangeChildren()
         {
-            if (Arranged) return;
-
             if (Orientation == Orientation.Horizontal)
             {
                 ArrangeHorizontalDirection();
@@ -27,8 +25,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             {
                 ArrangeVerticalDirection();
             }
-
-            Arranged = true;
         }
 
         protected virtual void ArrangeHorizontalDirection()

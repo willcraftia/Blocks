@@ -14,7 +14,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             var button = control as Controls.Button;
             if (button == null) return;
 
-            var bounds = button.GetAbsoluteBounds();
+            var bounds = button.RenderBounds;
 
             if (button.MouseHovering)
             {

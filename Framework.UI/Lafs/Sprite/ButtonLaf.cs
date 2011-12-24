@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var button = control as Controls.Button;
             if (button == null) return;
 
-            var bounds = button.GetAbsoluteBounds();
+            var bounds = button.RenderBounds;
 
             if (button.MouseHovering)
             {
@@ -34,7 +34,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
                     bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                SpriteBatch.DrawString(font, button.Text, position, button.FontColor);
+                SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor);
             }
         }
     }

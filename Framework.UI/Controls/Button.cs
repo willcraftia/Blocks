@@ -22,8 +22,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         public VerticalAlignment TextVerticalAlignment = VerticalAlignment.Center;
 
-        public Color FontColor = Color.Black;
-
         public SpriteFont Font;
 
         bool pressedByMouse;
