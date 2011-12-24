@@ -72,15 +72,6 @@ namespace Willcraftia.Xna.Framework.UI
         protected Animation() { }
 
         /// <summary>
-        /// コンストラクタ。
-        /// </summary>
-        /// <param name="name">名前。</param>
-        protected Animation(string name)
-        {
-            Name = name;
-        }
-
-        /// <summary>
         /// 更新します。
         /// </summary>
         /// <param name="gameTime"></param>

@@ -263,7 +263,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     stackPanel.Children.Add(button);
                     //window.Children.Add(button);
 
-                    button.Animations.Add(new RotateCubeAnimation());
+                    var rotateCubeTimelineAnimation = new RotateCubeAnimation();
+                    rotateCubeTimelineAnimation.From = 0;
+                    rotateCubeTimelineAnimation.To = MathHelper.TwoPi;
+                    rotateCubeTimelineAnimation.BeginTime = TimeSpan.Zero;
+                    rotateCubeTimelineAnimation.Duration = new TimeSpan(0, 0, 4);
+                    rotateCubeTimelineAnimation.Repeat = Animations.Repeat.Forever;
+                    button.Animations.Add(rotateCubeTimelineAnimation);
+                    rotateCubeTimelineAnimation.Enabled = true;
+
                     button.MouseEntered += delegate(object s, EventArgs e)
                     {
                         button.Scale = 1.5f;
@@ -287,8 +295,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) this.Exit();
 
             base.Update(gameTime);
         }
@@ -296,32 +303,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            //var effect = new BasicEffect(GraphicsDevice);
-
-            //float time = (float) gameTime.TotalGameTime.TotalSeconds;
-
-            //float yaw = time * 0.4f;
-            //float pitch = time * 0.7f;
-            //float roll = time * 1.1f;
-
-            //var cameraPosition = new Vector3(0, 0, 2.5f);
-
-            //var viewport = GraphicsDevice.Viewport;
-
-            //var aspect = viewport.AspectRatio;
-
-            //effect.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-            //effect.View = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
-            //effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 10);
-            //effect.DiffuseColor = Color.Red.ToVector3();
-            //effect.Alpha = 1;
-            //effect.EnableDefaultLighting();
-
-            //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            //GraphicsDevice.BlendState = BlendState.Opaque;
-
-            //cubePrimitive.Draw(effect);
 
             base.Draw(gameTime);
         }

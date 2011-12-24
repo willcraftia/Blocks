@@ -93,6 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimationCollection.cs" />
+    <Compile Include="Animations\LerpAnimation.cs" />
+    <Compile Include="Animations\Repeat.cs" />
+    <Compile Include="Animations\TimelineAnimation.cs" />
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Lafs\ControlLafBase.cs" />

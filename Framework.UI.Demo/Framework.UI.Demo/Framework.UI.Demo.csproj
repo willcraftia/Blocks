@@ -108,9 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CubeButton.cs" />
-    <Compile Include="RotateCubeAnimation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="RotateCubeAnimation.cs" />
     <Compile Include="UIDemoGame.cs" />
   </ItemGroup>
   <ItemGroup>
