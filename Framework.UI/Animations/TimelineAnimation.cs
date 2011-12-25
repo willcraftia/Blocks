@@ -83,7 +83,6 @@ namespace Willcraftia.Xna.Framework.UI.Animations
             {
                 // 再生開始時間を記録します。
                 activatedTime = gameTime.TotalGameTime;
-                repeatCount = 0;
                 activated = true;
             }
             else
@@ -94,7 +93,7 @@ namespace Willcraftia.Xna.Framework.UI.Animations
                 if (elapsedTime < beginTime) return;
 
                 // 終了時間を越えるならば Repeat に従います。
-                var endTime = activatedTime + beginTime + duration;
+                var endTime = beginTime + duration;
                 if (endTime < elapsedTime)
                 {
                     // まずはアニメーション終了としてマークします。
@@ -114,6 +113,7 @@ namespace Willcraftia.Xna.Framework.UI.Animations
 
                     // 再生を終えます。
                     Enabled = false;
+                    repeatCount = 0;
                     return;
                 }
 

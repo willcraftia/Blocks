@@ -201,6 +201,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (width == value) return;
                 width = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
 
@@ -214,6 +216,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (height == value) return;
                 height = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
 
@@ -508,13 +512,15 @@ namespace Willcraftia.Xna.Framework.UI
             // 未測定の子があるならば測定します。
             foreach (var child in Children)
             {
-                if (!child.Measured) child.Measure(MeasuredSize);
+                //if (!child.Measured) child.Measure(MeasuredSize);
+                if (!child.Measured) Measure(MeasuredSize);
             }
 
             // 未配置の子があるならば配置します。
             foreach (var child in Children)
             {
-                if (!child.Arranged) child.Arrange(ArrangedBounds);
+                //if (!child.Arranged) child.Arrange(ArrangedBounds);
+                if (!child.Arranged) Arrange(ArrangedBounds);
             }
 
             // 必要ならば Control の描画サイズを計算します。

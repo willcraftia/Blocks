@@ -158,6 +158,18 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     Margin = new Thickness(u, u, 0, 0),
                     BackgroundColor = Color.Red
                 };
+                {
+                    var animation = new Animations.ControlWidthAnimation()
+                    {
+                        From = 0,
+                        To = u * 10,
+                        BeginTime = new TimeSpan(0, 0, 1),
+                        Duration = new TimeSpan(0, 0, 3)
+                    };
+                    window.Animations.Add(animation);
+                    animation.Enabled = true;
+                }
+
                 window.Show(screen);
             }
 
