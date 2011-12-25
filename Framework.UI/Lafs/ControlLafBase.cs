@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -20,7 +21,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         }
 
         // I/F
-        public abstract void Draw(Control control);
+        public abstract void Draw(Control control, Rectangle renderBounds);
 
         /// <summary>
         /// Initialize メソッドから呼び出されます。

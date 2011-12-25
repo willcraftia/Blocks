@@ -111,13 +111,21 @@ namespace Willcraftia.Xna.Framework.UI
             if (HasFocus(control)) focusedControl = null;
         }
 
-        protected internal override void Arrange()
+        public override void Update(GameTime gameTime)
         {
-            // Screen は自分で自分に設定されたサイズを描画時のサイズとして設定します。
-            ActualWidth = Width;
-            ActualHeight = Height;
+            // Screen は自分のサイズで測定を開始します。
+            if (!Measured)
+            {
+                Measure(new Size(Width, Height));
+            }
+            // Screen は自分のマージンとサイズで配置を開始します。
+            if (!Arranged)
+            {
+                var margin = Margin;
+                Arrange(new Rect(margin.Left, margin.Top, Width, Height));
+            }
 
-            base.Arrange();
+            base.Update(gameTime);
         }
 
         /// <summary>

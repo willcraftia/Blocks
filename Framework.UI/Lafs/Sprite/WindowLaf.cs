@@ -35,41 +35,40 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             base.LoadContent();
         }
 
-        public override void Draw(Control control)
+        public override void Draw(Control control, Rectangle renderBounds)
         {
             var window = control as Controls.Window;
             if (window == null) return;
 
-            var bounds = window.RenderBounds;
             var color = window.BackgroundColor;
             var unit = Source.SpriteSize;
 
             // Top Lines
-            SpriteBatch.Draw(topLeft, new Rectangle(bounds.X, bounds.Y, unit, unit), color);
-            for (int x = unit; x < bounds.Width - unit; x += unit)
+            SpriteBatch.Draw(topLeft, new Rectangle(renderBounds.X, renderBounds.Y, unit, unit), color);
+            for (int x = unit; x < renderBounds.Width - unit; x += unit)
             {
-                SpriteBatch.Draw(top, new Rectangle(bounds.X + x, bounds.Y, unit, unit), color);
+                SpriteBatch.Draw(top, new Rectangle(renderBounds.X + x, renderBounds.Y, unit, unit), color);
             }
-            SpriteBatch.Draw(topRight, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y, unit, unit), color);
+            SpriteBatch.Draw(topRight, new Rectangle(renderBounds.X + renderBounds.Width - unit, renderBounds.Y, unit, unit), color);
 
             // Middle Lines
-            for (int y = unit; y < bounds.Height - unit; y += unit)
+            for (int y = unit; y < renderBounds.Height - unit; y += unit)
             {
-                SpriteBatch.Draw(left, new Rectangle(bounds.X, bounds.Y + y, unit, unit), color);
-                for (int x = unit; x < bounds.Width - unit; x += unit)
+                SpriteBatch.Draw(left, new Rectangle(renderBounds.X, renderBounds.Y + y, unit, unit), color);
+                for (int x = unit; x < renderBounds.Width - unit; x += unit)
                 {
-                    SpriteBatch.Draw(fill, new Rectangle(bounds.X + x, bounds.Y + y, unit, unit), color);
+                    SpriteBatch.Draw(fill, new Rectangle(renderBounds.X + x, renderBounds.Y + y, unit, unit), color);
                 }
-                SpriteBatch.Draw(right, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y + y, unit, unit), color);
+                SpriteBatch.Draw(right, new Rectangle(renderBounds.X + renderBounds.Width - unit, renderBounds.Y + y, unit, unit), color);
             }
 
             // Bottom LInes
-            SpriteBatch.Draw(bottomLeft, new Rectangle(bounds.X, bounds.Y + bounds.Height - unit, unit, unit), color);
-            for (int x = unit; x < bounds.Width - unit; x += unit)
+            SpriteBatch.Draw(bottomLeft, new Rectangle(renderBounds.X, renderBounds.Y + renderBounds.Height - unit, unit, unit), color);
+            for (int x = unit; x < renderBounds.Width - unit; x += unit)
             {
-                SpriteBatch.Draw(bottom, new Rectangle(bounds.X + x, bounds.Y + bounds.Height - unit, unit, unit), color);
+                SpriteBatch.Draw(bottom, new Rectangle(renderBounds.X + x, renderBounds.Y + renderBounds.Height - unit, unit, unit), color);
             }
-            SpriteBatch.Draw(bottomRight, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y + bounds.Height - unit, unit, unit), color);
+            SpriteBatch.Draw(bottomRight, new Rectangle(renderBounds.X + renderBounds.Width - unit, renderBounds.Y + renderBounds.Height - unit, unit, unit), color);
         }
     }
 }

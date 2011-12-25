@@ -35,7 +35,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             Rectangle previousScissorRectangle;
 
-            public Scissor(UIManager uiManager, ref Rectangle scissorRectangle)
+            public Scissor(UIManager uiManager, Rectangle scissorRectangle)
             {
                 this.uiManager = uiManager;
                 BeginClipping(ref scissorRectangle);
@@ -55,7 +55,16 @@ namespace Willcraftia.Xna.Framework.UI
                 spriteBatch.End();
 
                 previousScissorRectangle = graphicsDevice.ScissorRectangle;
-                graphicsDevice.ScissorRectangle = scissorRectangle;
+
+                // Viewport の領域からはみ出ないように領域を調整します (はみ出ると例外が発生します)。
+                var viewportBounds = graphicsDevice.Viewport.Bounds;
+                var finalScissorRectangle = new Rectangle();
+                finalScissorRectangle.X = (int) MathHelper.Max(viewportBounds.X, scissorRectangle.X);
+                finalScissorRectangle.Y = (int) MathHelper.Max(viewportBounds.Y, scissorRectangle.Y);
+                finalScissorRectangle.Width = (int) MathHelper.Min(viewportBounds.Right, scissorRectangle.Right) - finalScissorRectangle.X;
+                finalScissorRectangle.Height = (int) MathHelper.Min(viewportBounds.Bottom, scissorRectangle.Bottom) - finalScissorRectangle.Y;
+
+                graphicsDevice.ScissorRectangle = finalScissorRectangle;
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
             }
 
@@ -196,7 +205,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (Screen == null) return;
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
-            DrawControl(gameTime, Screen);
+            DrawControl(gameTime, Screen, Screen.ArrangedBounds.ToXnaRectangle());
             SpriteBatch.End();
 
             base.Draw(gameTime);
@@ -230,36 +239,41 @@ namespace Willcraftia.Xna.Framework.UI
         /// </remarks>
         /// <param name="gameTime"></param>
         /// <param name="control"></param>
-        void DrawControl(GameTime gameTime, Control control)
+        /// <param name="renderBounds"></param>
+        void DrawControl(GameTime gameTime, Control control, Rectangle renderBounds)
         {
-            // Control が不可視ならば描画しません。
-            if (!control.Visible) return;
-
-            // IControlLaf を取得します。
-            var laf = GetControlLaf(control);
             // IControlLaf を描画します。
-            if (laf != null) laf.Draw(control);
+            var laf = GetControlLaf(control);
+            if (laf != null) laf.Draw(control, renderBounds);
 
             // 独自の描画があるならば描画します。
-            control.Draw(gameTime);
+            control.Draw(gameTime, renderBounds);
 
             if (control.Children.Count != 0)
             {
                 // 子を再帰的に描画します。
                 foreach (var child in control.Children)
                 {
+                    // 不可視ならば描画しません。
+                    if (!child.Visible) continue;
+
+                    var childRenderBounds = child.ArrangedBounds;
+                    childRenderBounds.X += renderBounds.X;
+                    childRenderBounds.Y += renderBounds.Y;
+
+                    var xnaRectangle = childRenderBounds.ToXnaRectangle();
+
                     if (child.Clipped)
                     {
                         // 描画領域をクリッピングします。
-                        var bounds = control.RenderBounds;
-                        using (var scissor = new Scissor(this, ref bounds))
+                        using (var scissor = new Scissor(this, xnaRectangle))
                         {
-                            DrawControl(gameTime, child);
+                            DrawControl(gameTime, child, xnaRectangle);
                         }
                     }
                     else
                     {
-                        DrawControl(gameTime, child);
+                        DrawControl(gameTime, child, xnaRectangle);
                     }
                 }
             }

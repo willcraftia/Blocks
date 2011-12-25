@@ -10,17 +10,15 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     public class ButtonLaf : SpriteControlLafBase
     {
-        public override void Draw(Control control)
+        public override void Draw(Control control, Rectangle renderBounds)
         {
             var button = control as Controls.Button;
             if (button == null) return;
 
-            var bounds = button.RenderBounds;
-
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, Color.FromNonPremultiplied(255, 255, 255, 50));
+                SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, Color.FromNonPremultiplied(255, 255, 255, 50));
             }
 
             if (!string.IsNullOrEmpty(button.Text))
@@ -33,7 +31,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 }
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
-                    bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                    renderBounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
                 SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor);
             }
         }

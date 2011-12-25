@@ -198,7 +198,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                     stackPanel.Children.Add(button);
                     button.Clicked += delegate(object s, EventArgs e)
-
                     {
                         var overlay = new Overlay()
                         {

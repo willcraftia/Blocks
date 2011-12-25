@@ -9,17 +9,28 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     public class ButtonLaf : DebugControlLafBase
     {
-        public override void Draw(Control control)
+        public override void Draw(Control control, Rectangle renderBounds)
         {
             var button = control as Controls.Button;
             if (button == null) return;
 
-            var bounds = button.RenderBounds;
+            // 背景色で塗り潰します。
+            //SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, button.BackgroundColor * 1.0f);
+            //var c = button.BackgroundColor;
+            //SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, Color.FromNonPremultiplied(c.R, c.G, c.B, 100));
+
+            // 少し小さくした領域を半透明黒で覆います (ブレンドしつつ枠を作ります)。
+            //var inBounds = renderBounds;
+            //inBounds.X += 2;
+            //inBounds.Y += 2;
+            //inBounds.Width -= 4;
+            //inBounds.Height -= 4;
+            //SpriteBatch.Draw(Source.UIContext.FillTexture, inBounds, Color.Black * 0.8f);
 
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, Color.FromNonPremultiplied(255, 255, 255, 50));
+                SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, button.ForegroundColor * 0.5f);
             }
 
             if (!string.IsNullOrEmpty(button.Text))
@@ -32,9 +43,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 }
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
-                    bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                // Button の Font プロパティを無視して白で描画します (Window を黒ベースにしているので、見やすさのため)。
-                SpriteBatch.DrawString(font, button.Text, position, Color.White);
+                    renderBounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor);
             }
         }
     }

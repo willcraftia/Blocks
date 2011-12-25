@@ -9,13 +9,12 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     public class CanvasLaf : DebugControlLafBase
     {
-        public override void Draw(Control control)
+        public override void Draw(Control control, Rectangle renderBounds)
         {
             var canvas = control as Controls.Canvas;
             if (canvas == null) return;
 
-            var bounds = canvas.RenderBounds;
-            SpriteBatch.Draw(Source.UIContext.FillTexture, bounds, canvas.BackgroundColor);
+            SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, canvas.BackgroundColor);
         }
     }
 }

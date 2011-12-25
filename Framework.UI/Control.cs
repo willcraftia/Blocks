@@ -27,11 +27,6 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
-        /// RenderBounds プロパティが変更された時に発生します。
-        /// </summary>
-        public event EventHandler RenderBoundsChanged;
-
-        /// <summary>
         /// マウス カーソルが Control に入った時に発生します。
         /// </summary>
         public event EventHandler MouseEntered;
@@ -42,14 +37,49 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler MouseLeft;
 
         /// <summary>
-        /// Control の描画時の幅。
+        /// 外側の余白。
         /// </summary>
-        float actualWidth = float.NaN;
+        Thickness margin;
 
         /// <summary>
-        /// Control の描画時の高さ。
+        /// 幅の下限。
         /// </summary>
-        float actualHeight = float.NaN;
+        float minWidth = 0;
+
+        /// <summary>
+        /// 高さの下限。
+        /// </summary>
+        float minHeight = 0;
+
+        /// <summary>
+        /// 幅の上限。
+        /// </summary>
+        float maxWidth = float.PositiveInfinity;
+
+        /// <summary>
+        /// 高さの上限。
+        /// </summary>
+        float maxHeight = float.PositiveInfinity;
+
+        /// <summary>
+        /// 幅。
+        /// </summary>
+        float width = float.NaN;
+
+        /// <summary>
+        /// 高さ。
+        /// </summary>
+        float height = float.NaN;
+
+        /// <summary>
+        /// 希望するサイズ。
+        /// </summary>
+        Size measuredSize = Size.Empty;
+
+        /// <summary>
+        /// 配置後の領域。
+        /// </summary>
+        Rect arrangedBounds = Rect.Empty;
 
         /// <summary>
         /// 親 Control。
@@ -82,71 +112,173 @@ namespace Willcraftia.Xna.Framework.UI
         bool visible = true;
 
         /// <summary>
-        /// true (自身と子 Control の描画サイズに有効な値が設定されている場合)、false (それ以外の場合)。
+        /// true (測定済みである場合)、false (それ以外の場合)。
+        /// </summary>
+        bool measured;
+
+        /// <summary>
+        /// true (配置済みである場合)、false (それ以外の場合)。
         /// </summary>
         bool arranged;
 
         /// <summary>
-        /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
+        /// true (アクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </summary>
         bool affectsOrdering;
 
         /// <summary>
-        /// 絶対座標としての描画領域。
+        /// 外側の余白を取得または設定します。
         /// </summary>
-        Rectangle renderBounds;
-
-        /// <summary>
-        /// Control の外側の余白を取得または設定します。
-        /// </summary>
-        public Thickness Margin { get; set; }
-
-        /// <summary>
-        /// Control の幅の下限を取得または設定します。
-        /// </summary>
-        public float MinWidth { get; set; }
-
-        /// <summary>
-        /// Control の高さの下限を取得または設定します。
-        /// </summary>
-        public float MinHeight { get; set; }
-        
-        /// <summary>
-        /// Control の幅の上限を取得または設定します。
-        /// </summary>
-        public float MaxWidth { get; set; }
-        
-        /// <summary>
-        /// Control の高さの上限を取得または設定します。
-        /// </summary>
-        public float MaxHeight { get; set; }
-
-        /// <summary>
-        /// Control の幅を取得または設定します。
-        /// </summary>
-        public float Width { get; set; }
-
-        /// <summary>
-        /// Controln の高さを取得または設定します。
-        /// </summary>
-        public float Height { get; set; }
-
-        /// <summary>
-        /// Control の描画時の幅を取得します。
-        /// </summary>
-        public float ActualWidth
+        public Thickness Margin
         {
-            get { return actualWidth; }
-            protected internal set { actualWidth = MathHelper.Clamp(value, MinWidth, MaxWidth); }
+            get { return margin; }
+            set
+            {
+                if (margin == value) return;
+                margin = value;
+            }
         }
 
         /// <summary>
-        /// Control の描画時の高さを取得します。
+        /// 幅の下限を取得または設定します。
+        /// </summary>
+        public float MinWidth
+        {
+            get { return minWidth; }
+            set
+            {
+                if (minWidth == value) return;
+                minWidth = value;
+            }
+        }
+
+        /// <summary>
+        /// 高さの下限を取得または設定します。
+        /// </summary>
+        public float MinHeight
+        {
+            get { return minHeight; }
+            set
+            {
+                if (minHeight == value) return;
+                minHeight = value;
+            }
+        }
+        
+        /// <summary>
+        /// 幅の上限を取得または設定します。
+        /// </summary>
+        public float MaxWidth
+        {
+            get { return maxWidth; }
+            set
+            {
+                if (maxWidth == value) return;
+                maxWidth = value;
+            }
+        }
+        
+        /// <summary>
+        /// 高さの上限を取得または設定します。
+        /// </summary>
+        public float MaxHeight
+        {
+            get { return maxHeight; }
+            set
+            {
+                if (maxHeight == value) return;
+                maxHeight = value;
+            }
+        }
+
+        /// <summary>
+        /// 幅を取得または設定します。
+        /// </summary>
+        public float Width
+        {
+            get { return width; }
+            set
+            {
+                if (width == value) return;
+                width = value;
+            }
+        }
+
+        /// <summary>
+        /// 高さを取得または設定します。
+        /// </summary>
+        public float Height
+        {
+            get { return height; }
+            set
+            {
+                if (height == value) return;
+                height = value;
+            }
+        }
+
+        /// <summary>
+        /// 測定後のサイズを取得します。
+        /// </summary>
+        public Size MeasuredSize
+        {
+            get { return measuredSize; }
+        }
+
+        /// <summary>
+        /// 配置後の領域を取得します。
+        /// </summary>
+        public Rect ArrangedBounds
+        {
+            get { return arrangedBounds; }
+        }
+
+        /// <summary>
+        /// 配置後の幅を取得します。
+        /// </summary>
+        public float ActualWidth
+        {
+            get { return arrangedBounds.Width; }
+        }
+
+        /// <summary>
+        /// 配置後の高さを取得します。
         /// </summary>
         public float ActualHeight
         {
-            get { return actualHeight; }
-            protected internal set { actualHeight = MathHelper.Clamp(value, MinHeight, MaxHeight); }
+            get { return arrangedBounds.Height; }
+        }
+
+        /// <summary>
+        /// 測定済みかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (測定済みである場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Measured
+        {
+            get { return measured; }
+            protected set
+            {
+                if (measured == value) return;
+                measured = value;
+            }
+        }
+
+        /// <summary>
+        /// 配置済みであるかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (配置済みである場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Arranged
+        {
+            get { return arranged; }
+            protected set
+            {
+                if (arranged == value) return;
+                arranged = value;
+            }
         }
 
         /// <summary>
@@ -273,42 +405,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 自身と子 Control の描画サイズに有効な値が設定されているかどうかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// true (自身と子 Control の描画サイズに有効な値が設定されている場合)、false (それ以外の場合)。
-        /// </value>
-        public bool Arranged
-        {
-            get { return arranged; }
-            protected set
-            {
-                if (arranged == value) return;
-                arranged = value;
-            }
-        }
-
-        /// <summary>
-        /// 絶対座標としての描画領域を取得します。
-        /// </summary>
-        /// <remarks>
-        /// このプロパティは Arrange の呼び出しで算出されます。
-        /// </remarks>
-        public Rectangle RenderBounds
-        {
-            get { return renderBounds; }
-            protected set
-            {
-                if (renderBounds == value) return;
-
-                renderBounds = value;
-
-                // イベントを発生させます。
-                RaiseRenderBoundsChanged();
-            }
-        }
-
-        /// <summary>
         /// Control がフォーカスを得られるかどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control がフォーカスを得られる場合)、false (それ以外の場合)。</value>
@@ -321,16 +417,6 @@ namespace Willcraftia.Xna.Framework.UI
         public bool Focused
         {
             get { return Screen != null && Screen.HasFocus(this); }
-        }
-
-        protected internal float ClampedWidth
-        {
-            get { return MathHelper.Clamp(Width, MinWidth, MaxWidth); }
-        }
-
-        protected internal float ClampedHeight
-        {
-            get { return MathHelper.Clamp(Height, MinHeight, MaxHeight); }
         }
 
         /// <summary>
@@ -351,10 +437,6 @@ namespace Willcraftia.Xna.Framework.UI
             Children = new ControlCollection(this);
             Animations = new AnimationCollection(this);
 
-            Width = float.NaN;
-            Height = float.NaN;
-            MaxWidth = float.PositiveInfinity;
-            MaxHeight = float.PositiveInfinity;
             Clipped = true;
             ForegroundColor = Color.White;
             BackgroundColor = Color.Black;
@@ -362,6 +444,37 @@ namespace Willcraftia.Xna.Framework.UI
             VerticalAlignment = VerticalAlignment.Center;
 
             Focusable = true;
+        }
+
+        /// <summary>
+        /// 測定します。
+        /// </summary>
+        /// <param name="availableSize">親 Control が指定する利用可能なサイズ。</param>
+        public void Measure(Size availableSize)
+        {
+            measuredSize = MeasureOverride(availableSize);
+
+            // 測定済みにします。
+            Measured = true;
+            // 未配置にします。
+            Arranged = false;
+        }
+
+        /// <summary>
+        /// 配置します。
+        /// </summary>
+        /// <param name="finalBounds">親 Control が指定する配置に使用可能な領域。</param>
+        public void Arrange(Rect finalBounds)
+        {
+            //var size = ArrangeOverride(MeasuredSize);
+            var size = ArrangeOverride(finalBounds.Size);
+
+            // 配置結果の領域を設定します。
+            arrangedBounds = new Rect(finalBounds.TopLeft, size);
+            //arrangedBounds = new Rect(margin.Left, margin.Top, size.Width, size.Height);
+
+            // 配置済にします。
+            Arranged = true;
         }
 
         /// <summary>
@@ -392,8 +505,20 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (!Enabled) throw new InvalidOperationException("This control is disabled.");
 
+            // 未測定の子があるならば測定します。
+            foreach (var child in Children)
+            {
+                if (!child.Measured) child.Measure(MeasuredSize);
+            }
+
+            // 未配置の子があるならば配置します。
+            foreach (var child in Children)
+            {
+                if (!child.Arranged) child.Arrange(ArrangedBounds);
+            }
+
             // 必要ならば Control の描画サイズを計算します。
-            if (!Arranged) Arrange();
+            //if (!Arranged) Arrange();
 
             // Animation を更新します。
             foreach (var animation in Animations)
@@ -415,13 +540,14 @@ namespace Willcraftia.Xna.Framework.UI
         /// Visible が false の場合、Draw メソッドは呼び出されません。
         /// </remarks>
         /// <param name="gameTime"></param>
-        public virtual void Draw(GameTime gameTime) { }
+        /// <param name="renderBounds"></param>
+        public virtual void Draw(GameTime gameTime, Rectangle renderBounds) { }
 
         /// <summary>
         /// マウス カーソル移動を処理します。
         /// </summary>
-        /// <param name="x">親 Control の矩形位置を基準としたカーソルの X 座標。</param>
-        /// <param name="y">親 Control の矩形位置を基準としたカーソルの Y 座標。</param>
+        /// <param name="x">親を基準としたカーソルの X 座標。</param>
+        /// <param name="y">親を基準としたカーソルの Y 座標。</param>
         internal void ProcessMouseMoved(float x, float y)
         {
             // 不可視の場合は処理しません。
@@ -430,8 +556,8 @@ namespace Willcraftia.Xna.Framework.UI
             // x と y は親を基準としたカーソルの相対座標です。
 
             // 自分を基準としたカーソルの相対座標を算出します。
-            float localX = x - Margin.Left;
-            float localY = y - Margin.Top;
+            float localX = x - arrangedBounds.X;
+            float localY = y - arrangedBounds.Y;
 
             if (activatedControl != null)
             {
@@ -453,9 +579,8 @@ namespace Willcraftia.Xna.Framework.UI
                 // 不可視ならばスキップします。
                 if (!child.Visible) continue;
 
-                // 描画領域の外ならばスキップします。
-                if (localX < child.Margin.Left || child.Margin.Left + child.ActualWidth < localX) continue;
-                if (localY < child.Margin.Top || child.Margin.Top + child.ActualHeight < localY) continue;
+                // 領域の外ならばスキップします。
+                if (!child.ArrangedBounds.Contains(localX, localY)) continue;
 
                 // 子をマウス オーバ状態にします。
                 SwitchMouseOverControl(child);
@@ -469,7 +594,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // マウス オーバ状態にできる子がなく、
-            if (0 <= localX && localX <= ActualWidth && 0 <= localY && localY <= ActualHeight)
+            if (arrangedBounds.Contains(x, y))
             {
                 // 自分の領域内ならば、自分をマウス オーバ状態にします。
                 SwitchMouseOverControl(this);
@@ -573,82 +698,89 @@ namespace Willcraftia.Xna.Framework.UI
         internal void ProcessChildrenCollectionChanged()
         {
             ResetChildMouseOverControl();
-            // 再配置させます。
+            // 再測定と再配置を行います。
+            Measured = false;
             Arranged = false;
         }
 
-        protected internal virtual void Arrange()
+        /// <summary>
+        /// 測定します。
+        /// </summary>
+        /// <param name="availableSize">親 Control が指定する利用可能なサイズ。</param>
+        /// <returns>測定により自身が希望するサイズ。</returns>
+        protected virtual Size MeasureOverride(Size availableSize)
         {
-            if (Arranged) return;
+            Size size = new Size();
 
-            if (parent == null)
+            if (float.IsNaN(Width))
             {
-                RenderBounds = new Rectangle(0, 0, (int) ActualWidth, (int) ActualHeight);
+                // 幅が未設定ならば可能な限り最大の幅を希望します。
+                if (MinWidth < MaxWidth)
+                {
+                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                }
+                // 余白で調整します。
+                size.Width -= margin.Left + margin.Right;
             }
             else
             {
-                var parentBounds = parent.RenderBounds;
-                var bounds = new Rectangle((int) Margin.Left, (int) Margin.Top, (int) ActualWidth, (int) ActualHeight);
-                bounds.X += parentBounds.X;
-                bounds.Y += parentBounds.Y;
-                RenderBounds = bounds;
+                // 幅が設定されているならばそのまま希望します。
+                size.Width = Width;
             }
 
-            ArrangeChildren();
+            if (float.IsNaN(Height))
+            {
+                // 高さが未設定ならば可能な限り最大の幅を希望します。
+                if (MinHeight < MaxHeight)
+                {
+                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                }
+                // 余白で調整します。
+                size.Height -= margin.Top + margin.Bottom;
+            }
+            else
+            {
+                // 高さが設定されているならばそのまま希望します。
+                size.Height = Height;
+            }
 
-            Arranged = true;
+            // 自分が希望するサイズで子の希望サイズを定めます。
+            foreach (var child in Children)
+            {
+                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
+                child.Measure(size);
+            }
+
+            return size;
         }
 
-        protected virtual void ArrangeChildren()
+        /// <summary>
+        /// 配置します。
+        /// </summary>
+        /// <param name="finalSize">親 Control が指定する配置に利用可能な領域。</param>
+        /// <returns>配置により自身が希望する最終的なサイズ。</returns>
+        protected virtual Size ArrangeOverride(Size finalSize)
         {
             foreach (var child in Children)
             {
                 var childMargin = child.Margin;
-
-                var childMarginWidth = childMargin.Left + childMargin.Right;
-                if (float.IsNaN(child.Width))
-                {
-                    // 子の幅が未設定ならば自分の幅に収まる最大サイズで調整を試みます。
-                    child.ActualWidth = ActualWidth - childMarginWidth;
-                }
-                else
-                {
-                    var childWidth = child.ClampedWidth;
-                    if (ActualWidth < childWidth + childMarginWidth)
-                    {
-                        // 子に幅が設定されていて自分の幅を越えるようならば、自分の幅に収まる最大サイズで調整を試みます。
-                        child.ActualWidth = ActualWidth - childMarginWidth;
-                    }
-                    else
-                    {
-                        // それ以外は子に設定された幅をそのまま設定するように試みます。
-                        child.ActualWidth = childWidth;
-                    }
-                }
-
-                var childMarginHeight = childMargin.Top + childMargin.Bottom;
-                if (float.IsNaN(child.Height))
-                {
-                    // 子の高さが未設定ならば自分の高さに収まる最大サイズで調整を試みます。
-                    child.ActualHeight = ActualHeight - childMarginHeight;
-                }
-                else
-                {
-                    var childHeight = child.ClampedHeight;
-                    if (ActualHeight < childHeight + childMarginHeight)
-                    {
-                        // 子に高さが設定されていて自分の幅を越えるようならば、自分の高さに収まる最大サイズで調整を試みます。
-                        child.ActualHeight = ActualHeight - childMarginHeight;
-                    }
-                    else
-                    {
-                        // それ以外は子に設定された高さをそのまま設定するように試みます。
-                        child.ActualHeight = childHeight;
-                    }
-                }
-
-                child.Arrange();
+                var childMeasuredSize = child.MeasuredSize;
+                var bounds = new Rect(childMargin.Left, childMargin.Top, childMeasuredSize.Width, childMeasuredSize.Height);
+                //var bounds = new Rect(finalSize);
+                child.Arrange(bounds);
             }
+
+            return finalSize;
         }
 
         /// <summary>
@@ -660,11 +792,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// Visible プロパティが変更された時に呼び出されます。
         /// </summary>
         protected virtual void OnVisibleChanged() { }
-
-        /// <summary>
-        /// RenderBounds プロパティが変更された時に呼び出されます。
-        /// </summary>
-        protected virtual void OnRenderBoundsChanged() { }
 
         /// <summary>
         /// マウス カーソルが移動した時に呼び出されます。
@@ -745,15 +872,6 @@ namespace Willcraftia.Xna.Framework.UI
         {
             OnVisibleChanged();
             if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// RenderBoundsChanged イベントを発生させます。
-        /// </summary>
-        void RaiseRenderBoundsChanged()
-        {
-            OnRenderBoundsChanged();
-            if (RenderBoundsChanged != null) RenderBoundsChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
