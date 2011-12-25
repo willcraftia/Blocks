@@ -162,8 +162,19 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     var animation = new Animations.ControlWidthAnimation()
                     {
                         From = 0,
-                        To = u * 10,
-                        BeginTime = new TimeSpan(0, 0, 1),
+                        To = window.Width,
+                        BeginTime = new TimeSpan(0, 0, 0),
+                        Duration = new TimeSpan(0, 0, 3)
+                    };
+                    window.Animations.Add(animation);
+                    animation.Enabled = true;
+                }
+                {
+                    var animation = new Animations.ControlHeightAnimation()
+                    {
+                        From = 0,
+                        To = window.Height,
+                        BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 3)
                     };
                     window.Animations.Add(animation);
@@ -208,8 +219,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     var animation = new Animations.ControlWidthAnimation()
                     {
                         From = 0,
-                        To = u * 10,
-                        BeginTime = new TimeSpan(0, 0, 1),
+                        To = window.Width,
+                        BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 1)
                     };
                     window.Animations.Add(animation);

@@ -266,6 +266,9 @@ namespace Willcraftia.Xna.Framework.UI
 
                     var xnaRectangle = childRenderBounds.ToXnaRectangle();
 
+                    // 描画する必要のないサイズならばスキップします。
+                    if (xnaRectangle.Width <= 0 || xnaRectangle.Height <= 0) continue;
+
                     if (child.Clipped)
                     {
                         // 描画領域をクリッピングします。
