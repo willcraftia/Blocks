@@ -192,6 +192,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     Margin = new Thickness(u * 5, u * 5, 0, 0),
                     BackgroundColor = Color.Blue
                 };
+                //{
+                //    var animation = new Animations.ControlWidthAnimation()
+                //    {
+                //        From = 0,
+                //        To = u * 10,
+                //        BeginTime = new TimeSpan(0, 0, 1),
+                //        Duration = new TimeSpan(0, 0, 1)
+                //    };
+                //    window.Animations.Add(animation);
+                //    animation.Enabled = true;
+                //}
 
                 var stackPanel = new StackPanel()
                 {
@@ -205,8 +216,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     {
                         Text = "Open new dialog",
                         ForegroundColor = Color.White,
-                        Width = u * 5,
-                        Height = u
+                        Width = u * 5
                     };
                     stackPanel.Children.Add(button);
                     button.Clicked += delegate(object s, EventArgs e)
@@ -238,7 +248,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
                                 ForegroundColor = Color.White,
-                                Width = u * 5,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
@@ -266,8 +275,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                         Text = "Close",
                                         TextHorizontalAlignment = HorizontalAlignment.Left,
                                         ForegroundColor = Color.White,
-                                        Width = u * 2,
-                                        Height = u,
+                                        //Width = u * 2,
+                                        //Height = u,
                                         Margin = new Thickness(u, u, 0, 0)
                                     };
                                     subSubButton.Clicked += delegate(object subBs, EventArgs subBe)
@@ -286,7 +295,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
                                 ForegroundColor = Color.White,
-                                Width = u * 2,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
@@ -306,8 +314,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         CubePrimitive = cubePrimitive,
                         Clipped = false,
                         ForegroundColor = Color.White,
-                        Width = u * 5,
-                        Height = u
+                        Width = u * 5
                     };
                     stackPanel.Children.Add(button);
 

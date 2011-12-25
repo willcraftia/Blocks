@@ -44,7 +44,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
                     renderBounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor);
+                //SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor);
+                SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor, 0, Vector2.Zero, 1.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
             }
         }
     }

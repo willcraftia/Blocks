@@ -470,12 +470,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="finalBounds">親 Control が指定する配置に使用可能な領域。</param>
         public void Arrange(Rect finalBounds)
         {
-            //var size = ArrangeOverride(MeasuredSize);
             var size = ArrangeOverride(finalBounds.Size);
 
             // 配置結果の領域を設定します。
             arrangedBounds = new Rect(finalBounds.TopLeft, size);
-            //arrangedBounds = new Rect(margin.Left, margin.Top, size.Width, size.Height);
 
             // 配置済にします。
             Arranged = true;
@@ -512,19 +510,14 @@ namespace Willcraftia.Xna.Framework.UI
             // 未測定の子があるならば測定します。
             foreach (var child in Children)
             {
-                //if (!child.Measured) child.Measure(MeasuredSize);
                 if (!child.Measured) Measure(MeasuredSize);
             }
 
             // 未配置の子があるならば配置します。
             foreach (var child in Children)
             {
-                //if (!child.Arranged) child.Arrange(ArrangedBounds);
                 if (!child.Arranged) Arrange(ArrangedBounds);
             }
-
-            // 必要ならば Control の描画サイズを計算します。
-            //if (!Arranged) Arrange();
 
             // Animation を更新します。
             foreach (var animation in Animations)
@@ -731,7 +724,7 @@ namespace Willcraftia.Xna.Framework.UI
                     size.Width = MathHelper.Max(availableSize.Width, MinWidth);
                 }
                 // 余白で調整します。
-                size.Width -= margin.Left + margin.Right;
+                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
             }
             else
             {
@@ -752,7 +745,7 @@ namespace Willcraftia.Xna.Framework.UI
                     size.Height = MathHelper.Max(availableSize.Height, MinHeight);
                 }
                 // 余白で調整します。
-                size.Height -= margin.Top + margin.Bottom;
+                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
             }
             else
             {
