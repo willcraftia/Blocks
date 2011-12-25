@@ -25,7 +25,15 @@ namespace Willcraftia.Xna.Framework.UI.Animations
         protected sealed override void Update(GameTime gameTime, TimeSpan playElapsedTime)
         {
             float amount = (float) (playElapsedTime.TotalMilliseconds / Duration.TotalMilliseconds);
-            float current = MathHelper.Lerp(From, To, amount);
+            float current;
+            if (!Reversed)
+            {
+                current = MathHelper.Lerp(From, To, amount);
+            }
+            else
+            {
+                current = MathHelper.Lerp(To, From, amount);
+            }
             Update(gameTime, playElapsedTime, current);
         }
 

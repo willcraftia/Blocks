@@ -70,6 +70,25 @@ namespace Willcraftia.Xna.Framework.UI.Animations
         }
 
         /// <summary>
+        /// 再生完了後に逆再生するかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// <value>
+        /// true (再生完了後に逆再生する場合)、false (それ以外の場合)。
+        /// </value>
+        /// <remarks>
+        /// AutoReverse プロパティを true に設定すると、再生時間が Duration プロパティで指定した長さの 2 倍になります。 
+        /// </remarks>
+        public bool AutoReversed { get; set; }
+
+        /// <summary>
+        /// 逆再生中であるかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (逆再生中の場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Reversed { get; private set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         protected TimelineAnimation()
@@ -96,8 +115,19 @@ namespace Willcraftia.Xna.Framework.UI.Animations
                 var endTime = beginTime + duration;
                 if (endTime < elapsedTime)
                 {
+                    if (AutoReversed && !Reversed)
+                    {
+                        Reversed = true;
+                        // 逆再生開始時間を記録します。
+                        activatedTime = gameTime.TotalGameTime;
+                        return;
+                    }
+
                     // まずはアニメーション終了としてマークします。
                     activated = false;
+
+                    // 逆再生していたなら逆再生終了としてマークします。
+                    Reversed = false;
 
                     if (repeat.CountEnabled)
                     {
