@@ -64,6 +64,9 @@ namespace Willcraftia.Xna.Framework.UI
                 finalScissorRectangle.Width = (int) MathHelper.Min(viewportBounds.Right, scissorRectangle.Right) - finalScissorRectangle.X;
                 finalScissorRectangle.Height = (int) MathHelper.Min(viewportBounds.Bottom, scissorRectangle.Bottom) - finalScissorRectangle.Y;
 
+                // 親の ScissorRectangle を考慮した領域を計算します。
+                finalScissorRectangle = Rectangle.Intersect(finalScissorRectangle, previousScissorRectangle);
+
                 graphicsDevice.ScissorRectangle = finalScissorRectangle;
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
             }

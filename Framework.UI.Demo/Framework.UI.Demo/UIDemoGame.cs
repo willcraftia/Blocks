@@ -204,17 +204,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     Margin = new Thickness(u * 5, u * 5, 0, 0),
                     BackgroundColor = Color.Blue
                 };
-                //{
-                //    var animation = new Animations.ControlWidthAnimation()
-                //    {
-                //        From = 0,
-                //        To = u * 10,
-                //        BeginTime = new TimeSpan(0, 0, 1),
-                //        Duration = new TimeSpan(0, 0, 1)
-                //    };
-                //    window.Animations.Add(animation);
-                //    animation.Enabled = true;
-                //}
+                {
+                    var animation = new Animations.ControlWidthAnimation()
+                    {
+                        From = 0,
+                        To = u * 10,
+                        BeginTime = new TimeSpan(0, 0, 1),
+                        Duration = new TimeSpan(0, 0, 1)
+                    };
+                    window.Animations.Add(animation);
+                    animation.Enabled = true;
+                }
 
                 var stackPanel = new StackPanel()
                 {
