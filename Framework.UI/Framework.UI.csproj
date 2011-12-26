@@ -101,6 +101,7 @@
     <Compile Include="Animations\TimelineAnimation.cs" />
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
+    <Compile Include="Controls\SizeToContent.cs" />
     <Compile Include="Lafs\ControlLafBase.cs" />
     <Compile Include="Lafs\ControlLafSourceBase.cs" />
     <Compile Include="Controls\Orientation.cs" />

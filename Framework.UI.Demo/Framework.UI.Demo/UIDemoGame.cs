@@ -285,8 +285,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                                 var subSubWindow = new Window()
                                 {
-                                    Width = u * 7,
-                                    Height = u * 3,
+                                    SizeToContent = Controls.SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
                                     BackgroundColor = Color.Brown * 0.8f
                                 };
@@ -298,9 +297,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                         Text = "Close",
                                         TextHorizontalAlignment = HorizontalAlignment.Left,
                                         ForegroundColor = Color.White,
-                                        //Width = u * 2,
-                                        //Height = u,
-                                        Margin = new Thickness(u, u, 0, 0)
+                                        Width = u * 2,
+                                        Height = u,
+                                        Margin = new Thickness(u)
                                     };
                                     subSubButton.Clicked += delegate(object subBs, EventArgs subBe)
                                     {

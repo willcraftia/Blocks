@@ -709,7 +709,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>測定により自身が希望するサイズ。</returns>
         protected virtual Size MeasureOverride(Size availableSize)
         {
-            Size size = new Size();
+            var size = new Size();
 
             if (float.IsNaN(Width))
             {

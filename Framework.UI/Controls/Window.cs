@@ -1,7 +1,7 @@
 ﻿#region Using
 
 using System;
-using Willcraftia.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -26,6 +26,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// この Window を所有する Window。
         /// </summary>
         Window owner;
+
+        public SizeToContent SizeToContent { get; set; }
 
         /// <summary>
         /// この Window を所有する Window を取得あるいは設定します。
@@ -57,7 +59,10 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Window() : base(true) { }
+        public Window() : base(true)
+        {
+            SizeToContent = SizeToContent.Manual;
+        }
 
         /// <summary>
         /// Window を表示します。
@@ -80,6 +85,129 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Parent.Children.Remove(this);
             // Closed イベントを発生させます。
             RaiseClosed();
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            switch (SizeToContent)
+            {
+                case SizeToContent.Width:
+                    {
+                        return MeasureWidthToContent(availableSize);
+                    }
+                case SizeToContent.Height:
+                    {
+                        return MeasureHeightToContent(availableSize);
+                    }
+                case SizeToContent.WidthAndHeight:
+                    {
+                        return MeasureWidthAndHeightToContent(availableSize);
+                    }
+                case SizeToContent.Manual:
+                default:
+                    {
+                        return base.MeasureOverride(availableSize);
+                    }
+            }
+        }
+
+        Size MeasureWidthToContent(Size availableSize)
+        {
+            var size = new Size();
+
+            if (float.IsNaN(Height))
+            {
+                // 高さが未設定ならば可能な限り最大の幅を希望します。
+                if (MinHeight < MaxHeight)
+                {
+                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                }
+                // 余白で調整します。
+                var margin = Margin;
+                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
+            }
+            else
+            {
+                // 高さが設定されているならばそのまま希望します。
+                size.Height = Height;
+            }
+
+            // 一旦、自分が希望するサイズで子の希望サイズを定めます。
+            var finalSize = new Size(0, size.Height);
+            foreach (var child in Children)
+            {
+                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
+                child.Measure(size);
+                var childMeasuredSize = child.MeasuredSize;
+                var childMargin = child.Margin;
+                finalSize.Width += childMeasuredSize.Width + childMargin.Left + childMargin.Right;
+            }
+
+            return finalSize;
+        }
+
+        Size MeasureHeightToContent(Size availableSize)
+        {
+            var size = new Size();
+
+            if (float.IsNaN(Width))
+            {
+                // 幅が未設定ならば可能な限り最大の幅を希望します。
+                if (MinWidth < MaxWidth)
+                {
+                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                }
+                // 余白で調整します。
+                var margin = Margin;
+                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
+            }
+            else
+            {
+                // 幅が設定されているならばそのまま希望します。
+                size.Width = Width;
+            }
+
+            // 一旦、自分が希望するサイズで子の希望サイズを定めます。
+            var finalSize = new Size(size.Width, 0);
+            foreach (var child in Children)
+            {
+                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
+                child.Measure(size);
+                var childMeasuredSize = child.MeasuredSize;
+                var childMargin = child.Margin;
+                finalSize.Height += childMeasuredSize.Height + childMargin.Top + childMargin.Bottom;
+            }
+
+            return finalSize;
+        }
+
+        Size MeasureWidthAndHeightToContent(Size availableSize)
+        {
+            var size = new Size();
+
+            // 一旦、自分が希望するサイズで子の希望サイズを定めます。
+            var finalSize = new Size(0, 0);
+            foreach (var child in Children)
+            {
+                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
+                child.Measure(size);
+                var childMeasuredSize = child.MeasuredSize;
+                var childMargin = child.Margin;
+                finalSize.Width += childMeasuredSize.Width + childMargin.Left + childMargin.Right;
+                finalSize.Height += childMeasuredSize.Height + childMargin.Top + childMargin.Bottom;
+            }
+
+            return finalSize;
         }
 
         /// <summary>
