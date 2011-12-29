@@ -205,7 +205,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (Screen == null) return;
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
-            DrawControl(gameTime, Screen, Screen.ArrangedBounds.ToXnaRectangle());
+            DrawControl(gameTime, Screen, Screen.ArrangedBounds.ToXnaRectangle(), Screen.Opacity);
             SpriteBatch.End();
 
             base.Draw(gameTime);
@@ -240,11 +240,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         /// <param name="control"></param>
         /// <param name="renderBounds"></param>
-        void DrawControl(GameTime gameTime, Control control, Rectangle renderBounds)
+        /// <param name="totalOpacity"></param>
+        void DrawControl(GameTime gameTime, Control control, Rectangle renderBounds, float totalOpacity)
         {
             // IControlLaf を描画します。
             var laf = GetControlLaf(control);
-            if (laf != null) laf.Draw(control, renderBounds);
+            if (laf != null) laf.Draw(control, renderBounds, totalOpacity);
 
             // 独自の描画があるならば描画します。
             control.Draw(gameTime, renderBounds);
@@ -261,22 +262,24 @@ namespace Willcraftia.Xna.Framework.UI
                     childRenderBounds.X += renderBounds.X;
                     childRenderBounds.Y += renderBounds.Y;
 
-                    var xnaRectangle = childRenderBounds.ToXnaRectangle();
+                    var childXnaBounds = childRenderBounds.ToXnaRectangle();
 
                     // 描画する必要のないサイズならばスキップします。
-                    if (xnaRectangle.Width <= 0 || xnaRectangle.Height <= 0) continue;
+                    if (childXnaBounds.Width <= 0 || childXnaBounds.Height <= 0) continue;
+
+                    var childTotalOpacity = totalOpacity * child.Opacity;
 
                     if (child.Clipped)
                     {
                         // 描画領域をクリッピングします。
-                        using (var scissor = new Scissor(this, xnaRectangle))
+                        using (var scissor = new Scissor(this, childXnaBounds))
                         {
-                            DrawControl(gameTime, child, xnaRectangle);
+                            DrawControl(gameTime, child, childXnaBounds, childTotalOpacity);
                         }
                     }
                     else
                     {
-                        DrawControl(gameTime, child, xnaRectangle);
+                        DrawControl(gameTime, child, childXnaBounds, childTotalOpacity);
                     }
                 }
             }

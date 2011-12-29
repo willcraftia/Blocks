@@ -35,12 +35,12 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             base.LoadContent();
         }
 
-        public override void Draw(Control control, Rectangle renderBounds)
+        public override void Draw(Control control, Rectangle renderBounds, float totalOpacity)
         {
             var window = control as Controls.Window;
             if (window == null) return;
 
-            var color = window.BackgroundColor;
+            var color = window.BackgroundColor * totalOpacity;
             var unit = Source.SpriteSize;
 
             // Top Lines

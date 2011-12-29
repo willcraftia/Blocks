@@ -294,6 +294,11 @@ namespace Willcraftia.Xna.Framework.UI
         public bool Clipped { get; set; }
 
         /// <summary>
+        /// 透明度を取得または設定します。
+        /// </summary>
+        public float Opacity { get; set; }
+
+        /// <summary>
         /// 背景色。
         /// </summary>
         public Color BackgroundColor { get; set; }
@@ -442,6 +447,7 @@ namespace Willcraftia.Xna.Framework.UI
             Animations = new AnimationCollection(this);
 
             Clipped = true;
+            Opacity = 1;
             ForegroundColor = Color.White;
             BackgroundColor = Color.Black;
             HorizontalAlignment = HorizontalAlignment.Center;

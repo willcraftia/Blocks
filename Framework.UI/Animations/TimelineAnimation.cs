@@ -25,7 +25,7 @@ namespace Willcraftia.Xna.Framework.UI.Animations
         /// <summary>
         /// 再生の反復方法。
         /// </summary>
-        Repeat repeat = Repeat.Forever;
+        Repeat repeat = Repeat.Once;
 
         /// <summary>
         /// 再生時間の判定を開始したゲーム内経過時間。

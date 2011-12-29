@@ -93,9 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimationCollection.cs" />
-    <Compile Include="Animations\BackgroundAlphaAnimation.cs" />
-    <Compile Include="Animations\ControlHeightAnimation.cs" />
-    <Compile Include="Animations\ControlWidthAnimation.cs" />
+    <Compile Include="Animations\PropertyLerpAnimation.cs" />
     <Compile Include="Animations\LerpAnimation.cs" />
     <Compile Include="Animations\Repeat.cs" />
     <Compile Include="Animations\TimelineAnimation.cs" />

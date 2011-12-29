@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
@@ -9,7 +10,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     public class ButtonLaf : DebugControlLafBase
     {
-        public override void Draw(Control control, Rectangle renderBounds)
+        public override void Draw(Control control, Rectangle renderBounds, float totalOpacity)
         {
             var button = control as Controls.Button;
             if (button == null) return;
@@ -27,10 +28,12 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             //inBounds.Height -= 4;
             //SpriteBatch.Draw(Source.UIContext.FillTexture, inBounds, Color.Black * 0.8f);
 
+            var foregroundColor = button.ForegroundColor * totalOpacity;
+
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, button.ForegroundColor * 0.5f);
+                SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, foregroundColor * 0.5f);
             }
 
             if (!string.IsNullOrEmpty(button.Text))
@@ -44,8 +47,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
                     renderBounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                //SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor);
-                SpriteBatch.DrawString(font, button.Text, position, button.ForegroundColor, 0, Vector2.Zero, 1.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                SpriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
             }
         }
     }

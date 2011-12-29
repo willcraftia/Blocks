@@ -21,7 +21,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         }
 
         // I/F
-        public abstract void Draw(Control control, Rectangle renderBounds);
+        public abstract void Draw(Control control, Rectangle renderBounds, float totalOpacity);
 
         /// <summary>
         /// Initialize メソッドから呼び出されます。

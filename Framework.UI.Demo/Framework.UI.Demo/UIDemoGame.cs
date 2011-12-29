@@ -159,10 +159,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     BackgroundColor = Color.Red
                 };
                 {
-                    var animation = new Animations.ControlWidthAnimation()
+                    var animation = new Animations.PropertyLerpAnimation()
                     {
+                        PropertyName = "Width",
                         From = 0,
                         To = window.Width,
+                        Repeat = Animations.Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 3)
                     };
@@ -170,10 +172,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     animation.Enabled = true;
                 }
                 {
-                    var animation = new Animations.ControlHeightAnimation()
+                    var animation = new Animations.PropertyLerpAnimation()
                     {
+                        PropertyName = "Height",
                         From = 0,
                         To = window.Height,
+                        Repeat = Animations.Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 3)
                     };
@@ -193,10 +197,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     BackgroundColor = Color.Green
                 };
                 {
-                    var animation = new Animations.BackgroundAlphaAnimation()
+                    var animation = new Animations.PropertyLerpAnimation()
                     {
+                        PropertyName = "Opacity",
                         From = 0,
                         To = 1,
+                        Repeat = Animations.Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 5),
                         AutoReversed = true
@@ -215,17 +221,30 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     Margin = new Thickness(u * 5, u * 5, 0, 0),
                     BackgroundColor = Color.Blue
                 };
-                //{
-                //    var animation = new Animations.ControlWidthAnimation()
-                //    {
-                //        From = 0,
-                //        To = window.Width,
-                //        BeginTime = new TimeSpan(0, 0, 0),
-                //        Duration = new TimeSpan(0, 0, 1)
-                //    };
-                //    window.Animations.Add(animation);
-                //    animation.Enabled = true;
-                //}
+                {
+                    var animation = new Animations.PropertyLerpAnimation()
+                    {
+                        PropertyName = "Width",
+                        From = 0,
+                        To = window.Width,
+                        BeginTime = new TimeSpan(0, 0, 0),
+                        Duration = new TimeSpan(0, 0, 1),
+                        Enabled = true
+                    };
+                    window.Animations.Add(animation);
+                }
+                {
+                    var animation = new Animations.PropertyLerpAnimation()
+                    {
+                        PropertyName = "Height",
+                        From = 0,
+                        To = window.Height,
+                        BeginTime = new TimeSpan(0, 0, 0),
+                        Duration = new TimeSpan(0, 0, 1),
+                        Enabled = true
+                    };
+                    window.Animations.Add(animation);
+                }
 
                 var stackPanel = new StackPanel()
                 {
@@ -249,7 +268,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     {
                         var overlay = new Overlay()
                         {
-                            BackgroundColor = Color.Black * 0.5f
+                            Opacity = 0.5f,
+                            BackgroundColor = Color.Black
                         };
 
                         var subWindow = new Window()
@@ -283,7 +303,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             {
                                 var subOverlay = new Overlay()
                                 {
-                                    BackgroundColor = Color.Black * 0.5f
+                                    Opacity = 0.5f,
+                                    BackgroundColor = Color.Black
                                 };
 
                                 var subSubWindow = new Window()

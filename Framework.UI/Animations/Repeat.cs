@@ -20,6 +20,14 @@ namespace Willcraftia.Xna.Framework.UI.Animations
         }
 
         /// <summary>
+        /// 1 回のみの処理を表す Repeat を取得します。
+        /// </summary>
+        public static Repeat Once
+        {
+            get { return new Repeat(1); }
+        }
+
+        /// <summary>
         /// 反復回数を取得します。
         /// </summary>
         public int Count { get; private set; }
