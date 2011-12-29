@@ -113,7 +113,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         Size MeasureWidthToContent(Size availableSize)
         {
-            var size = new Size();
+            var size = availableSize;
 
             if (float.IsNaN(Height))
             {
@@ -153,7 +153,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         Size MeasureHeightToContent(Size availableSize)
         {
-            var size = new Size();
+            var size = availableSize;
 
             if (float.IsNaN(Width))
             {
@@ -193,7 +193,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         Size MeasureWidthAndHeightToContent(Size availableSize)
         {
-            var size = new Size();
+            var size = availableSize;
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, 0);

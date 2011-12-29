@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -22,6 +23,134 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public StackPanel()
         {
             Orientation = Orientation.Horizontal;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (Orientation == Orientation.Horizontal)
+            {
+                return MeasureHorizontalDirection(availableSize);
+            }
+            else
+            {
+                return MeasureVerticalDirection(availableSize);
+            }
+        }
+
+        protected virtual Size MeasureHorizontalDirection(Size availableSize)
+        {
+            var size = new Size();
+            var margin = Margin;
+
+            if (float.IsNaN(Width))
+            {
+                // 幅が未設定ならば可能な限り最大の幅を希望します。
+                if (MinWidth < MaxWidth)
+                {
+                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                }
+                // 余白で調整します。
+                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
+            }
+            else
+            {
+                // 幅が設定されているならばそのまま希望します。
+                size.Width = Width;
+            }
+
+            if (float.IsNaN(Height))
+            {
+                // 高さが未設定ならば可能な限り最大の幅を希望します。
+                if (MinHeight < MaxHeight)
+                {
+                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                }
+                // 余白で調整します。
+                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
+            }
+            else
+            {
+                // 高さが設定されているならばそのまま希望します。
+                size.Height = Height;
+            }
+
+            var finalSize = new Size(0, size.Height);
+            foreach (var child in Children)
+            {
+                child.Measure(size);
+                var childMeasuredSize = child.MeasuredSize;
+                finalSize.Width += childMeasuredSize.Width;
+            }
+
+            return finalSize;
+        }
+
+        protected virtual Size MeasureVerticalDirection(Size availableSize)
+        {
+            var size = new Size();
+            var margin = Margin;
+
+            if (float.IsNaN(Width))
+            {
+                // 幅が未設定ならば可能な限り最大の幅を希望します。
+                if (MinWidth < MaxWidth)
+                {
+                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                }
+                // 余白で調整します。
+                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
+            }
+            else
+            {
+                // 幅が設定されているならばそのまま希望します。
+                size.Width = Width;
+            }
+
+            if (float.IsNaN(Height))
+            {
+                // 高さが未設定ならば可能な限り最大の幅を希望します。
+                if (MinHeight < MaxHeight)
+                {
+                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                }
+                // 余白で調整します。
+                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
+            }
+            else
+            {
+                // 高さが設定されているならばそのまま希望します。
+                size.Height = Height;
+            }
+
+            var finalSize = new Size(size.Width, 0);
+            foreach (var child in Children)
+            {
+                child.Measure(size);
+                var childMeasuredSize = child.MeasuredSize;
+                finalSize.Height += childMeasuredSize.Height;
+            }
+
+            return finalSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -51,6 +180,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             {
                 var childMeasuredSize = child.MeasuredSize;
                 var childMargin = child.Margin;
+                point.X += childMargin.Left;
                 point.Y = childMargin.Top;
                 switch (child.VerticalAlignment)
                 {
@@ -60,13 +190,13 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         }
                     case VerticalAlignment.Bottom:
                         {
-                            point.Y += finalSize.Height - childMeasuredSize.Height;
+                            point.Y += finalSize.Height- (childMeasuredSize.Height + childMargin.Top + childMargin.Bottom);
                             break;
                         }
                     case UI.VerticalAlignment.Center:
                     default:
                         {
-                            point.Y += (finalSize.Height - childMeasuredSize.Height) * 0.5f;
+                            point.Y += (finalSize.Height - (childMeasuredSize.Height + childMargin.Top + childMargin.Bottom)) * 0.5f;
                             break;
                         }
                 }
@@ -74,7 +204,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 child.Arrange(new Rect(point, childMeasuredSize));
 
                 // 子が確定した幅の分だけ次の子の座標をずらします。
-                point.X += child.ActualWidth;
+                point.X += child.ActualWidth + childMargin.Right;
             }
 
             return finalSize;
@@ -96,6 +226,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 var childMeasuredSize = child.MeasuredSize;
                 var childMargin = child.Margin;
                 point.X = childMargin.Left;
+                point.Y += childMargin.Top;
                 switch (child.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
@@ -104,13 +235,13 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         }
                     case HorizontalAlignment.Right:
                         {
-                            point.X += finalSize.Width - childMeasuredSize.Width;
+                            point.X += finalSize.Width - (childMeasuredSize.Width - childMargin.Left + childMargin.Right);
                             break;
                         }
                     case HorizontalAlignment.Center:
                     default:
                         {
-                            point.X += (finalSize.Width - childMeasuredSize.Width) * 0.5f;
+                            point.X += (finalSize.Width - (childMeasuredSize.Width - childMargin.Left + childMargin.Right)) * 0.5f;
                             break;
                         }
                 }
@@ -118,7 +249,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 child.Arrange(new Rect(point, childMeasuredSize));
 
                 // 子が確定した幅の分だけ次の子の座標をずらします。
-                point.Y += child.ActualHeight;
+                point.Y += child.ActualHeight + childMargin.Bottom;
             }
 
             return finalSize;

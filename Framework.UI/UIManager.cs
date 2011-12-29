@@ -58,14 +58,11 @@ namespace Willcraftia.Xna.Framework.UI
 
                 // Viewport の領域からはみ出ないように領域を調整します (はみ出ると例外が発生します)。
                 var viewportBounds = graphicsDevice.Viewport.Bounds;
-                var finalScissorRectangle = new Rectangle();
-                finalScissorRectangle.X = (int) MathHelper.Max(viewportBounds.X, scissorRectangle.X);
-                finalScissorRectangle.Y = (int) MathHelper.Max(viewportBounds.Y, scissorRectangle.Y);
-                finalScissorRectangle.Width = (int) MathHelper.Min(viewportBounds.Right, scissorRectangle.Right) - finalScissorRectangle.X;
-                finalScissorRectangle.Height = (int) MathHelper.Min(viewportBounds.Bottom, scissorRectangle.Bottom) - finalScissorRectangle.Y;
-
+                Rectangle viewIntersectBounds;
+                Rectangle.Intersect(ref viewportBounds, ref scissorRectangle, out viewIntersectBounds);
                 // 親の ScissorRectangle を考慮した領域を計算します。
-                finalScissorRectangle = Rectangle.Intersect(finalScissorRectangle, previousScissorRectangle);
+                Rectangle finalScissorRectangle;
+                Rectangle.Intersect(ref viewIntersectBounds, ref previousScissorRectangle, out finalScissorRectangle);
 
                 graphicsDevice.ScissorRectangle = finalScissorRectangle;
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);

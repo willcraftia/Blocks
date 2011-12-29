@@ -775,7 +775,6 @@ namespace Willcraftia.Xna.Framework.UI
                 var childMargin = child.Margin;
                 var childMeasuredSize = child.MeasuredSize;
                 var bounds = new Rect(childMargin.Left, childMargin.Top, childMeasuredSize.Width, childMeasuredSize.Height);
-                //var bounds = new Rect(finalSize);
                 child.Arrange(bounds);
             }
 

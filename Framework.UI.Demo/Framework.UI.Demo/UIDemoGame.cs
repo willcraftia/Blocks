@@ -215,21 +215,21 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     Margin = new Thickness(u * 5, u * 5, 0, 0),
                     BackgroundColor = Color.Blue
                 };
-                {
-                    var animation = new Animations.ControlWidthAnimation()
-                    {
-                        From = 0,
-                        To = window.Width,
-                        BeginTime = new TimeSpan(0, 0, 0),
-                        Duration = new TimeSpan(0, 0, 1)
-                    };
-                    window.Animations.Add(animation);
-                    animation.Enabled = true;
-                }
+                //{
+                //    var animation = new Animations.ControlWidthAnimation()
+                //    {
+                //        From = 0,
+                //        To = window.Width,
+                //        BeginTime = new TimeSpan(0, 0, 0),
+                //        Duration = new TimeSpan(0, 0, 1)
+                //    };
+                //    window.Animations.Add(animation);
+                //    animation.Enabled = true;
+                //}
 
                 var stackPanel = new StackPanel()
                 {
-                    Margin = new Thickness(8, 8, 8, 8),
+                    Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
                 };
                 window.Children.Add(stackPanel);
@@ -239,6 +239,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     {
                         Text = "Open new dialog",
                         ForegroundColor = Color.White,
+                        VerticalAlignment = UI.VerticalAlignment.Center,
+                        Margin = new Thickness(8),
+                        Height = u * 3,
                         Width = u * 5
                     };
                     stackPanel.Children.Add(button);
@@ -252,7 +255,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         var subWindow = new Window()
                         {
                             Width = u * 7,
-                            Height = u * 4,
+                            SizeToContent = Controls.SizeToContent.Height,
                             Margin = new Thickness(u * 4, u * 6, 0, 0),
                             BackgroundColor = Color.Green * 0.8f
                         };
@@ -260,7 +263,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                         var subStackPanel = new StackPanel()
                         {
-                            Margin = new Thickness(8, 8, 8, 8),
+                            Margin = new Thickness(8),
                             Orientation = Orientation.Vertical
                         };
                         subWindow.Children.Add(subStackPanel);

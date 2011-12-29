@@ -26,15 +26,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         {
             var graphicsDevice = Screen.UIContext.GraphicsDevice;
             var previousViewport = graphicsDevice.Viewport;
+            var newBounds = Rectangle.Intersect(previousViewport.Bounds, renderBounds);
+            graphicsDevice.Viewport = new Viewport(newBounds);
 
             var effect = Screen.UIContext.BasicEffect;
-
-            var viewport = graphicsDevice.Viewport;
-            viewport.X = renderBounds.X;
-            viewport.Y = renderBounds.Y;
-            viewport.Width = renderBounds.Width;
-            viewport.Height = renderBounds.Height;
-            graphicsDevice.Viewport = viewport;
 
             var cameraPosition = new Vector3(0, 0, 2.5f);
             var aspect = ((float) renderBounds.Width / (float) renderBounds.Height);
