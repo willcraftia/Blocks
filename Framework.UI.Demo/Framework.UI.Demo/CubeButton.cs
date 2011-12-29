@@ -22,17 +22,21 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             Orientation = Matrix.Identity;
         }
 
-        public override void Draw(GameTime gameTime, Rectangle renderBounds)
+        public override void Draw(GameTime gameTime, IDrawContext drawContext)
         {
-            var graphicsDevice = Screen.UIContext.GraphicsDevice;
+            drawContext.Flush();
+
+            var bounds = drawContext.Bounds;
+
+            var graphicsDevice = drawContext.GraphicsDevice;
             var previousViewport = graphicsDevice.Viewport;
-            var newBounds = Rectangle.Intersect(previousViewport.Bounds, renderBounds);
+            var newBounds = Rectangle.Intersect(previousViewport.Bounds, bounds);
             graphicsDevice.Viewport = new Viewport(newBounds);
 
-            var effect = Screen.UIContext.BasicEffect;
+            var effect = drawContext.BasicEffect;
 
             var cameraPosition = new Vector3(0, 0, 2.5f);
-            var aspect = ((float) renderBounds.Width / (float) renderBounds.Height);
+            var aspect = ((float) bounds.Width / (float) bounds.Height);
 
             effect.World = Orientation * Matrix.CreateScale(Scale);
             effect.View = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
@@ -41,15 +45,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             effect.Alpha = 1;
             effect.EnableDefaultLighting();
 
-            graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            //graphicsDevice.BlendState = BlendState.Opaque;
-            //graphicsDevice.BlendState = BlendState.AlphaBlend;
-
             CubePrimitive.Draw(effect);
 
             graphicsDevice.Viewport = previousViewport;
 
-            base.Draw(gameTime, renderBounds);
+            base.Draw(gameTime, drawContext);
         }
     }
 }

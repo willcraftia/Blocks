@@ -545,8 +545,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// Visible が false の場合、Draw メソッドは呼び出されません。
         /// </remarks>
         /// <param name="gameTime"></param>
-        /// <param name="renderBounds"></param>
-        public virtual void Draw(GameTime gameTime, Rectangle renderBounds) { }
+        /// <param name="drawContext"></param>
+        public virtual void Draw(GameTime gameTime, IDrawContext drawContext) { }
 
         /// <summary>
         /// マウス カーソル移動を処理します。

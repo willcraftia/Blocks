@@ -29,7 +29,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// using 終了による Dispose 呼び出しにて SpriteBatch を End し、前回の ScissorRectangle を再設定して SpriteBatch を Begin します。
         /// これにより、GraphicsDevice の ScissorRectangle の状態と SpriteBatch の Begin/End の状態を論理的にスタック化できます。
         /// </remarks>
-        private class Scissor : IDisposable
+        class Scissor : IDisposable
         {
             UIManager uiManager;
 
@@ -45,11 +45,12 @@ namespace Willcraftia.Xna.Framework.UI
             public void Dispose()
             {
                 EndClipping();
+                GC.SuppressFinalize(this);
             }
 
             void BeginClipping(ref Rectangle scissorRectangle)
             {
-                var spriteBatch = uiManager.SpriteBatch;
+                var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = uiManager.GraphicsDevice;
 
                 spriteBatch.End();
@@ -70,13 +71,70 @@ namespace Willcraftia.Xna.Framework.UI
 
             void EndClipping()
             {
-                var spriteBatch = uiManager.SpriteBatch;
+                var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
                 spriteBatch.End();
 
                 graphicsDevice.ScissorRectangle = previousScissorRectangle;
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
+            }
+        }
+
+        #endregion
+
+        #region IDrawContext
+
+        class DrawContext : IDrawContext, IDisposable
+        {
+            UIManager uiManager;
+
+            // I/F
+            public GraphicsDevice GraphicsDevice
+            {
+                get { return uiManager.GraphicsDevice; }
+            }
+
+            // I/F
+            public SpriteBatch SpriteBatch
+            {
+                get { return uiManager.spriteBatch; }
+            }
+
+            // I/F
+            public BasicEffect BasicEffect
+            {
+                get { return uiManager.basicEffect; }
+            }
+
+            // I/F
+            public Rectangle Bounds { get; internal set; }
+
+            // I/F
+            public float Opacity { get; internal set; }
+
+            // I/F
+            public Texture2D FillTexture
+            {
+                get { return uiManager.fillTexture; }
+            }
+
+            public DrawContext(UIManager uiManager)
+            {
+                this.uiManager = uiManager;
+            }
+
+            // I/F
+            public void Flush()
+            {
+                SpriteBatch.End();
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
+            }
+
+            // I/F
+            public void Dispose()
+            {
+                GC.SuppressFinalize(this);
             }
         }
 
@@ -92,14 +150,11 @@ namespace Willcraftia.Xna.Framework.UI
 
         RasterizerState scissorTestRasterizerState;
 
-        // I/F
-        public SpriteBatch SpriteBatch { get; private set; }
+        SpriteBatch spriteBatch;
 
-        // I/F
-        public Texture2D FillTexture { get; private set; }
+        Texture2D fillTexture;
 
-        // I/F
-        public BasicEffect BasicEffect { get; private set; }
+        BasicEffect basicEffect;
 
         public IInputCapturer InputCapturer
         {
@@ -204,18 +259,25 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (Screen == null) return;
 
-            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
-            DrawControl(gameTime, Screen, Screen.ArrangedBounds.ToXnaRectangle(), Screen.Opacity);
-            SpriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
+
+            using (var drawContext = new DrawContext(this))
+            {
+                drawContext.Bounds = Screen.ArrangedBounds.ToXnaRectangle();
+                drawContext.Opacity = Screen.Opacity;
+                DrawControl(gameTime, Screen, drawContext);
+            }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
         protected override void LoadContent()
         {
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
-            FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
-            BasicEffect = new BasicEffect(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
+            basicEffect = new BasicEffect(GraphicsDevice);
 
             if (ControlLafSource != null) ControlLafSource.Initialize();
 
@@ -224,8 +286,8 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected override void UnloadContent()
         {
-            if (SpriteBatch != null) SpriteBatch.Dispose();
-            if (FillTexture != null) FillTexture.Dispose();
+            if (spriteBatch != null) spriteBatch.Dispose();
+            if (fillTexture != null) fillTexture.Dispose();
             if (ControlLafSource != null) ControlLafSource.Dispose();
 
             base.UnloadContent();
@@ -239,19 +301,20 @@ namespace Willcraftia.Xna.Framework.UI
         /// </remarks>
         /// <param name="gameTime"></param>
         /// <param name="control"></param>
-        /// <param name="renderBounds"></param>
-        /// <param name="totalOpacity"></param>
-        void DrawControl(GameTime gameTime, Control control, Rectangle renderBounds, float totalOpacity)
+        /// <param name="drawContext"></param>
+        void DrawControl(GameTime gameTime, Control control, DrawContext drawContext)
         {
             // IControlLaf を描画します。
             var laf = GetControlLaf(control);
-            if (laf != null) laf.Draw(control, renderBounds, totalOpacity);
+            if (laf != null) laf.Draw(control, drawContext);
 
             // 独自の描画があるならば描画します。
-            control.Draw(gameTime, renderBounds);
+            control.Draw(gameTime, drawContext);
 
             if (control.Children.Count != 0)
             {
+                var renderBounds = drawContext.Bounds;
+
                 // 子を再帰的に描画します。
                 foreach (var child in control.Children)
                 {
@@ -267,19 +330,23 @@ namespace Willcraftia.Xna.Framework.UI
                     // 描画する必要のないサイズならばスキップします。
                     if (childXnaBounds.Width <= 0 || childXnaBounds.Height <= 0) continue;
 
-                    var childTotalOpacity = totalOpacity * child.Opacity;
+                    using (var childDrawContext = new DrawContext(this))
+                    {
+                        childDrawContext.Opacity = drawContext.Opacity * child.Opacity;
+                        childDrawContext.Bounds = childXnaBounds;
 
-                    if (child.Clipped)
-                    {
-                        // 描画領域をクリッピングします。
-                        using (var scissor = new Scissor(this, childXnaBounds))
+                        if (child.Clipped)
                         {
-                            DrawControl(gameTime, child, childXnaBounds, childTotalOpacity);
+                            // 描画領域をクリッピングします。
+                            using (var scissor = new Scissor(this, childXnaBounds))
+                            {
+                                DrawControl(gameTime, child, childDrawContext);
+                            }
                         }
-                    }
-                    else
-                    {
-                        DrawControl(gameTime, child, childXnaBounds, childTotalOpacity);
+                        else
+                        {
+                            DrawControl(gameTime, child, childDrawContext);
+                        }
                     }
                 }
             }

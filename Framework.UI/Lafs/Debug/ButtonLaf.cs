@@ -10,30 +10,32 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     public class ButtonLaf : DebugControlLafBase
     {
-        public override void Draw(Control control, Rectangle renderBounds, float totalOpacity)
+        public override void Draw(Control control, IDrawContext drawContext)
         {
             var button = control as Controls.Button;
             if (button == null) return;
 
+            var opacity = drawContext.Opacity;
+            var bounds = drawContext.Bounds;
+
+            // 枠のために白で塗り潰します。
+            drawContext.SpriteBatch.Draw(drawContext.FillTexture, drawContext.Bounds, Color.White * drawContext.Opacity);
+
             // 背景色で塗り潰します。
-            //SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, button.BackgroundColor * 1.0f);
-            //var c = button.BackgroundColor;
-            //SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, Color.FromNonPremultiplied(c.R, c.G, c.B, 100));
+            // 少し小さくした領域を背景色で覆います。
+            var inBounds = drawContext.Bounds;
+            inBounds.X += 2;
+            inBounds.Y += 2;
+            inBounds.Width -= 4;
+            inBounds.Height -= 4;
+            drawContext.SpriteBatch.Draw(drawContext.FillTexture, inBounds, null, button.BackgroundColor * opacity);
 
-            // 少し小さくした領域を半透明黒で覆います (ブレンドしつつ枠を作ります)。
-            //var inBounds = renderBounds;
-            //inBounds.X += 2;
-            //inBounds.Y += 2;
-            //inBounds.Width -= 4;
-            //inBounds.Height -= 4;
-            //SpriteBatch.Draw(Source.UIContext.FillTexture, inBounds, Color.Black * 0.8f);
-
-            var foregroundColor = button.ForegroundColor * totalOpacity;
+            var foregroundColor = button.ForegroundColor * opacity;
 
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, foregroundColor * 0.5f);
+                drawContext.SpriteBatch.Draw(drawContext.FillTexture, bounds, foregroundColor * 0.5f);
             }
 
             if (!string.IsNullOrEmpty(button.Text))
@@ -46,8 +48,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 }
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
-                    renderBounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                SpriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
+                    bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                drawContext.SpriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
             }
         }
     }

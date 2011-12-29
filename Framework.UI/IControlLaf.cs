@@ -11,6 +11,6 @@ namespace Willcraftia.Xna.Framework.UI
     {
         void Initialize();
 
-        void Draw(Control control, Rectangle renderBounds, float totalOpacity);
+        void Draw(Control control, IDrawContext drawContext);
     }
 }

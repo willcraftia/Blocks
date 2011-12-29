@@ -9,23 +9,21 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     public class WindowLaf : DebugControlLafBase
     {
-        public override void Draw(Control control, Rectangle renderBounds, float totalOpacity)
+        public override void Draw(Control control, IDrawContext drawContext)
         {
             var window = control as Controls.Window;
             if (window == null) return;
 
-            // 背景色で塗り潰します。
-            //SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, window.BackgroundColor);
-            SpriteBatch.Draw(Source.UIContext.FillTexture, renderBounds, Color.White * totalOpacity);
+            // 枠のために白で塗り潰します。
+            drawContext.SpriteBatch.Draw(drawContext.FillTexture, drawContext.Bounds, Color.White * drawContext.Opacity);
 
-            // 少し小さくした領域を半透明黒で覆います (ブレンドしつつ枠を作ります)。
-            var inBounds = renderBounds;
+            // 少し小さくした領域を背景色で覆います。
+            var inBounds = drawContext.Bounds;
             inBounds.X += 2;
             inBounds.Y += 2;
             inBounds.Width -= 4;
             inBounds.Height -= 4;
-            //SpriteBatch.Draw(Source.UIContext.FillTexture, inBounds, Color.Black * alpha);
-            SpriteBatch.Draw(Source.UIContext.FillTexture, inBounds, window.BackgroundColor * totalOpacity);
+            drawContext.SpriteBatch.Draw(drawContext.FillTexture, inBounds, window.BackgroundColor * drawContext.Opacity);
         }
     }
 }

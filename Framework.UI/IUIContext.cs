@@ -13,14 +13,6 @@ namespace Willcraftia.Xna.Framework.UI
     {
         GraphicsDevice GraphicsDevice { get; }
 
-        SpriteBatch SpriteBatch { get; }
-
-        Texture2D FillTexture { get; }
-
-        BasicEffect BasicEffect { get; }
-
-        Screen Screen { get; }
-
         ContentManager CreateContentManager();
     }
 }
