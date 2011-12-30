@@ -369,11 +369,6 @@ namespace Willcraftia.Xna.Framework.UI
         public ControlCollection Children { get; private set; }
 
         /// <summary>
-        /// Animation コレクションを取得します。
-        /// </summary>
-        public AnimationCollection Animations { get; private set; }
-
-        /// <summary>
         /// Control が有効かどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control が有効な場合)、false (それ以外の場合)。</value>
@@ -444,7 +439,6 @@ namespace Willcraftia.Xna.Framework.UI
             this.affectsOrdering = affectsOrdering;
 
             Children = new ControlCollection(this);
-            Animations = new AnimationCollection(this);
 
             Clipped = true;
             Opacity = 1;
@@ -523,12 +517,6 @@ namespace Willcraftia.Xna.Framework.UI
             foreach (var child in Children)
             {
                 if (!child.Arranged) Arrange(ArrangedBounds);
-            }
-
-            // Animation を更新します。
-            foreach (var animation in Animations)
-            {
-                if (animation.Enabled) animation.Update(gameTime);
             }
 
             // 再帰的に子 Control を更新します。

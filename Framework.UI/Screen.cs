@@ -40,11 +40,17 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Animation コレクションを取得します。
+        /// </summary>
+        public AnimationCollection Animations { get; private set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Screen()
         {
             Screen = this;
+            Animations = new AnimationCollection(this);
         }
 
         // I/F
@@ -113,6 +119,12 @@ namespace Willcraftia.Xna.Framework.UI
 
         public override void Update(GameTime gameTime)
         {
+            // Animation を更新します。
+            foreach (var animation in Screen.Animations)
+            {
+                if (animation.Enabled) animation.Update(gameTime);
+            }
+
             // Screen は自分のサイズで測定を開始します。
             if (!Measured)
             {

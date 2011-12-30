@@ -92,7 +92,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimationCollection.cs" />
     <Compile Include="Animations\PropertyLerpAnimation.cs" />
     <Compile Include="Animations\LerpAnimation.cs" />
     <Compile Include="Animations\Repeat.cs" />
@@ -112,6 +111,7 @@
     <Compile Include="Controls\Overlay.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Rect.cs" />
+    <Compile Include="AnimationCollection.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Thickness.cs" />
     <Compile Include="VerticalAlignment.cs" />

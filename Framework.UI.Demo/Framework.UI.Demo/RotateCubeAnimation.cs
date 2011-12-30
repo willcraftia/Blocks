@@ -13,16 +13,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         float pitch;
         float roll;
 
+        public CubeButton CubeButton { get; set; }
+
         protected override void Update(GameTime gameTime, TimeSpan playElapsedTime, float current)
         {
-            var button = Control as CubeButton;
-            if (button == null) return;
+            if (CubeButton == null) throw new InvalidOperationException("CubeButton is null.");
 
             yaw = current;
             pitch = current;
             roll = current;
 
-            button.Orientation = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
+            CubeButton.Orientation = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
         }
     }
 }

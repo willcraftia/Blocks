@@ -161,6 +161,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 {
                     var animation = new Animations.PropertyLerpAnimation()
                     {
+                        Target = window,
                         PropertyName = "Width",
                         From = 0,
                         To = window.Width,
@@ -168,21 +169,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 3)
                     };
-                    window.Animations.Add(animation);
+                    screen.Animations.Add(animation);
                     animation.Enabled = true;
                 }
                 {
                     var animation = new Animations.PropertyLerpAnimation()
                     {
+                        Target = window,
                         PropertyName = "Height",
                         From = 0,
                         To = window.Height,
                         Repeat = Animations.Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
-                        Duration = new TimeSpan(0, 0, 3)
+                        Duration = new TimeSpan(0, 0, 3),
+                        Enabled = true
                     };
-                    window.Animations.Add(animation);
-                    animation.Enabled = true;
+                    screen.Animations.Add(animation);
                 }
 
                 window.Show(screen);
@@ -199,16 +201,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 {
                     var animation = new Animations.PropertyLerpAnimation()
                     {
+                        Target = window,
                         PropertyName = "Opacity",
                         From = 0,
                         To = 1,
                         Repeat = Animations.Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 5),
-                        AutoReversed = true
+                        AutoReversed = true,
+                        Enabled = true
                     };
-                    window.Animations.Add(animation);
-                    animation.Enabled = true;
+                    screen.Animations.Add(animation);
                 }
                 window.Show(screen);
             }
@@ -224,6 +227,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 {
                     var animation = new Animations.PropertyLerpAnimation()
                     {
+                        Target = window,
                         PropertyName = "Width",
                         From = 0,
                         To = window.Width,
@@ -231,11 +235,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         Duration = new TimeSpan(0, 0, 1),
                         Enabled = true
                     };
-                    window.Animations.Add(animation);
+                    screen.Animations.Add(animation);
                 }
                 {
                     var animation = new Animations.PropertyLerpAnimation()
                     {
+                        Target = window,
                         PropertyName = "Height",
                         From = 0,
                         To = window.Height,
@@ -243,7 +248,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         Duration = new TimeSpan(0, 0, 1),
                         Enabled = true
                     };
-                    window.Animations.Add(animation);
+                    screen.Animations.Add(animation);
                 }
 
                 var stackPanel = new StackPanel()
@@ -372,6 +377,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 {
                                     var animation = new Animations.PropertyLerpAnimation()
                                     {
+                                        Target = exitOverlay,
                                         PropertyName = "Opacity",
                                         From = 0,
                                         To = 1,
@@ -383,11 +389,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                     {
                                         Exit();
                                     };
-                                    exitOverlay.Animations.Add(animation);
+                                    screen.Animations.Add(animation);
                                 }
                                 exitOverlay.Show(screen);
-
-                                //overlay.Close();
                             };
                         }
 
@@ -406,13 +410,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                     var rotateCubeTimelineAnimation = new RotateCubeAnimation()
                     {
+                        CubeButton = button,
                         From = 0,
                         To = MathHelper.TwoPi,
                         BeginTime = TimeSpan.Zero,
                         Duration = new TimeSpan(0, 0, 4),
                         Repeat = Animations.Repeat.Forever
                     };
-                    button.Animations.Add(rotateCubeTimelineAnimation);
+                    screen.Animations.Add(rotateCubeTimelineAnimation);
 
                     button.MouseEntered += delegate(object s, EventArgs e)
                     {

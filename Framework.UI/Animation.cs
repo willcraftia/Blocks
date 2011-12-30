@@ -43,7 +43,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if (name == value) return;
 
                 // コレクション内のキーを更新します。
-                if (Control != null) Control.Animations.ChangeKey(this, value);
+                if (Screen != null) Screen.Animations.ChangeKey(this, value);
                 // 名前を設定します。
                 name = value;
             }
@@ -67,9 +67,9 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// この Animation を所有する Control を取得します。
+        /// この Animation を所有する Screen を取得します。
         /// </summary>
-        public Control Control { get; internal set; }
+        public Screen Screen { get; internal set; }
 
         /// <summary>
         /// コンストラクタ。

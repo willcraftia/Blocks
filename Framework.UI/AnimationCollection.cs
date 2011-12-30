@@ -8,23 +8,23 @@ using System.Collections.ObjectModel;
 namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
-    /// Control に設定する Animation を管理するコレクションです。
+    /// Screen の Animation を管理するコレクションです。
     /// </summary>
-    public sealed class AnimationCollection : KeyedCollection<string, Animation>
+    public class AnimationCollection : KeyedCollection<string, Animation>
     {
         /// <summary>
-        /// このコレクションを所持する Control を取得します。
+        /// このコレクションを所持する Screen を取得します。
         /// </summary>
-        public Control Control { get; private set; }
+        public Screen Screen { get; private set; }
 
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="control">このコレクションを所持する Control。</param>
-        public AnimationCollection(Control control)
+        /// <param name="screen">このコレクションを所持する Screen。</param>
+        public AnimationCollection(Screen screen)
         {
-            if (control == null) throw new ArgumentNullException("control");
-            Control = control;
+            if (screen == null) throw new ArgumentNullException("screen");
+            Screen = screen;
         }
 
         /// <summary>
@@ -49,35 +49,35 @@ namespace Willcraftia.Xna.Framework.UI
         {
             base.InsertItem(index, item);
 
-            // Control を設定します。
-            item.Control = Control;
+            // Screen を設定します。
+            item.Screen = Screen;
         }
 
         protected override void RemoveItem(int index)
         {
-            // Control を解除します。
-            base[index].Control = null;
+            // Screen を解除します。
+            base[index].Screen = null;
 
             base.RemoveItem(index);
         }
 
         protected override void SetItem(int index, Animation item)
         {
-            // Control を解除します。
-            base[index].Control = null;
+            // Screen を解除します。
+            base[index].Screen = null;
 
             base.SetItem(index, item);
 
-            // Control を設定します。
-            item.Control = Control;
+            // Screen を設定します。
+            item.Screen = Screen;
         }
 
         protected override void ClearItems()
         {
             foreach (var item in Items)
             {
-                // Control を解除します。
-                item.Control = null;
+                // Screen を解除します。
+                item.Screen = null;
             }
 
             base.ClearItems();
