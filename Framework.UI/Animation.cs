@@ -18,6 +18,11 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler EnanbledChanged;
 
         /// <summary>
+        /// アニメーションが完了した時に発生します。
+        /// </summary>
+        public event EventHandler Completed;
+
+        /// <summary>
         /// 名前。
         /// </summary>
         string name;
@@ -81,6 +86,20 @@ namespace Willcraftia.Xna.Framework.UI
         /// Enabled プロパティが変更された時に呼び出されます。
         /// </summary>
         protected virtual void OnEnanbledChanged() { }
+
+        /// <summary>
+        /// Completed イベントが発生される時に呼び出されます。
+        /// </summary>
+        protected virtual void OnCompleted() { }
+
+        /// <summary>
+        /// Completed イベントを発生させます。
+        /// </summary>
+        protected void RaiseCompleted()
+        {
+            OnCompleted();
+            if (Completed != null) Completed(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// EnanbledChanged イベントを発生させます。

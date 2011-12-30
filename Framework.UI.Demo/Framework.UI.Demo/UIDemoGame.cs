@@ -300,7 +300,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             };
                             subStackPanel.Children.Add(subButton);
                             subButton.Clicked += delegate(object bs, EventArgs be)
-
                             {
                                 var subOverlay = new Overlay()
                                 {
@@ -350,6 +349,45 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 overlay.Close();
+                            };
+                        }
+                        {
+                            var subButton = new Button()
+                            {
+                                Text = "Exit",
+                                TextHorizontalAlignment = HorizontalAlignment.Left,
+                                Margin = new Thickness(8),
+                                ForegroundColor = Color.White,
+                                Height = u,
+                                HorizontalAlignment = HorizontalAlignment.Left
+                            };
+                            subStackPanel.Children.Add(subButton);
+                            subButton.Clicked += delegate(object bs, EventArgs be)
+                            {
+                                var exitOverlay = new Controls.Overlay()
+                                {
+                                    Opacity = 0,
+                                    BackgroundColor = Color.Black
+                                };
+                                {
+                                    var animation = new Animations.PropertyLerpAnimation()
+                                    {
+                                        PropertyName = "Opacity",
+                                        From = 0,
+                                        To = 1,
+                                        BeginTime = new TimeSpan(0, 0, 0),
+                                        Duration = new TimeSpan(0, 0, 2),
+                                        Enabled = true
+                                    };
+                                    animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
+                                    {
+                                        Exit();
+                                    };
+                                    exitOverlay.Animations.Add(animation);
+                                }
+                                exitOverlay.Show(screen);
+
+                                //overlay.Close();
                             };
                         }
 

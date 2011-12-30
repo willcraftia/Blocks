@@ -144,6 +144,8 @@ namespace Willcraftia.Xna.Framework.UI.Animations
                     // 再生を終えます。
                     Enabled = false;
                     repeatCount = 0;
+                    // 完了イベントを発生させます。
+                    RaiseCompleted();
                     return;
                 }
 
