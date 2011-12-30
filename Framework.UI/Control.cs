@@ -37,6 +37,11 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler MouseLeft;
 
         /// <summary>
+        /// 名前。
+        /// </summary>
+        string name;
+
+        /// <summary>
         /// 外側の余白。
         /// </summary>
         Thickness margin;
@@ -82,16 +87,6 @@ namespace Willcraftia.Xna.Framework.UI
         Rect arrangedBounds = Rect.Empty;
 
         /// <summary>
-        /// 親 Control。
-        /// </summary>
-        Control parent;
-
-        /// <summary>
-        /// 属する Screen。
-        /// </summary>
-        Screen screen;
-
-        /// <summary>
         /// 自身あるいは子のうちのアクティブな Control。
         /// </summary>
         Control activatedControl;
@@ -125,6 +120,23 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (アクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </summary>
         bool affectsOrdering;
+
+        /// <summary>
+        /// 名前を取得または設定します。
+        /// </summary>
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if (name == value) return;
+
+                // コレクション内のキーを更新します。
+                if (Screen != null && Screen.Controls.Contains(this)) Screen.Controls.ChangeKey(this, value);
+                // 名前を設定します。
+                name = value;
+            }
+        }
 
         /// <summary>
         /// 外側の余白を取得または設定します。
@@ -319,54 +331,19 @@ namespace Willcraftia.Xna.Framework.UI
         public VerticalAlignment VerticalAlignment { get; set; }
 
         /// <summary>
-        /// 親 Control を取得または設定します。
+        /// 親 Control を取得します。
         /// </summary>
-        public Control Parent
-        {
-            get { return parent; }
-            internal set
-            {
-                if (parent == value) return;
-
-                parent = value;
-
-                if (parent != null)
-                {
-                    // 親と同じ Screen を設定します。
-                    if (parent.Screen != null) Screen = parent.Screen;
-                }
-                else
-                {
-                    // 親を失ったので Screen をリセットします。
-                    Screen = null;
-                }
-            }
-        }
+        public Control Parent { get; internal set; }
 
         /// <summary>
         /// Screen を取得します。
         /// </summary>
-        public Screen Screen
-        {
-            get { return screen; }
-            internal set
-            {
-                if (screen == value) return;
-
-                // 古い Screen でフォーカスを得ていたならば解除します。
-                if (screen != null) Defocus();
-
-                screen = value;
-
-                // 子にも同じ Screen を設定します。
-                foreach (var child in Children) child.Screen = screen;
-            }
-        }
+        public Screen Screen { get; internal set; }
 
         /// <summary>
         /// 子 Control のコレクションを取得します。
         /// </summary>
-        public ControlCollection Children { get; private set; }
+        public ParentingControlCollection Children { get; private set; }
 
         /// <summary>
         /// Control が有効かどうかを取得または設定します。
@@ -426,19 +403,26 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Control() : this(false) { }
+        public Control(Screen screen) : this(screen, false) { }
 
         /// <summary>
         /// コンストラクタ。
         /// </summary>
+        /// <param name="screen">
+        /// Control が属する Screen。
+        /// </param>
         /// <param name="affectsOrdering">
         /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </param>
-        public Control(bool affectsOrdering)
+        public Control(Screen screen, bool affectsOrdering)
         {
+            if (screen == null) throw new ArgumentNullException("screen");
+            this.Screen = screen;
             this.affectsOrdering = affectsOrdering;
 
-            Children = new ControlCollection(this);
+            screen.Controls.Add(this);
+
+            Children = new ParentingControlCollection(this);
 
             Clipped = true;
             Opacity = 1;

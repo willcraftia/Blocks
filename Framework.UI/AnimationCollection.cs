@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 #endregion
@@ -16,6 +17,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// このコレクションを所持する Screen を取得します。
         /// </summary>
         public Screen Screen { get; private set; }
+
+        /// <summary>
+        /// 型の簡易名をキーとして、その型のインスタンスが追加された数を値とする Dictionary。
+        /// </summary>
+        Dictionary<string, int> counters;
 
         /// <summary>
         /// コンストラクタ。
@@ -37,10 +43,26 @@ namespace Willcraftia.Xna.Framework.UI
             base.ChangeItemKey(item, newKey);
         }
 
+        /// <summary>
+        /// 指定の要素に設定するキーを生成します。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        protected virtual string GenerateKey(Animation item)
+        {
+            if (counters == null) counters = new Dictionary<string, int>();
+
+            var baseName = item.GetType().Name;
+            int counter = 0;
+            counters.TryGetValue(baseName, out counter);
+            counters[baseName] = ++counter;
+            return baseName + "_" + counter;
+        }
+
         protected override string GetKeyForItem(Animation item)
         {
             // 名前が未設定ならばコレクションで命名します。
-            if (string.IsNullOrEmpty(item.Name)) item.Name = "Animation_" + Count;
+            if (string.IsNullOrEmpty(item.Name)) item.Name = GenerateKey(item);
 
             return item.Name;
         }

@@ -9,123 +9,85 @@ using System.Collections.ObjectModel;
 namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
-    /// 子 Control を管理するためのコレクションです。
+    /// Screen の Control を管理するコレクションです。
     /// </summary>
-    /// <remarks>
-    /// コレクションのインデックスは、画面における Control の前後関係を表します。
-    /// インデックス 0 は、その親 Control 内での最背面を表します。
-    /// </remarks>
-    public class ControlCollection : Collection<Control>
+    public class ControlCollection : KeyedCollection<string, Control>
     {
-        Control parent;
+        /// <summary>
+        /// このコレクションを所持する Screen を取得します。
+        /// </summary>
+        public Screen Screen { get; private set; }
 
         /// <summary>
-        /// parent で指定した Control の子を管理するためのインスタンスを生成します。
+        /// 型の簡易名をキーとして、その型のインスタンスが追加された数を値とする Dictionary。
         /// </summary>
-        /// <param name="parent">このコレクションを所有する Control。</param>
-        public ControlCollection(Control parent)
+        Dictionary<string, int> counters;
+
+        /// <summary>
+        /// コンストラクタ。
+        /// </summary>
+        /// <param name="screen">このコレクションを所持する Screen。</param>
+        public ControlCollection(Screen screen)
         {
-            if (parent == null) throw new ArgumentNullException("parent");
-            this.parent = parent;
+            if (screen == null) throw new ArgumentNullException("screen");
+            Screen = screen;
         }
 
         /// <summary>
-        /// 指定の Control を最前面へ移動させます。
+        /// 指定の要素についてコレクションで管理するキーを変更します。
         /// </summary>
         /// <param name="item"></param>
-        public void MoveToTopMost(Control item)
+        /// <param name="newKey"></param>
+        internal void ChangeKey(Control item, string newKey)
         {
-            if (item == null) throw new ArgumentNullException("item");
-            if (!Contains(item)) throw new ArgumentException("Collection dose not contain the specified control.", "item");
-
-            var index = IndexOf(item);
-            // 既に最前面ならばスキップします。
-            if (index == Count - 1) return;
-
-            base.RemoveAt(index);
-            Add(item);
+            base.ChangeItemKey(item, newKey);
         }
 
-        protected override void InsertItem(int index, Control item)
+        /// <summary>
+        /// 指定の要素に設定するキーを生成します。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        protected virtual string GenerateKey(Control item)
         {
-            // 子として追加可能かどうかを検査
-            validateControl(item);
-            
-            base.InsertItem(index, item);
-            
-            // 親を設定
-            item.Parent = parent;
+            if (counters == null) counters = new Dictionary<string, int>();
 
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
+            var baseName = item.GetType().Name;
+            int counter = 0;
+            counters.TryGetValue(baseName, out counter);
+            counters[baseName] = ++counter;
+            return baseName + "_" + counter;
+        }
+
+        protected override string GetKeyForItem(Control item)
+        {
+            // 名前が未設定ならばコレクションで命名します。
+            if (string.IsNullOrEmpty(item.Name)) item.Name = GenerateKey(item);
+
+            return item.Name;
         }
 
         protected override void RemoveItem(int index)
         {
-            // 除去される Control の親をリセット
-            base[index].Parent = null;
+            var removedItem = base[index];
+            removedItem.Defocus();
 
             base.RemoveItem(index);
-
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
         }
 
         protected override void SetItem(int index, Control item)
         {
-            // 子として追加可能かどうかを検査
-            validateControl(item);
+            var removedItem = base[index];
+            removedItem.Defocus();
 
-            // 除去される Control の親をリセット
-            base[index].Parent = null;
-            
             base.SetItem(index, item);
-
-            // 親を設定
-            item.Parent = parent;
-
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
         }
 
         protected override void ClearItems()
         {
-            // 親をリセット
-            foreach (var item in this) item.Parent = null;
+            foreach (var item in Items) item.Defocus();
 
             base.ClearItems();
-
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
-        }
-
-        /// <summary>
-        /// 指定の Control が、このコレクションに追加可能な状態であるかどうかを検査します。
-        /// 追加不能な状態の場合には例外が発生します。
-        /// </summary>
-        /// <param name="control">このコレクションに追加しようとしている Control。</param>
-        void validateControl(Control control)
-        {
-            // 他の子であってはならない
-            if (control.Parent != null) throw new InvalidOperationException("Control is already the child of another control.");
-            // 自身を子孫にはできない
-            if (IsAncestor(control)) throw new InvalidOperationException("Control can not be the descendant of one's own.");
-        }
-
-        /// <summary>
-        /// 指定の Control が、このコレクションの所有者、あるいは、祖先であるかどうかを判定します。
-        /// </summary>
-        /// <param name="control">判定対象の Control。</param>
-        /// <returns>true (指定の Control がこのコレクションを所有者、あるいは、祖先である場合)、false (それ以外の場合)。</returns>
-        bool IsAncestor(Control control)
-        {
-            var ancestor = parent;
-            while (ancestor != null)
-            {
-                if (ancestor == control) return true;
-                ancestor = ancestor.Parent;
-            }
-            return false;
         }
     }
 }

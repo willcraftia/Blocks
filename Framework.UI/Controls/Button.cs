@@ -16,15 +16,50 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// </summary>
         public event EventHandler Clicked;
 
-        public string Text;
+        string text;
 
-        public HorizontalAlignment TextHorizontalAlignment = HorizontalAlignment.Center;
+        SpriteFont font;
 
-        public VerticalAlignment TextVerticalAlignment = VerticalAlignment.Center;
-
-        public SpriteFont Font;
+        float fontScale = 1;
 
         bool pressedByMouse;
+
+        public string Text
+        {
+            get { return text; }
+            set
+            {
+                if (text == value) return;
+                text = value;
+                Measured = false;
+            }
+        }
+
+        public HorizontalAlignment TextHorizontalAlignment { get; set; }
+
+        public VerticalAlignment TextVerticalAlignment { get; set; }
+
+        public SpriteFont Font
+        {
+            get { return font; }
+            set
+            {
+                if (font == value) return;
+                font = value;
+                Measured = false;
+            }
+        }
+
+        public float FontScale
+        {
+            get { return fontScale; }
+            set
+            {
+                if (fontScale == value) return;
+                fontScale = value;
+                Measured = false;
+            }
+        }
 
         public bool MouseHovering { get; private set; }
 
@@ -34,17 +69,17 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <value>true (Button が押された状態にある場合)、false (それ以外の場合)。</value>
         public bool Pressed
         {
-            get
-            {
-                return MouseHovering && pressedByMouse;
-            }
+            get { return MouseHovering && pressedByMouse; }
         }
 
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Button()
+        public Button(Screen screen)
+            : base(screen)
         {
+            TextHorizontalAlignment = HorizontalAlignment.Center;
+            TextVerticalAlignment = VerticalAlignment.Center;
             Enabled = true;
         }
 

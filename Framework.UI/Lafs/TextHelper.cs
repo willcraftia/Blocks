@@ -10,12 +10,13 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     public static class TextHelper
     {
-        public static Vector2 CalculateTextPosition(Rectangle bounds, SpriteFont font, string text, HorizontalAlignment hAlign, VerticalAlignment vAlign)
+        public static Vector2 CalculateTextPosition(
+            Rectangle bounds, SpriteFont font, string text, float scale, HorizontalAlignment hAlign, VerticalAlignment vAlign)
         {
             if (font == null) throw new ArgumentNullException("font");
             if (text == null) throw new ArgumentNullException("text");
 
-            Vector2 textSize = font.MeasureString(text);
+            Vector2 textSize = font.MeasureString(text) * scale;
             float x;
             float y;
 

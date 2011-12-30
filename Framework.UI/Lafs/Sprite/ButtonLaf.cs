@@ -15,13 +15,15 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var button = control as Controls.Button;
             if (button == null) return;
 
+            var spriteBatch = drawContext.SpriteBatch;
+
             var foregroundColor = button.ForegroundColor * drawContext.Opacity;
             var bounds = drawContext.Bounds;
 
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                drawContext.SpriteBatch.Draw(drawContext.FillTexture, bounds, foregroundColor * 0.5f);
+                spriteBatch.Draw(drawContext.FillTexture, bounds, foregroundColor * 0.5f);
             }
 
             if (!string.IsNullOrEmpty(button.Text))
@@ -34,8 +36,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 }
                 var font = button.Font ?? Source.Font;
                 var position = TextHelper.CalculateTextPosition(
-                    bounds, font, button.Text, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                drawContext.SpriteBatch.DrawString(font, button.Text, position, foregroundColor);
+                    bounds, font, button.Text, button.FontScale, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontScale, SpriteEffects.None, 0);
             }
         }
     }

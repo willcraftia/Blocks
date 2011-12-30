@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
@@ -90,24 +91,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             // Unit size.
             int u = 32;
 
-            var viewportBounds = GraphicsDevice.Viewport.Bounds;
-            var screen = new Screen()
-            {
-                Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0),
-                Width = viewportBounds.Width,
-                Height = viewportBounds.Height
-            };
+            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
+            var screen = new Screen(GraphicsDevice);
+            screen.Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
+            screen.Desktop.Width = viewportBounds.Width;
+            screen.Desktop.Height = viewportBounds.Height;
 
-            var window = new Window()
+            var window = new Window(screen)
             {
                 Width = u * 10,
                 Height = u * 4
             };
-            window.Margin = new Thickness((screen.Width - window.Width) * 0.5f, (screen.Height - window.Height) * 0.5f, 0, 0);
+            window.Margin = new Thickness((screen.Desktop.Width - window.Width) * 0.5f, (screen.Desktop.Height - window.Height) * 0.5f, 0, 0);
 
             {
                 {
-                    var button = new Button()
+                    var button = new Button(screen)
                     {
                         Width = u * 8,
                         Height = u,
@@ -118,7 +117,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     window.Children.Add(button);
                 }
                 {
-                    var button = new Button()
+                    var button = new Button(screen)
                     {
                         Width = u * 8,
                         Height = u,
@@ -129,7 +128,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     window.Children.Add(button);
                 }
             }
-            window.Show(screen);
+            window.Show();
 
             uiManager.Screen = screen;
         }
@@ -142,16 +141,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             // Unit size.
             int u = 32;
 
-            var viewportBounds = GraphicsDevice.Viewport.Bounds;
-            var screen = new Screen()
-            {
-                Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0),
-                Width = viewportBounds.Width,
-                Height = viewportBounds.Height
-            };
+            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
+            var screen = new Screen(GraphicsDevice);
+            screen.Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
+            screen.Desktop.Width = viewportBounds.Width;
+            screen.Desktop.Height = viewportBounds.Height;
 
             {
-                var window = new Window()
+                var window = new Window(screen)
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -159,13 +156,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     BackgroundColor = Color.Red
                 };
                 {
-                    var animation = new Animations.PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation()
                     {
                         Target = window,
                         PropertyName = "Width",
                         From = 0,
                         To = window.Width,
-                        Repeat = Animations.Repeat.Forever,
+                        Repeat = Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 3)
                     };
@@ -173,25 +170,24 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     animation.Enabled = true;
                 }
                 {
-                    var animation = new Animations.PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation()
                     {
                         Target = window,
                         PropertyName = "Height",
                         From = 0,
                         To = window.Height,
-                        Repeat = Animations.Repeat.Forever,
+                        Repeat = Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 3),
                         Enabled = true
                     };
                     screen.Animations.Add(animation);
                 }
-
-                window.Show(screen);
+                window.Show();
             }
 
             {
-                var window = new Window()
+                var window = new Window(screen)
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -199,13 +195,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     BackgroundColor = Color.Green
                 };
                 {
-                    var animation = new Animations.PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation()
                     {
                         Target = window,
                         PropertyName = "Opacity",
                         From = 0,
                         To = 1,
-                        Repeat = Animations.Repeat.Forever,
+                        Repeat = Repeat.Forever,
                         BeginTime = new TimeSpan(0, 0, 0),
                         Duration = new TimeSpan(0, 0, 5),
                         AutoReversed = true,
@@ -213,11 +209,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                     screen.Animations.Add(animation);
                 }
-                window.Show(screen);
+                window.Show();
             }
 
             {
-                var window = new Window()
+                var window = new Window(screen)
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -225,7 +221,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     BackgroundColor = Color.Blue
                 };
                 {
-                    var animation = new Animations.PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation()
                     {
                         Target = window,
                         PropertyName = "Width",
@@ -238,7 +234,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     screen.Animations.Add(animation);
                 }
                 {
-                    var animation = new Animations.PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation()
                     {
                         Target = window,
                         PropertyName = "Height",
@@ -251,7 +247,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     screen.Animations.Add(animation);
                 }
 
-                var stackPanel = new StackPanel()
+                var stackPanel = new StackPanel(screen)
                 {
                     Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
@@ -259,11 +255,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 window.Children.Add(stackPanel);
 
                 {
-                    var button = new Button()
+                    var button = new Button(screen)
                     {
                         Text = "Open new dialog",
+                        FontScale = 1.5f,
                         ForegroundColor = Color.White,
-                        VerticalAlignment = UI.VerticalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
                         Margin = new Thickness(8),
                         Height = u * 3,
                         Width = u * 5
@@ -271,13 +268,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     stackPanel.Children.Add(button);
                     button.Clicked += delegate(object s, EventArgs e)
                     {
-                        var overlay = new Overlay()
+                        var overlay = new Overlay(screen)
                         {
                             Opacity = 0.5f,
                             BackgroundColor = Color.Black
                         };
 
-                        var subWindow = new Window()
+                        var subWindow = new Window(screen)
                         {
                             Width = u * 7,
                             SizeToContent = Controls.SizeToContent.Height,
@@ -286,7 +283,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         };
                         overlay.Children.Add(subWindow);
 
-                        var subStackPanel = new StackPanel()
+                        var subStackPanel = new StackPanel(screen)
                         {
                             Margin = new Thickness(8),
                             Orientation = Orientation.Vertical
@@ -294,7 +291,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         subWindow.Children.Add(subStackPanel);
 
                         {
-                            var subButton = new Button()
+                            var subButton = new Button(screen)
                             {
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -306,13 +303,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subStackPanel.Children.Add(subButton);
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
-                                var subOverlay = new Overlay()
+                                var subOverlay = new Overlay(screen)
                                 {
                                     Opacity = 0.5f,
                                     BackgroundColor = Color.Black
                                 };
 
-                                var subSubWindow = new Window()
+                                var subSubWindow = new Window(screen)
                                 {
                                     SizeToContent = Controls.SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
@@ -321,7 +318,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 subOverlay.Children.Add(subSubWindow);
 
                                 {
-                                    var subSubButton = new Button()
+                                    var subSubButton = new Button(screen)
                                     {
                                         Text = "Close",
                                         TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -341,7 +338,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             };
                         }
                         {
-                            var subButton = new Button()
+                            var subButton = new Button(screen)
                             {
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -357,7 +354,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             };
                         }
                         {
-                            var subButton = new Button()
+                            var subButton = new Button(screen)
                             {
                                 Text = "Exit",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -369,13 +366,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subStackPanel.Children.Add(subButton);
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
-                                var exitOverlay = new Controls.Overlay()
+                                var exitOverlay = new Controls.Overlay(screen)
                                 {
                                     Opacity = 0,
                                     BackgroundColor = Color.Black
                                 };
                                 {
-                                    var animation = new Animations.PropertyLerpAnimation()
+                                    var animation = new PropertyLerpAnimation()
                                     {
                                         Target = exitOverlay,
                                         PropertyName = "Opacity",
@@ -399,7 +396,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                 }
                 {
-                    var button = new CubeButton()
+                    var button = new CubeButton(screen)
                     {
                         CubePrimitive = cubePrimitive,
                         Clipped = false,
@@ -415,7 +412,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         To = MathHelper.TwoPi,
                         BeginTime = TimeSpan.Zero,
                         Duration = new TimeSpan(0, 0, 4),
-                        Repeat = Animations.Repeat.Forever
+                        Repeat = Repeat.Forever
                     };
                     screen.Animations.Add(rotateCubeTimelineAnimation);
 
@@ -431,7 +428,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                 }
 
-                window.Show(screen);
+                window.Show();
             }
 
             uiManager.Screen = screen;

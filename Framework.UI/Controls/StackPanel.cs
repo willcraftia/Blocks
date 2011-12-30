@@ -20,7 +20,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public StackPanel()
+        public StackPanel(Screen screen)
+            : base(screen)
         {
             Orientation = Orientation.Horizontal;
         }

@@ -256,9 +256,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             using (var drawContext = new DrawContext(this))
             {
-                drawContext.Bounds = Screen.ArrangedBounds.ToXnaRectangle();
-                drawContext.Opacity = Screen.Opacity;
-                DrawControl(gameTime, Screen, drawContext);
+                drawContext.Bounds = Screen.Desktop.ArrangedBounds.ToXnaRectangle();
+                drawContext.Opacity = Screen.Desktop.Opacity;
+                DrawControl(gameTime, Screen.Desktop, drawContext);
             }
 
             spriteBatch.End();

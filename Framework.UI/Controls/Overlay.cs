@@ -22,7 +22,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public Overlay()
+        public Overlay(Screen screen)
+            : base(screen)
         {
             // デフォルト背景色は透明にします。
             BackgroundColor = Color.White * 0.0f;
@@ -34,10 +35,10 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="screen"></param>
         public void Show(Screen screen)
         {
-            Margin = screen.Margin;
-            Width = screen.Width;
-            Height = screen.Height;
-            screen.Children.Add(this);
+            Margin = screen.Desktop.Margin;
+            Width = screen.Desktop.Width;
+            Height = screen.Desktop.Height;
+            screen.Desktop.Children.Add(this);
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             // Closing イベントを発生させます。
             RaiseClosing();
             // Screen から登録を解除します。
-            Screen.Children.Remove(this);
+            Screen.Desktop.Children.Remove(this);
             // Closed イベントを発生させます。
             RaiseClosed();
         }

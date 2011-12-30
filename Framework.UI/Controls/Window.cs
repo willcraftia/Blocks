@@ -59,7 +59,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Window() : base(true)
+        public Window(Screen screen)
+            : base(screen, true)
         {
             SizeToContent = SizeToContent.Manual;
         }
@@ -67,11 +68,10 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// Window を表示します。
         /// </summary>
-        /// <param name="screen"></param>
-        public void Show(Screen screen)
+        public void Show()
         {
-            // Screen へ登録します。
-            screen.Children.Add(this);
+            // Desktop へ登録します。
+            Screen.Desktop.Children.Add(this);
         }
 
         /// <summary>
@@ -81,8 +81,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             // Closing イベントを発生させます。
             RaiseClosing();
-            // Screen から登録を解除します。
-            Parent.Children.Remove(this);
+            // Desktop から登録を解除します。
+            Screen.Desktop.Children.Remove(this);
             // Closed イベントを発生させます。
             RaiseClosed();
         }
