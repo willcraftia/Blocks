@@ -11,12 +11,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
     public abstract class ControlLafSourceBase : IControlLafSource
     {
         /// <summary>
+        /// IServiceProvider (ContentManager 生成に利用)。
+        /// </summary>
+        IServiceProvider serviceProvider;
+
+        /// <summary>
         /// Content プロパティの構築で ContentManager に設定する RootDirectory プロパティ。
         /// </summary>
         string contentRootDirectory;
-
-        // I/F
-        public IUIContext UIContext { get; set; }
 
         /// <summary>
         /// ControlLafSource 専用の ContentManager を取得します。
@@ -26,11 +28,16 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
+        /// <param name="serviceProvider">
+        /// IServiceProvider (ContentManager 生成に利用)。
+        /// </param>
         /// <param name="contentRootDirectory">
         /// Content プロパティの構築で ContentManager に設定する RootDirectory プロパティ。
         /// </param>
-        protected ControlLafSourceBase(string contentRootDirectory)
+        protected ControlLafSourceBase(IServiceProvider serviceProvider, string contentRootDirectory)
         {
+            if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
+            this.serviceProvider = serviceProvider;
             this.contentRootDirectory = contentRootDirectory;
         }
 
@@ -38,7 +45,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         public virtual void Initialize()
         {
             // この LaF のための ContentManager を生成します。
-            Content = UIContext.CreateContentManager();
+            Content = new ContentManager(serviceProvider);
             if (!string.IsNullOrEmpty(contentRootDirectory)) Content.RootDirectory = contentRootDirectory;
 
             LoadContent();

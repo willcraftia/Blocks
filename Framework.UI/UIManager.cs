@@ -12,7 +12,7 @@ using Willcraftia.Xna.Framework.Input;
 
 namespace Willcraftia.Xna.Framework.UI
 {
-    public class UIManager : DrawableGameComponent, IUIService, IUIContext
+    public class UIManager : DrawableGameComponent, IUIService
     {
         #region Scissor
 
@@ -188,8 +188,6 @@ namespace Willcraftia.Xna.Framework.UI
                 {
                     // InputReceiver から Screen をアンバインドします。
                     inputCapturer.InputReceiver = null;
-                    // Screen から自分をアンバインドします。
-                    screen.UIContext = null;
                 }
 
                 screen = value;
@@ -198,8 +196,6 @@ namespace Willcraftia.Xna.Framework.UI
                 {
                     // InputReceiver に Screen をバインドします。
                     if (inputCapturer != null) inputCapturer.InputReceiver = screen;
-                    // Screen に自分をバインドします。
-                    screen.UIContext = this;
                 }
             }
         }
@@ -214,10 +210,7 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (controlLafSource == value) return;
 
-                if (controlLafSource != null) controlLafSource.UIContext = null;
-
                 controlLafSource = value;
-                controlLafSource.UIContext = this;
             }
         }
 

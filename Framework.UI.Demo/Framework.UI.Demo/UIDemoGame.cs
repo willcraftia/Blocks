@@ -66,9 +66,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             uiManager = new UIManager(this);
             Components.Add(uiManager);
 
-            debugControlLafSource = new DebugControlLafSource("Content/UI/Debug");
+            debugControlLafSource = new DebugControlLafSource(Services, "Content/UI/Debug");
 
-            spriteControlLafSource = new SpriteControlLafSource("Content/UI/Sprite");
+            spriteControlLafSource = new SpriteControlLafSource(Services, "Content/UI/Sprite");
             spriteControlLafSource.SpriteSize = 32;
 
             uiManager.ControlLafSource = debugControlLafSource;

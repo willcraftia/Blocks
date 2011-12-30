@@ -18,10 +18,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         public SpriteFont Font { get; private set; }
 
-        public SpriteControlLafSource() : this(null) { }
+        public SpriteControlLafSource(IServiceProvider serviceProvider) : this(serviceProvider, null) { }
 
-        public SpriteControlLafSource(string contentRootDirectory)
-            : base(contentRootDirectory)
+        public SpriteControlLafSource(IServiceProvider serviceProvider, string contentRootDirectory)
+            : base(serviceProvider, contentRootDirectory)
         {
             SpriteSize = 16;
 

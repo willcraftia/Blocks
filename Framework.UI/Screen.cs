@@ -16,28 +16,9 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : Control, IInputReceiver
     {
         /// <summary>
-        /// IUIContext。
-        /// </summary>
-        IUIContext uiContext;
-
-        /// <summary>
         /// フォーカスを得ている Control。
         /// </summary>
         Control focusedControl;
-
-        /// <summary>
-        /// UIContext を取得します。
-        /// </summary>
-        public IUIContext UIContext
-        {
-            get { return uiContext; }
-            internal set
-            {
-                if (uiContext == value) return;
-
-                uiContext = value;
-            }
-        }
 
         /// <summary>
         /// Animation コレクションを取得します。
