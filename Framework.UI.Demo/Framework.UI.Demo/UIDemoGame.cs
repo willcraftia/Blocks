@@ -293,6 +293,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             {
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
+                                Margin = new Thickness(8),
                                 ForegroundColor = Color.White,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
@@ -340,6 +341,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             {
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
+                                Margin = new Thickness(8),
                                 ForegroundColor = Color.White,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left

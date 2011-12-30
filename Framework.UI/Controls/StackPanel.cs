@@ -84,15 +84,16 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 size.Height = Height;
             }
 
-            var finalSize = new Size(0, size.Height);
+            float measuredWidth = 0;
             foreach (var child in Children)
             {
                 child.Measure(size);
                 var childMeasuredSize = child.MeasuredSize;
-                finalSize.Width += childMeasuredSize.Width;
+                var childMargin = child.Margin;
+                measuredWidth += childMeasuredSize.Width + margin.Left + margin.Right;
             }
 
-            return finalSize;
+            return new Size(measuredWidth, size.Height);
         }
 
         protected virtual Size MeasureVerticalDirection(Size availableSize)
@@ -142,15 +143,16 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 size.Height = Height;
             }
 
-            var finalSize = new Size(size.Width, 0);
+            float measuredHeight = 0;
             foreach (var child in Children)
             {
                 child.Measure(size);
                 var childMeasuredSize = child.MeasuredSize;
-                finalSize.Height += childMeasuredSize.Height;
+                var childMargin = child.Margin;
+                measuredHeight += childMeasuredSize.Height + childMargin.Top + childMargin.Bottom;
             }
 
-            return finalSize;
+            return new Size(size.Width, measuredHeight);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
