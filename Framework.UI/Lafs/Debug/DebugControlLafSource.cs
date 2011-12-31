@@ -13,8 +13,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
     {
         Dictionary<Type, DebugControlLafBase> controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
-        public SpriteFont Font { get; private set; }
-
         public DebugControlLafSource(IServiceProvider serviceProvider) : this(serviceProvider, null) { }
 
         public DebugControlLafSource(IServiceProvider serviceProvider, string contentRootDirectory)
@@ -66,9 +64,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 
         protected override void LoadContent()
         {
-            // UI のデフォルト フォントをロードします。
-            Font = Content.Load<SpriteFont>("Default");
-
             foreach (var controlLaf in controlLafs.Values) controlLaf.Initialize();
 
             base.LoadContent();

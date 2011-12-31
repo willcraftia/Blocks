@@ -104,15 +104,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Sprite\Default.spritefont">
-      <Name>Default</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
+    <Folder Include="UI\Debug\" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Compile Include="UI\Debug\Default.spritefont">
+    <Compile Include="Font\Default.spritefont">
       <Name>Default</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>

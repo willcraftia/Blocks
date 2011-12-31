@@ -35,6 +35,11 @@ namespace Willcraftia.Xna.Framework.UI
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
+        /// デフォルトの SpriteFont を取得または設定します。
+        /// </summary>
+        public SpriteFont Font { get; set; }
+
+        /// <summary>
         /// Screen を表す Control を取得または設定します。
         /// </summary>
         public DesktopControl Desktop { get; private set; }

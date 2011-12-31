@@ -16,8 +16,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         public int SpriteSize { get; set; }
 
-        public SpriteFont Font { get; private set; }
-
         public SpriteControlLafSource(IServiceProvider serviceProvider) : this(serviceProvider, null) { }
 
         public SpriteControlLafSource(IServiceProvider serviceProvider, string contentRootDirectory)
@@ -71,9 +69,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void LoadContent()
         {
-            // UI のデフォルト フォントをロードします。
-            Font = Content.Load<SpriteFont>("Default");
-
             foreach (var controlLaf in controlLafs.Values) controlLaf.Initialize();
 
             base.LoadContent();

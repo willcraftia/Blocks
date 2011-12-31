@@ -22,17 +22,17 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void LoadContent()
         {
-            var context = Source.Content;
+            var content = Source.Content;
 
-            topLeft = context.Load<Texture2D>("WindowTopLeft");
-            topRight = context.Load<Texture2D>("WindowTopRight");
-            bottomLeft = context.Load<Texture2D>("WindowBottomLeft");
-            bottomRight = context.Load<Texture2D>("WindowBottomRight");
-            left = context.Load<Texture2D>("WindowLeft");
-            right = context.Load<Texture2D>("WindowRight");
-            top = context.Load<Texture2D>("WindowTop");
-            bottom = context.Load<Texture2D>("WindowBottom");
-            fill = context.Load<Texture2D>("WindowFill");
+            topLeft = content.Load<Texture2D>("WindowTopLeft");
+            topRight = content.Load<Texture2D>("WindowTopRight");
+            bottomLeft = content.Load<Texture2D>("WindowBottomLeft");
+            bottomRight = content.Load<Texture2D>("WindowBottomRight");
+            left = content.Load<Texture2D>("WindowLeft");
+            right = content.Load<Texture2D>("WindowRight");
+            top = content.Load<Texture2D>("WindowTop");
+            bottom = content.Load<Texture2D>("WindowBottom");
+            fill = content.Load<Texture2D>("WindowFill");
 
             base.LoadContent();
         }

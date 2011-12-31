@@ -18,10 +18,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         string text;
 
-        SpriteFont font;
-
-        float fontScale = 1;
-
         bool pressedByMouse;
 
         public string Text
@@ -38,28 +34,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public HorizontalAlignment TextHorizontalAlignment { get; set; }
 
         public VerticalAlignment TextVerticalAlignment { get; set; }
-
-        public SpriteFont Font
-        {
-            get { return font; }
-            set
-            {
-                if (font == value) return;
-                font = value;
-                Measured = false;
-            }
-        }
-
-        public float FontScale
-        {
-            get { return fontScale; }
-            set
-            {
-                if (fontScale == value) return;
-                fontScale = value;
-                Measured = false;
-            }
-        }
 
         public bool MouseHovering { get; private set; }
 
@@ -81,6 +55,64 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;
             Enabled = true;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var size = new Size();
+
+            if (float.IsNaN(Width))
+            {
+                // 幅が未設定ならば可能な限り最大の幅を希望します。
+                if (MinWidth < MaxWidth)
+                {
+                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                }
+                // 余白で調整します。
+                var margin = Margin;
+                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
+            }
+            else
+            {
+                // 幅が設定されているならばそのまま希望します。
+                size.Width = Width;
+            }
+
+            if (float.IsNaN(Height))
+            {
+                // 高さが未設定ならば可能な限り最大の幅を希望します。
+                if (MinHeight < MaxHeight)
+                {
+                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                }
+                // 余白で調整します。
+                var margin = Margin;
+                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
+            }
+            else
+            {
+                // 高さが設定されているならばそのまま希望します。
+                size.Height = Height;
+            }
+
+            // 自分が希望するサイズで子の希望サイズを定めます。
+            foreach (var child in Children)
+            {
+                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
+                child.Measure(size);
+            }
+
+            return size;
         }
 
         protected override void OnMouseEntered()

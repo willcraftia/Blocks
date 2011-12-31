@@ -34,10 +34,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                     offset.X += 2;
                     offset.Y += 2;
                 }
-                var font = button.Font ?? Source.Font;
+                var font = button.Font ?? button.Screen.Font;
                 var position = TextHelper.CalculateTextPosition(
-                    bounds, font, button.Text, button.FontScale, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-                spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontScale, SpriteEffects.None, 0);
+                    bounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
             }
         }
     }

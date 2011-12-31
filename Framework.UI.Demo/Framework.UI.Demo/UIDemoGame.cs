@@ -93,6 +93,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             var screen = new Screen(GraphicsDevice);
+            screen.Font = Content.Load<SpriteFont>("Font/Default");
             screen.Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             screen.Desktop.Width = viewportBounds.Width;
             screen.Desktop.Height = viewportBounds.Height;
@@ -143,6 +144,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             var screen = new Screen(GraphicsDevice);
+            screen.Font = Content.Load<SpriteFont>("Font/Default");
             screen.Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             screen.Desktop.Width = viewportBounds.Width;
             screen.Desktop.Height = viewportBounds.Height;
@@ -258,7 +260,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     var button = new Button(screen)
                     {
                         Text = "Open new dialog",
-                        FontScale = 1.5f,
+                        FontStretch = new Vector2(1.5f, 1.0f),
                         ForegroundColor = Color.White,
                         VerticalAlignment = VerticalAlignment.Center,
                         Margin = new Thickness(8),

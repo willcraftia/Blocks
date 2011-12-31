@@ -1,11 +1,9 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
-using Willcraftia.Xna.Framework.UI.Controls;
-using Willcraftia.Xna.Framework.UI.Lafs;
 
 #endregion
 
@@ -120,6 +118,16 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (アクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </summary>
         bool affectsOrdering;
+
+        /// <summary>
+        /// SpriteFont。
+        /// </summary>
+        SpriteFont font;
+
+        /// <summary>
+        /// フォントの拡大縮小の度合い。
+        /// </summary>
+        Vector2 fontStretch = Vector2.One;
 
         /// <summary>
         /// 名前を取得または設定します。
@@ -304,6 +312,34 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (親の描画領域でクリップする場合)、false (それ以外の場合)。
         /// </value>
         public bool Clipped { get; set; }
+
+        /// <summary>
+        /// SpriteFont を取得または設定します。
+        /// </summary>
+        public SpriteFont Font
+        {
+            get { return font; }
+            set
+            {
+                if (font == value) return;
+                font = value;
+                Measured = false;
+            }
+        }
+
+        /// <summary>
+        /// フォントの拡大縮小の度合いを取得または設定します。
+        /// </summary>
+        public Vector2 FontStretch
+        {
+            get { return fontStretch; }
+            set
+            {
+                if (fontStretch == value) return;
+                fontStretch = value;
+                Measured = false;
+            }
+        }
 
         /// <summary>
         /// 透明度を取得または設定します。
