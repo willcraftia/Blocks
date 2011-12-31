@@ -27,6 +27,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             // デフォルト背景色は透明にします。
             BackgroundColor = Color.White * 0.0f;
+            // デフォルトは透明度の継承を行いません。
+            OpacityInherited = false;
         }
 
         /// <summary>

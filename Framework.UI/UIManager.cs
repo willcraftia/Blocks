@@ -325,7 +325,14 @@ namespace Willcraftia.Xna.Framework.UI
 
                     using (var childDrawContext = new DrawContext(this))
                     {
-                        childDrawContext.Opacity = drawContext.Opacity * child.Opacity;
+                        if (control.OpacityInherited)
+                        {
+                            childDrawContext.Opacity = drawContext.Opacity * child.Opacity;
+                        }
+                        else
+                        {
+                            childDrawContext.Opacity = child.Opacity;
+                        }
                         childDrawContext.Bounds = childXnaBounds;
 
                         if (child.Clipped)

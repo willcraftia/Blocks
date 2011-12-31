@@ -94,6 +94,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             var screen = new Screen(GraphicsDevice);
             screen.Font = Content.Load<SpriteFont>("Font/Default");
+            screen.Desktop.BackgroundColor = Color.CornflowerBlue;
             screen.Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             screen.Desktop.Width = viewportBounds.Width;
             screen.Desktop.Height = viewportBounds.Height;
@@ -145,6 +146,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             var screen = new Screen(GraphicsDevice);
             screen.Font = Content.Load<SpriteFont>("Font/Default");
+            screen.Desktop.BackgroundColor = Color.CornflowerBlue;
             screen.Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             screen.Desktop.Width = viewportBounds.Width;
             screen.Desktop.Height = viewportBounds.Height;
@@ -260,7 +262,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     var button = new Button(screen)
                     {
                         Text = "Open new dialog",
-                        FontStretch = new Vector2(1.5f, 1.0f),
+                        FontStretch = new Vector2(1.0f, 2.0f),
                         ForegroundColor = Color.White,
                         VerticalAlignment = VerticalAlignment.Center,
                         Margin = new Thickness(8),
@@ -280,7 +282,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             Width = u * 7,
                             SizeToContent = Controls.SizeToContent.Height,
                             Margin = new Thickness(u * 4, u * 6, 0, 0),
-                            BackgroundColor = Color.Green * 0.8f
+                            BackgroundColor = Color.Green
                         };
                         overlay.Children.Add(subWindow);
 
@@ -315,7 +317,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 {
                                     SizeToContent = Controls.SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
-                                    BackgroundColor = Color.Brown * 0.8f
+                                    BackgroundColor = Color.Brown
                                 };
                                 subOverlay.Children.Add(subSubWindow);
 
@@ -383,7 +385,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                         From = 0,
                                         To = 1,
                                         BeginTime = new TimeSpan(0, 0, 0),
-                                        Duration = new TimeSpan(0, 0, 2),
+                                        Duration = new TimeSpan(0, 0, 1),
                                         Enabled = true
                                     };
                                     animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)

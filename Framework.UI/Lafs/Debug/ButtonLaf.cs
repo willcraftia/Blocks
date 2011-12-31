@@ -8,30 +8,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
-    public class ButtonLaf : DebugControlLafBase
+    public class ButtonLaf : DefaultControlLaf
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {
+            base.Draw(control, drawContext);
+
             var button = control as Controls.Button;
             if (button == null) return;
 
             var spriteBatch = drawContext.SpriteBatch;
-
             var opacity = drawContext.Opacity;
             var bounds = drawContext.Bounds;
-
-            // 枠のために白で塗り潰します。
-            spriteBatch.Draw(drawContext.FillTexture, drawContext.Bounds, Color.White * drawContext.Opacity);
-
-            // 背景色で塗り潰します。
-            // 少し小さくした領域を背景色で覆います。
-            var inBounds = drawContext.Bounds;
-            inBounds.X += 2;
-            inBounds.Y += 2;
-            inBounds.Width -= 4;
-            inBounds.Height -= 4;
-            spriteBatch.Draw(drawContext.FillTexture, inBounds, null, button.BackgroundColor * opacity);
-
             var foregroundColor = button.ForegroundColor * opacity;
 
             if (button.MouseHovering)
