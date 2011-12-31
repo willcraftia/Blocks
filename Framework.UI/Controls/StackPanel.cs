@@ -175,16 +175,28 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <returns></returns>
         protected virtual Size ArrangeHorizontalDirection(Size finalSize)
         {
-            // シンプルに実装します。
-            // 幅も高さも指定された値をそのまま使うことにします。
-
-            var point = new Point();
+            float offsetX = 0;
             foreach (var child in Children)
             {
                 var childMeasuredSize = child.MeasuredSize;
                 var childMargin = child.Margin;
-                point.X += childMargin.Left;
-                point.Y = childMargin.Top;
+
+                offsetX += childMargin.Left;
+
+                var childBounds = new Rect();
+                childBounds.X = offsetX;
+                childBounds.Y = childMargin.Top;
+                childBounds.Width = childMeasuredSize.Width;
+
+                if (float.IsNaN(child.Height))
+                {
+                    childBounds.Height = MathHelper.Min(finalSize.Height, child.MaxHeight) - (childMargin.Top + childMargin.Bottom);
+                }
+                else
+                {
+                    childBounds.Height = childMeasuredSize.Height;
+                }
+
                 switch (child.VerticalAlignment)
                 {
                     case VerticalAlignment.Top:
@@ -193,21 +205,21 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         }
                     case VerticalAlignment.Bottom:
                         {
-                            point.Y += finalSize.Height- (childMeasuredSize.Height + childMargin.Top + childMargin.Bottom);
+                            childBounds.Y += finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom);
                             break;
                         }
                     case UI.VerticalAlignment.Center:
                     default:
                         {
-                            point.Y += (finalSize.Height - (childMeasuredSize.Height + childMargin.Top + childMargin.Bottom)) * 0.5f;
+                            childBounds.Y += (finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom)) * 0.5f;
                             break;
                         }
                 }
 
-                child.Arrange(new Rect(point, childMeasuredSize));
+                child.Arrange(childBounds);
 
                 // 子が確定した幅の分だけ次の子の座標をずらします。
-                point.X += child.ActualWidth + childMargin.Right;
+                offsetX += child.ActualWidth + childMargin.Right;
             }
 
             return finalSize;
@@ -220,16 +232,28 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <returns></returns>
         protected virtual Size ArrangeVerticalDirection(Size finalSize)
         {
-            // シンプルに実装します。
-            // 幅も高さも指定された値をそのまま使うことにします。
-
-            var point = new Point();
+            float offsetY = 0;
             foreach (var child in Children)
             {
                 var childMeasuredSize = child.MeasuredSize;
                 var childMargin = child.Margin;
-                point.X = childMargin.Left;
-                point.Y += childMargin.Top;
+
+                offsetY += childMargin.Top;
+
+                var childBounds = new Rect();
+                childBounds.X = childMargin.Left;
+                childBounds.Y = offsetY;
+                childBounds.Height = childMeasuredSize.Height;
+
+                if (float.IsNaN(child.Width))
+                {
+                    childBounds.Width = MathHelper.Min(finalSize.Width, child.MaxWidth) - (childMargin.Left + childMargin.Right);
+                }
+                else
+                {
+                    childBounds.Width = childMeasuredSize.Width;
+                }
+
                 switch (child.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
@@ -238,21 +262,21 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         }
                     case HorizontalAlignment.Right:
                         {
-                            point.X += finalSize.Width - (childMeasuredSize.Width - childMargin.Left + childMargin.Right);
+                            childBounds.X += finalSize.Width - (childBounds.Width - childMargin.Left + childMargin.Right);
                             break;
                         }
                     case HorizontalAlignment.Center:
                     default:
                         {
-                            point.X += (finalSize.Width - (childMeasuredSize.Width - childMargin.Left + childMargin.Right)) * 0.5f;
+                            childBounds.X += (finalSize.Width - (childBounds.Width - childMargin.Left + childMargin.Right)) * 0.5f;
                             break;
                         }
                 }
 
-                child.Arrange(new Rect(point, childMeasuredSize));
+                child.Arrange(childBounds);
 
                 // 子が確定した幅の分だけ次の子の座標をずらします。
-                point.Y += child.ActualHeight + childMargin.Bottom;
+                offsetY += child.ActualHeight + childMargin.Bottom;
             }
 
             return finalSize;
