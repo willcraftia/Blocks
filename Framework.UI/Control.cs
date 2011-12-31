@@ -45,6 +45,11 @@ namespace Willcraftia.Xna.Framework.UI
         Thickness margin;
 
         /// <summary>
+        /// 内側の余白。
+        /// </summary>
+        Thickness padding;
+
+        /// <summary>
         /// 幅の下限。
         /// </summary>
         float minWidth = 0;
@@ -156,6 +161,23 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (margin == value) return;
                 margin = value;
+                // 再測定させます。
+                Measured = false;
+            }
+        }
+
+        /// <summary>
+        /// 内側の余白を取得または設定します。
+        /// </summary>
+        public Thickness Padding
+        {
+            get { return padding; }
+            set
+            {
+                if (padding == value) return;
+                padding = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
 
@@ -169,6 +191,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (minWidth == value) return;
                 minWidth = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
 
@@ -182,6 +206,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (minHeight == value) return;
                 minHeight = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
         
@@ -195,6 +221,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (maxWidth == value) return;
                 maxWidth = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
         
@@ -208,6 +236,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (maxHeight == value) return;
                 maxHeight = value;
+                // 再測定させます。
+                Measured = false;
             }
         }
 

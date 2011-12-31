@@ -61,21 +61,37 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             var size = new Size();
 
+            Vector2 fontSize = new Vector2();
+            if (!string.IsNullOrEmpty(Text))
+            {
+                var font = Font ?? Screen.Font;
+                fontSize = font.MeasureString(Text) * FontStretch;
+            }
+
             if (float.IsNaN(Width))
             {
-                // 幅が未設定ならば可能な限り最大の幅を希望します。
-                if (MinWidth < MaxWidth)
+                if (string.IsNullOrEmpty(Text))
                 {
-                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                    // 幅が未設定ならば可能な限り最大の幅を希望します。
+                    if (MinWidth < MaxWidth)
+                    {
+                        size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
+                    }
+                    else
+                    {
+                        // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                        size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                    }
+                    // 余白で調整します。
+                    var margin = Margin;
+                    size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
                 }
                 else
                 {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
+                    // Text が設定されているならば、そのフォントの幅と Padding で希望します。
+                    var padding = Padding;
+                    size.Width = fontSize.X + padding.Left + padding.Right;
                 }
-                // 余白で調整します。
-                var margin = Margin;
-                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
             }
             else
             {
@@ -85,19 +101,28 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
             if (float.IsNaN(Height))
             {
-                // 高さが未設定ならば可能な限り最大の幅を希望します。
-                if (MinHeight < MaxHeight)
+                if (string.IsNullOrEmpty(Text))
                 {
-                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                    // 高さが未設定ならば可能な限り最大の幅を希望します。
+                    if (MinHeight < MaxHeight)
+                    {
+                        size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
+                    }
+                    else
+                    {
+                        // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                        size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                    }
+                    // 余白で調整します。
+                    var margin = Margin;
+                    size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
                 }
                 else
                 {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
+                    // Text が設定されているならば、そのフォントの高さと Padding で希望します。
+                    var padding = Padding;
+                    size.Height = fontSize.Y + padding.Top + padding.Bottom;
                 }
-                // 余白で調整します。
-                var margin = Margin;
-                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
             }
             else
             {

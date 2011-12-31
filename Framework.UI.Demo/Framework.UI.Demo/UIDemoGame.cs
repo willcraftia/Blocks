@@ -217,7 +217,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             {
                 var window = new Window(screen)
                 {
-                    Width = u * 10,
+                    Width = u * 15,
                     Height = u * 10,
                     Margin = new Thickness(u * 5, u * 5, 0, 0),
                     BackgroundColor = Color.Blue
@@ -264,8 +264,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         ForegroundColor = Color.White,
                         VerticalAlignment = VerticalAlignment.Center,
                         Margin = new Thickness(8),
-                        Height = u * 3,
-                        Width = u * 5
+                        Padding = new Thickness(8)
                     };
                     stackPanel.Children.Add(button);
                     button.Clicked += delegate(object s, EventArgs e)
@@ -298,6 +297,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
                                 Margin = new Thickness(8),
+                                Padding = new Thickness(8),
                                 ForegroundColor = Color.White,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
@@ -345,6 +345,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
                                 Margin = new Thickness(8),
+                                Padding = new Thickness(8),
                                 ForegroundColor = Color.White,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
@@ -361,6 +362,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 Text = "Exit",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
                                 Margin = new Thickness(8),
+                                Padding = new Thickness(8),
                                 ForegroundColor = Color.White,
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
@@ -403,7 +405,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         CubePrimitive = cubePrimitive,
                         Clipped = false,
                         ForegroundColor = Color.White,
-                        Width = u * 5
+                        Width = u * 7
                     };
                     stackPanel.Children.Add(button);
 

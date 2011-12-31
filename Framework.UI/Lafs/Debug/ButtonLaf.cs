@@ -48,9 +48,18 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                     offset.X += 2;
                     offset.Y += 2;
                 }
+
+                var padding = button.Padding;
+                var paddedBounds = bounds;
+                paddedBounds.X += (int) padding.Left;
+                paddedBounds.Y += (int) padding.Top;
+                paddedBounds.Width -= (int) (padding.Left + padding.Right);
+                paddedBounds.Height -= (int) (padding.Top + padding.Bottom);
+
                 var font = button.Font ?? button.Screen.Font;
                 var position = TextHelper.CalculateTextPosition(
-                    bounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                    paddedBounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+
                 spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
             }
         }
