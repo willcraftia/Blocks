@@ -30,6 +30,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         Graphics.GeometricPrimitive cubePrimitive;
 
+        Content.AsyncLoadManager asyncLoadManager = new Content.AsyncLoadManager();
+
         public UIDemoGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -84,6 +86,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         {
             //LoadSimpleGameDemoGui();
             LoadSimpleWindowDemoGui();
+
+            asyncLoadManager.Execute(new LongSleepingLoader(), LongSleepingLoaderCompleteCallback);
+        }
+
+        void LongSleepingLoaderCompleteCallback()
+        {
+            Console.WriteLine("LongSleepingLoader completed.");
         }
 
         void LoadSimpleGameDemoGui()

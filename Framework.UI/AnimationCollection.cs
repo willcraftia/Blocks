@@ -14,14 +14,14 @@ namespace Willcraftia.Xna.Framework.UI
     public class AnimationCollection : KeyedCollection<string, Animation>
     {
         /// <summary>
-        /// このコレクションを所持する Screen を取得します。
-        /// </summary>
-        public Screen Screen { get; private set; }
-
-        /// <summary>
         /// 型の簡易名をキーとして、その型のインスタンスが追加された数を値とする Dictionary。
         /// </summary>
         Dictionary<string, int> counters;
+
+        /// <summary>
+        /// このコレクションを所持する Screen を取得します。
+        /// </summary>
+        public Screen Screen { get; private set; }
 
         /// <summary>
         /// コンストラクタ。
