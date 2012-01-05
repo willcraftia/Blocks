@@ -6,15 +6,12 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI.Demo
 {
-    public sealed class LongSleepingLoader : Content.ILoadable
+    public sealed class LongSleepingLoader : Content.ILoader<object>
     {
-        public void LoadContent()
+        public object Load()
         {
             System.Threading.Thread.Sleep(5000);
-        }
-
-        public void UnloadContent()
-        {
+            return 1000;
         }
     }
 }

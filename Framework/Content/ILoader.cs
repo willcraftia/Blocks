@@ -6,10 +6,8 @@ using System;
 
 namespace Willcraftia.Xna.Framework.Content
 {
-    public interface ILoadable
+    public interface ILoader<TResult>
     {
-        void LoadContent();
-
-        void UnloadContent();
+        TResult Load();
     }
 }

@@ -90,9 +90,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             asyncLoadManager.Execute(new LongSleepingLoader(), LongSleepingLoaderCompleteCallback);
         }
 
-        void LongSleepingLoaderCompleteCallback()
+        void LongSleepingLoaderCompleteCallback(object result)
         {
-            Console.WriteLine("LongSleepingLoader completed.");
+            Console.WriteLine("LongSleepingLoader completed: result=" + result);
         }
 
         void LoadSimpleGameDemoGui()

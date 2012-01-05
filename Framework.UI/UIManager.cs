@@ -243,7 +243,26 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (Screen == null) return;
 
-            Screen.Update(gameTime);
+            // Animation を更新します。
+            foreach (var animation in Screen.Animations)
+            {
+                if (animation.Enabled) animation.Update(gameTime);
+            }
+
+            // Screen は自分のサイズで測定を開始します。
+            if (!Screen.Desktop.Measured)
+            {
+                Screen.Desktop.Measure(new Size(Screen.Desktop.Width, Screen.Desktop.Height));
+            }
+            // Screen は自分のマージンとサイズで配置を開始します。
+            if (!Screen.Desktop.Arranged)
+            {
+                var margin = Screen.Desktop.Margin;
+                Screen.Desktop.Arrange(new Rect(margin.Left, margin.Top, Screen.Desktop.Width, Screen.Desktop.Height));
+            }
+
+            // Control を更新します。
+            Screen.Desktop.Update(gameTime);
 
             base.Update(gameTime);
         }

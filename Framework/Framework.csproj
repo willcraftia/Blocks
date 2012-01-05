@@ -93,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\AsyncLoadManager.cs" />
-    <Compile Include="Content\ILoadable.cs" />
+    <Compile Include="Content\ILoader.cs" />
     <Compile Include="GameServiceContainerExtension.cs" />
     <Compile Include="Graphics\BackBuffer.cs" />
     <Compile Include="Graphics\ColorHelper.cs" />

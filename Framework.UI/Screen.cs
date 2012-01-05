@@ -131,30 +131,6 @@ namespace Willcraftia.Xna.Framework.UI
             if (HasFocus(control)) focusedControl = null;
         }
 
-        public virtual void Update(GameTime gameTime)
-        {
-            // Animation を更新します。
-            foreach (var animation in Animations)
-            {
-                if (animation.Enabled) animation.Update(gameTime);
-            }
-
-            // Screen は自分のサイズで測定を開始します。
-            if (!Desktop.Measured)
-            {
-                Desktop.Measure(new Size(Desktop.Width, Desktop.Height));
-            }
-            // Screen は自分のマージンとサイズで配置を開始します。
-            if (!Desktop.Arranged)
-            {
-                var margin = Desktop.Margin;
-                Desktop.Arrange(new Rect(margin.Left, margin.Top, Desktop.Width, Desktop.Height));
-            }
-
-            // Control を更新します。
-            Desktop.Update(gameTime);
-        }
-
         /// <summary>
         /// 指定の Control がこの Screen で操作できる状態であるかどうかを保証します。
         /// </summary>
