@@ -49,8 +49,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Button(Screen screen)
-            : base(screen)
+        public Button()
         {
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;

@@ -22,8 +22,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public Overlay(Screen screen)
-            : base(screen)
+        public Overlay()
         {
             // デフォルト背景色は透明にします。
             BackgroundColor = Color.White * 0.0f;

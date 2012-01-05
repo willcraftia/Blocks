@@ -108,7 +108,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             screen.Desktop.Width = viewportBounds.Width;
             screen.Desktop.Height = viewportBounds.Height;
 
-            var window = new Window(screen)
+            var window = new Window()
             {
                 Width = u * 10,
                 Height = u * 4
@@ -117,7 +117,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             {
                 {
-                    var button = new Button(screen)
+                    var button = new Button()
                     {
                         Width = u * 8,
                         Height = u,
@@ -128,7 +128,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     window.Children.Add(button);
                 }
                 {
-                    var button = new Button(screen)
+                    var button = new Button()
                     {
                         Width = u * 8,
                         Height = u,
@@ -139,7 +139,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     window.Children.Add(button);
                 }
             }
-            window.Show();
+            window.Show(screen);
 
             uiManager.Screen = screen;
         }
@@ -161,7 +161,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             screen.Desktop.Height = viewportBounds.Height;
 
             {
-                var window = new Window(screen)
+                var window = new Window()
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -196,11 +196,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                     screen.Animations.Add(animation);
                 }
-                window.Show();
+                window.Show(screen);
             }
 
             {
-                var window = new Window(screen)
+                var window = new Window()
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -222,11 +222,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                     screen.Animations.Add(animation);
                 }
-                window.Show();
+                window.Show(screen);
             }
 
             {
-                var window = new Window(screen)
+                var window = new Window()
                 {
                     Width = u * 15,
                     Height = u * 10,
@@ -260,7 +260,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     screen.Animations.Add(animation);
                 }
 
-                var stackPanel = new StackPanel(screen)
+                var stackPanel = new StackPanel()
                 {
                     Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
@@ -268,7 +268,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 window.Children.Add(stackPanel);
 
                 {
-                    var button = new Button(screen)
+                    var button = new Button()
                     {
                         Text = "Open new dialog",
                         FontStretch = new Vector2(1.0f, 2.0f),
@@ -280,13 +280,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     stackPanel.Children.Add(button);
                     button.Clicked += delegate(object s, EventArgs e)
                     {
-                        var overlay = new Overlay(screen)
+                        var overlay = new Overlay()
                         {
                             Opacity = 0.5f,
                             BackgroundColor = Color.Black
                         };
 
-                        var subWindow = new Window(screen)
+                        var subWindow = new Window()
                         {
                             Width = u * 7,
                             SizeToContent = Controls.SizeToContent.Height,
@@ -295,7 +295,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         };
                         overlay.Children.Add(subWindow);
 
-                        var subStackPanel = new StackPanel(screen)
+                        var subStackPanel = new StackPanel()
                         {
                             Margin = new Thickness(8),
                             Orientation = Orientation.Vertical
@@ -303,7 +303,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         subWindow.Children.Add(subStackPanel);
 
                         {
-                            var subButton = new Button(screen)
+                            var subButton = new Button()
                             {
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -316,13 +316,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subStackPanel.Children.Add(subButton);
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
-                                var subOverlay = new Overlay(screen)
+                                var subOverlay = new Overlay()
                                 {
                                     Opacity = 0.5f,
                                     BackgroundColor = Color.Black
                                 };
 
-                                var subSubWindow = new Window(screen)
+                                var subSubWindow = new Window()
                                 {
                                     SizeToContent = Controls.SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
@@ -331,7 +331,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                                 subOverlay.Children.Add(subSubWindow);
 
                                 {
-                                    var subSubButton = new Button(screen)
+                                    var subSubButton = new Button()
                                     {
                                         Text = "Close",
                                         TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -351,7 +351,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             };
                         }
                         {
-                            var subButton = new Button(screen)
+                            var subButton = new Button()
                             {
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -368,7 +368,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             };
                         }
                         {
-                            var subButton = new Button(screen)
+                            var subButton = new Button()
                             {
                                 Text = "Exit",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -381,7 +381,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subStackPanel.Children.Add(subButton);
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
-                                var exitOverlay = new Controls.Overlay(screen)
+                                var exitOverlay = new Controls.Overlay()
                                 {
                                     Opacity = 0,
                                     BackgroundColor = Color.Black
@@ -411,7 +411,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                 }
                 {
-                    var button = new CubeButton(screen)
+                    var button = new CubeButton()
                     {
                         CubePrimitive = cubePrimitive,
                         Clipped = false,
@@ -443,7 +443,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     };
                 }
 
-                window.Show();
+                window.Show(screen);
             }
 
             uiManager.Screen = screen;

@@ -14,11 +14,6 @@ namespace Willcraftia.Xna.Framework.UI
     public class AnimationCollection : KeyedCollection<string, Animation>
     {
         /// <summary>
-        /// 型の簡易名をキーとして、その型のインスタンスが追加された数を値とする Dictionary。
-        /// </summary>
-        Dictionary<string, int> counters;
-
-        /// <summary>
         /// このコレクションを所持する Screen を取得します。
         /// </summary>
         public Screen Screen { get; private set; }
@@ -50,13 +45,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns></returns>
         protected virtual string GenerateKey(Animation item)
         {
-            if (counters == null) counters = new Dictionary<string, int>();
-
-            var baseName = item.GetType().Name;
-            int counter = 0;
-            counters.TryGetValue(baseName, out counter);
-            counters[baseName] = ++counter;
-            return baseName + "_" + counter;
+            return "Animation_" + Count;
         }
 
         protected override string GetKeyForItem(Animation item)

@@ -96,7 +96,6 @@
     <Compile Include="Animations\LerpAnimation.cs" />
     <Compile Include="Animations\Repeat.cs" />
     <Compile Include="Animations\TimelineAnimation.cs" />
-    <Compile Include="ControlCollection.cs" />
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Controls\SizeToContent.cs" />

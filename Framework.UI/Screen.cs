@@ -21,7 +21,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public class DesktopControl : Control
         {
-            internal DesktopControl(Screen screen) : base(screen) { }
+            internal DesktopControl() { }
         }
 
         /// <summary>
@@ -50,11 +50,6 @@ namespace Willcraftia.Xna.Framework.UI
         public AnimationCollection Animations { get; private set; }
 
         /// <summary>
-        /// Control コレクションを取得します。
-        /// </summary>
-        public ControlCollection Controls { get; private set; }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Screen(GraphicsDevice graphicsDevice)
@@ -62,9 +57,11 @@ namespace Willcraftia.Xna.Framework.UI
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             GraphicsDevice = graphicsDevice;
 
-            Controls = new ControlCollection(this);
             Animations = new AnimationCollection(this);
-            Desktop = new DesktopControl(this);
+            Desktop = new DesktopControl()
+            {
+                Screen = this
+            };
         }
 
         // I/F

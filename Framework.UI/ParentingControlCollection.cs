@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// コレクションのインデックスは、画面における Control の前後関係を表します。
     /// インデックス 0 は、その親 Control 内での最背面を表します。
     /// </remarks>
-    public class ParentingControlCollection : Collection<Control>
+    public class ParentingControlCollection : KeyedCollection<string, Control>
     {
         /// <summary>
         /// このコレクションを所有する Control。
@@ -30,6 +30,34 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (parent == null) throw new ArgumentNullException("parent");
             this.parent = parent;
+        }
+
+        /// <summary>
+        /// 指定の要素についてコレクションで管理するキーを変更します。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="newKey"></param>
+        internal void ChangeKey(Control item, string newKey)
+        {
+            base.ChangeItemKey(item, newKey);
+        }
+
+        /// <summary>
+        /// 指定の要素に設定するキーを生成します。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        protected virtual string GenerateKey(Control item)
+        {
+            return "Control_" + Count;
+        }
+
+        protected override string GetKeyForItem(Control item)
+        {
+            // 名前が未設定ならばコレクションで命名します。
+            if (string.IsNullOrEmpty(item.Name)) item.Name = GenerateKey(item);
+
+            return item.Name;
         }
 
         /// <summary>

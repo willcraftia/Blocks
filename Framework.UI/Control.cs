@@ -40,6 +40,16 @@ namespace Willcraftia.Xna.Framework.UI
         string name;
 
         /// <summary>
+        /// 属する Screen。
+        /// </summary>
+        Screen screen;
+
+        /// <summary>
+        /// 親 Control。
+        /// </summary>
+        Control parent;
+
+        /// <summary>
         /// 外側の余白。
         /// </summary>
         Thickness margin;
@@ -145,7 +155,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if (name == value) return;
 
                 // コレクション内のキーを更新します。
-                if (Screen != null && Screen.Controls.Contains(this)) Screen.Controls.ChangeKey(this, value);
+                if (Parent != null && Parent.Children.Contains(this)) Parent.Children.ChangeKey(this, value);
                 // 名前を設定します。
                 name = value;
             }
@@ -407,12 +417,43 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 親 Control を取得します。
         /// </summary>
-        public Control Parent { get; internal set; }
+        public Control Parent
+        {
+            get { return parent; }
+            internal set
+            {
+                if (parent == value) return;
+
+                parent = value;
+
+                Measured = false;
+
+                // 親と同じ Screen に属します。
+                if (parent != null) Screen = parent.Screen;
+            }
+        }
 
         /// <summary>
         /// Screen を取得します。
         /// </summary>
-        public Screen Screen { get; internal set; }
+        public Screen Screen
+        {
+            get { return screen; }
+            internal set
+            {
+                if (screen == value) return;
+
+                screen = value;
+
+                Measured = false;
+
+                // 子を同じ Screen に属させます。
+                if (screen != null)
+                {
+                    foreach (var child in Children) child.Screen = screen;
+                }
+            }
+        }
 
         /// <summary>
         /// 子 Control のコレクションを取得します。
@@ -477,24 +518,17 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Control(Screen screen) : this(screen, false) { }
+        public Control() : this(false) { }
 
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="screen">
-        /// Control が属する Screen。
-        /// </param>
         /// <param name="affectsOrdering">
         /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </param>
-        public Control(Screen screen, bool affectsOrdering)
+        public Control(bool affectsOrdering)
         {
-            if (screen == null) throw new ArgumentNullException("screen");
-            this.Screen = screen;
             this.affectsOrdering = affectsOrdering;
-
-            screen.Controls.Add(this);
 
             Children = new ParentingControlCollection(this);
 
