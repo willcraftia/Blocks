@@ -99,7 +99,9 @@
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Controls\SizeToContent.cs" />
+    <Compile Include="DefaultScreenFactory.cs" />
     <Compile Include="IDrawContext.cs" />
+    <Compile Include="IScreenFactory.cs" />
     <Compile Include="Lafs\ControlLafBase.cs" />
     <Compile Include="Lafs\ControlLafSourceBase.cs" />
     <Compile Include="Controls\Orientation.cs" />
@@ -149,7 +151,9 @@
       <Name>Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Screens\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

@@ -150,29 +150,9 @@ namespace Willcraftia.Xna.Framework.UI
 
         BasicEffect basicEffect;
 
-        public IInputCapturer InputCapturer
-        {
-            get { return inputCapturer; }
-            set
-            {
-                if (inputCapturer == value) return;
-
-                // InputCapturer から Screen をアンバインドします。
-                if (inputCapturer != null) inputCapturer.InputReceiver = null;
-
-                inputCapturer = value;
-
-                // InputCapturer に Screen をバインドします。
-                if (inputCapturer != null && Screen != null) inputCapturer.InputReceiver = Screen;
-            }
-        }
-
-        /// <summary>
-        /// Screen を取得または設定します。
-        /// </summary>
+        // I/F
         public Screen Screen
         {
-            // I/F
             get { return screen; }
             set
             {
@@ -201,6 +181,23 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        public IInputCapturer InputCapturer
+        {
+            get { return inputCapturer; }
+            set
+            {
+                if (inputCapturer == value) return;
+
+                // InputCapturer から Screen をアンバインドします。
+                if (inputCapturer != null) inputCapturer.InputReceiver = null;
+
+                inputCapturer = value;
+
+                // InputCapturer に Screen をバインドします。
+                if (inputCapturer != null && Screen != null) inputCapturer.InputReceiver = Screen;
+            }
+        }
+
         /// <summary>
         /// IControlLafSource を取得あるいは設定します。
         /// </summary>
@@ -214,6 +211,8 @@ namespace Willcraftia.Xna.Framework.UI
                 controlLafSource = value;
             }
         }
+
+        public IScreenFactory ScreenFactory { get; set; }
 
         public UIManager(Game game)
             : base(game)
@@ -230,6 +229,12 @@ namespace Willcraftia.Xna.Framework.UI
         public ContentManager CreateContentManager()
         {
             return new ContentManager(Game.Services);
+        }
+
+        // I/F
+        public void Show(string screenName)
+        {
+            Screen = ScreenFactory.CreateScreen(screenName);
         }
 
         public override void Initialize()

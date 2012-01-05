@@ -63,6 +63,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             Components.Add(inputManager);
 
             uiManager = new UIManager(this);
+            {
+                var screenFactory = new DefaultScreenFactory(this);
+                screenFactory["WindowDemoScreen"] = typeof(WindowDemoScreen);
+                screenFactory["MainMenuDemoScreen"] = typeof(MainMenuDemoScreen);
+                uiManager.ScreenFactory = screenFactory;
+            }
             Components.Add(uiManager);
 
             debugControlLafSource = new DebugControlLafSource(Services, "Content/UI/Debug");
@@ -80,8 +86,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void LoadContent()
         {
-            //uiManager.Screen = new MainMenuDemoScreen(this);
-            uiManager.Screen = new WindowDemoScreen(this);
+            uiManager.Show("MainMenuDemoScreen");
 
             asyncLoadManager.Execute(new LongSleepingLoader(), LongSleepingLoaderCompleteCallback);
         }

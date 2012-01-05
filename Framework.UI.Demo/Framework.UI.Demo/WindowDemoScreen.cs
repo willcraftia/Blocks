@@ -32,6 +32,29 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
+            var screenOverlay = new Overlay()
+            {
+                Opacity = 1,
+                BackgroundColor = Color.Black
+            };
+            {
+                var animation = new PropertyLerpAnimation()
+                {
+                    Target = screenOverlay,
+                    PropertyName = "Opacity",
+                    From = 1,
+                    To = 0,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
+                {
+                    screenOverlay.Close();
+                };
+                Animations.Add(animation);
+            }
+
             {
                 var window = new Window()
                 {
@@ -242,6 +265,46 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                         {
                             var subButton = new Button()
                             {
+                                Text = "Switch Screen",
+                                TextHorizontalAlignment = HorizontalAlignment.Left,
+                                Margin = new Thickness(8),
+                                Padding = new Thickness(8),
+                                ForegroundColor = Color.White,
+                                Height = u,
+                                HorizontalAlignment = HorizontalAlignment.Left
+                            };
+                            subStackPanel.Children.Add(subButton);
+                            subButton.Clicked += delegate(object bs, EventArgs be)
+                            {
+                                var exitOverlay = new Overlay()
+                                {
+                                    Opacity = 0,
+                                    BackgroundColor = Color.Black
+                                };
+                                {
+                                    var animation = new PropertyLerpAnimation()
+                                    {
+                                        Target = exitOverlay,
+                                        PropertyName = "Opacity",
+                                        From = 0,
+                                        To = 1,
+                                        BeginTime = TimeSpan.Zero,
+                                        Duration = TimeSpan.FromSeconds(0.5d),
+                                        Enabled = true
+                                    };
+                                    animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
+                                    {
+                                        var uiService = Game.Services.GetRequiredService<IUIService>();
+                                        uiService.Show("MainMenuDemoScreen");
+                                    };
+                                    Animations.Add(animation);
+                                }
+                                exitOverlay.Show(this);
+                            };
+                        }
+                        {
+                            var subButton = new Button()
+                            {
                                 Text = "Exit",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
                                 Margin = new Thickness(8),
@@ -253,7 +316,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                             subStackPanel.Children.Add(subButton);
                             subButton.Clicked += delegate(object bs, EventArgs be)
                             {
-                                var exitOverlay = new Controls.Overlay()
+                                var exitOverlay = new Overlay()
                                 {
                                     Opacity = 0,
                                     BackgroundColor = Color.Black
@@ -317,6 +380,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                 window.Show(this);
             }
+
+            screenOverlay.Show(this);
 
             base.LoadContent();
         }
