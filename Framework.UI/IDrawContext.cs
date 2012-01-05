@@ -10,8 +10,6 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public interface IDrawContext
     {
-        GraphicsDevice GraphicsDevice { get; }
-
         SpriteBatch SpriteBatch { get; }
 
         BasicEffect BasicEffect { get; }

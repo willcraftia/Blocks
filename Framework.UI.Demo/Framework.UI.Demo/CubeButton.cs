@@ -28,7 +28,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             var bounds = drawContext.Bounds;
 
-            var graphicsDevice = drawContext.GraphicsDevice;
+            var graphicsDevice = Screen.GraphicsDevice;
             var previousViewport = graphicsDevice.Viewport;
             var newBounds = Rectangle.Intersect(previousViewport.Bounds, bounds);
             graphicsDevice.Viewport = new Viewport(newBounds);

@@ -109,10 +109,12 @@
   <ItemGroup>
     <Compile Include="CubeButton.cs" />
     <Compile Include="LongSleepingLoader.cs" />
+    <Compile Include="MainMenuDemoScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RotateCubeAnimation.cs" />
     <Compile Include="UIDemoGame.cs" />
+    <Compile Include="WindowDemoScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

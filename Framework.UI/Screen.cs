@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 
@@ -14,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Screen を表す Control です。
     /// </summary>
-    public class Screen : IInputReceiver
+    public class Screen : IInputReceiver, IDisposable
     {
         /// <summary>
         /// Desktop を表す Control です。
@@ -30,9 +31,27 @@ namespace Willcraftia.Xna.Framework.UI
         Control focusedControl;
 
         /// <summary>
+        /// Screen が初期化されているかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (Screen が初期化されている場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Initialized { get; private set; }
+
+        /// <summary>
+        /// Game。
+        /// </summary>
+        public Game Game { get; private set; }
+
+        /// <summary>
         /// GraphicsDevice。
         /// </summary>
         public GraphicsDevice GraphicsDevice { get; private set; }
+
+        /// <summary>
+        /// ContentManager。
+        /// </summary>
+        public ContentManager Content { get; private set; }
 
         /// <summary>
         /// デフォルトの SpriteFont を取得または設定します。
@@ -49,13 +68,16 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public AnimationCollection Animations { get; private set; }
 
+        // TODO
+        // protected にする？
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Screen(GraphicsDevice graphicsDevice)
+        public Screen(Game game)
         {
-            if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
-            GraphicsDevice = graphicsDevice;
+            Game = game;
+            GraphicsDevice = game.GraphicsDevice;
+            Content = new ContentManager(game.Services);
 
             Animations = new AnimationCollection(this);
             Desktop = new DesktopControl()
@@ -86,6 +108,40 @@ namespace Willcraftia.Xna.Framework.UI
         public void NotifyMouseWheelRotated(int ticks)
         {
         }
+
+        /// <summary>
+        /// Screen を初期化します。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドの呼び出しにより Initialized プロパティが true に設定されます。
+        /// このメソッドは、明示的に呼び出すか、あるいは、UIManager に Screen を設定する際に、Initialized プロパティが false ならば、
+        /// UIManager により呼び出されます。
+        /// </remarks>
+        public void Initialize()
+        {
+            if (Initialized) throw new InvalidOperationException("Screen is already initialized.");
+
+            LoadContent();
+
+            Initialized = true;
+        }
+
+        /// <summary>
+        /// コンテンツをロードします。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドは Initialize メソッドから呼び出されます。
+        /// サブクラスでは、このメソッドをオーバライドして Control の配置などを行います。
+        /// </remarks>
+        protected virtual void LoadContent() { }
+
+        /// <summary>
+        /// コンテンツをアンロードします。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドは、Dispose メソッドの呼び出しか、ガベージコレクションによるインスタンス破棄の際に呼び出されます。
+        /// </remarks>
+        protected virtual void UnloadContent() { }
 
         /// <summary>
         /// 指定の Control がフォーカスを持つかどうかを判定します。
@@ -136,5 +192,31 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (control.Screen != this) throw new InvalidOperationException("Control is in another screen.");
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        bool disposed;
+
+        ~Screen()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing) UnloadContent();
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

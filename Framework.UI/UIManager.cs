@@ -90,12 +90,6 @@ namespace Willcraftia.Xna.Framework.UI
             UIManager uiManager;
 
             // I/F
-            public GraphicsDevice GraphicsDevice
-            {
-                get { return uiManager.GraphicsDevice; }
-            }
-
-            // I/F
             public SpriteBatch SpriteBatch
             {
                 get { return uiManager.spriteBatch; }
@@ -188,6 +182,10 @@ namespace Willcraftia.Xna.Framework.UI
                 {
                     // InputReceiver から Screen をアンバインドします。
                     inputCapturer.InputReceiver = null;
+
+                    // TODO どうしよう？
+                    // 破棄します。
+                    //screen.Dispose();
                 }
 
                 screen = value;
@@ -196,6 +194,9 @@ namespace Willcraftia.Xna.Framework.UI
                 {
                     // InputReceiver に Screen をバインドします。
                     if (inputCapturer != null) inputCapturer.InputReceiver = screen;
+
+                    // 必要ならば初期化します。
+                    if (!screen.Initialized) screen.Initialize();
                 }
             }
         }
