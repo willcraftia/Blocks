@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,10 +14,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
     {
         Dictionary<Type, DebugControlLafBase> controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
-        public DebugControlLafSource(IServiceProvider serviceProvider) : this(serviceProvider, null) { }
-
-        public DebugControlLafSource(IServiceProvider serviceProvider, string contentRootDirectory)
-            : base(serviceProvider, contentRootDirectory)
+        public DebugControlLafSource(Game game)
+            : base(game)
         {
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Control), new DefaultControlLaf());

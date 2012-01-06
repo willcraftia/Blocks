@@ -71,13 +71,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             }
             Components.Add(uiManager);
 
-            debugControlLafSource = new DebugControlLafSource(Services, "Content/UI/Debug");
+            debugControlLafSource = new DebugControlLafSource(this);
+            debugControlLafSource.Content.RootDirectory = "Content/UI/Debug";
 
-            spriteControlLafSource = new SpriteControlLafSource(Services, "Content/UI/Sprite");
+            spriteControlLafSource = new SpriteControlLafSource(this);
             spriteControlLafSource.SpriteSize = 32;
+            spriteControlLafSource.Content.RootDirectory = "Content/UI/Sprite";
 
-            uiManager.ControlLafSource = debugControlLafSource;
-            //uiManager.ControlLafSource = spriteControlLafSource;
+            //uiManager.ControlLafSource = debugControlLafSource;
+            uiManager.ControlLafSource = spriteControlLafSource;
 
             IsMouseVisible = true;
 
@@ -93,7 +95,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         void LongSleepingLoaderCompleteCallback(object result)
         {
-            Console.WriteLine("LongSleepingLoader completed: result=" + result);
+            Console.WriteLine("LongSleepingLoader was completed: result=" + result);
         }
 
         protected override void UnloadContent()

@@ -55,7 +55,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             var window = new Window()
             {
                 Width = u * 10,
-                Height = u * 4
+                Height = u * 4,
+                BackgroundColor = Color.White
             };
             window.Margin = new Thickness((Desktop.Width - window.Width) * 0.5f, (Desktop.Height - window.Height) * 0.5f, 0, 0);
 

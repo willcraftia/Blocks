@@ -45,10 +45,13 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 paddedBounds.Height -= (int) (padding.Top + padding.Bottom);
 
                 var font = button.Font ?? button.Screen.Font;
-                var position = TextHelper.CalculateTextPosition(
-                    paddedBounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                if (font != null)
+                {
+                    var position = TextHelper.CalculateTextPosition(
+                        paddedBounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
 
-                spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
+                }
             }
         }
     }

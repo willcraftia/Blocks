@@ -1,8 +1,9 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
@@ -11,14 +12,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
     public abstract class ControlLafSourceBase : IControlLafSource
     {
         /// <summary>
-        /// IServiceProvider (ContentManager 生成に利用)。
+        /// Game を取得します。
         /// </summary>
-        IServiceProvider serviceProvider;
+        public Game Game { get; private set; }
 
         /// <summary>
-        /// Content プロパティの構築で ContentManager に設定する RootDirectory プロパティ。
+        /// GraphicsDevice。
         /// </summary>
-        string contentRootDirectory;
+        public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
         /// ControlLafSource 専用の ContentManager を取得します。
@@ -28,26 +29,19 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="serviceProvider">
-        /// IServiceProvider (ContentManager 生成に利用)。
-        /// </param>
-        /// <param name="contentRootDirectory">
-        /// Content プロパティの構築で ContentManager に設定する RootDirectory プロパティ。
-        /// </param>
-        protected ControlLafSourceBase(IServiceProvider serviceProvider, string contentRootDirectory)
+        /// <param name="game">Game。</param>
+        protected ControlLafSourceBase(Game game)
         {
-            if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
-            this.serviceProvider = serviceProvider;
-            this.contentRootDirectory = contentRootDirectory;
+            if (game == null) throw new ArgumentNullException("game");
+            Game = game;
+
+            Content = new ContentManager(Game.Services);
+            GraphicsDevice = game.GraphicsDevice;
         }
 
         // I/F
-        public virtual void Initialize()
+        public void Initialize()
         {
-            // この LaF のための ContentManager を生成します。
-            Content = new ContentManager(serviceProvider);
-            if (!string.IsNullOrEmpty(contentRootDirectory)) Content.RootDirectory = contentRootDirectory;
-
             LoadContent();
         }
 

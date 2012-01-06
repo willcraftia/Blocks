@@ -21,7 +21,6 @@ namespace Willcraftia.Xna.Framework.Content.Pipeline
         public BasicScalingTextureProcessor()
         {
             Scale = 1;
-            TextureFormat = TextureProcessorOutputFormat.DxtCompressed;
         }
 
         public override TextureContent Process(TextureContent input, ContentProcessorContext context)

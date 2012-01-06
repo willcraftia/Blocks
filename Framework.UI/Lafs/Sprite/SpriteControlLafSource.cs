@@ -16,10 +16,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         public int SpriteSize { get; set; }
 
-        public SpriteControlLafSource(IServiceProvider serviceProvider) : this(serviceProvider, null) { }
-
-        public SpriteControlLafSource(IServiceProvider serviceProvider, string contentRootDirectory)
-            : base(serviceProvider, contentRootDirectory)
+        public SpriteControlLafSource(Game game)
+            : base(game)
         {
             SpriteSize = 16;
 

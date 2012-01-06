@@ -42,62 +42,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Sprite\WindowBottom.png">
-      <Name>WindowBottom</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowBottomLeft.png">
-      <Name>WindowBottomLeft</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowBottomRight.png">
-      <Name>WindowBottomRight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowFill.png">
-      <Name>WindowFill</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowLeft.png">
-      <Name>WindowLeft</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowRight.png">
-      <Name>WindowRight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowTop.png">
-      <Name>WindowTop</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowTopLeft.png">
-      <Name>WindowTopLeft</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\WindowTopRight.png">
-      <Name>WindowTopRight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Framework.Content.Pipeline\Framework.Content.Pipeline.csproj">
       <Project>{44FCDED7-AE50-41BA-A09A-7165E967E171}</Project>
       <Name>Framework.Content.Pipeline</Name>
@@ -111,6 +55,14 @@
       <Name>Default</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Sprite\Window.png">
+      <Name>Window</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

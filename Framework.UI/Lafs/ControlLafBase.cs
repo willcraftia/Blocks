@@ -15,13 +15,15 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         protected ControlLafBase() { }
 
         // I/F
+        public abstract void Draw(Control control, IDrawContext drawContext);
+
+        /// <summary>
+        /// 初期化します。
+        /// </summary>
         public virtual void Initialize()
         {
             LoadContent();
         }
-
-        // I/F
-        public abstract void Draw(Control control, IDrawContext drawContext);
 
         /// <summary>
         /// Initialize メソッドから呼び出されます。
