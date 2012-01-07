@@ -1,10 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks", "Blocks\Blocks\Blocks.csproj", "{1AB8FD49-064B-418C-B62B-69ECF8149C2A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlocksContent", "Blocks\BlocksContent\BlocksContent.contentproj", "{E29F91E7-29C4-4A0E-86ED-345AA4C72EE3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockEditor", "BlockEditor\BlockEditor\BlockEditor.csproj", "{7C7E6020-272D-4E4E-A0F5-A011B42EC30D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockEditorContent", "BlockEditor\BlockEditorContent\BlockEditorContent.contentproj", "{815C00DE-0C8F-4E6A-809E-8DFBBF27BC56}"
@@ -29,12 +25,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1AB8FD49-064B-418C-B62B-69ECF8149C2A}.Debug|x86.ActiveCfg = Debug|x86
-		{1AB8FD49-064B-418C-B62B-69ECF8149C2A}.Debug|x86.Build.0 = Debug|x86
-		{1AB8FD49-064B-418C-B62B-69ECF8149C2A}.Release|x86.ActiveCfg = Release|x86
-		{1AB8FD49-064B-418C-B62B-69ECF8149C2A}.Release|x86.Build.0 = Release|x86
-		{E29F91E7-29C4-4A0E-86ED-345AA4C72EE3}.Debug|x86.ActiveCfg = Debug|x86
-		{E29F91E7-29C4-4A0E-86ED-345AA4C72EE3}.Release|x86.ActiveCfg = Release|x86
 		{7C7E6020-272D-4E4E-A0F5-A011B42EC30D}.Debug|x86.ActiveCfg = Debug|x86
 		{7C7E6020-272D-4E4E-A0F5-A011B42EC30D}.Debug|x86.Build.0 = Debug|x86
 		{7C7E6020-272D-4E4E-A0F5-A011B42EC30D}.Release|x86.ActiveCfg = Release|x86
