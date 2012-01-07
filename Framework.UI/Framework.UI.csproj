@@ -99,7 +99,7 @@
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Controls\SizeToContent.cs" />
-    <Compile Include="DefaultScreenFactory.cs" />
+    <Compile Include="ScreenFactories\DefaultScreenFactory.cs" />
     <Compile Include="IDrawContext.cs" />
     <Compile Include="IScreenFactory.cs" />
     <Compile Include="Lafs\ControlLafBase.cs" />
@@ -114,6 +114,8 @@
     <Compile Include="Point.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="AnimationCollection.cs" />
+    <Compile Include="ScreenFactories\ScreenDefinition.cs" />
+    <Compile Include="ScreenFactories\ScreenDefinitionCollection.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Thickness.cs" />
     <Compile Include="VerticalAlignment.cs" />

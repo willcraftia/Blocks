@@ -13,7 +13,7 @@ using Willcraftia.Xna.Framework.Input;
 namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
-    /// Screen を表す Control です。
+    /// Control で構成される画面を表すクラスです。
     /// </summary>
     public class Screen : IInputReceiver, IDisposable
     {
@@ -39,18 +39,21 @@ namespace Willcraftia.Xna.Framework.UI
         public bool Initialized { get; private set; }
 
         /// <summary>
-        /// Game。
+        /// Game を取得します。
         /// </summary>
         public Game Game { get; private set; }
 
         /// <summary>
-        /// GraphicsDevice。
+        /// GraphicsDevice を取得します。
         /// </summary>
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
-        /// ContentManager。
+        /// ContentManager を取得します。
         /// </summary>
+        /// <remarks>
+        /// この ContentManager は、Screen の生成と同時に生成され、Screen の破棄と同時に破棄されます。
+        /// </remarks>
         public ContentManager Content { get; private set; }
 
         /// <summary>
@@ -59,7 +62,7 @@ namespace Willcraftia.Xna.Framework.UI
         public SpriteFont Font { get; set; }
 
         /// <summary>
-        /// Screen を表す Control を取得または設定します。
+        /// Screen を表す Control を取得します。
         /// </summary>
         public DesktopControl Desktop { get; private set; }
 

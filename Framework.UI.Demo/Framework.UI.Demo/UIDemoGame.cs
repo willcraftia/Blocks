@@ -64,9 +64,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             uiManager = new UIManager(this);
             {
-                var screenFactory = new DefaultScreenFactory(this);
-                screenFactory["WindowDemoScreen"] = typeof(WindowDemoScreen);
-                screenFactory["MainMenuDemoScreen"] = typeof(MainMenuDemoScreen);
+                var screenFactory = new ScreenFactories.DefaultScreenFactory(this);
+                screenFactory.Definitions.Add(new ScreenFactories.ScreenDefinition("WindowDemoScreen", typeof(WindowDemoScreen)));
+                screenFactory.Definitions.Add(new ScreenFactories.ScreenDefinition("MainMenuDemoScreen", typeof(MainMenuDemoScreen)));
                 uiManager.ScreenFactory = screenFactory;
             }
             Components.Add(uiManager);

@@ -163,9 +163,9 @@ namespace Willcraftia.Xna.Framework.UI
                     // InputReceiver から Screen をアンバインドします。
                     inputCapturer.InputReceiver = null;
 
-                    // TODO どうしよう？
                     // 破棄します。
-                    //screen.Dispose();
+                    // MEMO: 恐らく他のタイミングでは明示的に Dispose を呼ぶのが難しい。
+                    screen.Dispose();
                 }
 
                 screen = value;
