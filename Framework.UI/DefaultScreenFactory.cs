@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.ScreenFactories
+namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
     /// デフォルトの IScreenFactory 実装クラスです。
@@ -45,7 +45,7 @@ namespace Willcraftia.Xna.Framework.UI.ScreenFactories
             var definition = Definitions[screenName];
             // Screen をインスタンス化します。
             var screen = CreateScreenInstance(definition);
-            // 定義にあるプロパティをインスタンスに設定します。
+            // プロパティをインスタンスに設定します。
             PopulateProperties(definition, screen);
             // インスタンスを初期化します。
             InitializeScreenInstance(definition, screen);
@@ -54,7 +54,7 @@ namespace Willcraftia.Xna.Framework.UI.ScreenFactories
         }
 
         /// <summary>
-        /// ScreenDefinition に基づいて Screen をインスタンス化します。
+        /// Screen をインスタンス化します。
         /// </summary>
         /// <param name="definition">ScreenDefinition。</param>
         /// <returns>Screen インスタンス。</returns>
@@ -64,7 +64,7 @@ namespace Willcraftia.Xna.Framework.UI.ScreenFactories
         }
 
         /// <summary>
-        /// ScreenDefinition に基づいて Screen インスタンスのプロパティを設定します。
+        /// Screen インスタンスのプロパティを設定します。
         /// </summary>
         /// <param name="definition">ScreenDefinition。</param>
         /// <param name="screen">Screen インスタンス。</param>
@@ -78,6 +78,10 @@ namespace Willcraftia.Xna.Framework.UI.ScreenFactories
 
                 propertyInfo.SetValue(screen, property.Value, null);
             }
+
+            // Screen が IScreenFactoryAware ならば自分を通知します。
+            var screenFactoryAware = screen as IScreenFactoryAware;
+            if (screenFactoryAware != null) screenFactoryAware.ScreenFactory = this;
         }
 
         /// <summary>

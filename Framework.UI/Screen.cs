@@ -18,14 +18,6 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : IInputReceiver, IDisposable
     {
         /// <summary>
-        /// Desktop を表す Control です。
-        /// </summary>
-        public class DesktopControl : Control
-        {
-            internal DesktopControl() { }
-        }
-
-        /// <summary>
         /// フォーカスを得ている Control。
         /// </summary>
         Control focusedControl;
@@ -62,9 +54,9 @@ namespace Willcraftia.Xna.Framework.UI
         public SpriteFont Font { get; set; }
 
         /// <summary>
-        /// Screen を表す Control を取得します。
+        /// Desktop を取得します。
         /// </summary>
-        public DesktopControl Desktop { get; private set; }
+        public Desktop Desktop { get; private set; }
 
         /// <summary>
         /// Animation コレクションを取得します。
@@ -83,7 +75,7 @@ namespace Willcraftia.Xna.Framework.UI
             Content = new ContentManager(game.Services);
 
             Animations = new AnimationCollection(this);
-            Desktop = new DesktopControl()
+            Desktop = new Desktop()
             {
                 Screen = this
             };

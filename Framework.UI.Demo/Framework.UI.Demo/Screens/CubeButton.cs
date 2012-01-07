@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Demo
+namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 {
     public sealed class CubeButton : Controls.Button
     {

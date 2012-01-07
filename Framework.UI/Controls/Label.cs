@@ -2,32 +2,20 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Willcraftia.Xna.Framework.Input;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
     /// <summary>
-    /// Button として振る舞う Control です。
+    /// Label として振る舞う Control です。
     /// </summary>
-    public class Button : Control
+    public class Label : Control
     {
-        /// <summary>
-        /// Button がクリックされた時に発生します。
-        /// </summary>
-        public event EventHandler Clicked;
-
         /// <summary>
         /// 表示文字列。
         /// </summary>
         string text;
-
-        /// <summary>
-        /// true (マウスによりボタンが押された場合)、false (それ以外の場合)。
-        /// </summary>
-        bool pressedByMouse;
 
         /// <summary>
         /// 表示文字列を取得または設定します。
@@ -54,30 +42,12 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public VerticalAlignment TextVerticalAlignment { get; set; }
 
         /// <summary>
-        /// マウス カーソルが Button の直上に存在するかどうかを示す値を取得します。
-        /// </summary>
-        /// <value>
-        /// true (マウス カーソルが Button の直上に存在する場合)、false (それ以外の場合)。
-        /// </value>
-        public bool MouseHovering { get; private set; }
-
-        /// <summary>
-        /// Button が押された状態にあるかどうかを取得します。
-        /// </summary>
-        /// <value>true (Button が押された状態にある場合)、false (それ以外の場合)。</value>
-        public bool Pressed
-        {
-            get { return MouseHovering && pressedByMouse; }
-        }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Button()
+        public Label()
         {
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;
-            Enabled = true;
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -161,51 +131,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             }
 
             return size;
-        }
-
-        protected override void OnMouseEntered()
-        {
-            MouseHovering = true;
-        }
-
-        protected override void OnMouseLeft()
-        {
-            MouseHovering = false;
-        }
-
-        protected override void OnMouseButtonPressed(MouseButtons button)
-        {
-            // 機能が無効に設定されているならば、イベントを無視します。
-            if (!Enabled) return;
-
-            if (button == MouseButtons.Left) pressedByMouse = true;
-        }
-
-        protected override void OnMouseButtonReleased(MouseButtons button)
-        {
-            // Button が押された状態で機能が無効に設定される場合を考慮し、機能が有効かどうかに関わらず処理を進めます。
-
-            if (button == MouseButtons.Left)
-            {
-                pressedByMouse = false;
-
-                // Button の上でマウス ボタンが離されたのならば、Clicked イベントを発生させます。
-                if (Enabled && !Pressed) RaiseClicked();
-            }
-        }
-
-        /// <summary>
-        /// Click イベントが発生する時に呼び出されます。
-        /// </summary>
-        protected virtual void OnClicked() { }
-
-        /// <summary>
-        /// Clicked イベントを発生させます。
-        /// </summary>
-        void RaiseClicked()
-        {
-            OnClicked();
-            if (Clicked != null) Clicked(this, EventArgs.Empty);
         }
     }
 }

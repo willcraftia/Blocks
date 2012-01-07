@@ -26,8 +26,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         SpriteControlLafSource spriteControlLafSource;
 
-        Content.AsyncLoadManager asyncLoadManager = new Content.AsyncLoadManager();
-
         public UIDemoGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -64,9 +62,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
             uiManager = new UIManager(this);
             {
-                var screenFactory = new ScreenFactories.DefaultScreenFactory(this);
-                screenFactory.Definitions.Add(new ScreenFactories.ScreenDefinition("WindowDemoScreen", typeof(WindowDemoScreen)));
-                screenFactory.Definitions.Add(new ScreenFactories.ScreenDefinition("MainMenuDemoScreen", typeof(MainMenuDemoScreen)));
+                var screenFactory = new DefaultScreenFactory(this);
+                screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
+
+                var loadingWindowDemoScreen = new ScreenDefinition("WindowDemoScreen", typeof(Screens.DemoLoadingScreen));
+                loadingWindowDemoScreen.Properties["NextScreenName"] = "WindowDemoScreenImpl";
+
+                screenFactory.Definitions.Add(loadingWindowDemoScreen);
+                screenFactory.Definitions.Add(new ScreenDefinition("WindowDemoScreenImpl", typeof(Screens.WindowDemoScreen)));
+                
                 uiManager.ScreenFactory = screenFactory;
             }
             Components.Add(uiManager);
@@ -89,13 +93,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
         protected override void LoadContent()
         {
             uiManager.Show("MainMenuDemoScreen");
-
-            asyncLoadManager.Execute(new LongSleepingLoader(), LongSleepingLoaderCompleteCallback);
-        }
-
-        void LongSleepingLoaderCompleteCallback(object result)
-        {
-            Console.WriteLine("LongSleepingLoader was completed: result=" + result);
         }
 
         protected override void UnloadContent()

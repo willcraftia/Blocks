@@ -28,7 +28,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 spriteBatch.Draw(drawContext.FillTexture, bounds, foregroundColor * 0.5f);
             }
 
-            if (!string.IsNullOrEmpty(button.Text))
+            var font = button.Font ?? button.Screen.Font;
+
+            if (font != null && !string.IsNullOrEmpty(button.Text))
             {
                 var offset = Vector2.Zero;
                 if (button.Pressed)
@@ -44,14 +46,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 paddedBounds.Width -= (int) (padding.Left + padding.Right);
                 paddedBounds.Height -= (int) (padding.Top + padding.Bottom);
 
-                var font = button.Font ?? button.Screen.Font;
-                if (font != null)
-                {
-                    var position = TextHelper.CalculateTextPosition(
-                        paddedBounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
+                var position = TextHelper.CalculateTextPosition(
+                    paddedBounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
 
-                    spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
-                }
+                spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
             }
         }
     }

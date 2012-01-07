@@ -8,16 +8,18 @@ using Willcraftia.Xna.Framework.UI.Controls;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Demo
+namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 {
     public sealed class MainMenuDemoScreen : Screen
     {
-        public MainMenuDemoScreen(Game game) : base(game) { }
+        public MainMenuDemoScreen(Game game)
+            : base(game)
+        {
+            Content.RootDirectory = "Content";
+        }
 
         protected override void LoadContent()
         {
-            Content.RootDirectory = "Content";
-
             Font = Content.Load<SpriteFont>("Font/Default");
 
             // Unit size.
@@ -71,7 +73,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                     {
                         var button = new Button()
                         {
-                            Text = "NEW GAME",
+                            Text = "NEW GAME (DUMMY)",
                             Height = u,
                             Padding = new Thickness(8)
                         };

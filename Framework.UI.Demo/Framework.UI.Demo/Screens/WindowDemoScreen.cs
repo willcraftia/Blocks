@@ -8,15 +8,20 @@ using Willcraftia.Xna.Framework.UI.Controls;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Demo
+namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 {
     public sealed class WindowDemoScreen : Screen
     {
-        public WindowDemoScreen(Game game) : base(game) { }
+        public WindowDemoScreen(Game game)
+            : base(game)
+        {
+            Content.RootDirectory = "Content";
+        }
 
         protected override void LoadContent()
         {
-            Content.RootDirectory = "Content";
+            // 重いロードのテスト用にスリープさせてます。
+            System.Threading.Thread.Sleep(2000);
 
             Font = Content.Load<SpriteFont>("Font/Default");
 

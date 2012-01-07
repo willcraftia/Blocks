@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Demo
+namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 {
     public sealed class RotateCubeAnimation : Animations.LerpAnimation
     {

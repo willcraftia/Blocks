@@ -107,14 +107,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CubeButton.cs" />
-    <Compile Include="LongSleepingLoader.cs" />
-    <Compile Include="MainMenuDemoScreen.cs" />
+    <Compile Include="Screens\CubeButton.cs" />
+    <Compile Include="Screens\DemoLoadingScreen.cs" />
+    <Compile Include="Screens\MainMenuDemoScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="RotateCubeAnimation.cs" />
+    <Compile Include="Screens\RotateCubeAnimation.cs" />
     <Compile Include="UIDemoGame.cs" />
-    <Compile Include="WindowDemoScreen.cs" />
+    <Compile Include="Screens\WindowDemoScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

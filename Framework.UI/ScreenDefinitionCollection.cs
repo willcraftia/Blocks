@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.ScreenFactories
+namespace Willcraftia.Xna.Framework.UI
 {
     public sealed class ScreenDefinitionCollection : KeyedCollection<string, ScreenDefinition>
     {

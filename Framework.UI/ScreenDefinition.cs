@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.ScreenFactories
+namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
     /// Screen 生成の定義を表すクラスです。
