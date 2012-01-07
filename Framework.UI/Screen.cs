@@ -49,6 +49,11 @@ namespace Willcraftia.Xna.Framework.UI
         public ContentManager Content { get; private set; }
 
         /// <summary>
+        /// デフォルトの BasicEffect を取得します。
+        /// </summary>
+        public BasicEffect BasicEffect { get; private set; }
+
+        /// <summary>
         /// デフォルトの SpriteFont を取得または設定します。
         /// </summary>
         public SpriteFont Font { get; set; }
@@ -115,6 +120,8 @@ namespace Willcraftia.Xna.Framework.UI
         public void Initialize()
         {
             if (Initialized) throw new InvalidOperationException("Screen is already initialized.");
+
+            BasicEffect = new BasicEffect(GraphicsDevice);
 
             LoadContent();
 
@@ -207,7 +214,12 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (disposed) return;
 
-            if (disposing) UnloadContent();
+            if (disposing)
+            {
+                UnloadContent();
+
+                if (BasicEffect != null) BasicEffect.Dispose();
+            }
 
             disposed = true;
         }

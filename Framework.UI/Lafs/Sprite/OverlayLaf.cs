@@ -14,7 +14,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var overlay = control as Controls.Overlay;
             if (overlay == null) return;
 
-            drawContext.SpriteBatch.Draw(drawContext.FillTexture, drawContext.Bounds, overlay.BackgroundColor * drawContext.Opacity);
+            drawContext.SpriteBatch.Draw(Source.FillTexture, drawContext.Bounds, overlay.BackgroundColor * drawContext.Opacity);
         }
     }
 }

@@ -4,11 +4,15 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Lafs
 {
+    /// <summary>
+    /// IControlLafSource 実装の基礎実装を提供するクラスです。
+    /// </summary>
     public abstract class ControlLafSourceBase : IControlLafSource
     {
         // I/F
@@ -30,6 +34,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         public ContentManager Content { get; private set; }
 
         /// <summary>
+        /// 塗り潰しに利用するテクスチャを取得します。
+        /// </summary>
+        public Texture2D FillTexture { get; private set; }
+
+        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="game">Game。</param>
@@ -45,6 +54,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         // I/F
         public void Initialize()
         {
+            FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
+
             LoadContent();
 
             Initialized = true;
@@ -85,7 +96,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         {
             if (disposed) return;
 
-            if (disposing) UnloadContent();
+            if (disposing)
+            {
+                UnloadContent();
+                if (FillTexture != null) FillTexture.Dispose();
+            }
 
             disposed = true;
         }

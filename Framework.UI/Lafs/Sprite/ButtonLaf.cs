@@ -23,7 +23,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             if (button.MouseHovering)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                spriteBatch.Draw(drawContext.FillTexture, bounds, foregroundColor * 0.5f);
+                spriteBatch.Draw(Source.FillTexture, bounds, foregroundColor * 0.5f);
             }
 
             var font = button.Font ?? button.Screen.Font;

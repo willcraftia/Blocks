@@ -33,7 +33,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             var newBounds = Rectangle.Intersect(previousViewport.Bounds, bounds);
             graphicsDevice.Viewport = new Viewport(newBounds);
 
-            var effect = drawContext.BasicEffect;
+            var effect = Screen.BasicEffect;
 
             var cameraPosition = new Vector3(0, 0, 2.5f);
             var aspect = ((float) bounds.Width / (float) bounds.Height);

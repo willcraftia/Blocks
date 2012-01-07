@@ -126,22 +126,10 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public BasicEffect BasicEffect
-            {
-                get { return uiManager.basicEffect; }
-            }
-
-            // I/F
             public Rectangle Bounds { get; internal set; }
 
             // I/F
             public float Opacity { get; internal set; }
-
-            // I/F
-            public Texture2D FillTexture
-            {
-                get { return uiManager.fillTexture; }
-            }
 
             /// <summary>
             /// インスタンスを生成します。
@@ -202,16 +190,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// 描画に用いる SpriteBatch。
         /// </summary>
         SpriteBatch spriteBatch;
-
-        /// <summary>
-        /// 背景の塗り潰しに使用するテクスチャ。
-        /// </summary>
-        Texture2D fillTexture;
-
-        /// <summary>
-        /// デフォルトの BasicEffect。
-        /// </summary>
-        BasicEffect basicEffect;
 
         // I/F
         public Screen Screen
@@ -369,9 +347,10 @@ namespace Willcraftia.Xna.Framework.UI
 
             using (var drawContext = new DrawContext(this))
             {
-                drawContext.Bounds = Screen.Desktop.ArrangedBounds.ToXnaRectangle();
-                drawContext.Opacity = Screen.Desktop.Opacity;
-                DrawControl(gameTime, Screen.Desktop, drawContext);
+                var desktop = Screen.Desktop;
+                drawContext.Bounds = desktop.ArrangedBounds.ToXnaRectangle();
+                drawContext.Opacity = desktop.Opacity;
+                DrawControl(gameTime, desktop, drawContext);
             }
 
             spriteBatch.End();
@@ -382,9 +361,6 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
-            basicEffect = new BasicEffect(GraphicsDevice);
-
             if (ControlLafSource != null && !ControlLafSource.Initialized) ControlLafSource.Initialize();
             if (ScreenFactory != null && !ScreenFactory.Initialized) ScreenFactory.Initialize();
 
@@ -394,7 +370,6 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void UnloadContent()
         {
             if (spriteBatch != null) spriteBatch.Dispose();
-            if (fillTexture != null) fillTexture.Dispose();
             if (ControlLafSource != null && ControlLafSource.Initialized) ControlLafSource.Dispose();
             if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
 
