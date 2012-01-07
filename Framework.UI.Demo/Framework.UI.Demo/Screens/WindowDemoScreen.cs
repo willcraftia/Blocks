@@ -23,8 +23,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             // 重いロードのテスト用にスリープさせてます。
             System.Threading.Thread.Sleep(2000);
 
-            Font = Content.Load<SpriteFont>("Font/Default");
-
             var cubePrimitiveFactory = new Graphics.CubePrimitiveFactory();
             var cubePrimitive = cubePrimitiveFactory.Create(Game.GraphicsDevice);
 

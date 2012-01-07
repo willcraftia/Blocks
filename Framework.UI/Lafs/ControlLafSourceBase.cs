@@ -11,6 +11,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     public abstract class ControlLafSourceBase : IControlLafSource
     {
+        // I/F
+        public bool Initialized { get; private set; }
+
         /// <summary>
         /// Game を取得します。
         /// </summary>
@@ -43,6 +46,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         public void Initialize()
         {
             LoadContent();
+
+            Initialized = true;
         }
 
         // I/F

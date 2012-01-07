@@ -20,8 +20,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         protected override void LoadContent()
         {
-            Font = Content.Load<SpriteFont>("Font/Default");
-
             // Unit size.
             int u = 32;
 

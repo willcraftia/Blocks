@@ -12,6 +12,9 @@ using Willcraftia.Xna.Framework.Input;
 
 namespace Willcraftia.Xna.Framework.UI
 {
+    /// <summary>
+    /// ユーザ インタフェースを管理する GameComponent です。
+    /// </summary>
     public class UIManager : DrawableGameComponent, IUIService
     {
         #region Scissor
@@ -31,10 +34,21 @@ namespace Willcraftia.Xna.Framework.UI
         /// </remarks>
         class Scissor : IDisposable
         {
+            /// <summary>
+            /// UIManager。
+            /// </summary>
             UIManager uiManager;
 
+            /// <summary>
+            /// BeginClipping を開始する前に設定されていたシザー テスト領域。
+            /// </summary>
             Rectangle previousScissorRectangle;
 
+            /// <summary>
+            /// インスタンスを生成します。
+            /// </summary>
+            /// <param name="uiManager">UIManager。</param>
+            /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
             public Scissor(UIManager uiManager, Rectangle scissorRectangle)
             {
                 this.uiManager = uiManager;
@@ -48,6 +62,10 @@ namespace Willcraftia.Xna.Framework.UI
                 GC.SuppressFinalize(this);
             }
 
+            /// <summary>
+            /// クリッピングを開始します。
+            /// </summary>
+            /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
             void BeginClipping(ref Rectangle scissorRectangle)
             {
                 var spriteBatch = uiManager.spriteBatch;
@@ -69,6 +87,12 @@ namespace Willcraftia.Xna.Framework.UI
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
             }
 
+            /// <summary>
+            /// クリッピングを終了します。
+            /// </summary>
+            /// <remarks>
+            /// BeginClipping メソッドの呼び出し前に設定されていたシザー テスト領域を GraphicsDevice に再設定します。
+            /// </remarks>
             void EndClipping()
             {
                 var spriteBatch = uiManager.spriteBatch;
@@ -85,8 +109,14 @@ namespace Willcraftia.Xna.Framework.UI
 
         #region IDrawContext
 
+        /// <summary>
+        /// IDrawContext の実装クラスです。
+        /// </summary>
         class DrawContext : IDrawContext, IDisposable
         {
+            /// <summary>
+            /// UIManager。
+            /// </summary>
             UIManager uiManager;
 
             // I/F
@@ -113,6 +143,10 @@ namespace Willcraftia.Xna.Framework.UI
                 get { return uiManager.fillTexture; }
             }
 
+            /// <summary>
+            /// インスタンスを生成します。
+            /// </summary>
+            /// <param name="uiManager">UIManager。</param>
             public DrawContext(UIManager uiManager)
             {
                 this.uiManager = uiManager;
@@ -134,20 +168,49 @@ namespace Willcraftia.Xna.Framework.UI
 
         #endregion
 
+        /// <summary>
+        /// IInputService。
+        /// </summary>
         IInputService inputService;
 
+        /// <summary>
+        /// IInputCapturer。
+        /// </summary>
         IInputCapturer inputCapturer;
 
+        /// <summary>
+        /// Screen の生成に使用する IScreenFactory。
+        /// </summary>
+        IScreenFactory screenFactory;
+
+        /// <summary>
+        /// 表示対象の Screen。
+        /// </summary>
         Screen screen;
 
+        /// <summary>
+        /// 描画に用いる IControlLafSource。
+        /// </summary>
         IControlLafSource controlLafSource;
 
+        /// <summary>
+        /// シザー テストのための RasterizerState。
+        /// </summary>
         RasterizerState scissorTestRasterizerState;
 
+        /// <summary>
+        /// 描画に用いる SpriteBatch。
+        /// </summary>
         SpriteBatch spriteBatch;
 
+        /// <summary>
+        /// 背景の塗り潰しに使用するテクスチャ。
+        /// </summary>
         Texture2D fillTexture;
 
+        /// <summary>
+        /// デフォルトの BasicEffect。
+        /// </summary>
         BasicEffect basicEffect;
 
         // I/F
@@ -181,6 +244,9 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        /// <summary>
+        /// IInputCapturer を取得または設定します。
+        /// </summary>
         public IInputCapturer InputCapturer
         {
             get { return inputCapturer; }
@@ -199,8 +265,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// IControlLafSource を取得あるいは設定します。
+        /// IControlLafSource を取得または設定します。
         /// </summary>
+        /// <value>
+        /// Look & Feel を使用しない場合には null を設定します。
+        /// </value>
         public IControlLafSource ControlLafSource
         {
             get { return controlLafSource; }
@@ -212,8 +281,27 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
-        public IScreenFactory ScreenFactory { get; set; }
+        /// <summary>
+        /// Screen の生成に使用する IScreenFactory を取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// Show メソッドによる Screen の名前からの Screen の決定と生成は IScreenFactory に移譲されます。
+        /// </remarks>
+        public IScreenFactory ScreenFactory
+        {
+            get { return screenFactory; }
+            set
+            {
+                if (screenFactory == value) return;
 
+                screenFactory = value;
+            }
+        }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="game">Game。</param>
         public UIManager(Game game)
             : base(game)
         {
@@ -297,7 +385,8 @@ namespace Willcraftia.Xna.Framework.UI
             fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
             basicEffect = new BasicEffect(GraphicsDevice);
 
-            if (ControlLafSource != null) ControlLafSource.Initialize();
+            if (ControlLafSource != null && !ControlLafSource.Initialized) ControlLafSource.Initialize();
+            if (ScreenFactory != null && !ScreenFactory.Initialized) ScreenFactory.Initialize();
 
             base.LoadContent();
         }
@@ -306,7 +395,8 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (spriteBatch != null) spriteBatch.Dispose();
             if (fillTexture != null) fillTexture.Dispose();
-            if (ControlLafSource != null) ControlLafSource.Dispose();
+            if (ControlLafSource != null && ControlLafSource.Initialized) ControlLafSource.Dispose();
+            if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
 
             base.UnloadContent();
         }
@@ -377,6 +467,14 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        /// <summary>
+        /// IControlLafSource から指定の Control のための IControlLaf を取得します。
+        /// </summary>
+        /// <param name="control">Control。</param>
+        /// <returns>
+        /// 指定の Control のための IControlLaf。
+        /// ControlLafSource プロパティが null、あるいは、IControlLafSource 内で見つからない場合は null を返します。
+        /// </returns>
         IControlLaf GetControlLaf(Control control)
         {
             if (ControlLafSource == null) return null;

@@ -27,8 +27,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         protected override void LoadContent()
         {
-            Font = Content.Load<SpriteFont>("Font/Default");
-
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             Desktop.BackgroundColor = Color.Black;
             Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
