@@ -5,21 +5,40 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
+    /// <summary>
+    /// スプライト イメージで Control の LaF を描画するための IControlLafSource です。
+    /// </summary>
     public class SpriteControlLafSource : ControlLafSourceBase
     {
+        /// <summary>
+        /// Control の型をキーとし、その Control の LaF を値とするディクショナリ。
+        /// </summary>
         Dictionary<Type, SpriteControlLafBase> controlLafs = new Dictionary<Type, SpriteControlLafBase>();
 
-        public int SpriteSize { get; set; }
+        /// <summary>
+        /// 塗り潰しに利用するテクスチャを取得します。
+        /// </summary>
+        public Texture2D FillTexture { get; private set; }
 
+        /// <summary>
+        /// 専用の ContentManager を取得します。
+        /// </summary>
+        public ContentManager Content { get; private set; }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="game">Game。</param>
         public SpriteControlLafSource(Game game)
             : base(game)
         {
-            SpriteSize = 16;
+            Content = new ContentManager(Game.Services);
 
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Desktop), new DesktopLaf());
@@ -29,6 +48,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             RegisterControlLaf(typeof(Controls.Overlay), new OverlayLaf());
         }
 
+        /// <summary>
+        /// LaF を登録します。
+        /// </summary>
+        /// <param name="type">Control の型。</param>
+        /// <param name="controlLaf">SpriteControlLafBase。</param>
         public void RegisterControlLaf(Type type, SpriteControlLafBase controlLaf)
         {
             if (type == null) throw new ArgumentNullException("type");
@@ -38,6 +62,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             controlLaf.Source = this;
         }
 
+        /// <summary>
+        /// LaF の登録を解除します。
+        /// </summary>
+        /// <param name="type">Control の型。</param>
         public void DeregisterControlLaf(Type type)
         {
             if (type == null) throw new ArgumentNullException("type");
@@ -69,6 +97,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void LoadContent()
         {
+            FillTexture = Texture2DHelper.CreateFillTexture(Game.GraphicsDevice);
+
             foreach (var controlLaf in controlLafs.Values) controlLaf.Initialize();
 
             base.LoadContent();
@@ -76,6 +106,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void UnloadContent()
         {
+            if (FillTexture != null) FillTexture.Dispose();
+
             foreach (var controlLaf in controlLafs.Values) controlLaf.Dispose();
             controlLafs.Clear();
 

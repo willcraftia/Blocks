@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
+    /// <summary>
+    /// デフォルトのデバッグ用 LaF です。
+    /// </summary>
     public class DefaultControlLaf : DebugControlLafBase
     {
         public override void Draw(Control control, IDrawContext drawContext)

@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
+    /// <summary>
+    /// Label 用の LaF です。
+    /// </summary>
     public class LabelLaf : SpriteControlLafBase
     {
         public override void Draw(Control control, IDrawContext drawContext)

@@ -9,14 +9,37 @@ using Willcraftia.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
+    /// <summary>
+    /// Window 描画用の LaF です。
+    /// </summary>
     public class WindowLaf : SpriteControlLafBase
     {
-        SpriteSheet spriteSheet;
+        /// <summary>
+        /// Window 描画用の SpriteSheet を取得または設定します。
+        /// </summary>
+        public SpriteSheet spriteSheet { get; set; }
+
+        /// <summary>
+        /// SpriteSheet 内の各スプライト イメージの幅を取得または設定します。
+        /// </summary>
+        public int SpriteWidth { get; set; }
+
+        /// <summary>
+        /// SpriteSheet 内の各スプライト イメージの高さを取得または設定します。
+        /// </summary>
+        public int SpriteHeight { get; set; }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        public WindowLaf()
+        {
+            SpriteWidth = 16;
+            SpriteHeight = 16;
+        }
 
         protected override void LoadContent()
         {
-            var content = Source.Content;
-
             //----------------------------------------------------------------
             // TODO test code
             //
@@ -27,19 +50,20 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //
             //----------------------------------------------------------------
 
-            var spriteSheetTexture = content.Load<Texture2D>("Window");
+            var spriteSheetTexture = Source.Content.Load<Texture2D>("Window");
             spriteSheet = new SpriteSheet(spriteSheetTexture);
 
-            var size = Source.SpriteSize;
-            spriteSheet.SourceRectangles["TopLeft"] = new Rectangle(0, 0, size, size);
-            spriteSheet.SourceRectangles["Top"] = new Rectangle(size, 0, size, size);
-            spriteSheet.SourceRectangles["TopRight"] = new Rectangle(size * 2, 0, size, size);
-            spriteSheet.SourceRectangles["Left"] = new Rectangle(0, size, size, size);
-            spriteSheet.SourceRectangles["Fill"] = new Rectangle(size, size, size, size);
-            spriteSheet.SourceRectangles["Right"] = new Rectangle(size * 2, size, size, size);
-            spriteSheet.SourceRectangles["BottomLeft"] = new Rectangle(0, size * 2, size, size);
-            spriteSheet.SourceRectangles["Bottom"] = new Rectangle(size, size * 2, size, size);
-            spriteSheet.SourceRectangles["BottomRight"] = new Rectangle(size * 2, size * 2, size, size);
+            var w = SpriteWidth;
+            var h = SpriteHeight;
+            spriteSheet.SourceRectangles["TopLeft"] = new Rectangle(0, 0, w, h);
+            spriteSheet.SourceRectangles["Top"] = new Rectangle(w, 0, w, h);
+            spriteSheet.SourceRectangles["TopRight"] = new Rectangle(w * 2, 0, w, h);
+            spriteSheet.SourceRectangles["Left"] = new Rectangle(0, h, w, h);
+            spriteSheet.SourceRectangles["Fill"] = new Rectangle(w, h, w, h);
+            spriteSheet.SourceRectangles["Right"] = new Rectangle(w * 2, h, w, h);
+            spriteSheet.SourceRectangles["BottomLeft"] = new Rectangle(0, h * 2, w, h);
+            spriteSheet.SourceRectangles["Bottom"] = new Rectangle(w, h * 2, w, h);
+            spriteSheet.SourceRectangles["BottomRight"] = new Rectangle(w * 2, h * 2, w, h);
 
             base.LoadContent();
         }
@@ -51,46 +75,73 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             var color = window.BackgroundColor * drawContext.Opacity;
             var bounds = drawContext.Bounds;
-            var unit = Source.SpriteSize;
             var spriteBatch = drawContext.SpriteBatch;
             var texture = spriteSheet.Texture;
+
+            // 全てのスプライト イメージが同サイズであることを強制します。
+            // SpriteSheet には異なるサイズで指定できますが、このクラスでは異なるサイズを取り扱うことができません。
+            // 異なるサイズを扱おうとすると、どのスプライト イメージのサイズに基準を揃えるかの制御が複雑になります。
+            int w = SpriteWidth;
+            int h = SpriteHeight;
+
+            var destinationRectangle = new Rectangle();
             Rectangle sourceRectangle;
 
             // Top Lines
             sourceRectangle = spriteSheet.SourceRectangles["TopLeft"];
-            spriteBatch.Draw(texture, new Rectangle(bounds.X, bounds.Y, unit, unit), sourceRectangle, color);
+            destinationRectangle.X = bounds.X;
+            destinationRectangle.Y = bounds.Y;
+            destinationRectangle.Width = w;
+            destinationRectangle.Height = h;
+            spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
+
             sourceRectangle = spriteSheet.SourceRectangles["Top"];
-            for (int x = unit; x < bounds.Width - unit; x += unit)
+            for (int x = w; x < bounds.Width - w; x += w)
             {
-                spriteBatch.Draw(texture, new Rectangle(bounds.X + x, bounds.Y, unit, unit), sourceRectangle, color);
+                destinationRectangle.X = bounds.X + x;
+                spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
             }
+            
             sourceRectangle = spriteSheet.SourceRectangles["TopRight"];
-            spriteBatch.Draw(texture, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y, unit, unit), sourceRectangle, color);
+            destinationRectangle.X = bounds.X + bounds.Width - w;
+            spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
 
             // Middle Lines
-            for (int y = unit; y < bounds.Height - unit; y += unit)
+            for (int y = h; y < bounds.Height - h; y += h)
             {
                 sourceRectangle = spriteSheet.SourceRectangles["Left"];
-                spriteBatch.Draw(texture, new Rectangle(bounds.X, bounds.Y + y, unit, unit), sourceRectangle, color);
+                destinationRectangle.X = bounds.X;
+                destinationRectangle.Y = bounds.Y + y;
+                spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
+
                 sourceRectangle = spriteSheet.SourceRectangles["Fill"];
-                for (int x = unit; x < bounds.Width - unit; x += unit)
+                for (int x = w; x < bounds.Width - w; x += w)
                 {
-                    spriteBatch.Draw(texture, new Rectangle(bounds.X + x, bounds.Y + y, unit, unit), sourceRectangle, color);
+                    destinationRectangle.X = bounds.X + x;
+                    spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
                 }
+
                 sourceRectangle = spriteSheet.SourceRectangles["Right"];
-                spriteBatch.Draw(texture, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y + y, unit, unit), sourceRectangle, color);
+                destinationRectangle.X = bounds.X + bounds.Width - w;
+                spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
             }
 
             // Bottom Lines
             sourceRectangle = spriteSheet.SourceRectangles["BottomLeft"];
-            spriteBatch.Draw(texture, new Rectangle(bounds.X, bounds.Y + bounds.Height - unit, unit, unit), sourceRectangle, color);
+            destinationRectangle.X = bounds.X;
+            destinationRectangle.Y = bounds.Y + bounds.Height - h;
+            spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
+
             sourceRectangle = spriteSheet.SourceRectangles["Bottom"];
-            for (int x = unit; x < bounds.Width - unit; x += unit)
+            for (int x = w; x < bounds.Width - w; x += w)
             {
-                spriteBatch.Draw(texture, new Rectangle(bounds.X + x, bounds.Y + bounds.Height - unit, unit, unit), sourceRectangle, color);
+                destinationRectangle.X = bounds.X + x;
+                spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
             }
+            
             sourceRectangle = spriteSheet.SourceRectangles["BottomRight"];
-            spriteBatch.Draw(texture, new Rectangle(bounds.X + bounds.Width - unit, bounds.Y + bounds.Height - unit, unit, unit), sourceRectangle, color);
+            destinationRectangle.X = bounds.X + bounds.Width - w;
+            spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
         }
     }
 }

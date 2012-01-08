@@ -47,9 +47,7 @@
       <Name>Framework.Content.Pipeline</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\Debug\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="Font\Default.spritefont">
       <Name>Default</Name>
@@ -62,7 +60,6 @@
       <Name>Window</Name>
       <Importer>TextureImporter</Importer>
       <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

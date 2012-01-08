@@ -4,7 +4,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
@@ -24,21 +23,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         public Game Game { get; private set; }
 
         /// <summary>
-        /// GraphicsDevice。
-        /// </summary>
-        public GraphicsDevice GraphicsDevice { get; private set; }
-
-        /// <summary>
-        /// ControlLafSource 専用の ContentManager を取得します。
-        /// </summary>
-        public ContentManager Content { get; private set; }
-
-        /// <summary>
-        /// 塗り潰しに利用するテクスチャを取得します。
-        /// </summary>
-        public Texture2D FillTexture { get; private set; }
-
-        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="game">Game。</param>
@@ -46,16 +30,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         {
             if (game == null) throw new ArgumentNullException("game");
             Game = game;
-
-            Content = new ContentManager(Game.Services);
-            GraphicsDevice = game.GraphicsDevice;
         }
 
         // I/F
         public void Initialize()
         {
-            FillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
-
             LoadContent();
 
             Initialized = true;
@@ -67,9 +46,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// <summary>
         /// Initialize メソッドから呼び出されます。
         /// </summary>
-        /// <remarks>
-        /// このメソッドが呼び出される段階では、Content プロパティが利用可能な状態に構築されています。
-        /// </remarks>
         protected virtual void LoadContent() { }
 
         /// <summary>
@@ -96,11 +72,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         {
             if (disposed) return;
 
-            if (disposing)
-            {
-                UnloadContent();
-                if (FillTexture != null) FillTexture.Dispose();
-            }
+            if (disposing) UnloadContent();
 
             disposed = true;
         }

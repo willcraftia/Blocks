@@ -5,15 +5,31 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
+    /// <summary>
+    /// スプライト デバッグ用に Control の LaF を描画するための IControlLafSource です。
+    /// </summary>
     public class DebugControlLafSource : ControlLafSourceBase
     {
+        /// <summary>
+        /// Control の型をキーとし、その Control の LaF を値とするディクショナリ。
+        /// </summary>
         Dictionary<Type, DebugControlLafBase> controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
+        /// <summary>
+        /// 塗り潰しに利用するテクスチャを取得します。
+        /// </summary>
+        public Texture2D FillTexture { get; private set; }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="game">Game。</param>
         public DebugControlLafSource(Game game)
             : base(game)
         {
@@ -26,6 +42,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             RegisterControlLaf(typeof(Controls.Overlay), new OverlayLaf());
         }
 
+        /// <summary>
+        /// LaF を登録します。
+        /// </summary>
+        /// <param name="type">Control の型。</param>
+        /// <param name="controlLaf">DebugControlLafBase。</param>
         public void RegisterControlLaf(Type type, DebugControlLafBase controlLaf)
         {
             if (type == null) throw new ArgumentNullException("type");
@@ -35,6 +56,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             controlLaf.Source = this;
         }
 
+        /// <summary>
+        /// LaF の登録を解除します。
+        /// </summary>
+        /// <param name="type">Control の型。</param>
         public void DeregisterControlLaf(Type type)
         {
             if (type == null) throw new ArgumentNullException("type");
@@ -43,7 +68,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             if (controlLafs.TryGetValue(type, out controlLaf))
             {
                 controlLafs.Remove(type);
-                controlLaf.Dispose();
             }
         }
 
@@ -66,17 +90,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 
         protected override void LoadContent()
         {
-            foreach (var controlLaf in controlLafs.Values) controlLaf.Initialize();
+            FillTexture = Texture2DHelper.CreateFillTexture(Game.GraphicsDevice);
 
             base.LoadContent();
         }
 
         protected override void UnloadContent()
         {
-            foreach (var controlLaf in controlLafs.Values) controlLaf.Dispose();
-            controlLafs.Clear();
-
-            if (Content != null) Content.Unload();
+            if (FillTexture != null) FillTexture.Dispose();
 
             base.UnloadContent();
         }

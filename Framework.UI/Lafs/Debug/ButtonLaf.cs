@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
+    /// <summary>
+    /// Button 用の LaF です。
+    /// </summary>
     public class ButtonLaf : DefaultControlLaf
     {
         public override void Draw(Control control, IDrawContext drawContext)

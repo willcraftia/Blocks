@@ -1,8 +1,7 @@
 #region Using
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline;
@@ -16,6 +15,7 @@ namespace Willcraftia.Xna.Framework.Content.Pipeline
     [ContentProcessor(DisplayName = "Basic Scaling Texture Processor")]
     public class BasicScalingTextureProcessor : TextureProcessor
     {
+        [DefaultValue(1.0f)]
         public float Scale { get; set; }
 
         public BasicScalingTextureProcessor()

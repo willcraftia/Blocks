@@ -104,7 +104,6 @@
     <Compile Include="Desktop.cs" />
     <Compile Include="IDrawContext.cs" />
     <Compile Include="IScreenFactory.cs" />
-    <Compile Include="Lafs\ControlLafBase.cs" />
     <Compile Include="Lafs\ControlLafSourceBase.cs" />
     <Compile Include="Controls\Orientation.cs" />
     <Compile Include="Controls\StackPanel.cs" />
