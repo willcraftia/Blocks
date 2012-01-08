@@ -783,7 +783,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         internal void ProcessChildrenCollectionChanged()
         {
-            ResetChildMouseOverControl();
+            // マウス オーバ状態の再判定を促すために、Screen にマウス カーソル位置を再通知させます。
+            if (Screen != null) Screen.NotifyLastMousePosition();
             // 再測定と再配置を行います。
             Measured = false;
             Arranged = false;
@@ -921,24 +922,6 @@ namespace Willcraftia.Xna.Framework.UI
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
             mouseOverControl.RaiseMouseEntered();
-        }
-
-        /// <summary>
-        /// 子がマウス オーバ状態ならばそれを解除し、自身をマウス オーバ状態にします。
-        /// マウス オーバ状態の Control が存在しなければ何もしません。
-        /// </summary>
-        void ResetChildMouseOverControl()
-        {
-            if (mouseOverControl == null) return;
-
-            // 子がマウス オーバ状態ならばリセットします。
-            if (mouseOverControl != this)
-            {
-                // これまでマウス オーバ状態にあった Control に変更を通知します。
-                mouseOverControl.ProcessMouseLeft();
-                // 自分をマウス オーバ状態にします。
-                mouseOverControl = this;
-            }
         }
 
         /// <summary>

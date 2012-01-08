@@ -23,6 +23,11 @@ namespace Willcraftia.Xna.Framework.UI
         Control focusedControl;
 
         /// <summary>
+        /// 最後に Screen が得たマウス カーソルの位置。
+        /// </summary>
+        Point lastMousePosition;
+
+        /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -90,6 +95,9 @@ namespace Willcraftia.Xna.Framework.UI
         public void NotifyMouseMoved(int x, int y)
         {
             Desktop.ProcessMouseMoved(x, y);
+
+            lastMousePosition.X = x;
+            lastMousePosition.Y = y;
         }
 
         // I/F
@@ -126,6 +134,14 @@ namespace Willcraftia.Xna.Framework.UI
             LoadContent();
 
             Initialized = true;
+        }
+
+        /// <summary>
+        /// 最後に Screen が得たマウス カーソルの位置を Control に通知します。
+        /// </summary>
+        public void NotifyLastMousePosition()
+        {
+            Desktop.ProcessMouseMoved(lastMousePosition.X, lastMousePosition.Y);
         }
 
         /// <summary>
