@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+using Willcraftia.Xna.Framework.Serialization;
 
 #endregion
 
@@ -32,20 +33,13 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// <param name="block">Block。</param>
         static void SerializeAndDeserializeAsJson(Block block)
         {
-            using (var stream = new MemoryStream())
-            {
-                var serializer = new DataContractJsonSerializer(typeof(Block));
+            // シリアライズ
+            string json = JsonHelper.ToJson<Block>(block);
+            Console.WriteLine(json);
 
-                // シリアライズ
-                serializer.WriteObject(stream, block);
-                var json = Encoding.UTF8.GetString(stream.ToArray());
-                Console.WriteLine(json);
-
-                // デシリアライズ
-                stream.Seek(0, SeekOrigin.Begin);
-                var deserialized = serializer.ReadObject(stream) as Block;
-                Console.WriteLine(deserialized);
-            }
+            // デシリアライズ
+            var deserialized = JsonHelper.FromJson<Block>(json);
+            Console.WriteLine(deserialized);
         }
 
         /// <summary>
@@ -77,64 +71,71 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         static Block CreateSimpleBlock()
         {
             var block = new Block();
-            block.Cubes = new List<Cube>();
+            block.Materials = new List<Material>();
+            block.Meshes = new List<BlockMesh>();
 
-            var cube_0_0_0 = new Cube()
+            var material = new Material()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(0, 0, 0)
+                DiffuseColor = new MaterialColor(63, 127, 255)
             };
-            block.Cubes.Add(cube_0_0_0);
+            block.Materials.Add(material);
 
-            var cube_0_0_16 = new Cube()
+            var cube_0_0_0 = new BlockMesh()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(0, 0, 16)
+                Position = new Position(0, 0, 0),
+                MaterialIndex = 0
             };
-            block.Cubes.Add(cube_0_0_16);
+            block.Meshes.Add(cube_0_0_0);
 
-            var cube_16_0_16 = new Cube()
+            var cube_0_0_16 = new BlockMesh()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(16, 0, 16)
+                Position = new Position(0, 0, 16),
+                MaterialIndex = 0
             };
-            block.Cubes.Add(cube_16_0_16);
+            block.Meshes.Add(cube_0_0_16);
 
-            var cube_16_0_0 = new Cube()
+            var cube_16_0_16 = new BlockMesh()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(16, 0, 0)
+                Position = new Position(16, 0, 16),
+                MaterialIndex = 0
             };
-            block.Cubes.Add(cube_16_0_0);
+            block.Meshes.Add(cube_16_0_16);
 
-
-            var cube_0_16_0 = new Cube()
+            var cube_16_0_0 = new BlockMesh()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(0, 16, 0)
+                Position = new Position(16, 0, 0),
+                MaterialIndex = 0
             };
-            block.Cubes.Add(cube_0_16_0);
+            block.Meshes.Add(cube_16_0_0);
 
-            var cube_0_16_16 = new Cube()
-            {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(0, 16, 16)
-            };
-            block.Cubes.Add(cube_0_16_16);
 
-            var cube_16_16_16 = new Cube()
+            var cube_0_16_0 = new BlockMesh()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(16, 16, 16)
+                Position = new Position(0, 16, 0),
+                MaterialIndex = 0
             };
-            block.Cubes.Add(cube_16_16_16);
+            block.Meshes.Add(cube_0_16_0);
 
-            var cube_16_16_0 = new Cube()
+            var cube_0_16_16 = new BlockMesh()
             {
-                Color = new CubeColor(255, 255, 255),
-                Position = new CubePosition(16, 16, 0)
+                Position = new Position(0, 16, 16),
+                MaterialIndex = 0
             };
-            block.Cubes.Add(cube_16_16_0);
+            block.Meshes.Add(cube_0_16_16);
+
+            var cube_16_16_16 = new BlockMesh()
+            {
+                Position = new Position(16, 16, 16),
+                MaterialIndex = 0
+            };
+            block.Meshes.Add(cube_16_16_16);
+
+            var cube_16_16_0 = new BlockMesh()
+            {
+                Position = new Position(16, 16, 0),
+                MaterialIndex = 0
+            };
+            block.Meshes.Add(cube_16_16_0);
 
             return block;
         }

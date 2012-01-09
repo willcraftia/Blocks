@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks", "Blocks\Blocks.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Serialization.Demo", "Blocks.Serialization.Demo\Blocks.Serialization.Demo.csproj", "{C56C5ACC-A154-4B5E-9611-A72301681492}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Graphics.Demo", "Blocks.Graphics.Demo\Blocks.Graphics.Demo\Blocks.Graphics.Demo.csproj", "{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Blocks.Graphics.DemoContent", "Blocks.Graphics.Demo\Blocks.Graphics.DemoContent\Blocks.Graphics.DemoContent.contentproj", "{D3D4C4F1-A878-41D0-B156-D8F5279697EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -69,6 +73,12 @@ Global
 		{C56C5ACC-A154-4B5E-9611-A72301681492}.Debug|x86.Build.0 = Debug|x86
 		{C56C5ACC-A154-4B5E-9611-A72301681492}.Release|x86.ActiveCfg = Release|x86
 		{C56C5ACC-A154-4B5E-9611-A72301681492}.Release|x86.Build.0 = Release|x86
+		{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}.Debug|x86.ActiveCfg = Debug|x86
+		{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}.Debug|x86.Build.0 = Debug|x86
+		{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}.Release|x86.ActiveCfg = Release|x86
+		{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}.Release|x86.Build.0 = Release|x86
+		{D3D4C4F1-A878-41D0-B156-D8F5279697EF}.Debug|x86.ActiveCfg = Debug|x86
+		{D3D4C4F1-A878-41D0-B156-D8F5279697EF}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

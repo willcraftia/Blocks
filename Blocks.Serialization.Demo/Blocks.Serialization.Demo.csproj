@@ -53,6 +53,10 @@
       <Project>{AF33ACD1-05BE-478C-80E3-3566B0569700}</Project>
       <Name>Blocks</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Framework\Framework.csproj">
+      <Project>{FA23868B-0454-4B81-B5AA-F270F987ECC7}</Project>
+      <Name>Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

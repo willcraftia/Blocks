@@ -7,19 +7,37 @@ using System.Runtime.Serialization;
 
 namespace Willcraftia.Xna.Blocks.Serialization
 {
+    /// <summary>
+    /// Block 内グリッドにおける BlockMesh の位置を表すための構造体です。
+    /// </summary>
     [DataContract]
-    public struct CubePosition : IEquatable<CubePosition>
+    public struct Position : IEquatable<Position>
     {
+        /// <summary>
+        /// X 座標。
+        /// </summary>
         [DataMember]
         public int X;
 
+        /// <summary>
+        /// Y 座標。
+        /// </summary>
         [DataMember]
         public int Y;
 
+        /// <summary>
+        /// Z 座標。
+        /// </summary>
         [DataMember]
         public int Z;
 
-        public CubePosition(int x, int y, int z)
+        /// <summary>
+        /// コンストラクタ。
+        /// </summary>
+        /// <param name="x">X 座標。</param>
+        /// <param name="y">Y 座標。</param>
+        /// <param name="z">Z 座標。</param>
+        public Position(int x, int y, int z)
         {
             X = x;
             Y = y;
@@ -28,18 +46,18 @@ namespace Willcraftia.Xna.Blocks.Serialization
 
         #region Equatable
 
-        public static bool operator ==(CubePosition c1, CubePosition c2)
+        public static bool operator ==(Position c1, Position c2)
         {
             return c1.Equals(c2);
         }
 
-        public static bool operator !=(CubePosition c1, CubePosition c2)
+        public static bool operator !=(Position c1, Position c2)
         {
             return !c1.Equals(c2);
         }
 
         // I/F
-        public bool Equals(CubePosition other)
+        public bool Equals(Position other)
         {
             return X == other.X && Y == other.Y && Z == other.Z;
         }
@@ -48,7 +66,7 @@ namespace Willcraftia.Xna.Blocks.Serialization
         {
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            return Equals((CubePosition) obj);
+            return Equals((Position) obj);
         }
 
         public override int GetHashCode()
