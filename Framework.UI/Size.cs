@@ -52,6 +52,8 @@ namespace Willcraftia.Xna.Framework.UI
             return float.IsNegativeInfinity(size.Width) && float.IsNegativeInfinity(size.Height);
         }
 
+        #region Equatable
+
         public static bool operator ==(Size s1, Size s2)
         {
             return s1.Equals(s2);
@@ -78,5 +80,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             return Width.GetHashCode() ^ Height.GetHashCode();
         }
+
+        #endregion
     }
 }

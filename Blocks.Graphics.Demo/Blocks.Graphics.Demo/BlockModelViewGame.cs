@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Serialization;
 
@@ -36,6 +37,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         protected override void Initialize()
         {
+            var fpsCounter = new FpsCounter(this);
+            fpsCounter.Content.RootDirectory = "Content";
+            fpsCounter.HorizontalAlignment = DebugHorizontalAlignment.Right;
+            fpsCounter.SampleSpan = TimeSpan.FromSeconds(2);
+            Components.Add(fpsCounter);
+
             // テスト用にメモリ上で Block の JSON データを作ります。
             var block = CreateSimpleBlock();
             modelJson = JsonHelper.ToJson<Block>(block);
@@ -59,6 +66,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         protected override void UnloadContent()
         {
+            spriteBatch.Dispose();
+            basicEffect.Dispose();
         }
 
         protected override void Update(GameTime gameTime)

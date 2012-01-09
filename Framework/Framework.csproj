@@ -93,6 +93,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debug\FpsCounter.cs" />
+    <Compile Include="Debug\DebugHorizontalAlignment.cs" />
+    <Compile Include="Debug\DebugLayout.cs" />
+    <Compile Include="Debug\DebugVerticalAlignment.cs" />
     <Compile Include="GameServiceContainerExtension.cs" />
     <Compile Include="Graphics\BackBuffer.cs" />
     <Compile Include="Graphics\ColorHelper.cs" />

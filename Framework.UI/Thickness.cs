@@ -58,6 +58,8 @@ namespace Willcraftia.Xna.Framework.UI
             Bottom = bottom;
         }
 
+        #region Equatable
+
         public static bool operator ==(Thickness t1, Thickness t2)
         {
             return t1.Equals(t2);
@@ -84,5 +86,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             return Left.GetHashCode() ^ Top.GetHashCode() ^ Right.GetHashCode() ^ Bottom.GetHashCode();
         }
+
+        #endregion
     }
 }

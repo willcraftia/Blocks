@@ -162,16 +162,6 @@ namespace Willcraftia.Xna.Framework.UI
             return new Rect(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
-        public static bool operator ==(Rect r1, Rect r2)
-        {
-            return r1.Equals(r2);
-        }
-
-        public static bool operator !=(Rect r1, Rect r2)
-        {
-            return !r1.Equals(r2);
-        }
-
         /// <summary>
         /// 指定の Point が領域に含まれるかどうかを判定します。
         /// </summary>
@@ -218,6 +208,18 @@ namespace Willcraftia.Xna.Framework.UI
             return new Microsoft.Xna.Framework.Rectangle((int) X, (int) Y, (int) Width, (int) Height);
         }
 
+        #region Equatable
+
+        public static bool operator ==(Rect r1, Rect r2)
+        {
+            return r1.Equals(r2);
+        }
+
+        public static bool operator !=(Rect r1, Rect r2)
+        {
+            return !r1.Equals(r2);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType()) return false;
@@ -234,5 +236,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
         }
+
+        #endregion
     }
 }

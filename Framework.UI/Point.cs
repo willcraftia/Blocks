@@ -32,6 +32,8 @@ namespace Willcraftia.Xna.Framework.UI
             Y = y;
         }
 
+        #region Equatable
+
         public static bool operator ==(Point p1, Point p2)
         {
             return p1.Equals(p2);
@@ -58,5 +60,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             return X.GetHashCode() ^ Y.GetHashCode();
         }
+
+        #endregion
     }
 }

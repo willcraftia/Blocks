@@ -395,12 +395,12 @@ namespace Willcraftia.Xna.Framework.UI
         public bool OpacityInherited { get; set; }
 
         /// <summary>
-        /// 背景色。
+        /// 背景色を取得または設定します。
         /// </summary>
         public Color BackgroundColor { get; set; }
 
         /// <summary>
-        /// 前景色
+        /// 前景色を取得または設定します。
         /// </summary>
         public Color ForegroundColor { get; set; }
 
