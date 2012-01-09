@@ -187,8 +187,8 @@ namespace Willcraftia.Xna.Framework.Debug
 
         protected override void UnloadContent()
         {
-            spriteBatch.Dispose();
-            fillTexture.Dispose();
+            if (spriteBatch != null) spriteBatch.Dispose();
+            if (fillTexture != null) fillTexture.Dispose();
             Content.Unload();
 
             base.UnloadContent();

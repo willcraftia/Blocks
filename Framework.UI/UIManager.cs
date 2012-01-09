@@ -283,8 +283,9 @@ namespace Willcraftia.Xna.Framework.UI
         public UIManager(Game game)
             : base(game)
         {
-            // サービスとして登録
+            // サービスとして登録します。
             Game.Services.AddService(typeof(IUIService), this);
+
             scissorTestRasterizerState = new RasterizerState()
             {
                 ScissorTestEnable = true

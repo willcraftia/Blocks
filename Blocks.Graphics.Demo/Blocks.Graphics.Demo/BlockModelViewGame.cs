@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Serialization;
@@ -29,6 +30,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         BasicEffect basicEffect;
 
+        TimeRulerMarker drawMarker;
+
         public BlockModelViewGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -42,6 +45,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             fpsCounter.HorizontalAlignment = DebugHorizontalAlignment.Right;
             fpsCounter.SampleSpan = TimeSpan.FromSeconds(2);
             Components.Add(fpsCounter);
+
+            var timeRuler = new TimeRuler(this);
+            Components.Add(timeRuler);
 
             // テスト用にメモリ上で Block の JSON データを作ります。
             var block = CreateSimpleBlock();
@@ -62,10 +68,15 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             var factory = new BlockModelFactory();
             model = factory.CreateBlockModel(GraphicsDevice, block);
+
+            drawMarker = Services.GetRequiredService<ITimeRulerService>().CreateMarker();
+            drawMarker.Name = "Draw";
+            drawMarker.Color = Color.Yellow;
         }
 
         protected override void UnloadContent()
         {
+            Services.GetRequiredService<ITimeRulerService>().ReleaseMarker(drawMarker);
             spriteBatch.Dispose();
             basicEffect.Dispose();
         }
@@ -79,6 +90,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         protected override void Draw(GameTime gameTime)
         {
+            drawMarker.Begin();
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             float time = (float) gameTime.TotalGameTime.TotalSeconds;
@@ -112,6 +125,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
 
             base.Draw(gameTime);
+
+            drawMarker.End();
         }
 
         /// <summary>
