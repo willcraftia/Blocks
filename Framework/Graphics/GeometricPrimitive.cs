@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.Graphics
 {
     /// <summary>
-    /// 幾何プリミティブ (Geometric Primitive) を描画するクラスです。
+    /// 幾何プリミティブ (Geometric Primitive) の頂点データを管理するクラスです。
     /// </summary>
     public sealed class GeometricPrimitive : IDisposable
     {
@@ -49,12 +49,12 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// </summary>
         /// <param name="vertices">VertexPositionNormal 配列。</param>
         /// <param name="indices">インデックス配列。</param>
-        public GeometricPrimitive(GraphicsDevice graphicsDevice, VertexPositionNormal[] vertices, ushort[] indices)
+        public GeometricPrimitive(GraphicsDevice graphicsDevice, VertexPositionNormalColor[] vertices, ushort[] indices)
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
 
             // 頂点バッファを初期化します。
-            VertexBuffer = new VertexBuffer(graphicsDevice, typeof(VertexPositionNormal), vertices.Length, BufferUsage.None);
+            VertexBuffer = new VertexBuffer(graphicsDevice, typeof(VertexPositionNormalColor), vertices.Length, BufferUsage.None);
             VertexBuffer.SetData(vertices);
 
             // インデックス バッファを初期化します。

@@ -15,9 +15,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
     public sealed class BlockModelMesh
     {
         /// <summary>
-        /// Geometric Primitive (Cube Primitive を仮定)。
+        /// Geometric Primitive (Cube Primitive を仮定) を取得します。
         /// </summary>
-        GeometricPrimitive geometricPrimitive;
+        public GeometricPrimitive GeometricPrimitive { get; internal set; }
 
         /// <summary>
         /// BlockModel に対する変換行列。
@@ -36,7 +36,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         internal BlockModelMesh(GeometricPrimitive geometricPrimitive)
         {
             if (geometricPrimitive == null) throw new ArgumentNullException("geometricPrimitive");
-            this.geometricPrimitive = geometricPrimitive;
+            this.GeometricPrimitive = geometricPrimitive;
 
             Transform = Matrix.Identity;
         }
@@ -47,7 +47,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <param name="effect">Effect。</param>
         public void Draw(Effect effect)
         {
-            geometricPrimitive.Draw(effect);
+            GeometricPrimitive.Draw(effect);
         }
     }
 }

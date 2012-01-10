@@ -24,6 +24,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             System.Threading.Thread.Sleep(2000);
 
             var cubePrimitiveFactory = new Graphics.CubePrimitiveFactory();
+            cubePrimitiveFactory.TopSurfaceColor = Color.Green;
+            cubePrimitiveFactory.BottomSurfaceColor = Color.GreenYellow;
+            cubePrimitiveFactory.NorthSurfaceColor = Color.Blue;
+            cubePrimitiveFactory.SouthSurfaceColor = Color.BlueViolet;
+            cubePrimitiveFactory.EastSurfaceColor = Color.Red;
+            cubePrimitiveFactory.WestSurfaceColor = Color.OrangeRed;
             var cubePrimitive = cubePrimitiveFactory.Create(Game.GraphicsDevice);
 
             // Unit size.

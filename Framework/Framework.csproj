@@ -110,6 +110,8 @@
     <Compile Include="Graphics\SpriteSheet.cs" />
     <Compile Include="Graphics\Texture2DHelper.cs" />
     <Compile Include="Graphics\VertexPositionNormal.cs" />
+    <Compile Include="Graphics\VertexPositionNormalColor.cs" />
+    <Compile Include="Graphics\VertexSource.cs" />
     <Compile Include="MatrixExtension.cs" />
     <Compile Include="Pov.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
