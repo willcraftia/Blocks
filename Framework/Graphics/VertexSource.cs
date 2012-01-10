@@ -11,17 +11,18 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// <summary>
     /// 頂点バッファを作成するための一時データを管理するクラスです。
     /// </summary>
-    public sealed class VertexSource : IDisposable
+    /// <typeparam name="T">頂点構造体の型。</typeparam>
+    public sealed class VertexSource<T> : IDisposable where T : struct
     {
         /// <summary>
         /// 頂点の位置のリスト。
         /// </summary>
-        internal List<VertexPositionNormalColor> Vertices = new List<VertexPositionNormalColor>();
+        public List<T> Vertices { get; private set; }
 
         /// <summary>
         /// 頂点のインデックスのリスト。
         /// </summary>
-        internal List<ushort> Indices = new List<ushort>();
+        public List<ushort> Indices { get; private set; }
 
         /// <summary>
         /// 追加する頂点のインデックス。
@@ -29,6 +30,15 @@ namespace Willcraftia.Xna.Framework.Graphics
         public int CurrentVertex
         {
             get { return Vertices.Count; }
+        }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        public VertexSource()
+        {
+            Vertices = new List<T>();
+            Indices = new List<ushort>();
         }
 
         // I/F
@@ -40,12 +50,10 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// <summary>
         /// 頂点を追加します。
         /// </summary>
-        /// <param name="position">位置。</param>
-        /// <param name="normal">法線。</param>
-        /// <param name="color">色。</param>
-        public void AddVertex(Vector3 position, Vector3 normal, Color color)
+        /// <param name="vertex">頂点構造体。</param>
+        public void AddVertex(T vertex)
         {
-            Vertices.Add(new VertexPositionNormalColor(position, normal, color));
+            Vertices.Add(vertex);
         }
 
         /// <summary>

@@ -23,14 +23,19 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             // 重いロードのテスト用にスリープさせてます。
             System.Threading.Thread.Sleep(2000);
 
-            var cubePrimitiveFactory = new Graphics.CubePrimitiveFactory();
-            cubePrimitiveFactory.TopSurfaceColor = Color.Green;
-            cubePrimitiveFactory.BottomSurfaceColor = Color.GreenYellow;
-            cubePrimitiveFactory.NorthSurfaceColor = Color.Blue;
-            cubePrimitiveFactory.SouthSurfaceColor = Color.BlueViolet;
-            cubePrimitiveFactory.EastSurfaceColor = Color.Red;
-            cubePrimitiveFactory.WestSurfaceColor = Color.OrangeRed;
-            var cubePrimitive = cubePrimitiveFactory.Create(Game.GraphicsDevice);
+            var cubeVertexSourceFactory = new Graphics.ColoredCubeVertexSourceFactory();
+            cubeVertexSourceFactory.TopSurfaceColor = Color.Green;
+            cubeVertexSourceFactory.BottomSurfaceColor = Color.GreenYellow;
+            cubeVertexSourceFactory.NorthSurfaceColor = Color.Blue;
+            cubeVertexSourceFactory.SouthSurfaceColor = Color.BlueViolet;
+            cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
+            cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
+
+            Graphics.GeometricPrimitive cubePrimitive;
+            using (var source = cubeVertexSourceFactory.CreateVertexSource())
+            {
+                cubePrimitive = Graphics.GeometricPrimitive.Create(GraphicsDevice, source);
+            }
 
             // Unit size.
             int u = 32;

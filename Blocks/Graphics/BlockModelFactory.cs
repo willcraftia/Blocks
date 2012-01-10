@@ -16,16 +16,16 @@ namespace Willcraftia.Xna.Blocks.Graphics
     public sealed class BlockModelFactory
     {
         /// <summary>
-        /// CubePrimitiveFactory を取得します。
+        /// CubeVertexSourceFactory を取得します。
         /// </summary>
-        public CubePrimitiveFactory CubePrimitiveFactory { get; private set; }
+        public ColoredCubeVertexSourceFactory CubeVertexSourceFactory { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         public BlockModelFactory()
         {
-            CubePrimitiveFactory = new CubePrimitiveFactory();
+            CubeVertexSourceFactory = new ColoredCubeVertexSourceFactory();
         }
 
         /// <summary>
@@ -36,7 +36,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <returns>生成された BlockModel。</returns>
         public BlockModel CreateBlockModel(GraphicsDevice graphicsDevice, Block block)
         {
-            var cubePrimitive = CubePrimitiveFactory.Create(graphicsDevice);
+            GeometricPrimitive cubePrimitive;
+            using (var source = CubeVertexSourceFactory.CreateVertexSource())
+            {
+                cubePrimitive = GeometricPrimitive.Create(graphicsDevice, source);
+            }
 
             var model = new BlockModel();
 
@@ -100,9 +104,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         void CreateTransform(ref Position position, out Matrix transform)
         {
             var v = new Vector3();
-            v.X = CubePrimitiveFactory.Size * (float) position.X;
-            v.Y = CubePrimitiveFactory.Size * (float) position.Y;
-            v.Z = CubePrimitiveFactory.Size * (float) position.Z;
+            v.X = CubeVertexSourceFactory.Size * (float) position.X;
+            v.Y = CubeVertexSourceFactory.Size * (float) position.Y;
+            v.Z = CubeVertexSourceFactory.Size * (float) position.Z;
 
             Matrix.CreateTranslation(ref v, out transform);
         }
