@@ -165,12 +165,21 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             block.Materials = new List<Material>();
             block.Elements = new List<Element>();
 
-            var material = new Material()
+            block.Materials.Add(new Material()
             {
                 DiffuseColor = new MaterialColor(255, 0, 0),
                 Alpha = 1
-            };
-            block.Materials.Add(material);
+            });
+            block.Materials.Add(new Material()
+            {
+                DiffuseColor = new MaterialColor(0, 255, 0),
+                Alpha = 1
+            });
+            block.Materials.Add(new Material()
+            {
+                DiffuseColor = new MaterialColor(0, 0, 255),
+                Alpha = 1
+            });
 
             for (int x = 0; x < n; x++)
             {
@@ -178,7 +187,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 {
                     for (int z = 0; z < n; z++)
                     {
-                        block.Elements.Add(new Element() { Position = new Position(x, y, z), MaterialIndex = 0 });
+                        int materialIndex = z % 3;
+                        block.Elements.Add(new Element() { Position = new Position(x, y, z), MaterialIndex = materialIndex });
                     }
                 }
             }
