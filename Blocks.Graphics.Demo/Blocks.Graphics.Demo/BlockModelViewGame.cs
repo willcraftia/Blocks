@@ -173,11 +173,14 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             block.Materials.Add(new Material()
             {
                 DiffuseColor = new MaterialColor(0, 255, 0),
-                Alpha = 1
+                EmissiveColor = new MaterialColor(127, 127, 0),
+                Alpha = 0.3f
             });
             block.Materials.Add(new Material()
             {
                 DiffuseColor = new MaterialColor(0, 0, 255),
+                SpecularColor = new MaterialColor(255, 255, 255),
+                SpecularPower = 0.5f,
                 Alpha = 1
             });
 
