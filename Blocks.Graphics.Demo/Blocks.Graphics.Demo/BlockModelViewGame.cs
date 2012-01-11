@@ -34,8 +34,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         TimeRulerMarker drawMarker;
 
-        DepthStencilState modelDrawDepthStencilState = new DepthStencilState();
-
         public BlockModelViewGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -123,13 +121,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             basicEffect.View = view;
             basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = false;
             basicEffect.EnableDefaultLighting();
 
             // Z バッファを有効にします。
             // デバッグ機能などで SpriteBatch を用いていると他の状態へ設定されているため、
             // 必要なタイミングで常に上書きするようにします。
-            GraphicsDevice.DepthStencilState = modelDrawDepthStencilState;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             DrawWithoutOptimization(world, view, projection);
 
