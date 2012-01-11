@@ -98,8 +98,8 @@
     <Compile Include="Graphics\BlockModelMaterial.cs" />
     <Compile Include="Graphics\BlockModelMesh.cs" />
     <Compile Include="Serialization\Block.cs" />
+    <Compile Include="Serialization\Element.cs" />
     <Compile Include="Serialization\MaterialColor.cs" />
-    <Compile Include="Serialization\BlockMesh.cs" />
     <Compile Include="Serialization\Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\Material.cs" />

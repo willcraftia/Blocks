@@ -10,7 +10,7 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// <summary>
     /// 頂点色を持つ立方体の VertexSource を生成するクラスです。
     /// </summary>
-    public sealed class ColoredCubeVertexSourceFactory : IVertexSourceFactory<VertexPositionNormalColor>
+    public sealed class ColoredCubeVertexSourceFactory : IVertexSourceFactory<VertexPositionNormalColor, ushort>
     {
         #region SurfaceMaker
 
@@ -53,14 +53,14 @@ namespace Willcraftia.Xna.Framework.Graphics
             /// VertexSource へ頂点データを設定します。
             /// </summary>
             /// <param name="source">頂点データが設定される VertexSource。</param>
-            public void Make(VertexSource<VertexPositionNormalColor> source)
+            public void Make(VertexSource<VertexPositionNormalColor, ushort> source)
             {
-                source.AddIndex(source.CurrentVertex + 0);
-                source.AddIndex(source.CurrentVertex + 1);
-                source.AddIndex(source.CurrentVertex + 2);
-                source.AddIndex(source.CurrentVertex + 0);
-                source.AddIndex(source.CurrentVertex + 2);
-                source.AddIndex(source.CurrentVertex + 3);
+                source.AddIndex((ushort) (source.CurrentVertex + 0));
+                source.AddIndex((ushort) (source.CurrentVertex + 1));
+                source.AddIndex((ushort) (source.CurrentVertex + 2));
+                source.AddIndex((ushort) (source.CurrentVertex + 0));
+                source.AddIndex((ushort) (source.CurrentVertex + 2));
+                source.AddIndex((ushort) (source.CurrentVertex + 3));
 
                 source.AddVertex(new VertexPositionNormalColor(Position0, Normal, Color));
                 source.AddVertex(new VertexPositionNormalColor(Position1, Normal, Color));
@@ -121,65 +121,48 @@ namespace Willcraftia.Xna.Framework.Graphics
         }
 
         // I/F
-        public VertexSource<VertexPositionNormalColor> CreateVertexSource()
+        public VertexSource<VertexPositionNormalColor, ushort> CreateVertexSource()
         {
-            var source = new VertexSource<VertexPositionNormalColor>();
+            var source = new VertexSource<VertexPositionNormalColor, ushort>();
             var maker = new SurfaceMaker();
             float s = Size * 0.5f;
 
-            // Top
-            maker.Position0 = new Vector3(-s, s, s);
-            maker.Position1 = new Vector3(-s, s, -s);
-            maker.Position2 = new Vector3(s, s, -s);
-            maker.Position3 = new Vector3(s, s, s);
-            maker.Normal = new Vector3(0, 1, 0);
-            maker.Color = TopSurfaceColor;
-            maker.Make(source);
+            // REFERENCE: 立方体頂点計算アルゴリズムは XNA の Primitive3D サンプル コードより。
 
-            // Bottom
-            maker.Position0 = new Vector3(s, -s, s);
-            maker.Position1 = new Vector3(s, -s, -s);
-            maker.Position2 = new Vector3(-s, -s, -s);
-            maker.Position3 = new Vector3(-s, -s, s);
-            maker.Normal = new Vector3(0, -1, 0);
-            maker.Color = BottomSurfaceColor;
-            maker.Make(source);
+            Vector3[] normals =
+            {
+                new Vector3(0, 0, 1),
+                new Vector3(0, 0, -1),
+                new Vector3(1, 0, 0),
+                new Vector3(-1, 0, 0),
+                new Vector3(0, 1, 0),
+                new Vector3(0, -1, 0),
+            };
 
-            // North
-            maker.Position0 = new Vector3(s, s, s);
-            maker.Position1 = new Vector3(s, -s, s);
-            maker.Position2 = new Vector3(-s, -s, s);
-            maker.Position3 = new Vector3(-s, s, s);
-            maker.Normal = new Vector3(0, 0, 1);
-            maker.Color = NorthSurfaceColor;
-            maker.Make(source);
+            Color[] colors =
+            {
+                NorthSurfaceColor,
+                SouthSurfaceColor,
+                WestSurfaceColor,
+                EastSurfaceColor,
+                TopSurfaceColor,
+                BottomSurfaceColor
+            };
 
-            // South
-            maker.Position0 = new Vector3(-s, s, -s);
-            maker.Position1 = new Vector3(-s, -s, -s);
-            maker.Position2 = new Vector3(s, -s, -s);
-            maker.Position3 = new Vector3(s, s, -s);
-            maker.Normal = new Vector3(0, 0, -1);
-            maker.Color = SouthSurfaceColor;
-            maker.Make(source);
+            for (int i = 0; i < normals.Length; i++)
+            {
+                var normal = normals[i];
+                var side1 = new Vector3(normal.Y, normal.Z, normal.X);
+                var side2 = Vector3.Cross(normal, side1);
 
-            // East
-            maker.Position0 = new Vector3(s, s, -s);
-            maker.Position1 = new Vector3(s, -s, -s);
-            maker.Position2 = new Vector3(s, -s, s);
-            maker.Position3 = new Vector3(s, s, s);
-            maker.Normal = new Vector3(1, 0, 0);
-            maker.Color = EastSurfaceColor;
-            maker.Make(source);
-
-            // West
-            maker.Position0 = new Vector3(-s, s, s);
-            maker.Position1 = new Vector3(-s, -s, s);
-            maker.Position2 = new Vector3(-s, -s, -s);
-            maker.Position3 = new Vector3(-s, s, -s);
-            maker.Normal = new Vector3(-1, 0, 0);
-            maker.Color = WestSurfaceColor;
-            maker.Make(source);
+                maker.Position0 = (normal - side1 - side2) * s;
+                maker.Position1 = (normal - side1 + side2) * s;
+                maker.Position2 = (normal + side1 + side2) * s;
+                maker.Position3 = (normal + side1 - side2) * s;
+                maker.Normal = normal;
+                maker.Color = colors[i];
+                maker.Make(source);
+            }
 
             return source;
         }

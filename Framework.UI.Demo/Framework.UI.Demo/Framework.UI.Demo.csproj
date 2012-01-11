@@ -107,7 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Screens\CubeButton.cs" />
+    <Compile Include="Screens\CubeControl.cs" />
     <Compile Include="Screens\DemoLoadingScreen.cs" />
     <Compile Include="Screens\MainMenuDemoScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

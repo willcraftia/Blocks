@@ -72,7 +72,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         {
             var block = new Block();
             block.Materials = new List<Material>();
-            block.Meshes = new List<BlockMesh>();
+            block.Elements = new List<Element>();
 
             var material = new Material()
             {
@@ -80,62 +80,14 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             };
             block.Materials.Add(material);
 
-            var cube_0_0_0 = new BlockMesh()
-            {
-                Position = new Position(0, 0, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_0_0);
-
-            var cube_0_0_16 = new BlockMesh()
-            {
-                Position = new Position(0, 0, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_0_16);
-
-            var cube_16_0_16 = new BlockMesh()
-            {
-                Position = new Position(16, 0, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_0_16);
-
-            var cube_16_0_0 = new BlockMesh()
-            {
-                Position = new Position(16, 0, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_0_0);
-
-
-            var cube_0_16_0 = new BlockMesh()
-            {
-                Position = new Position(0, 16, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_16_0);
-
-            var cube_0_16_16 = new BlockMesh()
-            {
-                Position = new Position(0, 16, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_16_16);
-
-            var cube_16_16_16 = new BlockMesh()
-            {
-                Position = new Position(16, 16, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_16_16);
-
-            var cube_16_16_0 = new BlockMesh()
-            {
-                Position = new Position(16, 16, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_16_0);
+            block.Elements.Add(new Element() { Position = new Position( 0,  0,  0), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position( 0,  0, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16,  0, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16,  0,  0), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position( 0, 16,  0), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position( 0, 16, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16, 16, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16, 16,  0), MaterialIndex = 0 });
 
             return block;
         }

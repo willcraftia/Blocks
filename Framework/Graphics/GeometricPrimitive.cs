@@ -55,18 +55,20 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// <param name="graphicsDevice">GraphicsDevice。</param>
         GeometricPrimitive(GraphicsDevice graphicsDevice)
         {
-            if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             this.graphicsDevice = graphicsDevice;
         }
 
         /// <summary>
         /// 指定された VertexSource から GeometricPrimitive を生成します。
         /// </summary>
-        /// <typeparam name="T">頂点構造体の型。</typeparam>
+        /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
+        /// <typeparam name="TIndex">インデックスの型。</typeparam>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
         /// <param name="source">VertexSource。</param>
         /// <returns>生成された GeometricPrimitive。</returns>
-        public static GeometricPrimitive Create<T>(GraphicsDevice graphicsDevice, VertexSource<T> source) where T: struct
+        public static GeometricPrimitive Create<TVertex, TIndex>(GraphicsDevice graphicsDevice, VertexSource<TVertex, TIndex> source)
+            where TVertex : struct
+            where TIndex : struct
         {
             var vertices = source.Vertices.ToArray();
             var indices = source.Indices.ToArray();
@@ -76,13 +78,18 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// <summary>
         /// 指定された頂点とインデックスのデータから GeometricPrimitive を生成します。
         /// </summary>
-        /// <typeparam name="T">頂点構造体の型。</typeparam>
+        /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
+        /// <typeparam name="TIndex">インデックスの型。</typeparam>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
         /// <param name="vertices">頂点データの配列。</param>
         /// <param name="indices">インデックス データの配列。</param>
         /// <returns>生成された GeometricPrimitive。</returns>
-        public static GeometricPrimitive Create<T>(GraphicsDevice graphicsDevice, T[] vertices, ushort[] indices) where T : struct
+        public static GeometricPrimitive Create<TVertex, TIndex>(GraphicsDevice graphicsDevice, TVertex[] vertices, TIndex[] indices)
+            where TVertex : struct
+            where TIndex : struct
         {
+            if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
+
             var instance = new GeometricPrimitive(graphicsDevice);
             instance.Initialize(vertices, indices);
             return instance;
@@ -109,17 +116,20 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// <summary>
         /// 指定された頂点とインデックスのデータで GeometricPrimitive を初期化します。
         /// </summary>
-        /// <typeparam name="T">頂点構造体の型。</typeparam>
+        /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
+        /// <typeparam name="TIndex">インデックスの型。</typeparam>
         /// <param name="vertices">頂点データの配列。</param>
         /// <param name="indices">インデックス データの配列。</param>
-        void Initialize<T>(T[] vertices, ushort[] indices) where T : struct
+        void Initialize<TVertex, TIndex>(TVertex[] vertices, TIndex[] indices)
+            where TVertex : struct
+            where TIndex : struct
         {
             // 頂点バッファを初期化します。
-            VertexBuffer = new VertexBuffer(graphicsDevice, typeof(VertexPositionNormalColor), vertices.Length, BufferUsage.None);
+            VertexBuffer = new VertexBuffer(graphicsDevice, typeof(TVertex), vertices.Length, BufferUsage.None);
             VertexBuffer.SetData(vertices);
 
             // インデックス バッファを初期化します。
-            IndexBuffer = new IndexBuffer(graphicsDevice, typeof(ushort), indices.Length, BufferUsage.None);
+            IndexBuffer = new IndexBuffer(graphicsDevice, typeof(TIndex), indices.Length, BufferUsage.None);
             IndexBuffer.SetData(indices);
 
             VertexOffset = 0;

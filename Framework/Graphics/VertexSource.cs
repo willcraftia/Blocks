@@ -11,18 +11,21 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// <summary>
     /// 頂点バッファを作成するための一時データを管理するクラスです。
     /// </summary>
-    /// <typeparam name="T">頂点構造体の型。</typeparam>
-    public sealed class VertexSource<T> : IDisposable where T : struct
+    /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
+    /// <typeparam name="TIndex">インデックスの型。</typeparam>
+    public sealed class VertexSource<TVertex, TIndex> : IDisposable
+        where TVertex : struct
+        where TIndex : struct
     {
         /// <summary>
         /// 頂点の位置のリスト。
         /// </summary>
-        public List<T> Vertices { get; private set; }
+        public List<TVertex> Vertices { get; private set; }
 
         /// <summary>
         /// 頂点のインデックスのリスト。
         /// </summary>
-        public List<ushort> Indices { get; private set; }
+        public List<TIndex> Indices { get; private set; }
 
         /// <summary>
         /// 追加する頂点のインデックス。
@@ -37,21 +40,15 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// </summary>
         public VertexSource()
         {
-            Vertices = new List<T>();
-            Indices = new List<ushort>();
-        }
-
-        // I/F
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
+            Vertices = new List<TVertex>();
+            Indices = new List<TIndex>();
         }
 
         /// <summary>
         /// 頂点を追加します。
         /// </summary>
         /// <param name="vertex">頂点構造体。</param>
-        public void AddVertex(T vertex)
+        public void AddVertex(TVertex vertex)
         {
             Vertices.Add(vertex);
         }
@@ -60,9 +57,39 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// インデックスを追加します。
         /// </summary>
         /// <param name="index">インデックス。</param>
-        public void AddIndex(int index)
+        public void AddIndex(TIndex index)
         {
-            Indices.Add((ushort) index);
+            Indices.Add(index);
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        bool disposed;
+
+        ~VertexSource()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing)
+            {
+                Vertices.Clear();
+                Indices.Clear();
+            }
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

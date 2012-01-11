@@ -13,7 +13,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
         float pitch;
         float roll;
 
-        public CubeButton CubeButton { get; set; }
+        public CubeControl CubeButton { get; set; }
 
         protected override void Update(GameTime gameTime, TimeSpan playElapsedTime, float current)
         {

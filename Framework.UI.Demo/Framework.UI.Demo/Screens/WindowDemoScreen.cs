@@ -23,19 +23,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             // 重いロードのテスト用にスリープさせてます。
             System.Threading.Thread.Sleep(2000);
 
-            var cubeVertexSourceFactory = new Graphics.ColoredCubeVertexSourceFactory();
-            cubeVertexSourceFactory.TopSurfaceColor = Color.Green;
-            cubeVertexSourceFactory.BottomSurfaceColor = Color.GreenYellow;
-            cubeVertexSourceFactory.NorthSurfaceColor = Color.Blue;
-            cubeVertexSourceFactory.SouthSurfaceColor = Color.BlueViolet;
-            cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
-            cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
-
-            Graphics.GeometricPrimitive cubePrimitive;
-            using (var source = cubeVertexSourceFactory.CreateVertexSource())
-            {
-                cubePrimitive = Graphics.GeometricPrimitive.Create(GraphicsDevice, source);
-            }
+            var cubeVertexSourceFactory = new Graphics.CubeVertexSourceFactory();
 
             // Unit size.
             int u = 32;
@@ -360,9 +348,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     };
                 }
                 {
-                    var button = new CubeButton()
+                    var button = new CubeControl()
                     {
-                        CubePrimitive = cubePrimitive,
+                        CubePrimitive = CreateCubePrimitive(),
                         Clipped = false,
                         ForegroundColor = Color.White,
                         Width = u * 7
@@ -398,6 +386,27 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             screenOverlay.Show(this);
 
             base.LoadContent();
+        }
+
+        /// <summary>
+        /// 立方体の GeometricPrimitive を生成します。
+        /// </summary>
+        /// <returns>生成された立方体の GeometricPrimitive。</returns>
+        Graphics.GeometricPrimitive CreateCubePrimitive()
+        {
+            //var cubeVertexSourceFactory = new Graphics.CubeVertexSourceFactory();
+            var cubeVertexSourceFactory = new Graphics.ColoredCubeVertexSourceFactory();
+            cubeVertexSourceFactory.TopSurfaceColor = Color.Green;
+            cubeVertexSourceFactory.BottomSurfaceColor = Color.GreenYellow;
+            cubeVertexSourceFactory.NorthSurfaceColor = Color.Blue;
+            cubeVertexSourceFactory.SouthSurfaceColor = Color.BlueViolet;
+            cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
+            cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
+
+            using (var source = cubeVertexSourceFactory.CreateVertexSource())
+            {
+                return Graphics.GeometricPrimitive.Create(GraphicsDevice, source);
+            }
         }
     }
 }

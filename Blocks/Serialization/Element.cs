@@ -8,16 +8,15 @@ using System.Runtime.Serialization;
 namespace Willcraftia.Xna.Blocks.Serialization
 {
     /// <summary>
-    /// Block を構成する Mesh を表すクラスです。
+    /// Block の最小構成要素を表すクラスです。
     /// </summary>
-    [DataContract]
-    public sealed class BlockMesh
+    public sealed class Element
     {
         /// <summary>
-        /// Block 内グリッドにおける位置。
+        /// グリッド内での位置を取得または設定します。
         /// </summary>
         [DataMember]
-        public Position Position;
+        public Position Position { get; set; }
 
         /// <summary>
         /// 参照する Material のインデックスを取得または設定します。

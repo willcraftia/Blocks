@@ -34,6 +34,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         TimeRulerMarker drawMarker;
 
+        DepthStencilState modelDrawDepthStencilState = new DepthStencilState();
+
         public BlockModelViewGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -69,8 +71,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルからロードします。
             var block = JsonHelper.FromJson<Block>(modelJson);
 
-            var factory = new BlockModelFactory();
-            model = factory.CreateBlockModel(GraphicsDevice, block);
+            var factory = new BlockModelFactory(GraphicsDevice);
+            model = factory.CreateBlockModel(block);
 
             updateMarker = Services.GetRequiredService<ITimeRulerService>().CreateMarker();
             updateMarker.Name = "Draw";
@@ -92,11 +94,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         protected override void Update(GameTime gameTime)
         {
-            updateMarker.Begin();
-
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) Exit();
-
-            updateMarker.End();
 
             base.Update(gameTime);
         }
@@ -105,7 +103,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             drawMarker.Begin();
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1, 0);
 
             float time = (float) gameTime.TotalGameTime.TotalSeconds;
             float yaw = time * 0.4f;
@@ -116,17 +114,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             float aspect = GraphicsDevice.Viewport.AspectRatio;
 
-            Matrix world = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
+            // 原点を BlockModel の中心にします。
+            var originTransform = Matrix.CreateTranslation(new Vector3(-8));
+
+            Matrix world = originTransform * Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
             Matrix view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
             Matrix projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 100);
 
             basicEffect.View = view;
             basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
+            basicEffect.VertexColorEnabled = false;
             basicEffect.EnableDefaultLighting();
 
-            //DrawWithoutOptimization(world, view, projection);
-            DrawWithBatch(world, view, projection);
+            // Z バッファを有効にします。
+            // デバッグ機能などで SpriteBatch を用いていると他の状態へ設定されているため、
+            // 必要なタイミングで常に上書きするようにします。
+            GraphicsDevice.DepthStencilState = modelDrawDepthStencilState;
+
+            DrawWithoutOptimization(world, view, projection);
 
             drawMarker.End();
 
@@ -139,7 +144,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             {
                 basicEffect.World = mesh.Transform * world;
 
-                var material = model.Materials[mesh.MaterialIndex];
+                var material = mesh.Material;
                 basicEffect.DiffuseColor = material.DiffuseColor;
                 basicEffect.EmissiveColor = material.EmissiveColor;
                 basicEffect.SpecularColor = material.SpecularColor;
@@ -150,51 +155,19 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
-        void DrawWithBatch(Matrix world, Matrix view, Matrix projection)
-        {
-            var pass = basicEffect.CurrentTechnique.Passes[0];
-
-            foreach (var mesh in model.Meshes)
-            {
-                basicEffect.World = mesh.Transform * world;
-
-                var material = model.Materials[mesh.MaterialIndex];
-                basicEffect.DiffuseColor = material.DiffuseColor;
-                basicEffect.EmissiveColor = material.EmissiveColor;
-                basicEffect.SpecularColor = material.SpecularColor;
-                basicEffect.SpecularPower = material.SpecularPower;
-                basicEffect.Alpha = material.Alpha;
-
-                var primitive = mesh.GeometricPrimitive;
-
-                GraphicsDevice.SetVertexBuffer(primitive.VertexBuffer, primitive.VertexOffset);
-                GraphicsDevice.Indices = primitive.IndexBuffer;
-
-                pass.Apply();
-
-                GraphicsDevice.DrawIndexedPrimitives(
-                    PrimitiveType.TriangleList,
-                    0,
-                    0,
-                    primitive.NumVertices,
-                    primitive.StartIndex,
-                    primitive.PrimitiveCount);
-            }
-        }
-
         /// <summary>
         /// n * n * n 全てを使用した Block を生成します。
         /// </summary>
         /// <returns></returns>
-        static Block CreateFullFilledBlock(int n)
+        Block CreateFullFilledBlock(int n)
         {
             var block = new Block();
             block.Materials = new List<Material>();
-            block.Meshes = new List<BlockMesh>();
+            block.Elements = new List<Element>();
 
             var material = new Material()
             {
-                DiffuseColor = new MaterialColor(63, 127, 255),
+                DiffuseColor = new MaterialColor(255, 0, 0),
                 Alpha = 1
             };
             block.Materials.Add(material);
@@ -205,12 +178,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 {
                     for (int z = 0; z < n; z++)
                     {
-                        var cube = new BlockMesh()
-                        {
-                            Position = new Position(x, y, z),
-                            MaterialIndex = 0
-                        };
-                        block.Meshes.Add(cube);
+                        block.Elements.Add(new Element() { Position = new Position(x, y, z), MaterialIndex = 0 });
                     }
                 }
             }
@@ -222,75 +190,26 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// 簡単な Block を生成します。
         /// </summary>
         /// <returns>生成された Block。</returns>
-        static Block CreateSimpleBlock()
+        Block CreateSimpleBlock()
         {
             var block = new Block();
             block.Materials = new List<Material>();
-            block.Meshes = new List<BlockMesh>();
+            block.Elements = new List<Element>();
 
             var material = new Material()
             {
-                DiffuseColor = new MaterialColor(63, 127, 255),
-                Alpha = 1
+                DiffuseColor = new MaterialColor(63, 127, 255)
             };
             block.Materials.Add(material);
 
-            var cube_0_0_0 = new BlockMesh()
-            {
-                Position = new Position(0, 0, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_0_0);
-
-            var cube_0_0_16 = new BlockMesh()
-            {
-                Position = new Position(0, 0, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_0_16);
-
-            var cube_16_0_16 = new BlockMesh()
-            {
-                Position = new Position(16, 0, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_0_16);
-
-            var cube_16_0_0 = new BlockMesh()
-            {
-                Position = new Position(16, 0, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_0_0);
-
-
-            var cube_0_16_0 = new BlockMesh()
-            {
-                Position = new Position(0, 16, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_16_0);
-
-            var cube_0_16_16 = new BlockMesh()
-            {
-                Position = new Position(0, 16, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_0_16_16);
-
-            var cube_16_16_16 = new BlockMesh()
-            {
-                Position = new Position(16, 16, 16),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_16_16);
-
-            var cube_16_16_0 = new BlockMesh()
-            {
-                Position = new Position(16, 16, 0),
-                MaterialIndex = 0
-            };
-            block.Meshes.Add(cube_16_16_0);
+            block.Elements.Add(new Element() { Position = new Position(0, 0, 0), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(0, 0, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16, 0, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16, 0, 0), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(0, 16, 0), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(0, 16, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16, 16, 16), MaterialIndex = 0 });
+            block.Elements.Add(new Element() { Position = new Position(16, 16, 0), MaterialIndex = 0 });
 
             return block;
         }

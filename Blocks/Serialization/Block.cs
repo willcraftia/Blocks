@@ -11,22 +11,21 @@ namespace Willcraftia.Xna.Blocks.Serialization
 {
     /// <summary>
     /// Block を表現するクラスです。
-    /// Block は、複数の BlockMesh で構成されます。
     /// </summary>
     [DataContract]
     public sealed class Block
     {
         /// <summary>
-        /// BlockMesh が参照する Material のリストを取得または設定します。
+        /// Material のリストを取得または設定します。
         /// </summary>
         [DataMember]
         public List<Material> Materials { get; set; }
 
         /// <summary>
-        /// Block を構成する BlockMesh のリストを取得または設定します。
+        /// Element のリストを取得または設定します。
         /// </summary>
         [DataMember]
-        public List<BlockMesh> Meshes { get; set; }
+        public List<Element> Elements { get; set; }
 
         #region ToString
 
@@ -42,13 +41,13 @@ namespace Willcraftia.Xna.Blocks.Serialization
                     if (i < Materials.Count - 1) builder.Append(", ");
                 }
             }
-            builder.Append("], Meshes=[");
-            if (Meshes != null)
+            builder.Append("], Elements=[");
+            if (Elements != null)
             {
-                for (int i = 0; i < Meshes.Count; i++)
+                for (int i = 0; i < Elements.Count; i++)
                 {
-                    builder.Append(Meshes[i]);
-                    if (i < Meshes.Count - 1) builder.Append(", ");
+                    builder.Append(Elements[i]);
+                    if (i < Elements.Count - 1) builder.Append(", ");
                 }
             }
             builder.Append("]");
