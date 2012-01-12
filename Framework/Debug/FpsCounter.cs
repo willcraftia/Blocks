@@ -178,7 +178,7 @@ namespace Willcraftia.Xna.Framework.Debug
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            font = Content.Load<SpriteFont>("Font/Debug");
+            font = Content.Load<SpriteFont>("Fonts/Debug");
             fontSize = font.MeasureString("FPS: 00.00000");
             fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 

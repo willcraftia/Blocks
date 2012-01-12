@@ -113,6 +113,7 @@
     <Compile Include="Graphics\VertexPositionNormal.cs" />
     <Compile Include="Graphics\VertexPositionNormalColor.cs" />
     <Compile Include="Graphics\VertexSource.cs" />
+    <Compile Include="Graphics\WritableVertexBuffer.cs" />
     <Compile Include="MatrixExtension.cs" />
     <Compile Include="Pov.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

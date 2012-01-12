@@ -29,9 +29,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // マテリアルバッチを使った描画
             MaterialBatch,
             // ハードウェアインスタンスを使った描画
-            //HardwareInstancing,
+            HardwareInstancing,
             // ゲーム用の配列をそのまま使って描画
-            //DirectMapping,
+            DirectMapping,
+
             MaxCount,
         }
 
@@ -59,6 +60,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         BlockModel model;
 
         BasicEffect basicEffect;
+
+        Effect instancingEffect;
 
         TimeRuler timeRuler;
 
@@ -95,6 +98,13 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         // 描画用のインスタンス情報を格納する為の配列
         ObjectInstanceVertex[] objectInstances = new ObjectInstanceVertex[MaxGameObjectCount];
+
+        // HWインスタンスで使うインスタンス情報を入れるための頂点バッファ
+        WritableVertexBuffer<ObjectInstanceVertex> instanceVertexBuffer;
+        WritableVertexBuffer<GameObject> directMappingVertexBuffer;
+
+        // 頂点バインディング情報
+        VertexBufferBinding[] vertexBufferBindings = new VertexBufferBinding[2];
 
         // Aボタンが押されていたか
         bool pressedA;
@@ -139,11 +149,13 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            font = Content.Load<SpriteFont>("Font/Default");
+            font = Content.Load<SpriteFont>("Fonts/Default");
             fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
             basicEffect = new BasicEffect(GraphicsDevice);
             basicEffect.EnableDefaultLighting();
+
+            instancingEffect = Content.Load<Effect>("Effects/Instancing");
 
             // 実際のアプリケーションではファイルからロードします。
             var factory = new BlockModelFactory(GraphicsDevice);
@@ -160,6 +172,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             cameraPosition = new Vector3(0, 0, 30);
             view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(30), aspectRatio, 1, 1000);
+
+            // インスタンス情報を格納する為の頂点バッファの生成
+            instanceVertexBuffer = new WritableVertexBuffer<ObjectInstanceVertex>(GraphicsDevice, MaxGameObjectCount * 2);
+            directMappingVertexBuffer = new WritableVertexBuffer<GameObject>(GraphicsDevice, MaxGameObjectCount * 2);
 
             // モデルの移動範囲の設定
             float sandBoxSize = 20.0f;
@@ -401,12 +417,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 case DrawMethod.MaterialBatch:
                     DrawGameObjectsWithBatch();
                     break;
-                //case DrawMethod.HardwareInstancing:
-                //    DrawGameObjectsWithHardwareInstancing();
-                //    break;
-                //case DrawMethod.DirectMapping:
-                //    DrawGameObjectsWithDirectMapping();
-                //    break;
+                case DrawMethod.HardwareInstancing:
+                    DrawGameObjectsWithHardwareInstancing();
+                    break;
+                case DrawMethod.DirectMapping:
+                    DrawGameObjectsWithDirectMapping();
+                    break;
             }
         }
 
@@ -468,6 +484,85 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         GraphicsDevice.DrawIndexedPrimitives(
                             PrimitiveType.TriangleList, mesh.VertexOffset, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
                     }
+                }
+            }
+        }
+
+        void DrawGameObjectsWithHardwareInstancing()
+        {
+            // インスタンス情報を一旦コピー
+            for (int i = 0; i < gameObjectCount; ++i)
+            {
+                objectInstances[i].Position = gameObjects[i].Position;
+                objectInstances[i].Scale = gameObjects[i].Scale;
+                objectInstances[i].RotateAxis = gameObjects[i].RotateAxis;
+                objectInstances[i].Rotation = gameObjects[i].Rotation;
+            }
+
+            // インスタンス用の頂点バッファへ書き込む
+            int offset = instanceVertexBuffer.SetData(objectInstances, 0, gameObjectCount);
+
+            // ゲームオブジェクトを描画
+            foreach (var mesh in model.Meshes)
+            {
+                var material = mesh.Material;
+                instancingEffect.Parameters["DiffuseColor"].SetValue(material.DiffuseColor);
+                instancingEffect.Parameters["EmissiveColor"].SetValue(material.EmissiveColor);
+                instancingEffect.Parameters["SpecularColor"].SetValue(material.SpecularColor);
+                instancingEffect.Parameters["SpecularPower"].SetValue(material.SpecularPower);
+                instancingEffect.Parameters["Alpha"].SetValue(material.Alpha);
+
+                instancingEffect.Parameters["View"].SetValue(view);
+                instancingEffect.Parameters["Projection"].SetValue(projection);
+                instancingEffect.Parameters["EyePosition"].SetValue(cameraPosition);
+
+                vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
+
+                GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
+                GraphicsDevice.Indices = mesh.IndexBuffer;
+
+                foreach (var pass in instancingEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+
+                    GraphicsDevice.DrawInstancedPrimitives(
+                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
+                }
+            }
+        }
+
+        void DrawGameObjectsWithDirectMapping()
+        {
+            //　インスタンスをそのまま頂点バッファへコピー
+            int offset = directMappingVertexBuffer.SetData(gameObjects, 0, gameObjectCount);
+
+            // ゲームオブジェクトを描画
+            foreach (var mesh in model.Meshes)
+            {
+                var material = mesh.Material;
+                instancingEffect.Parameters["DiffuseColor"].SetValue(material.DiffuseColor);
+                instancingEffect.Parameters["EmissiveColor"].SetValue(material.EmissiveColor);
+                instancingEffect.Parameters["SpecularColor"].SetValue(material.SpecularColor);
+                instancingEffect.Parameters["SpecularPower"].SetValue(material.SpecularPower);
+                instancingEffect.Parameters["Alpha"].SetValue(material.Alpha);
+
+                instancingEffect.Parameters["View"].SetValue(view);
+                instancingEffect.Parameters["Projection"].SetValue(projection);
+                instancingEffect.Parameters["EyePosition"].SetValue(cameraPosition);
+
+                vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
+
+                GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
+                GraphicsDevice.Indices = mesh.IndexBuffer;
+
+                foreach (var pass in instancingEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+
+                    GraphicsDevice.DrawInstancedPrimitives(
+                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
                 }
             }
         }

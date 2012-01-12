@@ -57,7 +57,7 @@ namespace Willcraftia.Xna.Framework.UI
             LoadContent();
 
             // LoadContent メソッドの終了までに Font プロパティが設定されていないならば、デフォルトの振る舞いで設定します。
-            if (Font == null) Font = Game.Content.Load<SpriteFont>("Font/Default");
+            if (Font == null) Font = Game.Content.Load<SpriteFont>("Fonts/Default");
 
             Initialized = true;
         }
