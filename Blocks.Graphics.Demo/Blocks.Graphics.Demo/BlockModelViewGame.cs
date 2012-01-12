@@ -21,6 +21,20 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 {
     public class BlockModelViewGame : Game
     {
+        // 描画方法
+        enum DrawMethod
+        {
+            // 最適化無しの描画
+            NoOptimization,
+            // マテリアルバッチを使った描画
+            MaterialBatch,
+            // ハードウェアインスタンスを使った描画
+            //HardwareInstancing,
+            // ゲーム用の配列をそのまま使って描画
+            //DirectMapping,
+            MaxCount,
+        }
+
         // 初期表示モデル数
         public const int InitialGameObjectCount = 100;
 
@@ -52,6 +66,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         TimeRulerMarker drawMarker;
 
+        // 現在使用している描画方法
+        DrawMethod drawMethod = DrawMethod.NoOptimization;
+
         // ターゲットゲームオブジェクト表示数
         int targetObjectCount = InitialGameObjectCount;
 
@@ -78,6 +95,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         // 描画用のインスタンス情報を格納する為の配列
         ObjectInstanceVertex[] objectInstances = new ObjectInstanceVertex[MaxGameObjectCount];
+
+        // Aボタンが押されていたか
+        bool pressedA;
 
         public BlockModelViewGame()
         {
@@ -172,6 +192,19 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             KeyboardState keyState = Keyboard.GetState();
 
+            // Aボタン、またはスペースキーで次の描画手法に変更する
+            if (keyState.IsKeyDown(Keys.Space))
+            {
+                if (!pressedA)
+                    MoveToNextTechnique();
+
+                pressedA = true;
+            }
+            else
+            {
+                pressedA = false;
+            }
+
             // ゲームオブジェクト数を増やす
             float trigger = keyState.IsKeyDown(Keys.Up) ? 0.1f : 0.0f;
             if (trigger > 0.0f)
@@ -207,11 +240,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             drawMarker.Begin();
 
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1, 0);
-
-            // Z バッファを有効にします。
-            // デバッグ機能などで SpriteBatch を用いていると他の状態へ設定されているため、
-            // 必要なタイミングで常に上書きするようにします。
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             // ゲームオブジェクトの描画
             DrawGameObjects();
@@ -360,9 +388,26 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjects()
         {
+            // デバッグ機能などで SpriteBatch を用いていると他の状態へ設定されているため、
+            // 必要なタイミングで常に上書きするようにします。
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            DrawGameObjectsWithoutOptimization();
+
+            switch (drawMethod)
+            {
+                case DrawMethod.NoOptimization:
+                    DrawGameObjectsWithoutOptimization();
+                    break;
+                case DrawMethod.MaterialBatch:
+                    DrawGameObjectsWithBatch();
+                    break;
+                //case DrawMethod.HardwareInstancing:
+                //    DrawGameObjectsWithHardwareInstancing();
+                //    break;
+                //case DrawMethod.DirectMapping:
+                //    DrawGameObjectsWithDirectMapping();
+                //    break;
+            }
         }
 
         void DrawGameObjectsWithoutOptimization()
@@ -371,7 +416,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             basicEffect.Projection = projection;
 
             // 各ゲームオブジェクトの描画
-            for (int i = 0; i < gameObjectCount; ++i)
+            for (int i = 0; i < gameObjectCount; i++)
             {
                 Matrix world =
                     Matrix.CreateScale(gameObjects[i].Scale) *
@@ -394,6 +439,50 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        void DrawGameObjectsWithBatch()
+        {
+            foreach (var mesh in model.Meshes)
+            {
+                var material = mesh.Material;
+                basicEffect.DiffuseColor = material.DiffuseColor;
+                basicEffect.EmissiveColor = material.EmissiveColor;
+                basicEffect.SpecularColor = material.SpecularColor;
+                basicEffect.SpecularPower = material.SpecularPower;
+                basicEffect.Alpha = material.Alpha;
+
+                for (int i = 0; i < gameObjectCount; i++)
+                {
+                    Matrix world =
+                        Matrix.CreateScale(gameObjects[i].Scale) *
+                        Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
+                    world.Translation = gameObjects[i].Position;
+
+                    basicEffect.World = mesh.Transform * world;
+
+                    GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
+                    GraphicsDevice.Indices = mesh.IndexBuffer;
+
+                    foreach (var pass in basicEffect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        GraphicsDevice.DrawIndexedPrimitives(
+                            PrimitiveType.TriangleList, mesh.VertexOffset, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 次の描画方法に変更する
+        /// </summary>
+        void MoveToNextTechnique()
+        {
+            drawMethod = (DrawMethod) (drawMethod + 1);
+            if (drawMethod == DrawMethod.MaxCount) drawMethod = 0;
+
+            UpdateStatusString();
+        }
+
         /// <summary>
         /// ステータス文字列の更新
         /// </summary>
@@ -401,7 +490,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             statusString.Length = 0;
             statusString.Append(" Draw Method: ");
-            statusString.Append("TODO");
+            statusString.Append(drawMethod.ToString());
             statusString.Append(" \n Objects: ");
             statusString.Append(gameObjectCount);
         }
