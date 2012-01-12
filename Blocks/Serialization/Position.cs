@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -44,16 +45,25 @@ namespace Willcraftia.Xna.Blocks.Serialization
             Z = z;
         }
 
-        #region Equatable
-
-        public static bool operator ==(Position c1, Position c2)
+        /// <summary>
+        /// Vector3 へ変換します。
+        /// </summary>
+        /// <returns>Vector3。</returns>
+        public Vector3 ToVector3()
         {
-            return c1.Equals(c2);
+            return new Vector3(X, Y, Z);
         }
 
-        public static bool operator !=(Position c1, Position c2)
+        #region Equatable
+
+        public static bool operator ==(Position p1, Position p2)
         {
-            return !c1.Equals(c2);
+            return p1.Equals(p2);
+        }
+
+        public static bool operator !=(Position p1, Position p2)
+        {
+            return !p1.Equals(p2);
         }
 
         // I/F

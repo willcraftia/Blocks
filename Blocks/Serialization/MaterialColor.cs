@@ -58,9 +58,9 @@ namespace Willcraftia.Xna.Blocks.Serialization
         }
 
         /// <summary>
-        /// Color 構造体へ変換します。
+        /// Color へ変換します。
         /// </summary>
-        /// <returns>Color 構造体。</returns>
+        /// <returns>Color。</returns>
         public Color ToColor()
         {
             return new Color(R, G, B);

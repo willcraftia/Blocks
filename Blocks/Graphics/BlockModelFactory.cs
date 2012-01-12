@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,21 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// </summary>
     public sealed class BlockModelFactory
     {
+        #region ResolvedElement
+
+        /// <summary>
+        /// グリッド内位置をキーとして Element を管理するコレクションです。
+        /// </summary>
+        class PositionedElementCollection : KeyedCollection<Position, Element>
+        {
+            protected override Position GetKeyForItem(Element item)
+            {
+                return item.Position;
+            }
+        }
+
+        #endregion
+
         #region ResolvedElement
 
         /// <summary>
@@ -69,12 +85,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
             }
 
             /// <summary>
-            /// 指定の Element リスト内について、指定の Element を解析します。
+            /// 指定の Element コレクション内について、指定の Element を解析します。
             /// </summary>
-            /// <param name="elements">Element リスト。</param>
-            /// <param name="target">Element リストに含まれる解析対象の Element。</param>
+            /// <param name="elements">Element コレクション。</param>
+            /// <param name="target">解析対象の Element。</param>
             /// <returns>解析結果の ResolvedElement。</returns>
-            public static ResolvedElement Resolve(List<Element> elements, Element target)
+            public static ResolvedElement Resolve(PositionedElementCollection elements, Element target)
             {
                 var resolvedElement = new ResolvedElement(target);
 
@@ -82,42 +98,26 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 var testPosition = targetPosition;
 
                 testPosition.X = targetPosition.X + 1;
-                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
-                {
-                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.East] = true;
-                }
+                resolvedElement.SurfaceVisible[(int) CubeSurfaces.East] = !elements.Contains(testPosition);
 
                 testPosition.X = targetPosition.X - 1;
-                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
-                {
-                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.West] = true;
-                }
+                resolvedElement.SurfaceVisible[(int) CubeSurfaces.West] = !elements.Contains(testPosition);
 
                 testPosition.X = targetPosition.X;
 
                 testPosition.Y = targetPosition.Y + 1;
-                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
-                {
-                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.Top] = true;
-                }
+                resolvedElement.SurfaceVisible[(int) CubeSurfaces.Top] = !elements.Contains(testPosition);
+
                 testPosition.Y = targetPosition.Y - 1;
-                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
-                {
-                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.Bottom] = true;
-                }
+                resolvedElement.SurfaceVisible[(int) CubeSurfaces.Bottom] = !elements.Contains(testPosition);
 
                 testPosition.Y = targetPosition.Y;
 
                 testPosition.Z = targetPosition.Z + 1;
-                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
-                {
-                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.North] = true;
-                }
+                resolvedElement.SurfaceVisible[(int) CubeSurfaces.North] = !elements.Contains(testPosition);
+
                 testPosition.Z = targetPosition.Z - 1;
-                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
-                {
-                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.South] = true;
-                }
+                resolvedElement.SurfaceVisible[(int) CubeSurfaces.South] = !elements.Contains(testPosition);
 
                 return resolvedElement;
             }
@@ -183,10 +183,16 @@ namespace Willcraftia.Xna.Blocks.Graphics
             {
                 var instance = new ElementClassifier();
 
+                // グリッド位置で参照できる Element のコレクションを生成します。
+                // これは ResolvedElement の処理で、特定の位置に Element が存在するかどうかを調べる際に、
+                // リストに対する全件検索ではなく、高速化のためにハッシュ テーブルに対する検索とするためです。
+                var positionedElements = new PositionedElementCollection();
+                foreach (var element in elements) positionedElements.Add(element);
+
                 foreach (var element in elements)
                 {
                     // 面の結合状態を解析します。
-                    var resolvedElement = ResolvedElement.Resolve(elements, element);
+                    var resolvedElement = ResolvedElement.Resolve(positionedElements, element);
 
                     // 立方体が完全に囲まれているのではないならば分類を開始します。
                     if (!resolvedElement.Enclosed) instance.Classify(resolvedElement);
@@ -310,6 +316,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
             return modelMaterial;
         }
 
+        /// <summary>
+        /// BlockModelMesh を生成します。
+        /// </summary>
+        /// <param name="mesh">BlockMesh。</param>
+        /// <param name="cubeSurfaceVertexSource">立方体の面の頂点データを提供する VertexSource。</param>
+        /// <returns>生成された BlockModelMesh。</returns>
         BlockModelMesh CreateBlockModelMesh(BlockMesh mesh, CubeSurfaceVertexSource cubeSurfaceVertexSource)
         {
             // BlockModelMesh 用 VertexSource に頂点データを詰めていきます。
@@ -322,10 +334,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 for (int i = 0; i < mesh.ResolvedElements.Count; i++)
                 {
                     var resolvedElement = mesh.ResolvedElements[i];
-                    var element = resolvedElement.Element;
 
                     // グリッド内位置へ移動させるための移動行列を作成します。
-                    var gridPosition = new Vector3(element.Position.X, element.Position.Y, element.Position.Z) * ElementSize;
+                    var gridPosition = resolvedElement.Element.Position.ToVector3() * ElementSize;
                     Matrix gridTransform = Matrix.CreateTranslation(gridPosition);
 
                     // 立方体の最終的な移動行列を作成します。
@@ -346,6 +357,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
             }
         }
 
+        /// <summary>
+        /// 面の頂点データをメッシュの頂点データへ設定します。
+        /// </summary>
+        /// <param name="meshVertexSource">メッシュの頂点データを提供する VertexSource。</param>
+        /// <param name="surfaceVertexSource">面の頂点データを提供する VertexSource。</param>
+        /// <param name="transform">設定前に適用する変換行列。</param>
         void AddSurfaceVertices(MeshVertexSource meshVertexSource, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
         {
             var startIndex = meshVertexSource.Vertices.Count;
@@ -354,9 +371,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
             {
                 meshVertexSource.Indices.Add((ushort) (startIndex + index));
             }
-            for (int cubeVertexIndex = 0; cubeVertexIndex < vertexSource.Vertices.Count; cubeVertexIndex++)
+            for (int i = 0; i < vertexSource.Vertices.Count; i++)
             {
-                var cubeVertex = vertexSource.Vertices[cubeVertexIndex];
+                var cubeVertex = vertexSource.Vertices[i];
                 Vector3 transformedVertexPosition;
                 Vector3.Transform(ref cubeVertex.Position, ref transform, out transformedVertexPosition);
                 meshVertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
