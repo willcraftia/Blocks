@@ -102,12 +102,14 @@
     <Compile Include="Debug\TimeRulerMarker.cs" />
     <Compile Include="GameServiceContainerExtension.cs" />
     <Compile Include="Graphics\BackBuffer.cs" />
+    <Compile Include="Graphics\ColoredQuadrangleMaker.cs" />
     <Compile Include="Graphics\ColorHelper.cs" />
     <Compile Include="Graphics\ColoredCubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\CubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Grid.cs" />
     <Compile Include="Graphics\IVertexSourceFactory.cs" />
+    <Compile Include="Graphics\QuadrangleMaker.cs" />
     <Compile Include="Graphics\SpriteSheet.cs" />
     <Compile Include="Graphics\Texture2DHelper.cs" />
     <Compile Include="Graphics\VertexPositionNormal.cs" />

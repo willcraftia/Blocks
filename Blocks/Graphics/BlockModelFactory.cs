@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Graphics;
@@ -11,15 +12,123 @@ using Willcraftia.Xna.Blocks.Serialization;
 
 namespace Willcraftia.Xna.Blocks.Graphics
 {
+    using MeshVertexSource = VertexSource<VertexPositionNormal, ushort>;
+    using SurfaceVertexSource = VertexSource<VertexPositionNormal, ushort>;
+
     /// <summary>
     /// 永続化用データ表現の Block から 3D モデル描画のための BlockModel を生成するクラスです。
     /// </summary>
     public sealed class BlockModelFactory
     {
+        #region ResolvedElement
+
+        /// <summary>
+        /// 他の Element との隣接状態と共に Element を管理する構造体です。
+        /// </summary>
+        struct ResolvedElement
+        {
+            /// <summary>
+            /// Element を取得します。
+            /// </summary>
+            public Element Element { get; private set; }
+
+            /// <summary>
+            /// 各面が他の Element に隣接しているかどうかを示す値の配列。
+            /// インデックスは面の方向に対応。
+            /// </summary>
+            /// <value>
+            /// true (面が他の Element に隣接していない場合)、false (それ以外の場合)。
+            /// </value>
+            public bool[] SurfaceVisible;
+
+            /// <summary>
+            /// Element が他の Element で完全に囲まれているかどうかを示す値を取得します。
+            /// </summary>
+            /// <value>
+            /// true (Element が他の Element で完全に囲まれている場合)、false (それ以外の場合)。
+            /// </value>
+            public bool Enclosed
+            {
+                get
+                {
+                    return !SurfaceVisible[0] && !SurfaceVisible[1] &&
+                        !SurfaceVisible[2] && !SurfaceVisible[3] &&
+                        !SurfaceVisible[4] && !SurfaceVisible[5];
+                }
+            }
+
+            /// <summary>
+            /// インスタンスを生成します。
+            /// </summary>
+            /// <param name="element">Element。</param>
+            ResolvedElement(Element element)
+                : this()
+            {
+                Element = element;
+                SurfaceVisible = new bool[6];
+            }
+
+            /// <summary>
+            /// 指定の Element リスト内について、指定の Element を解析します。
+            /// </summary>
+            /// <param name="elements">Element リスト。</param>
+            /// <param name="target">Element リストに含まれる解析対象の Element。</param>
+            /// <returns>解析結果の ResolvedElement。</returns>
+            public static ResolvedElement Resolve(List<Element> elements, Element target)
+            {
+                var resolvedElement = new ResolvedElement(target);
+
+                var targetPosition = target.Position;
+                var testPosition = targetPosition;
+
+                testPosition.X = targetPosition.X + 1;
+                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
+                {
+                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.East] = true;
+                }
+
+                testPosition.X = targetPosition.X - 1;
+                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
+                {
+                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.West] = true;
+                }
+
+                testPosition.X = targetPosition.X;
+
+                testPosition.Y = targetPosition.Y + 1;
+                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
+                {
+                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.Top] = true;
+                }
+                testPosition.Y = targetPosition.Y - 1;
+                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
+                {
+                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.Bottom] = true;
+                }
+
+                testPosition.Y = targetPosition.Y;
+
+                testPosition.Z = targetPosition.Z + 1;
+                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
+                {
+                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.North] = true;
+                }
+                testPosition.Z = targetPosition.Z - 1;
+                if (elements.FirstOrDefault(e => { return e.Position == testPosition; }) == null)
+                {
+                    resolvedElement.SurfaceVisible[(int) CubeSurfaces.South] = true;
+                }
+
+                return resolvedElement;
+            }
+        }
+
+        #endregion
+
         #region BlockMesh
 
         /// <summary>
-        /// Material ごとに Element をまとめるクラスです。
+        /// Material ごとに ResolvedElement をまとめるクラスです。
         /// </summary>
         class BlockMesh
         {
@@ -29,9 +138,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
             public int MaterialIndex;
 
             /// <summary>
-            /// Element のリスト。
+            /// ResolvedElement のリスト。
             /// </summary>
-            public List<Element> Elements = new List<Element>();
+            public List<ResolvedElement> ResolvedElements = new List<ResolvedElement>();
 
             /// <summary>
             /// インスタンスを生成します。
@@ -48,7 +157,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         #region ElementClassifier
 
         /// <summary>
-        /// Element を BlockMesh へ分類するクラスです。
+        /// ResolvedElement を BlockMesh へ分類するクラスです。
         /// このクラスでは、IndexBuffer で使えるインデックスの最大値を考慮し、
         /// その最大値を越える場合には、同じ Material を参照する Element であっても、
         /// 新たに作成する BlockMesh へ分類します。
@@ -61,18 +170,44 @@ namespace Willcraftia.Xna.Blocks.Graphics
             public Dictionary<int, List<BlockMesh>> MeshListMap = new Dictionary<int, List<BlockMesh>>();
 
             /// <summary>
-            /// Element を BlockMesh へ分類します。
+            /// インスタンスを生成します。
             /// </summary>
-            /// <param name="element">分類する Element。</param>
-            public void Classify(Element element)
+            ElementClassifier() { }
+
+            /// <summary>
+            /// Element を分類します。
+            /// </summary>
+            /// <param name="elements">分類する Element のリスト。</param>
+            /// <returns>分類結果を管理する ElementClassifier。</returns>
+            public static ElementClassifier Classify(List<Element> elements)
+            {
+                var instance = new ElementClassifier();
+
+                foreach (var element in elements)
+                {
+                    // 面の結合状態を解析します。
+                    var resolvedElement = ResolvedElement.Resolve(elements, element);
+
+                    // 立方体が完全に囲まれているのではないならば分類を開始します。
+                    if (!resolvedElement.Enclosed) instance.Classify(resolvedElement);
+                }
+
+                return instance;
+            }
+
+            /// <summary>
+            /// ResolvedElement を BlockMesh へ分類します。
+            /// </summary>
+            /// <param name="resolvedElement">分類する ResolvedElement。</param>
+            void Classify(ResolvedElement resolvedElement)
             {
                 // 対象とする BlockMesh のリストを取得します。
                 List<BlockMesh> meshList;
-                if (!MeshListMap.TryGetValue(element.MaterialIndex, out meshList))
+                if (!MeshListMap.TryGetValue(resolvedElement.Element.MaterialIndex, out meshList))
                 {
                     meshList = new List<BlockMesh>();
-                    meshList.Add(new BlockMesh(element.MaterialIndex));
-                    MeshListMap[element.MaterialIndex] = meshList;
+                    meshList.Add(new BlockMesh(resolvedElement.Element.MaterialIndex));
+                    MeshListMap[resolvedElement.Element.MaterialIndex] = meshList;
                 }
 
                 // リストの最後の BlockMesh を取得します。
@@ -82,14 +217,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 // 新たな BlockMesh へ Element を追加するようにします。
                 // Reach Profile では 16 ビットが最大サイズ (ushort) であり、
                 // また、立方体の表現に必要なインデックス数は 36 です。
-                if (ushort.MaxValue < (lastMesh.Elements.Count + 1) * 36)
+                if (ushort.MaxValue < (lastMesh.ResolvedElements.Count + 1) * 36)
                 {
-                    lastMesh = new BlockMesh(element.MaterialIndex);
+                    lastMesh = new BlockMesh(resolvedElement.Element.MaterialIndex);
                     meshList.Add(lastMesh);
                 }
 
                 // リストの最後の BlockMesh へ Element を追加します。
-                lastMesh.Elements.Add(element);
+                lastMesh.ResolvedElements.Add(resolvedElement);
             }
         }
 
@@ -101,9 +236,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
-        /// CubeVertexSourceFactory を取得します。
+        /// Element の立方体の辺のサイズを取得または設定します。
         /// </summary>
-        public CubeVertexSourceFactory CubeVertexSourceFactory { get; private set; }
+        public float ElementSize { get; set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -114,7 +249,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             GraphicsDevice = graphicsDevice;
 
-            CubeVertexSourceFactory = new CubeVertexSourceFactory();
+            ElementSize = 0.1f;
         }
 
         /// <summary>
@@ -134,19 +269,18 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 model.InternalMaterials.Add(modelMaterial);
             }
 
-            // Element を BlockMesh へ分類します。
-            var elementClassifier = new ElementClassifier();
-            foreach (var element in block.Elements) elementClassifier.Classify(element);
+            // Element を分類します。
+            var elementClassifier = ElementClassifier.Classify(block.Elements);
 
-            // BlockModelMesh を生成して BlockModel へ登録します。
-            using (var vertexSource = CubeVertexSourceFactory.CreateVertexSource())
+            // BlockModelMesh を生成して登録します。
+            using (var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(ElementSize))
             {
                 foreach (var meshList in elementClassifier.MeshListMap.Values)
                 {
                     foreach (var mesh in meshList)
                     {
                         // BlockModelMesh を生成します。
-                        var modelMesh = CreateBlockModelMesh(mesh, vertexSource);
+                        var modelMesh = CreateBlockModelMesh(mesh, cubeSurfaceVertexSource);
                         // BlockModelMaterial への参照を設定します。
                         modelMesh.Material = model.Materials[mesh.MaterialIndex];
                         // BlockModel へ登録します。
@@ -176,53 +310,56 @@ namespace Willcraftia.Xna.Blocks.Graphics
             return modelMaterial;
         }
 
-        /// <summary>
-        /// BlockModelMesh を生成します。
-        /// </summary>
-        /// <param name="mesh">BlockMesh。</param>
-        /// <param name="vertexSource">立方体の頂点データを持つ VertexSource。</param>
-        /// <returns>生成された BlockModelMesh。</returns>
-        BlockModelMesh CreateBlockModelMesh(BlockMesh mesh, VertexSource<VertexPositionNormal, ushort> vertexSource)
+        BlockModelMesh CreateBlockModelMesh(BlockMesh mesh, CubeSurfaceVertexSource cubeSurfaceVertexSource)
         {
             // BlockModelMesh 用 VertexSource に頂点データを詰めていきます。
-            using (var meshVertexSource = new VertexSource<VertexPositionNormal, ushort>())
+            using (var meshVertexSource = new MeshVertexSource())
             {
-                var elementSize = CubeVertexSourceFactory.Size;
-
                 // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
                 // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
-                Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementSize * 0.5f));
+                Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(ElementSize * 0.5f));
 
-                for (int i = 0; i < mesh.Elements.Count; i++)
+                for (int i = 0; i < mesh.ResolvedElements.Count; i++)
                 {
-                    var element = mesh.Elements[i];
+                    var resolvedElement = mesh.ResolvedElements[i];
+                    var element = resolvedElement.Element;
 
                     // グリッド内位置へ移動させるための移動行列を作成します。
-                    var gridPosition = new Vector3(element.Position.X, element.Position.Y, element.Position.Z) * elementSize;
+                    var gridPosition = new Vector3(element.Position.X, element.Position.Y, element.Position.Z) * ElementSize;
                     Matrix gridTransform = Matrix.CreateTranslation(gridPosition);
 
                     // 立方体の最終的な移動行列を作成します。
                     Matrix finalTransform;
                     Matrix.Multiply(ref elementOriginTranslation, ref gridTransform, out finalTransform);
 
-                    // インデックスを追加します。
-                    var startIndex = meshVertexSource.Vertices.Count;
-                    foreach (var index in vertexSource.Indices)
+                    // 表示すべき面の頂点データを VertexSource へ設定します。
+                    for (int surfaceIndex = 0; surfaceIndex < 6; surfaceIndex++)
                     {
-                        meshVertexSource.Indices.Add((ushort) (startIndex + index));
-                    }
-
-                    // 頂点位置を変換させつつ立方体の頂点データを BlockModelMesh 用 VertexSource に追加します。
-                    for (int cubeVertexIndex = 0; cubeVertexIndex < vertexSource.Vertices.Count; cubeVertexIndex++)
-                    {
-                        var cubeVertex = vertexSource.Vertices[cubeVertexIndex];
-                        Vector3 transformedVertexPosition;
-                        Vector3.Transform(ref cubeVertex.Position, ref finalTransform, out transformedVertexPosition);
-                        meshVertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
+                        if (resolvedElement.SurfaceVisible[surfaceIndex])
+                        {
+                            AddSurfaceVertices(meshVertexSource, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTransform);
+                        }
                     }
                 }
 
                 return BlockModelMesh.Create(GraphicsDevice, meshVertexSource.Vertices.ToArray(), meshVertexSource.Indices.ToArray());
+            }
+        }
+
+        void AddSurfaceVertices(MeshVertexSource meshVertexSource, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
+        {
+            var startIndex = meshVertexSource.Vertices.Count;
+            var vertexSource = surfaceVertexSource;
+            foreach (var index in vertexSource.Indices)
+            {
+                meshVertexSource.Indices.Add((ushort) (startIndex + index));
+            }
+            for (int cubeVertexIndex = 0; cubeVertexIndex < vertexSource.Vertices.Count; cubeVertexIndex++)
+            {
+                var cubeVertex = vertexSource.Vertices[cubeVertexIndex];
+                Vector3 transformedVertexPosition;
+                Vector3.Transform(ref cubeVertex.Position, ref transform, out transformedVertexPosition);
+                meshVertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
             }
         }
     }

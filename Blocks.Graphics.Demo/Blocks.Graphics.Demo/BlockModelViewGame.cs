@@ -37,7 +37,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         // 初期表示モデル数
-        public const int InitialGameObjectCount = 100;
+        public const int InitialGameObjectCount = 500;
 
         // 最大表示モデル数
         public const int MaxGameObjectCount = 50000;
@@ -137,8 +137,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             drawMarker.Color = Color.Yellow;
 
             // テスト用にメモリ上で Block の JSON データを作ります。
-            //var block = CreateSimpleBlock();
-            var block = CreateFullFilledBlock(16);
+            var block = CreateFullFilledBlock();
             modelJson = JsonHelper.ToJson<Block>(block);
 
             UpdateStatusString();
@@ -159,13 +158,13 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             // 実際のアプリケーションではファイルからロードします。
             var factory = new BlockModelFactory(GraphicsDevice);
-            factory.CubeVertexSourceFactory.Size = elementSize;
+            factory.ElementSize = elementSize;
             var block = JsonHelper.FromJson<Block>(modelJson);
             model = factory.CreateBlockModel(block);
 
             // BlockModel は最小値を原点とするモデルなので、中心へ原点を移動させます。
-            var originTranslation = Matrix.CreateTranslation(new Vector3(-8 * elementSize));
-            foreach (var mesh in model.Meshes) mesh.Transform = mesh.Transform * originTranslation;
+            //var originTranslation = Matrix.CreateTranslation(new Vector3(-8 * elementSize));
+            //foreach (var mesh in model.Meshes) mesh.Transform = mesh.Transform * originTranslation;
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 
@@ -202,11 +201,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             timeRuler.StartFrame();
             updateMarker.Begin();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) Exit();
+            KeyboardState keyState = Keyboard.GetState();
+
+            if (keyState.IsKeyDown(Keys.Escape)) Exit();
 
             float dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
-
-            KeyboardState keyState = Keyboard.GetState();
 
             // Aボタン、またはスペースキーで次の描画手法に変更する
             if (keyState.IsKeyDown(Keys.Space))
@@ -287,10 +286,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         /// <summary>
-        /// n * n * n 全てを使用した Block を生成します。
+        /// 16 * 16 * 16 の全てを使用した Block を生成します。
         /// </summary>
-        /// <returns></returns>
-        Block CreateFullFilledBlock(int n)
+        Block CreateFullFilledBlock()
         {
             var block = new Block();
             block.Materials = new List<Material>();
@@ -315,45 +313,22 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 Alpha = 1
             });
 
-            for (int x = 0; x < n; x++)
+            for (int x = -8; x < 8; x++)
             {
-                for (int y = 0; y < n; y++)
+                for (int y = -8; y < 8; y++)
                 {
-                    for (int z = 0; z < n; z++)
+                    for (int z = -8; z < 8; z++)
                     {
-                        int materialIndex = z % 3;
-                        block.Elements.Add(new Element() { Position = new Position(x, y, z), MaterialIndex = materialIndex });
+                        int materialIndex = Math.Abs(z % 3);
+                        var element = new Element()
+                        {
+                            Position = new Position(x, y, z),
+                            MaterialIndex = materialIndex
+                        };
+                        block.Elements.Add(element);
                     }
                 }
             }
-
-            return block;
-        }
-
-        /// <summary>
-        /// 簡単な Block を生成します。
-        /// </summary>
-        /// <returns>生成された Block。</returns>
-        Block CreateSimpleBlock()
-        {
-            var block = new Block();
-            block.Materials = new List<Material>();
-            block.Elements = new List<Element>();
-
-            var material = new Material()
-            {
-                DiffuseColor = new MaterialColor(63, 127, 255)
-            };
-            block.Materials.Add(material);
-
-            block.Elements.Add(new Element() { Position = new Position(0, 0, 0), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(0, 0, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16, 0, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16, 0, 0), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(0, 16, 0), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(0, 16, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16, 16, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16, 16, 0), MaterialIndex = 0 });
 
             return block;
         }

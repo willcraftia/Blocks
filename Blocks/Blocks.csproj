@@ -97,6 +97,8 @@
     <Compile Include="Graphics\BlockModelFactory.cs" />
     <Compile Include="Graphics\BlockModelMaterial.cs" />
     <Compile Include="Graphics\BlockModelMesh.cs" />
+    <Compile Include="Graphics\CubeSurfaces.cs" />
+    <Compile Include="Graphics\CubeSurfaceVertexSource.cs" />
     <Compile Include="Serialization\Block.cs" />
     <Compile Include="Serialization\Element.cs" />
     <Compile Include="Serialization\MaterialColor.cs" />
