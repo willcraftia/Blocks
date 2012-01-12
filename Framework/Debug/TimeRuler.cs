@@ -260,45 +260,8 @@ namespace Willcraftia.Xna.Framework.Debug
             markers.Remove(marker.Id);
         }
 
-        protected override void LoadContent()
-        {
-            var titleSafeArea = GraphicsDevice.Viewport.TitleSafeArea;
-
-            // 表示幅を TitleSafeArea から余白を考慮した値に設定。
-            width = titleSafeArea.Width - 16;
-
-            // 表示位置を計算します。
-            // 高さは Bar の数で変動するため、Bottom 合わせで固定し、Bottom ラインをベースに描画時に調整します。
-            var layout = new DebugLayout()
-            {
-                ContainerBounds = titleSafeArea,
-                Width = width,
-                Height = 0,
-                HorizontalMargin = 8,
-                VerticalMargin = 8,
-                HorizontalAlignment = DebugHorizontalAlignment.Center,
-                VerticalAlignment = DebugVerticalAlignment.Bottom
-            };
-            layout.Arrange();
-
-            offsetX = layout.ArrangedBounds.X;
-            offsetY = layout.ArrangedBounds.Y;
-
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
-
-            base.LoadContent();
-        }
-
-        protected override void UnloadContent()
-        {
-            if (spriteBatch != null) spriteBatch.Dispose();
-            if (fillTexture != null) fillTexture.Dispose();
-
-            base.UnloadContent();
-        }
-
-        public override void Update(GameTime gameTime)
+        // I/F
+        public void StartFrame()
         {
             // currentFrameLog の同期をとるために自身をロックします。
             lock (this)
@@ -343,8 +306,6 @@ namespace Willcraftia.Xna.Framework.Debug
                 stopwatch.Reset();
                 stopwatch.Start();
             }
-
-            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
@@ -453,6 +414,44 @@ namespace Willcraftia.Xna.Framework.Debug
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected override void LoadContent()
+        {
+            var titleSafeArea = GraphicsDevice.Viewport.TitleSafeArea;
+
+            // 表示幅を TitleSafeArea から余白を考慮した値に設定。
+            width = titleSafeArea.Width - 16;
+
+            // 表示位置を計算します。
+            // 高さは Bar の数で変動するため、Bottom 合わせで固定し、Bottom ラインをベースに描画時に調整します。
+            var layout = new DebugLayout()
+            {
+                ContainerBounds = titleSafeArea,
+                Width = width,
+                Height = 0,
+                HorizontalMargin = 8,
+                VerticalMargin = 8,
+                HorizontalAlignment = DebugHorizontalAlignment.Center,
+                VerticalAlignment = DebugVerticalAlignment.Bottom
+            };
+            layout.Arrange();
+
+            offsetX = layout.ArrangedBounds.X;
+            offsetY = layout.ArrangedBounds.Y;
+
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
+
+            base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            if (spriteBatch != null) spriteBatch.Dispose();
+            if (fillTexture != null) fillTexture.Dispose();
+
+            base.UnloadContent();
         }
 
         /// <summary>

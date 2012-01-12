@@ -22,5 +22,10 @@ namespace Willcraftia.Xna.Framework.Debug
         /// </summary>
         /// <param name="marker">破棄する TimeRulerMarker。</param>
         void ReleaseMarker(TimeRulerMarker marker);
+
+        /// <summary>
+        /// フレームの開始を Time Ruler へ通知します。
+        /// </summary>
+        void StartFrame();
     }
 }

@@ -16,6 +16,8 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// </summary>
     public sealed class BlockModelFactory
     {
+        #region BlockMesh
+
         /// <summary>
         /// Material ごとに Element をまとめるクラスです。
         /// </summary>
@@ -40,6 +42,10 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 MaterialIndex = materialIndex;
             }
         }
+
+        #endregion
+
+        #region ElementClassifier
 
         /// <summary>
         /// Element を BlockMesh へ分類するクラスです。
@@ -87,10 +93,17 @@ namespace Willcraftia.Xna.Blocks.Graphics
             }
         }
 
+        #endregion
+
         /// <summary>
-        /// GraphicsDevice。
+        /// GraphicsDevice を取得します。
         /// </summary>
         public GraphicsDevice GraphicsDevice { get; private set; }
+
+        /// <summary>
+        /// CubeVertexSourceFactory を取得します。
+        /// </summary>
+        public CubeVertexSourceFactory CubeVertexSourceFactory { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -100,6 +113,8 @@ namespace Willcraftia.Xna.Blocks.Graphics
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             GraphicsDevice = graphicsDevice;
+
+            CubeVertexSourceFactory = new CubeVertexSourceFactory();
         }
 
         /// <summary>
@@ -124,8 +139,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             foreach (var element in block.Elements) elementClassifier.Classify(element);
 
             // BlockModelMesh を生成して BlockModel へ登録します。
-            var vertexSourceFactory = new CubeVertexSourceFactory();
-            using (var vertexSource = vertexSourceFactory.CreateVertexSource())
+            using (var vertexSource = CubeVertexSourceFactory.CreateVertexSource())
             {
                 foreach (var meshList in elementClassifier.MeshListMap.Values)
                 {
@@ -173,21 +187,23 @@ namespace Willcraftia.Xna.Blocks.Graphics
             // BlockModelMesh 用 VertexSource に頂点データを詰めていきます。
             using (var meshVertexSource = new VertexSource<VertexPositionNormal, ushort>())
             {
+                var elementSize = CubeVertexSourceFactory.Size;
+
                 // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
                 // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
-                Matrix cubeOriginTransform = Matrix.CreateTranslation(new Vector3(0.5f));
+                Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementSize * 0.5f));
 
                 for (int i = 0; i < mesh.Elements.Count; i++)
                 {
                     var element = mesh.Elements[i];
 
                     // グリッド内位置へ移動させるための移動行列を作成します。
-                    var gridPosition = element.Position;
-                    Matrix gridTransform = Matrix.CreateTranslation(new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z));
+                    var gridPosition = new Vector3(element.Position.X, element.Position.Y, element.Position.Z) * elementSize;
+                    Matrix gridTransform = Matrix.CreateTranslation(gridPosition);
 
                     // 立方体の最終的な移動行列を作成します。
                     Matrix finalTransform;
-                    Matrix.Multiply(ref cubeOriginTransform, ref gridTransform, out finalTransform);
+                    Matrix.Multiply(ref elementOriginTranslation, ref gridTransform, out finalTransform);
 
                     // インデックスを追加します。
                     var startIndex = meshVertexSource.Vertices.Count;
