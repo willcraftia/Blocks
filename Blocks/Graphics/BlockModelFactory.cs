@@ -87,11 +87,10 @@ namespace Willcraftia.Xna.Blocks.Graphics
             /// <summary>
             /// 指定の Element コレクション内について、指定の Element を解析します。
             /// </summary>
-            /// <param name="block">Element を保持する Block。</param>
             /// <param name="elements">Element コレクション。</param>
             /// <param name="target">解析対象の Element。</param>
             /// <returns>解析結果の ResolvedElement。</returns>
-            public static ResolvedElement Resolve(Block block, PositionedElementCollection elements, Element target)
+            public static ResolvedElement Resolve(PositionedElementCollection elements, Element target)
             {
                 var resolvedElement = new ResolvedElement(target);
 
@@ -178,9 +177,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
             /// <summary>
             /// Element を分類します。
             /// </summary>
-            /// <param name="elements">分類する Element を持つ Block。</param>
+            /// <param name="elements">Element のリスト。</param>
             /// <returns>分類結果を管理する ElementClassifier。</returns>
-            public static ElementClassifier ClassifyElements(Block block)
+            public static ElementClassifier Classify(List<Element> elements)
             {
                 var instance = new ElementClassifier();
 
@@ -188,12 +187,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 // これは ResolvedElement の処理で、特定の位置に Element が存在するかどうかを調べる際に、
                 // リストに対する全件検索ではなく、高速化のためにハッシュ テーブルに対する検索とするためです。
                 var positionedElements = new PositionedElementCollection();
-                foreach (var element in block.Elements) positionedElements.Add(element);
+                foreach (var element in elements) positionedElements.Add(element);
 
-                foreach (var element in block.Elements)
+                foreach (var element in elements)
                 {
                     // 面の結合状態を解析します。
-                    var resolvedElement = ResolvedElement.Resolve(block, positionedElements, element);
+                    var resolvedElement = ResolvedElement.Resolve(positionedElements, element);
 
                     // 立方体が完全に囲まれているのではないならば分類を開始します。
                     if (!resolvedElement.Enclosed) instance.Classify(resolvedElement);
@@ -277,7 +276,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             }
 
             // Element を分類します。
-            var elementClassifier = ElementClassifier.ClassifyElements(block);
+            var elementClassifier = ElementClassifier.Classify(block.Elements);
 
             // BlockModelMesh を生成して登録します。
             using (var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(ElementSize))
