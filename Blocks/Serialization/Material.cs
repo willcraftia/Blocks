@@ -10,6 +10,17 @@ namespace Willcraftia.Xna.Blocks.Serialization
     /// <summary>
     /// BlockMesh の Material を表すクラスです。
     /// </summary>
+    /// <remarks>
+    /// Material では透明度 (Alpha) を管理できないものとします。
+    /// 
+    /// Block を描画モデルへ変換する際には、Element 同士の隣接状態から最小限必要な頂点データだけが選択されますが、
+    /// Material で Alpha を管理することを考えた場合、この処理をどのように行うかが問題となってしまいます。
+    /// 例えば、半透明な Element は隣接していないと判定した場合、描画モデル構築における頂点データの削減が阻まれます。
+    /// あるいは、半透明な Element も隣接していると判定した場合、頂点データの削減には貢献しますが、
+    /// 不自然な見た目の描画モデルが構築されてしまいます。
+    /// 
+    /// これらの問題について深く検討したくないため、Material では透明度を管理しないものとしています。
+    /// </remarks>
     [DataContract]
     public sealed class Material
     {
@@ -38,10 +49,16 @@ namespace Willcraftia.Xna.Blocks.Serialization
         public float SpecularPower { get; set; }
 
         /// <summary>
-        /// Alpha 値。
+        /// インスタンスを生成します。
         /// </summary>
-        [DataMember]
-        public float Alpha { get; set; }
+        public Material()
+        {
+            // デフォルト値は BasicEffect のデフォルト値に合わせています。
+            DiffuseColor = new MaterialColor(1, 1, 1);
+            EmissiveColor = new MaterialColor(0, 0, 0);
+            SpecularColor = new MaterialColor(1, 1, 1);
+            SpecularPower = 16;
+        }
 
         #region ToString
 

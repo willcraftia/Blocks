@@ -130,3 +130,11 @@ ColorPair ComputeLights(float3 E, float3 N)
 		
 	return result;
 }
+
+//-----------------------------------------------------------------------------
+// Compute fog factor
+//-----------------------------------------------------------------------------
+float ComputeFogFactor(float d)
+{
+    return clamp((d - FogStart) / (FogEnd - FogStart), 0, 1) * FogEnabled;
+}

@@ -162,10 +162,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             var block = JsonHelper.FromJson<Block>(modelJson);
             model = factory.CreateBlockModel(block);
 
-            // BlockModel は最小値を原点とするモデルなので、中心へ原点を移動させます。
-            //var originTranslation = Matrix.CreateTranslation(new Vector3(-8 * elementSize));
-            //foreach (var mesh in model.Meshes) mesh.Transform = mesh.Transform * originTranslation;
-
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 
             cameraPosition = new Vector3(0, 0, 30);
@@ -296,21 +292,18 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             block.Materials.Add(new Material()
             {
-                DiffuseColor = new MaterialColor(255, 0, 0),
-                Alpha = 1
+                DiffuseColor = new MaterialColor(255, 0, 0)
             });
             block.Materials.Add(new Material()
             {
                 DiffuseColor = new MaterialColor(0, 255, 0),
-                EmissiveColor = new MaterialColor(127, 127, 0),
-                Alpha = 0.3f
+                EmissiveColor = new MaterialColor(31, 0, 0)
             });
             block.Materials.Add(new Material()
             {
                 DiffuseColor = new MaterialColor(0, 0, 255),
                 SpecularColor = new MaterialColor(255, 255, 255),
-                SpecularPower = 0.5f,
-                Alpha = 1
+                SpecularPower = 0.5f
             });
 
             for (int x = -8; x < 8; x++)
@@ -423,7 +416,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     basicEffect.EmissiveColor = material.EmissiveColor;
                     basicEffect.SpecularColor = material.SpecularColor;
                     basicEffect.SpecularPower = material.SpecularPower;
-                    basicEffect.Alpha = material.Alpha;
 
                     mesh.Draw(basicEffect);
                 }
@@ -439,7 +431,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 basicEffect.EmissiveColor = material.EmissiveColor;
                 basicEffect.SpecularColor = material.SpecularColor;
                 basicEffect.SpecularPower = material.SpecularPower;
-                basicEffect.Alpha = material.Alpha;
 
                 for (int i = 0; i < gameObjectCount; i++)
                 {
@@ -485,7 +476,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 instancingEffect.Parameters["EmissiveColor"].SetValue(material.EmissiveColor);
                 instancingEffect.Parameters["SpecularColor"].SetValue(material.SpecularColor);
                 instancingEffect.Parameters["SpecularPower"].SetValue(material.SpecularPower);
-                instancingEffect.Parameters["Alpha"].SetValue(material.Alpha);
 
                 instancingEffect.Parameters["View"].SetValue(view);
                 instancingEffect.Parameters["Projection"].SetValue(projection);
@@ -520,7 +510,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 instancingEffect.Parameters["EmissiveColor"].SetValue(material.EmissiveColor);
                 instancingEffect.Parameters["SpecularColor"].SetValue(material.SpecularColor);
                 instancingEffect.Parameters["SpecularPower"].SetValue(material.SpecularPower);
-                instancingEffect.Parameters["Alpha"].SetValue(material.Alpha);
 
                 instancingEffect.Parameters["View"].SetValue(view);
                 instancingEffect.Parameters["Projection"].SetValue(projection);
