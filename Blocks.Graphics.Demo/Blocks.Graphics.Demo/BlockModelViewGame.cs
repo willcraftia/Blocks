@@ -26,13 +26,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             // 最適化無しの描画
             NoOptimization,
+            LodNoOptimization,
             // マテリアルバッチを使った描画
             MaterialBatch,
+            LodMaterialBatch,
             // ハードウェアインスタンスを使った描画
             HardwareInstancing,
+            LodHardwareInstancing,
             // ゲーム用の配列をそのまま使って描画
             DirectMapping,
-
+            LodDirectMapping,
             MaxCount,
         }
 
@@ -78,6 +81,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         // 確保しているゲームオブジェクト数
         int gameObjectCount;
+
+        int levelSize = 4;
+        BlockModel[] lodModels;
+        GameObject[][] lodGameObjects;
+        int[] lodGameObjectCount;
+        float[] lodDistanceSquareds = { 50 * 50, 100 * 100, 180 * 180, 240 * 240 };
 
         // ゲームオブジェクト初期化に使う乱数発生インスタンス
         Random ramdom = new Random(0);
@@ -127,7 +136,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             updateMarker = timeRuler.CreateMarker();
             updateMarker.Name = "Draw";
             updateMarker.BarIndex = 0;
-            updateMarker.Color = Color.Blue;
+            updateMarker.Color = Color.Cyan;
 
             drawMarker = timeRuler.CreateMarker();
             drawMarker.Name = "Draw";
@@ -158,12 +167,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルからロードします。
             var factory = new BlockModelFactory(GraphicsDevice);
             var block = JsonHelper.FromJson<Block>(modelJson);
-            var models = factory.CreateBlockModels(block, 4);
-            model = models[0];
+            lodModels = factory.CreateBlockModels(block, levelSize);
+            model = lodModels[0];
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 
-            cameraPosition = new Vector3(0, 0, 50);
+            cameraPosition = new Vector3(0, 0, 30);
             view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(30), aspectRatio, 1, 1000);
 
@@ -318,14 +327,13 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
                         if (testX + testY + testZ <= 10)
                         {
-                            var element = new Element();
-                            element.Position = new Position(x, y, z);
-
                             materialIndex = 0;
                             if (x < 0) materialIndex |= 1;
                             if (y < 0) materialIndex |= 2;
                             if (z < 0) materialIndex |= 4;
 
+                            var element = new Element();
+                            element.Position = new Position(x, y, z);
                             element.MaterialIndex = materialIndex;
                             block.Elements.Add(element);
                         }
@@ -345,34 +353,40 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             block.Materials = new List<Material>();
             block.Elements = new List<Element>();
 
-            block.Materials.Add(new Material()
+            MaterialColor[] diffuses =
             {
-                DiffuseColor = new MaterialColor(255, 0, 0)
-            });
-            block.Materials.Add(new Material()
+                new MaterialColor(255, 255, 255),
+                new MaterialColor(255,   0,   0),
+                new MaterialColor(  0, 255,   0),
+                new MaterialColor(  0,   0, 255),
+                new MaterialColor(127, 127,   0),
+                new MaterialColor(127,   0, 127),
+                new MaterialColor(  0, 127, 127),
+                new MaterialColor(  0,   0,   0),
+            };
+            Material[] materials = new Material[8];
+            for (int i = 0; i < 8; i++)
             {
-                DiffuseColor = new MaterialColor(0, 255, 0),
-                EmissiveColor = new MaterialColor(31, 0, 0)
-            });
-            block.Materials.Add(new Material()
-            {
-                DiffuseColor = new MaterialColor(0, 0, 255),
-                SpecularColor = new MaterialColor(255, 255, 255),
-                SpecularPower = 0.5f
-            });
+                materials[i] = new Material();
+                materials[i].DiffuseColor = diffuses[i];
+                block.Materials.Add(materials[i]);
+            }
 
+            int materialIndex;
             for (int x = -8; x < 8; x++)
             {
                 for (int y = -8; y < 8; y++)
                 {
                     for (int z = -8; z < 8; z++)
                     {
-                        int materialIndex = Math.Abs(z % 3);
-                        var element = new Element()
-                        {
-                            Position = new Position(x, y, z),
-                            MaterialIndex = materialIndex
-                        };
+                        materialIndex = 0;
+                        if (x < 0) materialIndex |= 1;
+                        if (y < 0) materialIndex |= 2;
+                        if (z < 0) materialIndex |= 4;
+
+                        var element = new Element();
+                        element.Position = new Position(x, y, z);
+                        element.MaterialIndex = materialIndex;
                         block.Elements.Add(element);
                     }
                 }
@@ -390,6 +404,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             gameObjectCount = InitialGameObjectCount;
             for (int i = 0; i < gameObjectCount; ++i) gameObjects[i].Initialize(ramdom);
 
+            lodGameObjects = new GameObject[levelSize][];
+            for (int i = 0; i < levelSize; i++) lodGameObjects[i] = new GameObject[MaxGameObjectCount];
+            lodGameObjectCount = new int[levelSize];
+
             UpdateStatusString();
         }
 
@@ -398,6 +416,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void UpdateGameObjects(float dt)
         {
+            for (int i = 0; i < lodGameObjectCount.Length; i++) lodGameObjectCount[i] = 0;
+
             // 全オブジェクトを更新する
             // ゲームオブジェクトのライフ時間によって、ゲームオブジェクトを
             // リストからはずすので単純なforeachはここでは使えない
@@ -406,6 +426,18 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 if (gameObjects[i].Update(dt))
                 {
                     ++i;
+
+                    float distanceSquared;
+                    Vector3.DistanceSquared(ref cameraPosition, ref gameObjects[i].Position, out distanceSquared);
+                    for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+                    {
+                        if (distanceSquared < lodDistanceSquareds[lod])
+                        {
+                            lodGameObjects[lod][lodGameObjectCount[lod]] = gameObjects[i];
+                            lodGameObjectCount[lod] += 1;
+                            break;
+                        }
+                    }
                 }
                 else
                 {
@@ -437,14 +469,26 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 case DrawMethod.NoOptimization:
                     DrawGameObjectsWithoutOptimization();
                     break;
+                case DrawMethod.LodNoOptimization:
+                    DrawGameObjectsLodWithoutOptimization();
+                    break;
                 case DrawMethod.MaterialBatch:
                     DrawGameObjectsWithBatch();
+                    break;
+                case DrawMethod.LodMaterialBatch:
+                    DrawGameObjectsLodWithBatch();
                     break;
                 case DrawMethod.HardwareInstancing:
                     DrawGameObjectsWithHardwareInstancing();
                     break;
+                case DrawMethod.LodHardwareInstancing:
+                    DrawGameObjectsLodWithHardwareInstancing();
+                    break;
                 case DrawMethod.DirectMapping:
                     DrawGameObjectsWithDirectMapping();
+                    break;
+                case DrawMethod.LodDirectMapping:
+                    DrawGameObjectsLodWithDirectMapping();
                     break;
             }
         }
@@ -477,6 +521,37 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        void DrawGameObjectsLodWithoutOptimization()
+        {
+            basicEffect.View = view;
+            basicEffect.Projection = projection;
+
+            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            {
+                for (int i = 0; i < lodGameObjectCount[lod]; i++)
+                {
+                    var gameObject = lodGameObjects[lod][i];
+                    Matrix world =
+                        Matrix.CreateScale(gameObject.Scale) *
+                        Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
+                    world.Translation = gameObject.Position;
+
+                    foreach (var mesh in lodModels[lod].Meshes)
+                    {
+                        basicEffect.World = mesh.Transform * world;
+
+                        var material = mesh.Material;
+                        basicEffect.DiffuseColor = material.DiffuseColor;
+                        basicEffect.EmissiveColor = material.EmissiveColor;
+                        basicEffect.SpecularColor = material.SpecularColor;
+                        basicEffect.SpecularPower = material.SpecularPower;
+
+                        mesh.Draw(basicEffect);
+                    }
+                }
+            }
+        }
+
         void DrawGameObjectsWithBatch()
         {
             foreach (var mesh in model.Meshes)
@@ -504,6 +579,42 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         pass.Apply();
                         GraphicsDevice.DrawIndexedPrimitives(
                             PrimitiveType.TriangleList, mesh.VertexOffset, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
+                    }
+                }
+            }
+        }
+
+        void DrawGameObjectsLodWithBatch()
+        {
+            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            {
+                foreach (var mesh in lodModels[lod].Meshes)
+                {
+                    var material = mesh.Material;
+                    basicEffect.DiffuseColor = material.DiffuseColor;
+                    basicEffect.EmissiveColor = material.EmissiveColor;
+                    basicEffect.SpecularColor = material.SpecularColor;
+                    basicEffect.SpecularPower = material.SpecularPower;
+
+                    for (int i = 0; i < lodGameObjectCount[lod]; i++)
+                    {
+                        var gameObject = lodGameObjects[lod][i];
+                        Matrix world =
+                            Matrix.CreateScale(gameObject.Scale) *
+                            Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
+                        world.Translation = gameObject.Position;
+
+                        basicEffect.World = mesh.Transform * world;
+
+                        GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
+                        GraphicsDevice.Indices = mesh.IndexBuffer;
+
+                        foreach (var pass in basicEffect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            GraphicsDevice.DrawIndexedPrimitives(
+                                PrimitiveType.TriangleList, mesh.VertexOffset, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
+                        }
                     }
                 }
             }
@@ -552,6 +663,55 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        void DrawGameObjectsLodWithHardwareInstancing()
+        {
+            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            {
+                if (lodGameObjectCount[lod] == 0) continue;
+
+                // インスタンス情報を一旦コピー
+                for (int i = 0; i < lodGameObjectCount[lod]; ++i)
+                {
+                    var gameObject = lodGameObjects[lod][i];
+                    objectInstances[i].Position = gameObject.Position;
+                    objectInstances[i].Scale = gameObject.Scale;
+                    objectInstances[i].RotateAxis = gameObject.RotateAxis;
+                    objectInstances[i].Rotation = gameObject.Rotation;
+                }
+
+                // インスタンス用の頂点バッファへ書き込む
+                int offset = instanceVertexBuffer.SetData(objectInstances, 0, lodGameObjectCount[lod]);
+
+                // ゲームオブジェクトを描画
+                foreach (var mesh in lodModels[lod].Meshes)
+                {
+                    var material = mesh.Material;
+                    instancingEffect.Parameters["DiffuseColor"].SetValue(material.DiffuseColor);
+                    instancingEffect.Parameters["EmissiveColor"].SetValue(material.EmissiveColor);
+                    instancingEffect.Parameters["SpecularColor"].SetValue(material.SpecularColor);
+                    instancingEffect.Parameters["SpecularPower"].SetValue(material.SpecularPower);
+
+                    instancingEffect.Parameters["View"].SetValue(view);
+                    instancingEffect.Parameters["Projection"].SetValue(projection);
+                    instancingEffect.Parameters["EyePosition"].SetValue(cameraPosition);
+
+                    vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                    vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
+
+                    GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
+                    GraphicsDevice.Indices = mesh.IndexBuffer;
+
+                    foreach (var pass in instancingEffect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+
+                        GraphicsDevice.DrawInstancedPrimitives(
+                            PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
+                    }
+                }
+            }
+        }
+
         void DrawGameObjectsWithDirectMapping()
         {
             //　インスタンスをそのまま頂点バッファへコピー
@@ -582,6 +742,45 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
                     GraphicsDevice.DrawInstancedPrimitives(
                         PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
+                }
+            }
+        }
+
+        void DrawGameObjectsLodWithDirectMapping()
+        {
+            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            {
+                if (lodGameObjectCount[lod] == 0) continue;
+
+                //　インスタンスをそのまま頂点バッファへコピー
+                int offset = directMappingVertexBuffer.SetData(lodGameObjects[lod], 0, lodGameObjectCount[lod]);
+
+                // ゲームオブジェクトを描画
+                foreach (var mesh in lodModels[lod].Meshes)
+                {
+                    var material = mesh.Material;
+                    instancingEffect.Parameters["DiffuseColor"].SetValue(material.DiffuseColor);
+                    instancingEffect.Parameters["EmissiveColor"].SetValue(material.EmissiveColor);
+                    instancingEffect.Parameters["SpecularColor"].SetValue(material.SpecularColor);
+                    instancingEffect.Parameters["SpecularPower"].SetValue(material.SpecularPower);
+
+                    instancingEffect.Parameters["View"].SetValue(view);
+                    instancingEffect.Parameters["Projection"].SetValue(projection);
+                    instancingEffect.Parameters["EyePosition"].SetValue(cameraPosition);
+
+                    vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                    vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
+
+                    GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
+                    GraphicsDevice.Indices = mesh.IndexBuffer;
+
+                    foreach (var pass in instancingEffect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+
+                        GraphicsDevice.DrawInstancedPrimitives(
+                            PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
+                    }
                 }
             }
         }

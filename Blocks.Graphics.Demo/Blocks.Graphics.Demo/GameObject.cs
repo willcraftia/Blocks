@@ -62,7 +62,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             Position = new Vector3(
                 BlockModelViewGame.Sandbox.Min.X + w * (float) rnd.NextDouble(),
                 BlockModelViewGame.Sandbox.Min.Y + h * (float) rnd.NextDouble(),
-                (float) rnd.NextDouble() * -50.0f);
+                (float) rnd.NextDouble() * -100.0f);
+            //Position = new Vector3(
+            //    BlockModelViewGame.Sandbox.Min.X + w * (float) rnd.NextDouble(),
+            //    BlockModelViewGame.Sandbox.Min.Y + h * (float) rnd.NextDouble(),
+            //    30 - 60);
 
             float rad = (float) rnd.NextDouble() * MathHelper.TwoPi;
             Velocity = new Vector3((float) Math.Cos(rad), (float) Math.Sin(rad), 0) * 3.0f;
@@ -73,7 +77,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             Rotation = (float) rnd.NextDouble() * MathHelper.TwoPi;
             RotationSpeed = (float) rnd.NextDouble() * MathHelper.TwoPi;
 
-            Scale = 0.5f + (float) rnd.NextDouble();
+            //Scale = 0.5f + (float) rnd.NextDouble();
+            Scale = 1;
             LifeTime = 20.0f + 10.0f * (float) rnd.NextDouble();
         }
 
