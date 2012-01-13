@@ -20,9 +20,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public const int MaxDetailLevelGridSize = 16;
 
         /// <summary>
+        /// 最大 LOD の Element サイズ。
+        /// </summary>
+        public const float MaxDefailLevelElementSize = 0.1f;
+
+        /// <summary>
         /// 最大の LOD サイズ。
         /// </summary>
-        public const int MaxDetailLevelCount = 4;
+        public const int MaxDetailLevelSize = 4;
 
         /// <summary>
         /// グリッド サイズを取得します。
@@ -40,6 +45,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public InterElementCollection Elements { get; private set; }
 
         /// <summary>
+        /// Element のサイズを取得します。
+        /// </summary>
+        public float ElementSize { get; private set; }
+
+        /// <summary>
         /// インスタンス生成は CreateInterBlock あるいは CreateLowDetailLevelInterBlock メソッドで行います。
         /// </summary>
         InterBlock() { }
@@ -52,7 +62,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <returns>生成された InterBlock の配列。</returns>
         public static InterBlock[] CreateInterBlock(Block block, int levelSize)
         {
-            if (levelSize < 1 || MaxDetailLevelCount < levelSize) throw new ArgumentOutOfRangeException("levelSize");
+            if (levelSize < 1 || MaxDetailLevelSize < levelSize) throw new ArgumentOutOfRangeException("levelSize");
 
             var interBlocks = new InterBlock[levelSize];
 
@@ -84,6 +94,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
             // Block の Element をそのままコピーします。
             interBlock.Elements = new InterElementCollection();
             foreach (var element in block.Elements) interBlock.Elements.Add(element);
+
+            // 最大 LOD の Element サイズを設定します。
+            interBlock.ElementSize = MaxDefailLevelElementSize;
 
             return interBlock;
         }
@@ -138,7 +151,8 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
                         for (int i = 0; i < 8; i++)
                         {
-                            var hElement = highBlock.Elements[hPositions[i]];
+                            Element hElement;
+                            highBlock.Elements.TryGetItem(hPositions[i], out hElement);
                             hMaterials[i] = (hElement != null) ? hElement.MaterialIndex : -1;
                         }
 
@@ -187,6 +201,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
                     }
                 }
             }
+
+            // Element サイズは上位 InterBlock の 2 倍です。
+            interBlock.ElementSize = highBlock.ElementSize * 2;
 
             return interBlock;
         }

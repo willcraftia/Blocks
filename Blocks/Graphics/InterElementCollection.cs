@@ -17,5 +17,18 @@ namespace Willcraftia.Xna.Blocks.Graphics
         {
             return item.Position;
         }
+
+        /// <summary>
+        /// 指定したキーに関連付けられている要素を取得します。
+        /// </summary>
+        /// <param name="key">取得する要素のキー。</param>
+        /// <param name="item">
+        /// このメソッドから制御が戻るときに、キーが見つかった場合は、指定したキーに関連付けられている値が格納されます。
+        /// それ以外の場合は null が格納されます。
+        /// </param>
+        public void TryGetItem(Position key, out Element item)
+        {
+            item = Contains(key) ? this[key] : null;
+        }
     }
 }

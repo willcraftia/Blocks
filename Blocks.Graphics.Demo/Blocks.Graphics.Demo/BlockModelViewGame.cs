@@ -55,8 +55,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         string modelJson;
 
-        float elementSize = 0.1f;
-
         BlockModel model;
 
         BasicEffect basicEffect;
@@ -137,7 +135,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             drawMarker.Color = Color.Yellow;
 
             // テスト用にメモリ上で Block の JSON データを作ります。
-            var block = CreateFullFilledBlock();
+            //var block = CreateFullFilledBlock();
+            var block = CreateOctahedronLikeBlock();
             modelJson = JsonHelper.ToJson<Block>(block);
 
             UpdateStatusString();
@@ -158,16 +157,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             // 実際のアプリケーションではファイルからロードします。
             var factory = new BlockModelFactory(GraphicsDevice);
-            factory.ElementSize = elementSize;
             var block = JsonHelper.FromJson<Block>(modelJson);
-            model = factory.CreateBlockModel(block);
 
-            // TEST
             var interBlocks = InterBlock.CreateInterBlock(block, 4);
-            for (int i = 0; i < interBlocks.Length; i++)
-            {
-                Console.WriteLine("interBlock[" + i + "].Elements.Count=" + interBlocks[i].Elements.Count);
-            }
+
+            model = factory.CreateBlockModel(interBlocks[0]);
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 
@@ -286,6 +280,62 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             drawMarker.End();
 
             base.Draw(gameTime);
+        }
+
+        Block CreateOctahedronLikeBlock()
+        {
+            var block = new Block();
+            block.Materials = new List<Material>();
+            block.Elements = new List<Element>();
+
+            MaterialColor[] diffuses =
+            {
+                new MaterialColor(255, 255, 255),
+                new MaterialColor(255,   0,   0),
+                new MaterialColor(  0, 255,   0),
+                new MaterialColor(  0,   0, 255),
+                new MaterialColor(127, 127,   0),
+                new MaterialColor(127,   0, 127),
+                new MaterialColor(  0, 127, 127),
+                new MaterialColor(  0,   0,   0),
+            };
+            Material[] materials = new Material[8];
+            for (int i = 0; i < 8; i++)
+            {
+                materials[i] = new Material();
+                materials[i].DiffuseColor = diffuses[i];
+                block.Materials.Add(materials[i]);
+            }
+
+            int materialIndex;
+            for (int x = -8; x < 8; x++)
+            {
+                for (int y = -8; y < 8; y++)
+                {
+                    for (int z = -8; z < 8; z++)
+                    {
+                        int testX = (x < 0) ? -x : x + 1;
+                        int testY = (y < 0) ? -y : y + 1;
+                        int testZ = (z < 0) ? -z : z + 1;
+
+                        if (testX + testY + testZ <= 10)
+                        {
+                            var element = new Element();
+                            element.Position = new Position(x, y, z);
+
+                            materialIndex = 0;
+                            if (x < 0) materialIndex |= 1;
+                            if (y < 0) materialIndex |= 2;
+                            if (z < 0) materialIndex |= 4;
+
+                            element.MaterialIndex = materialIndex;
+                            block.Elements.Add(element);
+                        }
+                    }
+                }
+            }
+
+            return block;
         }
 
         /// <summary>

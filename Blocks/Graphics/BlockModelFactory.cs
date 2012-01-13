@@ -21,21 +21,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// </summary>
     public sealed class BlockModelFactory
     {
-        #region PositionedElementCollection
-
-        /// <summary>
-        /// グリッド内位置をキーとして Element を管理するコレクションです。
-        /// </summary>
-        class PositionedElementCollection : KeyedCollection<Position, Element>
-        {
-            protected override Position GetKeyForItem(Element item)
-            {
-                return item.Position;
-            }
-        }
-
-        #endregion
-
         #region ResolvedElement
 
         /// <summary>
@@ -90,7 +75,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             /// <param name="elements">Element コレクション。</param>
             /// <param name="target">解析対象の Element。</param>
             /// <returns>解析結果の ResolvedElement。</returns>
-            public static ResolvedElement Resolve(PositionedElementCollection elements, Element target)
+            public static ResolvedElement Resolve(InterElementCollection elements, Element target)
             {
                 var resolvedElement = new ResolvedElement(target);
 
@@ -179,20 +164,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
             /// </summary>
             /// <param name="elements">Element のリスト。</param>
             /// <returns>分類結果を管理する ElementClassifier。</returns>
-            public static ElementClassifier Classify(List<Element> elements)
+            public static ElementClassifier Classify(InterElementCollection elements)
             {
                 var instance = new ElementClassifier();
-
-                // グリッド位置で参照できる Element のコレクションを生成します。
-                // これは ResolvedElement の処理で、特定の位置に Element が存在するかどうかを調べる際に、
-                // リストに対する全件検索ではなく、高速化のためにハッシュ テーブルに対する検索とするためです。
-                var positionedElements = new PositionedElementCollection();
-                foreach (var element in elements) positionedElements.Add(element);
 
                 foreach (var element in elements)
                 {
                     // 面の結合状態を解析します。
-                    var resolvedElement = ResolvedElement.Resolve(positionedElements, element);
+                    var resolvedElement = ResolvedElement.Resolve(elements, element);
 
                     // 立方体が完全に囲まれているのではないならば分類を開始します。
                     if (!resolvedElement.Enclosed) instance.Classify(resolvedElement);
@@ -242,11 +221,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
-        /// Element の立方体の辺のサイズを取得または設定します。
-        /// </summary>
-        public float ElementSize { get; set; }
-
-        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
@@ -254,16 +228,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             GraphicsDevice = graphicsDevice;
-
-            ElementSize = 0.1f;
         }
 
         /// <summary>
         /// BlockModel を生成します。
         /// </summary>
-        /// <param name="block">Block。</param>
+        /// <param name="block">InterBlock。</param>
         /// <returns>生成された BlockModel。</returns>
-        public BlockModel CreateBlockModel(Block block)
+        public BlockModel CreateBlockModel(InterBlock block)
         {
             // BlockModel を生成します。
             var model = new BlockModel();
@@ -279,14 +251,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
             var elementClassifier = ElementClassifier.Classify(block.Elements);
 
             // BlockModelMesh を生成して登録します。
-            using (var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(ElementSize))
+            using (var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(block.ElementSize))
             {
                 foreach (var meshList in elementClassifier.MeshListMap.Values)
                 {
                     foreach (var mesh in meshList)
                     {
                         // BlockModelMesh を生成します。
-                        var modelMesh = CreateBlockModelMesh(mesh, cubeSurfaceVertexSource);
+                        var modelMesh = CreateBlockModelMesh(mesh, cubeSurfaceVertexSource, block.ElementSize);
                         // BlockModelMaterial への参照を設定します。
                         modelMesh.Material = model.Materials[mesh.MaterialIndex];
                         // BlockModel へ登録します。
@@ -321,33 +293,33 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <param name="mesh">BlockMesh。</param>
         /// <param name="cubeSurfaceVertexSource">立方体の面の頂点データを提供する VertexSource。</param>
         /// <returns>生成された BlockModelMesh。</returns>
-        BlockModelMesh CreateBlockModelMesh(BlockMesh mesh, CubeSurfaceVertexSource cubeSurfaceVertexSource)
+        BlockModelMesh CreateBlockModelMesh(BlockMesh mesh, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementScale)
         {
             // BlockModelMesh 用 VertexSource に頂点データを詰めていきます。
             using (var meshVertexSource = new MeshVertexSource())
             {
                 // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
                 // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
-                Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(ElementSize * 0.5f));
+                Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementScale * 0.5f));
 
                 for (int i = 0; i < mesh.ResolvedElements.Count; i++)
                 {
                     var resolvedElement = mesh.ResolvedElements[i];
 
                     // グリッド内位置へ移動させるための移動行列を作成します。
-                    var gridPosition = resolvedElement.Element.Position.ToVector3() * ElementSize;
-                    Matrix gridTransform = Matrix.CreateTranslation(gridPosition);
+                    var gridPosition = resolvedElement.Element.Position.ToVector3() * elementScale;
+                    Matrix gridTranslation = Matrix.CreateTranslation(gridPosition);
 
                     // 立方体の最終的な移動行列を作成します。
-                    Matrix finalTransform;
-                    Matrix.Multiply(ref elementOriginTranslation, ref gridTransform, out finalTransform);
+                    Matrix finalTranslation;
+                    Matrix.Multiply(ref elementOriginTranslation, ref gridTranslation, out finalTranslation);
 
                     // 表示すべき面の頂点データを VertexSource へ設定します。
                     for (int surfaceIndex = 0; surfaceIndex < 6; surfaceIndex++)
                     {
                         if (resolvedElement.SurfaceVisible[surfaceIndex])
                         {
-                            AddSurfaceVertices(meshVertexSource, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTransform);
+                            AddSurfaceVertices(meshVertexSource, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTranslation);
                         }
                     }
                 }
