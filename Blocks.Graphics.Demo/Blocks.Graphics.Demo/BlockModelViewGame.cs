@@ -86,7 +86,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         BlockModel[] lodModels;
         GameObject[][] lodGameObjects;
         int[] lodGameObjectCount;
-        float[] lodDistanceSquareds = { 50 * 50, 100 * 100, 180 * 180, 240 * 240 };
+        float[] lodDistanceSquareds = { 80 * 80, 160 * 160, 240 * 240, 480 * 480 };
 
         // ゲームオブジェクト初期化に使う乱数発生インスタンス
         Random ramdom = new Random(0);
