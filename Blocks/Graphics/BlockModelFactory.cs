@@ -21,7 +21,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// </summary>
     public sealed class BlockModelFactory
     {
-        #region ResolvedElement
+        #region PositionedElementCollection
 
         /// <summary>
         /// グリッド内位置をキーとして Element を管理するコレクションです。

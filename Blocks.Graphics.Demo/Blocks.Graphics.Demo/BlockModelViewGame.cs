@@ -162,9 +162,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             var block = JsonHelper.FromJson<Block>(modelJson);
             model = factory.CreateBlockModel(block);
 
+            // TEST
+            var interBlocks = InterBlock.CreateInterBlock(block, 4);
+            for (int i = 0; i < interBlocks.Length; i++)
+            {
+                Console.WriteLine("interBlock[" + i + "].Elements.Count=" + interBlocks[i].Elements.Count);
+            }
+
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 
-            cameraPosition = new Vector3(0, 0, 30);
+            cameraPosition = new Vector3(0, 0, 50);
             view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(30), aspectRatio, 1, 1000);
 
