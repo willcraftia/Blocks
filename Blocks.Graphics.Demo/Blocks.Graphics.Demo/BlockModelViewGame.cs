@@ -554,6 +554,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithBatch()
         {
+            var pass = basicEffect.CurrentTechnique.Passes[0];
+
             foreach (var mesh in model.Meshes)
             {
                 var material = mesh.Material;
@@ -561,6 +563,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 basicEffect.EmissiveColor = material.EmissiveColor;
                 basicEffect.SpecularColor = material.SpecularColor;
                 basicEffect.SpecularPower = material.SpecularPower;
+
+                GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer, mesh.VertexOffset);
+                GraphicsDevice.Indices = mesh.IndexBuffer;
 
                 for (int i = 0; i < gameObjectCount; i++)
                 {
@@ -571,21 +576,17 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
                     basicEffect.World = mesh.Transform * world;
 
-                    GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
-                    GraphicsDevice.Indices = mesh.IndexBuffer;
-
-                    foreach (var pass in basicEffect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-                        GraphicsDevice.DrawIndexedPrimitives(
-                            PrimitiveType.TriangleList, mesh.VertexOffset, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
-                    }
+                    pass.Apply();
+                    GraphicsDevice.DrawIndexedPrimitives(
+                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
                 }
             }
         }
 
         void DrawGameObjectsLodWithBatch()
         {
+            var pass = basicEffect.CurrentTechnique.Passes[0];
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
                 foreach (var mesh in lodModels[lod].Meshes)
@@ -595,6 +596,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     basicEffect.EmissiveColor = material.EmissiveColor;
                     basicEffect.SpecularColor = material.SpecularColor;
                     basicEffect.SpecularPower = material.SpecularPower;
+
+                    GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer, mesh.VertexOffset);
+                    GraphicsDevice.Indices = mesh.IndexBuffer;
 
                     for (int i = 0; i < lodGameObjectCount[lod]; i++)
                     {
@@ -606,15 +610,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
                         basicEffect.World = mesh.Transform * world;
 
-                        GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
-                        GraphicsDevice.Indices = mesh.IndexBuffer;
-
-                        foreach (var pass in basicEffect.CurrentTechnique.Passes)
-                        {
-                            pass.Apply();
-                            GraphicsDevice.DrawIndexedPrimitives(
-                                PrimitiveType.TriangleList, mesh.VertexOffset, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
-                        }
+                        pass.Apply();
+                        GraphicsDevice.DrawIndexedPrimitives(
+                            PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
                     }
                 }
             }
@@ -622,6 +620,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithHardwareInstancing()
         {
+            var pass = instancingEffect.CurrentTechnique.Passes[0];
+
             // インスタンス情報を一旦コピー
             for (int i = 0; i < gameObjectCount; ++i)
             {
@@ -653,18 +653,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                 GraphicsDevice.Indices = mesh.IndexBuffer;
 
-                foreach (var pass in instancingEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-
-                    GraphicsDevice.DrawInstancedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
-                }
+                pass.Apply();
+                GraphicsDevice.DrawInstancedPrimitives(
+                    PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
             }
         }
 
         void DrawGameObjectsLodWithHardwareInstancing()
         {
+            var pass = instancingEffect.CurrentTechnique.Passes[0];
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
                 if (lodGameObjectCount[lod] == 0) continue;
@@ -701,19 +699,17 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                     GraphicsDevice.Indices = mesh.IndexBuffer;
 
-                    foreach (var pass in instancingEffect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-
-                        GraphicsDevice.DrawInstancedPrimitives(
-                            PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
-                    }
+                    pass.Apply();
+                    GraphicsDevice.DrawInstancedPrimitives(
+                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
                 }
             }
         }
 
         void DrawGameObjectsWithDirectMapping()
         {
+            var pass = instancingEffect.CurrentTechnique.Passes[0];
+
             //　インスタンスをそのまま頂点バッファへコピー
             int offset = directMappingVertexBuffer.SetData(gameObjects, 0, gameObjectCount);
 
@@ -736,18 +732,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                 GraphicsDevice.Indices = mesh.IndexBuffer;
 
-                foreach (var pass in instancingEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-
-                    GraphicsDevice.DrawInstancedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
-                }
+                pass.Apply();
+                GraphicsDevice.DrawInstancedPrimitives(
+                    PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
             }
         }
 
         void DrawGameObjectsLodWithDirectMapping()
         {
+            var pass = instancingEffect.CurrentTechnique.Passes[0];
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
                 if (lodGameObjectCount[lod] == 0) continue;
@@ -774,13 +768,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                     GraphicsDevice.Indices = mesh.IndexBuffer;
 
-                    foreach (var pass in instancingEffect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-
-                        GraphicsDevice.DrawInstancedPrimitives(
-                            PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
-                    }
+                    pass.Apply();
+                    GraphicsDevice.DrawInstancedPrimitives(
+                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
                 }
             }
         }
