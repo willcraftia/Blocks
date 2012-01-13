@@ -158,10 +158,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルからロードします。
             var factory = new BlockModelFactory(GraphicsDevice);
             var block = JsonHelper.FromJson<Block>(modelJson);
-
-            var interBlocks = InterBlock.CreateInterBlock(block, 4);
-
-            model = factory.CreateBlockModel(interBlocks[0]);
+            var models = factory.CreateBlockModels(block, 4);
+            model = models[0];
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 

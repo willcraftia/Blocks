@@ -231,11 +231,29 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
+        /// 指定された LOD サイズの分だけ BlockModel を生成します。
+        /// </summary>
+        /// <param name="block">Block。</param>
+        /// <param name="levelSize">LOD のサイズ。</param>
+        /// <returns>生成された BlockModel の配列。</returns>
+        public BlockModel[] CreateBlockModels(Block block, int levelSize)
+        {
+            if (levelSize < 1 || InterBlock.MaxDetailLevelSize < levelSize) throw new ArgumentOutOfRangeException("levelSize");
+
+            var models = new BlockModel[levelSize];
+
+            var interBlocks = InterBlock.CreateInterBlock(block, levelSize);
+            for (int i = 0; i < levelSize; i++) models[i] = CreateBlockModel(interBlocks[i]);
+
+            return models;
+        }
+
+        /// <summary>
         /// BlockModel を生成します。
         /// </summary>
         /// <param name="block">InterBlock。</param>
         /// <returns>生成された BlockModel。</returns>
-        public BlockModel CreateBlockModel(InterBlock block)
+        BlockModel CreateBlockModel(InterBlock block)
         {
             // BlockModel を生成します。
             var model = new BlockModel();
