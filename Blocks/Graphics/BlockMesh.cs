@@ -13,36 +13,37 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// </summary>
     public sealed class BlockMesh
     {
+        ReadOnlyCollection<IBlockEffect> effects;
+
+        ReadOnlyCollection<BlockMeshPart>[] lodMeshParts;
+
         /// <summary>
         /// IBlockEffect のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<IBlockEffect> Effects { get; private set; }
+        public ReadOnlyCollection<IBlockEffect> Effects
+        {
+            get { return effects; }
+        }
 
         /// <summary>
         /// BlockMeshPart のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<BlockMeshPart> MeshParts { get; private set; }
+        public ReadOnlyCollection<BlockMeshPart> MeshParts
+        {
+            get { return lodMeshParts[LevelOfDetail]; }
+        }
 
         /// <summary>
-        /// IBlockEffect のリストを取得します (内部処理用)。
+        /// 利用する LOD レベルを取得または設定します。
         /// </summary>
-        internal List<IBlockEffect> InternalEffects { get; private set; }
-
-        /// <summary>
-        /// BlockMeshPart のリストを取得します (内部処理用)。
-        /// </summary>
-        internal List<BlockMeshPart> InternalMeshParts { get; private set; }
+        public int LevelOfDetail { get; set; }
 
         /// <summary>
         /// インスタンスを生成します (内部処理用)。
         /// </summary>
-        internal BlockMesh()
+        internal BlockMesh(int lodSize)
         {
-            InternalEffects = new List<IBlockEffect>();
-            InternalMeshParts = new List<BlockMeshPart>();
-
-            Effects = new ReadOnlyCollection<IBlockEffect>(InternalEffects);
-            MeshParts = new ReadOnlyCollection<BlockMeshPart>(InternalMeshParts);
+            lodMeshParts = new ReadOnlyCollection<BlockMeshPart>[lodSize];
         }
 
         /// <summary>
@@ -50,7 +51,17 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         public void Draw()
         {
-            foreach (var meshPart in InternalMeshParts) meshPart.Draw();
+            foreach (var meshPart in MeshParts) meshPart.Draw();
+        }
+
+        internal void InitializeEffects(IBlockEffect[] effects)
+        {
+            this.effects = new ReadOnlyCollection<IBlockEffect>(effects);
+        }
+
+        internal void InitializeLODMeshParts(int lod, BlockMeshPart[] meshParts)
+        {
+            lodMeshParts[lod] = new ReadOnlyCollection<BlockMeshPart>(meshParts);
         }
     }
 }

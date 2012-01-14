@@ -154,6 +154,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
             public Dictionary<int, List<Part>> PartsMap = new Dictionary<int, List<Part>>();
 
             /// <summary>
+            /// 全ての Part を保持するリスト。
+            /// </summary>
+            public List<Part> Parts = new List<Part>();
+
+            /// <summary>
             /// インスタンスを生成します。
             /// </summary>
             ElementClassifier() { }
@@ -174,6 +179,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
                     // 立方体が完全に囲まれているのではないならば分類を開始します。
                     if (!resolvedElement.Enclosed) instance.Classify(resolvedElement);
+                }
+
+                // Parts プロパティへ全ての Part を追加します。
+                foreach (var parts in instance.PartsMap.Values)
+                {
+                    foreach (var part in parts) instance.Parts.Add(part);
                 }
 
                 return instance;
@@ -238,56 +249,62 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// 指定された LOD サイズの分だけ BlockMesh を生成します。
+        /// BlockMesh を生成します。
         /// </summary>
         /// <param name="block">Block。</param>
         /// <param name="levelSize">LOD のサイズ。</param>
         /// <returns>生成された BlockMesh の配列。</returns>
-        public BlockMesh[] CreateBlockMeshes(Block block, int levelSize)
+        public BlockMesh CreateBlockMesh(Block block, int levelSize)
         {
             if (levelSize < 1 || InterBlock.MaxDetailLevelSize < levelSize) throw new ArgumentOutOfRangeException("levelSize");
 
-            var meshes = new BlockMesh[levelSize];
-
+            // 中間データを作成します。
             var interBlocks = InterBlock.CreateInterBlock(block, levelSize);
-            for (int i = 0; i < levelSize; i++) meshes[i] = CreateBlockMesh(interBlocks[i]);
 
-            return meshes;
+            // 中間データから BlockMesh を作成します。
+            return CreateBlockMesh(interBlocks);
         }
 
         /// <summary>
         /// BlockMesh を生成します。
         /// </summary>
-        /// <param name="block">InterBlock。</param>
+        /// <param name="lodBlocks">各 LOD の InterBlock を要素とした配列。</param>
         /// <returns>生成された BlockMesh。</returns>
-        BlockMesh CreateBlockMesh(InterBlock block)
+        BlockMesh CreateBlockMesh(InterBlock[] lodBlocks)
         {
             // BlockMesh を生成します。
-            var mesh = new BlockMesh();
+            var mesh = new BlockMesh(lodBlocks.Length);
 
             // IBlockEffect を生成して登録します。
-            foreach (var material in block.Materials)
+            // LOD 間で Material は共有しているので、最大 LOD の Material から生成します。
+            var effects = new IBlockEffect[lodBlocks[0].Materials.Count];
+            for (int i = 0; i < effects.Length; i++)
             {
-                var effect = CreateBlockEffect(material);
-                mesh.InternalEffects.Add(effect);
+                effects[i] = CreateBlockEffect(lodBlocks[0].Materials[i]);
+                mesh.InitializeEffects(effects);
             }
 
-            // Element を分類します。
-            var elementClassifier = ElementClassifier.Classify(block.Elements);
-
-            // BlocklMeshPart を生成して登録します。
-            var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(block.ElementSize);
-            foreach (var partList in elementClassifier.PartsMap.Values)
+            // 各 LOD ごとに BlockMeshPart を生成して BlockMesh へ設定します。
+            for (int lod = 0; lod < lodBlocks.Length; lod++)
             {
-                foreach (var part in partList)
+                // Element を分類します。
+                var elementClassifier = ElementClassifier.Classify(lodBlocks[lod].Elements);
+
+                // BlocklMeshPart を生成して登録します。
+                var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(lodBlocks[lod].ElementSize);
+
+                var meshParts = new BlockMeshPart[elementClassifier.Parts.Count];
+                for (int i = 0; i < meshParts.Length; i++)
                 {
+                    var part = elementClassifier.Parts[i];
                     // BlocklMeshPart を生成します。
-                    var meshPart = CreateBlockMeshPart(part, cubeSurfaceVertexSource, block.ElementSize);
+                    meshParts[i] = CreateBlockMeshPart(part, cubeSurfaceVertexSource, lodBlocks[lod].ElementSize);
                     // IBlockEffect への参照を設定します。
-                    meshPart.Effect = mesh.InternalEffects[part.MaterialIndex];
-                    // BlockMesh へ登録します。
-                    mesh.InternalMeshParts.Add(meshPart);
+                    meshParts[i].Effect = mesh.Effects[part.MaterialIndex];
                 }
+
+                // 生成した BlockMeshPart を指定の LOD で BlockMesh へ設定します。
+                mesh.InitializeLODMeshParts(lod, meshParts);
             }
 
             return mesh;
@@ -317,22 +334,23 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         /// <param name="part">Part。</param>
         /// <param name="cubeSurfaceVertexSource">立方体の面の頂点データを提供する VertexSource。</param>
+        /// <param name="elementSize">Element のサイズ。</param>
         /// <returns>生成された BlockMeshPart。</returns>
-        BlockMeshPart CreateBlockMeshPart(Part part, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementScale)
+        BlockMeshPart CreateBlockMeshPart(Part part, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementSize)
         {
             // BlockMeshPart 用 VertexSource に頂点データを詰めていきます。
             var meshPartVertexSource = new MeshPartVertexSource();
 
             // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
             // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
-            Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementScale * 0.5f));
+            Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementSize * 0.5f));
 
             for (int i = 0; i < part.ResolvedElements.Count; i++)
             {
                 var resolvedElement = part.ResolvedElements[i];
 
                 // グリッド内位置へ移動させるための移動行列を作成します。
-                var gridPosition = resolvedElement.Element.Position.ToVector3() * elementScale;
+                var gridPosition = resolvedElement.Element.Position.ToVector3() * elementSize;
                 Matrix gridTranslation = Matrix.CreateTranslation(gridPosition);
 
                 // 立方体の最終的な移動行列を作成します。

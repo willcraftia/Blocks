@@ -63,6 +63,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         BlockMeshFactory blockMeshFactory;
         BlockMeshFactory instancingBlockMeshFactory;
 
+        int levelSize = 4;
+        BlockMesh mesh;
+        BlockMesh instancedMesh;
+
         TimeRuler timeRuler;
 
         TimeRulerMarker updateMarker;
@@ -81,9 +85,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         // 確保しているゲームオブジェクト数
         int gameObjectCount;
 
-        int levelSize = 4;
-        BlockMesh[] lodMeshes;
-        BlockMesh[] instancedLodMeshes;
         GameObject[][] lodGameObjects;
         int[] lodGameObjectCount;
         float[] lodDistanceSquareds = { 80 * 80, 160 * 160, 240 * 240, 480 * 480 };
@@ -167,17 +168,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルからロードします。
             var block = JsonHelper.FromJson<Block>(modelJson);
 
-            lodMeshes = blockMeshFactory.CreateBlockMeshes(block, levelSize);
-            foreach (var mesh in lodMeshes)
-            {
-                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
-            }
+            mesh = blockMeshFactory.CreateBlockMesh(block, levelSize);
+            foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
 
-            instancedLodMeshes = instancingBlockMeshFactory.CreateBlockMeshes(block, levelSize);
-            foreach (var mesh in instancedLodMeshes)
-            {
-                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
-            }
+            instancedMesh = instancingBlockMeshFactory.CreateBlockMesh(block, levelSize);
+            foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
 
@@ -504,11 +499,13 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithoutOptimization()
         {
-            foreach (var effect in lodMeshes[0].Effects)
+            foreach (var effect in mesh.Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
             }
+
+            mesh.LevelOfDetail = 0;
 
             for (int i = 0; i < gameObjectCount; i++)
             {
@@ -517,21 +514,23 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
                 world.Translation = gameObjects[i].Position;
 
-                foreach (var effect in lodMeshes[0].Effects) effect.World = world;
+                foreach (var effect in mesh.Effects) effect.World = world;
 
-                lodMeshes[0].Draw();
+                mesh.Draw();
             }
         }
 
         void DrawGameObjectsLodWithoutOptimization()
         {
+            foreach (var effect in mesh.Effects)
+            {
+                effect.View = view;
+                effect.Projection = projection;
+            }
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
-                foreach (var effect in lodMeshes[lod].Effects)
-                {
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
+                mesh.LevelOfDetail = lod;
 
                 for (int i = 0; i < lodGameObjectCount[lod]; i++)
                 {
@@ -541,22 +540,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                     world.Translation = gameObject.Position;
 
-                    foreach (var effect in lodMeshes[lod].Effects) effect.World = world;
+                    foreach (var effect in mesh.Effects) effect.World = world;
 
-                    lodMeshes[lod].Draw();
+                    mesh.Draw();
                 }
             }
         }
 
         void DrawGameObjectsWithBatch()
         {
-            foreach (var effect in lodMeshes[0].Effects)
+            foreach (var effect in mesh.Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
             }
 
-            foreach (var meshPart in lodMeshes[0].MeshParts)
+            mesh.LevelOfDetail = 0;
+
+            foreach (var meshPart in mesh.MeshParts)
             {
                 GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
                 GraphicsDevice.Indices = meshPart.IndexBuffer;
@@ -580,15 +581,17 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsLodWithBatch()
         {
+            foreach (var effect in mesh.Effects)
+            {
+                effect.View = view;
+                effect.Projection = projection;
+            }
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
-                foreach (var effect in lodMeshes[lod].Effects)
-                {
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
+                mesh.LevelOfDetail = lod;
 
-                foreach (var meshPart in lodMeshes[lod].MeshParts)
+                foreach (var meshPart in mesh.MeshParts)
                 {
                     GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
                     GraphicsDevice.Indices = meshPart.IndexBuffer;
@@ -614,6 +617,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithHardwareInstancing()
         {
+            foreach (InstancingBlockEffect effect in instancedMesh.Effects)
+            {
+                effect.View = view;
+                effect.Projection = projection;
+            }
+
             // インスタンス情報を一旦コピー
             for (int i = 0; i < gameObjectCount; ++i)
             {
@@ -626,14 +635,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // インスタンス用の頂点バッファへ書き込む
             int offset = instanceVertexBuffer.SetData(objectInstances, 0, gameObjectCount);
 
-            foreach (InstancingBlockEffect effect in instancedLodMeshes[0].Effects)
-            {
-                effect.View = view;
-                effect.Projection = projection;
-            }
+            instancedMesh.LevelOfDetail = 0;
 
             // ゲームオブジェクトを描画
-            foreach (var meshPart in instancedLodMeshes[0].MeshParts)
+            foreach (var meshPart in instancedMesh.MeshParts)
             {
                 vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                 vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
@@ -650,6 +655,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsLodWithHardwareInstancing()
         {
+            foreach (InstancingBlockEffect effect in instancedMesh.Effects)
+            {
+                effect.View = view;
+                effect.Projection = projection;
+            }
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
                 if (lodGameObjectCount[lod] == 0) continue;
@@ -667,14 +678,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 // インスタンス用の頂点バッファへ書き込む
                 int offset = instanceVertexBuffer.SetData(objectInstances, 0, lodGameObjectCount[lod]);
 
-                foreach (InstancingBlockEffect effect in instancedLodMeshes[lod].Effects)
-                {
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
+                instancedMesh.LevelOfDetail = lod;
 
                 // ゲームオブジェクトを描画
-                foreach (var meshPart in instancedLodMeshes[lod].MeshParts)
+                foreach (var meshPart in instancedMesh.MeshParts)
                 {
                     vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                     vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
@@ -692,17 +699,19 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithDirectMapping()
         {
-            //　インスタンスをそのまま頂点バッファへコピー
-            int offset = directMappingVertexBuffer.SetData(gameObjects, 0, gameObjectCount);
-
-            foreach (InstancingBlockEffect effect in instancedLodMeshes[0].Effects)
+            foreach (InstancingBlockEffect effect in instancedMesh.Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
             }
 
+            //　インスタンスをそのまま頂点バッファへコピー
+            int offset = directMappingVertexBuffer.SetData(gameObjects, 0, gameObjectCount);
+
+            instancedMesh.LevelOfDetail = 0;
+
             // ゲームオブジェクトを描画
-            foreach (var meshPart in instancedLodMeshes[0].MeshParts)
+            foreach (var meshPart in instancedMesh.MeshParts)
             {
                 vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                 vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
@@ -719,6 +728,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsLodWithDirectMapping()
         {
+            foreach (InstancingBlockEffect effect in instancedMesh.Effects)
+            {
+                effect.View = view;
+                effect.Projection = projection;
+            }
+
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
                 if (lodGameObjectCount[lod] == 0) continue;
@@ -726,14 +741,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 //　インスタンスをそのまま頂点バッファへコピー
                 int offset = directMappingVertexBuffer.SetData(lodGameObjects[lod], 0, lodGameObjectCount[lod]);
 
-                foreach (InstancingBlockEffect effect in instancedLodMeshes[lod].Effects)
-                {
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
+                instancedMesh.LevelOfDetail = lod;
 
                 // ゲームオブジェクトを描画
-                foreach (var meshPart in instancedLodMeshes[lod].MeshParts)
+                foreach (var meshPart in instancedMesh.MeshParts)
                 {
                     vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                     vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
