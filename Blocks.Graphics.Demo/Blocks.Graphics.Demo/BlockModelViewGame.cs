@@ -21,6 +21,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 {
     public class BlockModelViewGame : Game
     {
+        #region DrawMethod
+
         /// <summary>
         /// 描画方法の列挙値です。
         /// </summary>
@@ -65,6 +67,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             MaxCount,
         }
 
+        #endregion
+
+        #region GameObjectCollection
+
         /// <summary>
         /// GameObject を管理するクラスです。
         /// </summary>
@@ -81,6 +87,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             public int Count;
         }
 
+        #endregion
+
         /// <summary>
         /// 初期表示 GameObject 数。
         /// </summary>
@@ -96,30 +104,79 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         public static BoundingBox Sandbox = new BoundingBox();
 
+        /// <summary>
+        /// GraphicsDeviceManager。
+        /// </summary>
         GraphicsDeviceManager graphics;
 
+        /// <summary>
+        /// SpriteBatch。
+        /// </summary>
         SpriteBatch spriteBatch;
 
+        /// <summary>
+        /// SpriteFont。
+        /// </summary>
         SpriteFont font;
 
+        /// <summary>
+        /// 背景塗り潰しのためのテクスチャ。
+        /// </summary>
         Texture2D fillTexture;
 
-        string modelJson;
+        /// <summary>
+        /// Block の JSON。
+        /// </summary>
+        string blockJson;
 
+        /// <summary>
+        /// インスタンシング用の Effect。
+        /// </summary>
         Effect instancingEffect;
 
+        /// <summary>
+        /// 通常の Mesh を生成する BlockMeshFactory。
+        /// </summary>
         BlockMeshFactory blockMeshFactory;
+
+        /// <summary>
+        /// インスタンシング用の Mesh を生成する BlockMeshFactory。
+        /// </summary>
         BlockMeshFactory instancingBlockMeshFactory;
 
+        /// <summary>
+        /// LOD サイズ。
+        /// </summary>
         int lodSize = 4;
+
+        /// <summary>
+        /// 通常の Mesh。
+        /// </summary>
         BlockMesh mesh;
+
+        /// <summary>
+        /// インスタンシング用の Effect が設定された Mesh。
+        /// </summary>
         BlockMesh instancedMesh;
+
+        /// <summary>
+        /// LOD を切り替える距離 (の二乗) の配列。
+        /// </summary>
         float[] lodDistanceSquareds = { 80 * 80, 160 * 160, 240 * 240, 480 * 480 };
 
+        /// <summary>
+        /// TimeRuler。
+        /// </summary>
         TimeRuler timeRuler;
 
+        /// <summary>
+        /// Update メソッドを計測するための TimeRulerMarker。
+        /// </summary>
         TimeRulerMarker updateMarker;
 
+        /// <summary>
+        /// Draw メソッドを計測するための TimeRulerMarker。
+        /// </summary>
         TimeRulerMarker drawMarker;
 
         /// <summary>
@@ -141,9 +198,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// LOD 用 GameObject コレクション。
         /// </summary>
         GameObjectCollection[] lodGameObjects;
-
-        //GameObject[][] lodGameObjects;
-        //int[] lodGameObjectCount;
 
         /// <summary>
         /// GameObject の初期化に使う Random インスタンス。
@@ -191,9 +245,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         VertexBufferBinding[] vertexBufferBindings = new VertexBufferBinding[2];
 
         /// <summary>
-        /// A ボタンが押されていたかどうかを示す値。
+        /// スペース キーが押されていたかどうかを示す値。
         /// </summary>
-        bool pressedA;
+        bool pressedSpaceKey;
 
         /// <summary>
         /// インスタンスを生成します。
@@ -228,7 +282,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // テスト用にメモリ上で Block の JSON データを作ります。
             //var block = CreateFullFilledBlock();
             var block = CreateOctahedronLikeBlock();
-            modelJson = JsonHelper.ToJson<Block>(block);
+            blockJson = JsonHelper.ToJson<Block>(block);
 
             UpdateStatusString();
 
@@ -247,7 +301,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             instancingBlockMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect));
 
             // 実際のアプリケーションではファイルからロードします。
-            var block = JsonHelper.FromJson<Block>(modelJson);
+            var block = JsonHelper.FromJson<Block>(blockJson);
 
             mesh = blockMeshFactory.CreateBlockMesh(block, lodSize);
             foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
@@ -296,17 +350,17 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             float dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Aボタン、またはスペースキーで次の描画手法に変更する
+            // スペースキーで次の描画手法に変更する
             if (keyState.IsKeyDown(Keys.Space))
             {
-                if (!pressedA)
+                if (!pressedSpaceKey)
                     MoveToNextTechnique();
 
-                pressedA = true;
+                pressedSpaceKey = true;
             }
             else
             {
-                pressedA = false;
+                pressedSpaceKey = false;
             }
 
             // ゲームオブジェクト数を増やす
@@ -374,6 +428,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// 正八面体風のデータを定義する Block を作成します。
+        /// </summary>
+        /// <returns>作成された Block。</returns>
         Block CreateOctahedronLikeBlock()
         {
             var block = new Block();
@@ -481,7 +539,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         /// <summary>
-        /// ゲームオブジェクトの初期化
+        /// GameObject を初期化します。
         /// </summary>
         void InitializeGameObjects()
         {
@@ -501,7 +559,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         /// <summary>
-        /// ゲームオブジェクトの更新
+        /// GameObject を更新します。
         /// </summary>
         void UpdateGameObjects(float dt)
         {
@@ -544,7 +602,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         /// <summary>
-        /// ゲームオブジェクトの描画
+        /// GameObject を描画します。
         /// </summary>
         void DrawGameObjects()
         {
@@ -582,6 +640,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// チュートリアルなどで用いられる方法で GameObject を描画します。
+        /// </summary>
         void DrawGameObjectsWithoutOptimization()
         {
             foreach (var effect in mesh.Effects)
@@ -594,7 +655,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             for (int i = 0; i < gameObjects.Count; i++)
             {
-                Matrix world =
+                var world =
                     Matrix.CreateScale(gameObjects.Items[i].Scale) *
                     Matrix.CreateFromAxisAngle(gameObjects.Items[i].RotateAxis, gameObjects.Items[i].Rotation);
                 world.Translation = gameObjects.Items[i].Position;
@@ -605,6 +666,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// LOD を用いながらチュートリアルなどで用いられる方法で GameObject を描画します。
+        /// </summary>
         void DrawGameObjectsLodWithoutOptimization()
         {
             foreach (var effect in mesh.Effects)
@@ -620,7 +684,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 for (int i = 0; i < lodGameObjects[lod].Count; i++)
                 {
                     var gameObject = lodGameObjects[lod].Items[i];
-                    Matrix world =
+                    var world =
                         Matrix.CreateScale(gameObject.Scale) *
                         Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                     world.Translation = gameObject.Position;
@@ -632,6 +696,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// 同じ Material を持つ GameObject をまとめて描画します。
+        /// </summary>
         void DrawGameObjectsWithBatch()
         {
             foreach (var effect in mesh.Effects)
@@ -649,7 +716,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
                 for (int i = 0; i < gameObjects.Count; i++)
                 {
-                    Matrix world =
+                    var world =
                         Matrix.CreateScale(gameObjects.Items[i].Scale) *
                         Matrix.CreateFromAxisAngle(gameObjects.Items[i].RotateAxis, gameObjects.Items[i].Rotation);
                     world.Translation = gameObjects.Items[i].Position;
@@ -664,6 +731,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// LOD を用いながら同じ Material を持つ GameObject をまとめて描画します。
+        /// </summary>
         void DrawGameObjectsLodWithBatch()
         {
             foreach (var effect in mesh.Effects)
@@ -684,7 +754,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     for (int i = 0; i < lodGameObjects[lod].Count; i++)
                     {
                         var gameObject = lodGameObjects[lod].Items[i];
-                        Matrix world =
+                        var world =
                             Matrix.CreateScale(gameObject.Scale) *
                             Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                         world.Translation = gameObject.Position;
@@ -700,6 +770,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// HW インスタンシングで GameObject を描画します。
+        /// </summary>
         void DrawGameObjectsWithHardwareInstancing()
         {
             foreach (InstancingBlockEffect effect in instancedMesh.Effects)
@@ -739,6 +812,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// LOD を用いながら HW インスタンシングで GameObject を描画します。
+        /// </summary>
         void DrawGameObjectsLodWithHardwareInstancing()
         {
             foreach (InstancingBlockEffect effect in instancedMesh.Effects)
@@ -784,6 +860,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// GameObject をそのまま頂点バッファへ設定する HW インスタンシングで GameObject を描画します。
+        /// </summary>
         void DrawGameObjectsWithDirectMapping()
         {
             foreach (InstancingBlockEffect effect in instancedMesh.Effects)
@@ -814,6 +893,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
         }
 
+        /// <summary>
+        /// LOD を用いながら GameObject をそのまま頂点バッファへ設定する HW インスタンシングで GameObject を描画します。
+        /// </summary>
         void DrawGameObjectsLodWithDirectMapping()
         {
             foreach (InstancingBlockEffect effect in instancedMesh.Effects)
@@ -850,7 +932,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         /// <summary>
-        /// 次の描画方法に変更する
+        /// 次の描画方法に変更します。
         /// </summary>
         void MoveToNextTechnique()
         {
@@ -861,7 +943,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         }
 
         /// <summary>
-        /// ステータス文字列の更新
+        /// ステータス文字列を更新します。
         /// </summary>
         void UpdateStatusString()
         {
