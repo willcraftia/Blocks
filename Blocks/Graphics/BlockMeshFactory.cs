@@ -151,7 +151,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             /// <summary>
             /// Material のインデックスをキーとし、Part のリストを値とするディクショナリ。
             /// </summary>
-            public Dictionary<int, List<Part>> PartsMap = new Dictionary<int, List<Part>>();
+            Dictionary<int, List<Part>> partListMap = new Dictionary<int, List<Part>>();
 
             /// <summary>
             /// 全ての Part を保持するリスト。
@@ -182,9 +182,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 }
 
                 // Parts プロパティへ全ての Part を追加します。
-                foreach (var parts in instance.PartsMap.Values)
+                foreach (var partList in instance.partListMap.Values)
                 {
-                    foreach (var part in parts) instance.Parts.Add(part);
+                    foreach (var part in partList) instance.Parts.Add(part);
                 }
 
                 return instance;
@@ -198,11 +198,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
             {
                 // 対象とする Part のリストを取得します。
                 List<Part> partList;
-                if (!PartsMap.TryGetValue(resolvedElement.Element.MaterialIndex, out partList))
+                if (!partListMap.TryGetValue(resolvedElement.Element.MaterialIndex, out partList))
                 {
                     partList = new List<Part>();
                     partList.Add(new Part(resolvedElement.Element.MaterialIndex));
-                    PartsMap[resolvedElement.Element.MaterialIndex] = partList;
+                    partListMap[resolvedElement.Element.MaterialIndex] = partList;
                 }
 
                 // リストの最後の Part を取得します。
@@ -252,14 +252,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// BlockMesh を生成します。
         /// </summary>
         /// <param name="block">Block。</param>
-        /// <param name="levelSize">LOD のサイズ。</param>
+        /// <param name="lodSize">LOD のサイズ。</param>
         /// <returns>生成された BlockMesh の配列。</returns>
-        public BlockMesh CreateBlockMesh(Block block, int levelSize)
+        public BlockMesh CreateBlockMesh(Block block, int lodSize)
         {
-            if (levelSize < 1 || InterBlock.MaxDetailLevelSize < levelSize) throw new ArgumentOutOfRangeException("levelSize");
+            if (lodSize < 1 || InterBlock.MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
 
             // 中間データを作成します。
-            var interBlocks = InterBlock.CreateInterBlock(block, levelSize);
+            var interBlocks = InterBlock.CreateInterBlock(block, lodSize);
 
             // 中間データから BlockMesh を作成します。
             return CreateBlockMesh(interBlocks);
@@ -281,7 +281,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i] = CreateBlockEffect(lodBlocks[0].Materials[i]);
-                mesh.InitializeEffects(effects);
+                mesh.SetEffectArray(effects);
             }
 
             // 各 LOD ごとに BlockMeshPart を生成して BlockMesh へ設定します。
@@ -304,7 +304,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 }
 
                 // 生成した BlockMeshPart を指定の LOD で BlockMesh へ設定します。
-                mesh.InitializeLODMeshParts(lod, meshParts);
+                mesh.SetLODMeshPartArray(lod, meshParts);
             }
 
             return mesh;

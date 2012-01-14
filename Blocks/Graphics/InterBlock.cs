@@ -58,19 +58,19 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// 指定された数の LOD でそれぞれの LOD を持つ InterBlock の配列を生成します。
         /// </summary>
         /// <param name="block">Block。</param>
-        /// <param name="levelSize">LOD のサイズ。</param>
+        /// <param name="lodSize">LOD のサイズ。</param>
         /// <returns>生成された InterBlock の配列。</returns>
-        public static InterBlock[] CreateInterBlock(Block block, int levelSize)
+        public static InterBlock[] CreateInterBlock(Block block, int lodSize)
         {
-            if (levelSize < 1 || MaxDetailLevelSize < levelSize) throw new ArgumentOutOfRangeException("levelSize");
+            if (lodSize < 1 || MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
 
-            var interBlocks = new InterBlock[levelSize];
+            var interBlocks = new InterBlock[lodSize];
 
             // インデックス 0 は常に最大 LOD です。
             interBlocks[0] = CreateMaxDetailLevelInterBlock(block);
 
             // 要求された分の下位 LOD を生成します。
-            for (int i = 1; i < levelSize; i++) interBlocks[i] = CreateLowDetailLevelInterBlock(interBlocks[i - 1]);
+            for (int i = 1; i < lodSize; i++) interBlocks[i] = CreateLowDetailLevelInterBlock(interBlocks[i - 1]);
 
             return interBlocks;
         }
@@ -109,7 +109,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <returns>生成された InterBlock。</returns>
         static InterBlock CreateLowDetailLevelInterBlock(InterBlock highBlock)
         {
-            if (highBlock.GridSize == 2) throw new ArgumentException("A specified InterBlock has a minimum level of detail.");
+            if (highBlock.GridSize == 2) throw new ArgumentException("A specified InterBlock has a minimum LOD.");
 
             var interBlock = new InterBlock();
 

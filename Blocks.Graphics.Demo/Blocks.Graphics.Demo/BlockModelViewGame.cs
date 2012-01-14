@@ -63,9 +63,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         BlockMeshFactory blockMeshFactory;
         BlockMeshFactory instancingBlockMeshFactory;
 
-        int levelSize = 4;
+        int lodSize = 4;
         BlockMesh mesh;
         BlockMesh instancedMesh;
+        float[] lodDistanceSquareds = { 80 * 80, 160 * 160, 240 * 240, 480 * 480 };
 
         TimeRuler timeRuler;
 
@@ -87,7 +88,6 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         GameObject[][] lodGameObjects;
         int[] lodGameObjectCount;
-        float[] lodDistanceSquareds = { 80 * 80, 160 * 160, 240 * 240, 480 * 480 };
 
         // ゲームオブジェクト初期化に使う乱数発生インスタンス
         Random ramdom = new Random(0);
@@ -168,10 +168,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルからロードします。
             var block = JsonHelper.FromJson<Block>(modelJson);
 
-            mesh = blockMeshFactory.CreateBlockMesh(block, levelSize);
+            mesh = blockMeshFactory.CreateBlockMesh(block, lodSize);
             foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
 
-            instancedMesh = instancingBlockMeshFactory.CreateBlockMesh(block, levelSize);
+            instancedMesh = instancingBlockMeshFactory.CreateBlockMesh(block, lodSize);
             foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
@@ -408,9 +408,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             gameObjectCount = InitialGameObjectCount;
             for (int i = 0; i < gameObjectCount; ++i) gameObjects[i].Initialize(ramdom);
 
-            lodGameObjects = new GameObject[levelSize][];
-            for (int i = 0; i < levelSize; i++) lodGameObjects[i] = new GameObject[MaxGameObjectCount];
-            lodGameObjectCount = new int[levelSize];
+            lodGameObjects = new GameObject[lodSize][];
+            for (int i = 0; i < lodSize; i++) lodGameObjects[i] = new GameObject[MaxGameObjectCount];
+            lodGameObjectCount = new int[lodSize];
 
             UpdateStatusString();
         }
@@ -528,7 +528,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 effect.Projection = projection;
             }
 
-            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            for (int lod = 0; lod < lodSize; lod++)
             {
                 mesh.LevelOfDetail = lod;
 
@@ -587,7 +587,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 effect.Projection = projection;
             }
 
-            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            for (int lod = 0; lod < lodSize; lod++)
             {
                 mesh.LevelOfDetail = lod;
 
@@ -661,7 +661,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 effect.Projection = projection;
             }
 
-            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            for (int lod = 0; lod < lodSize; lod++)
             {
                 if (lodGameObjectCount[lod] == 0) continue;
 
@@ -734,7 +734,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 effect.Projection = projection;
             }
 
-            for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+            for (int lod = 0; lod < lodSize; lod++)
             {
                 if (lodGameObjectCount[lod] == 0) continue;
 
