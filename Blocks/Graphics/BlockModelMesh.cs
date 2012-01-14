@@ -55,9 +55,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public Matrix Transform { get; set; }
 
         /// <summary>
-        /// 参照する BlockModelMaterial。
+        /// 参照する IBlockEffect。
         /// </summary>
-        public BlockModelMaterial Material { get; internal set; }
+        public IBlockEffect Effect { get; internal set; }
 
         /// <summary>
         /// インスタンスを生成します (内部処理用)。
@@ -90,18 +90,30 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// 描画します。
+        /// この BlockModelMesh が参照する IBlockEffect で描画します。
+        /// </summary>
+        public void Draw()
+        {
+            graphicsDevice.SetVertexBuffer(VertexBuffer, VertexOffset);
+            graphicsDevice.Indices = IndexBuffer;
+
+            Effect.Pass.Apply();
+            graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, NumVertices, StartIndex, PrimitiveCount);
+        }
+
+        /// <summary>
+        /// 指定された Effect で描画します。
         /// </summary>
         /// <param name="effect">Effect。</param>
         public void Draw(Effect effect)
         {
-            graphicsDevice.SetVertexBuffer(VertexBuffer);
+            graphicsDevice.SetVertexBuffer(VertexBuffer, VertexOffset);
             graphicsDevice.Indices = IndexBuffer;
 
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, VertexOffset, 0, NumVertices, StartIndex, PrimitiveCount);
+                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, NumVertices, StartIndex, PrimitiveCount);
             }
         }
 

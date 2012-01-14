@@ -221,13 +221,21 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
+        /// IBlockEffectFactory を取得します。
+        /// </summary>
+        public IBlockEffectFactory BlockEffectFactory { get; private set; }
+
+        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
-        public BlockModelFactory(GraphicsDevice graphicsDevice)
+        /// <param name="blockEffectFactory">IBlockEffectFactory。</param>
+        public BlockModelFactory(GraphicsDevice graphicsDevice, IBlockEffectFactory blockEffectFactory)
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
+            if (blockEffectFactory == null) throw new ArgumentNullException("blockEffectFactory");
             GraphicsDevice = graphicsDevice;
+            BlockEffectFactory = blockEffectFactory;
         }
 
         /// <summary>
@@ -261,8 +269,8 @@ namespace Willcraftia.Xna.Blocks.Graphics
             // BlockModelMaterial を生成して登録します。
             foreach (var material in block.Materials)
             {
-                var modelMaterial = CreateBlockModelMaterial(material);
-                model.InternalMaterials.Add(modelMaterial);
+                var effect = CreateBlockEffect(material);
+                model.InternalEffects.Add(effect);
             }
 
             // Element を分類します。
@@ -278,7 +286,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
                         // BlockModelMesh を生成します。
                         var modelMesh = CreateBlockModelMesh(mesh, cubeSurfaceVertexSource, block.ElementSize);
                         // BlockModelMaterial への参照を設定します。
-                        modelMesh.Material = model.Materials[mesh.MaterialIndex];
+                        modelMesh.Effect = model.InternalEffects[mesh.MaterialIndex];
                         // BlockModel へ登録します。
                         model.InternalMeshes.Add(modelMesh);
                     }
@@ -289,20 +297,22 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// BlockModelMaterial を生成します。
+        /// 指定の Material が持つ情報を設定した IBlockEffect を生成します。
         /// </summary>
         /// <param name="material">Material。</param>
-        /// <returns>生成された BlockModelMaterial。</returns>
-        BlockModelMaterial CreateBlockModelMaterial(Material material)
+        /// <returns>生成された IBlockEffect。</returns>
+        IBlockEffect CreateBlockEffect(Material material)
         {
-            var modelMaterial = new BlockModelMaterial();
+            // IBlockEffect の生成を IBlockEffectFactory へ委譲します。
+            var effect = BlockEffectFactory.CreateBlockEffect();
 
-            modelMaterial.DiffuseColor = material.DiffuseColor.ToColor().ToVector3();
-            modelMaterial.EmissiveColor = material.EmissiveColor.ToColor().ToVector3();
-            modelMaterial.SpecularColor = material.SpecularColor.ToColor().ToVector3();
-            modelMaterial.SpecularPower = material.SpecularPower;
+            // Material を設定します。
+            effect.DiffuseColor = material.DiffuseColor.ToColor().ToVector3();
+            effect.EmissiveColor = material.EmissiveColor.ToColor().ToVector3();
+            effect.SpecularColor = material.SpecularColor.ToColor().ToVector3();
+            effect.SpecularPower = material.SpecularPower;
 
-            return modelMaterial;
+            return effect;
         }
 
         /// <summary>

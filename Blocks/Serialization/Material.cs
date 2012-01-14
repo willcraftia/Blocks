@@ -54,9 +54,9 @@ namespace Willcraftia.Xna.Blocks.Serialization
         public Material()
         {
             // デフォルト値は BasicEffect のデフォルト値に合わせています。
-            DiffuseColor = new MaterialColor(1, 1, 1);
+            DiffuseColor = new MaterialColor(255, 255, 255);
             EmissiveColor = new MaterialColor(0, 0, 0);
-            SpecularColor = new MaterialColor(1, 1, 1);
+            SpecularColor = new MaterialColor(255, 255, 255);
             SpecularPower = 16;
         }
 

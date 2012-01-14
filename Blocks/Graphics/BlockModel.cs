@@ -14,9 +14,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
     public sealed class BlockModel
     {
         /// <summary>
-        /// BlockModelMaterial のリストを取得します。
+        /// IBlockEffect のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<BlockModelMaterial> Materials { get; private set; }
+        public ReadOnlyCollection<IBlockEffect> Effects { get; private set; }
 
         /// <summary>
         /// BlockModelMesh のリストを取得します。
@@ -24,9 +24,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public ReadOnlyCollection<BlockModelMesh> Meshes { get; private set; }
 
         /// <summary>
-        /// BlockModelMaterial のリストを取得します (内部処理用)。
+        /// IBlockEffect のリストを取得します (内部処理用)。
         /// </summary>
-        internal List<BlockModelMaterial> InternalMaterials { get; private set; }
+        internal List<IBlockEffect> InternalEffects { get; private set; }
 
         /// <summary>
         /// BlockModelMesh のリストを取得します (内部処理用)。
@@ -38,10 +38,10 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         internal BlockModel()
         {
-            InternalMaterials = new List<BlockModelMaterial>();
+            InternalEffects = new List<IBlockEffect>();
             InternalMeshes = new List<BlockModelMesh>();
 
-            Materials = new ReadOnlyCollection<BlockModelMaterial>(InternalMaterials);
+            Effects = new ReadOnlyCollection<IBlockEffect>(InternalEffects);
             Meshes = new ReadOnlyCollection<BlockModelMesh>(InternalMeshes);
         }
     }
