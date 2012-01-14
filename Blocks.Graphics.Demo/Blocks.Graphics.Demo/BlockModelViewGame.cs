@@ -21,31 +21,79 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 {
     public class BlockModelViewGame : Game
     {
-        // 描画方法
+        /// <summary>
+        /// 描画方法の列挙値です。
+        /// </summary>
         enum DrawMethod
         {
-            // 最適化無しの描画
+            /// <summary>
+            /// 最適化無しの描画。
+            /// </summary>
             NoOptimization,
+            /// <summary>
+            /// LOD + 最適化無しの描画。
+            /// </summary>
             LodNoOptimization,
-            // マテリアルバッチを使った描画
+            /// <summary>
+            /// マテリアルバッチを使った描画。
+            /// </summary>
             MaterialBatch,
+            /// <summary>
+            /// LOD + マテリアルバッチを使った描画。
+            /// </summary>
             LodMaterialBatch,
-            // ハードウェアインスタンスを使った描画
+            /// <summary>
+            /// HW インスタンスを使った描画。
+            /// </summary>
             HardwareInstancing,
+            /// <summary>
+            /// LOD + HW インスタンスを使った描画。
+            /// </summary>
             LodHardwareInstancing,
-            // ゲーム用の配列をそのまま使って描画
+            /// <summary>
+            /// GameObject 配列をそのまま使って描画。
+            /// </summary>
             DirectMapping,
+            /// <summary>
+            /// LOD + GameObject 配列をそのまま使って描画。
+            /// </summary>
             LodDirectMapping,
+
+            /// <summary>
+            /// 列挙値の総数。
+            /// </summary>
             MaxCount,
         }
 
-        // 初期表示モデル数
+        /// <summary>
+        /// GameObject を管理するクラスです。
+        /// </summary>
+        class GameObjectCollection
+        {
+            /// <summary>
+            /// GameObject 配列。
+            /// </summary>
+            public GameObject[] Items;
+
+            /// <summary>
+            /// 確保している GameObject 数。
+            /// </summary>
+            public int Count;
+        }
+
+        /// <summary>
+        /// 初期表示 GameObject 数。
+        /// </summary>
         public const int InitialGameObjectCount = 500;
 
-        // 最大表示モデル数
+        /// <summary>
+        /// 最大表示 GameObject 数。
+        /// </summary>
         public const int MaxGameObjectCount = 50000;
 
-        // ゲームオブジェクトが移動できる領域
+        /// <summary>
+        /// GameObject が移動できる領域。
+        /// </summary>
         public static BoundingBox Sandbox = new BoundingBox();
 
         GraphicsDeviceManager graphics;
@@ -74,49 +122,82 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         TimeRulerMarker drawMarker;
 
-        // 現在使用している描画方法
+        /// <summary>
+        /// 現在使用している描画方法。
+        /// </summary>
         DrawMethod drawMethod = DrawMethod.NoOptimization;
 
-        // ターゲットゲームオブジェクト表示数
+        /// <summary>
+        /// ターゲット GameObject 表示数。
+        /// </summary>
         int targetObjectCount = InitialGameObjectCount;
 
-        // ゲームオブジェクト配列
-        GameObject[] gameObjects;
+        /// <summary>
+        /// GameObject コレクション。
+        /// </summary>
+        GameObjectCollection gameObjects = new GameObjectCollection();
 
-        // 確保しているゲームオブジェクト数
-        int gameObjectCount;
+        /// <summary>
+        /// LOD 用 GameObject コレクション。
+        /// </summary>
+        GameObjectCollection[] lodGameObjects;
 
-        GameObject[][] lodGameObjects;
-        int[] lodGameObjectCount;
+        //GameObject[][] lodGameObjects;
+        //int[] lodGameObjectCount;
 
-        // ゲームオブジェクト初期化に使う乱数発生インスタンス
+        /// <summary>
+        /// GameObject の初期化に使う Random インスタンス。
+        /// </summary>
         Random ramdom = new Random(0);
 
-        // ステータスに表示する文字列
+        /// <summary>
+        /// ステータスに表示する文字列。
+        /// </summary>
         StringBuilder statusString = new StringBuilder(128);
 
-        // カメラ座標
+        /// <summary>
+        /// カメラ座標。
+        /// </summary>
         Vector3 cameraPosition;
 
-        // ビュー行列
+        /// <summary>
+        /// View 行列。
+        /// </summary>
         Matrix view;
 
-        // 射影行列
+        /// <summary>
+        /// Projection 行列。
+        /// </summary>
         Matrix projection;
 
-        // 描画用のインスタンス情報を格納する為の配列
+        /// <summary>
+        /// 描画用のインスタンス情報を格納する為の配列。
+        /// </summary>
         ObjectInstanceVertex[] objectInstances = new ObjectInstanceVertex[MaxGameObjectCount];
 
-        // HWインスタンスで使うインスタンス情報を入れるための頂点バッファ
+        /// <summary>
+        /// HW インスタンスで使うインスタンス情報を入れるための頂点バッファ。
+        /// </summary>
         WritableVertexBuffer<ObjectInstanceVertex> instanceVertexBuffer;
+
+        /// <summary>
+        /// HW インスタンスで使うインスタンス情報を入れるための頂点バッファ (DirectMapping 用)。
+        /// </summary>
         WritableVertexBuffer<GameObject> directMappingVertexBuffer;
 
-        // 頂点バインディング情報
+        /// <summary>
+        /// 頂点バインディング情報。
+        /// </summary>
         VertexBufferBinding[] vertexBufferBindings = new VertexBufferBinding[2];
 
-        // Aボタンが押されていたか
+        /// <summary>
+        /// A ボタンが押されていたかどうかを示す値。
+        /// </summary>
         bool pressedA;
 
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
         public BlockModelViewGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -404,13 +485,17 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void InitializeGameObjects()
         {
-            gameObjects = new GameObject[MaxGameObjectCount];
-            gameObjectCount = InitialGameObjectCount;
-            for (int i = 0; i < gameObjectCount; ++i) gameObjects[i].Initialize(ramdom);
+            gameObjects.Items = new GameObject[MaxGameObjectCount];
+            gameObjects.Count = InitialGameObjectCount;
+            for (int i = 0; i < gameObjects.Count; ++i) gameObjects.Items[i].Initialize(ramdom);
 
-            lodGameObjects = new GameObject[lodSize][];
-            for (int i = 0; i < lodSize; i++) lodGameObjects[i] = new GameObject[MaxGameObjectCount];
-            lodGameObjectCount = new int[lodSize];
+            lodGameObjects = new GameObjectCollection[lodSize];
+            for (int lod = 0; lod < lodSize; lod++)
+            {
+                lodGameObjects[lod] = new GameObjectCollection();
+                lodGameObjects[lod].Items = new GameObject[MaxGameObjectCount];
+                lodGameObjects[lod].Count = InitialGameObjectCount;
+            }
 
             UpdateStatusString();
         }
@@ -420,25 +505,25 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void UpdateGameObjects(float dt)
         {
-            for (int i = 0; i < lodGameObjectCount.Length; i++) lodGameObjectCount[i] = 0;
+            for (int lod = 0; lod < lodSize; lod++) lodGameObjects[lod].Count = 0;
 
             // 全オブジェクトを更新する
             // ゲームオブジェクトのライフ時間によって、ゲームオブジェクトを
             // リストからはずすので単純なforeachはここでは使えない
-            for (int i = 0; i < gameObjectCount; )
+            for (int i = 0; i < gameObjects.Count; )
             {
-                if (gameObjects[i].Update(dt))
+                if (gameObjects.Items[i].Update(dt))
                 {
                     ++i;
 
                     float distanceSquared;
-                    Vector3.DistanceSquared(ref cameraPosition, ref gameObjects[i].Position, out distanceSquared);
-                    for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
+                    Vector3.DistanceSquared(ref cameraPosition, ref gameObjects.Items[i].Position, out distanceSquared);
+                    for (int lod = 0; lod < lodSize; lod++)
                     {
                         if (distanceSquared < lodDistanceSquareds[lod])
                         {
-                            lodGameObjects[lod][lodGameObjectCount[lod]] = gameObjects[i];
-                            lodGameObjectCount[lod] += 1;
+                            lodGameObjects[lod].Items[lodGameObjects[lod].Count] = gameObjects.Items[i];
+                            lodGameObjects[lod].Count += 1;
                             break;
                         }
                     }
@@ -447,15 +532,15 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 {
                     // ゲームオブジェクトの消去
                     // 最後尾のゲームオブジェクトと交換する
-                    var temp = gameObjects[i];
-                    gameObjects[i] = gameObjects[--gameObjectCount];
-                    gameObjects[gameObjectCount] = temp;
+                    var temp = gameObjects.Items[i];
+                    gameObjects.Items[i] = gameObjects.Items[--gameObjects.Count];
+                    gameObjects.Items[gameObjects.Count] = temp;
                 }
             }
 
-            if (targetObjectCount < gameObjectCount) gameObjectCount = targetObjectCount;
+            if (targetObjectCount < gameObjects.Count) gameObjects.Count = targetObjectCount;
 
-            while (gameObjectCount < targetObjectCount) gameObjects[gameObjectCount++].Initialize(ramdom);
+            while (gameObjects.Count < targetObjectCount) gameObjects.Items[gameObjects.Count++].Initialize(ramdom);
         }
 
         /// <summary>
@@ -507,12 +592,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             mesh.LevelOfDetail = 0;
 
-            for (int i = 0; i < gameObjectCount; i++)
+            for (int i = 0; i < gameObjects.Count; i++)
             {
                 Matrix world =
-                    Matrix.CreateScale(gameObjects[i].Scale) *
-                    Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
-                world.Translation = gameObjects[i].Position;
+                    Matrix.CreateScale(gameObjects.Items[i].Scale) *
+                    Matrix.CreateFromAxisAngle(gameObjects.Items[i].RotateAxis, gameObjects.Items[i].Rotation);
+                world.Translation = gameObjects.Items[i].Position;
 
                 foreach (var effect in mesh.Effects) effect.World = world;
 
@@ -532,9 +617,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             {
                 mesh.LevelOfDetail = lod;
 
-                for (int i = 0; i < lodGameObjectCount[lod]; i++)
+                for (int i = 0; i < lodGameObjects[lod].Count; i++)
                 {
-                    var gameObject = lodGameObjects[lod][i];
+                    var gameObject = lodGameObjects[lod].Items[i];
                     Matrix world =
                         Matrix.CreateScale(gameObject.Scale) *
                         Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
@@ -562,12 +647,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
                 GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                for (int i = 0; i < gameObjectCount; i++)
+                for (int i = 0; i < gameObjects.Count; i++)
                 {
                     Matrix world =
-                        Matrix.CreateScale(gameObjects[i].Scale) *
-                        Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
-                    world.Translation = gameObjects[i].Position;
+                        Matrix.CreateScale(gameObjects.Items[i].Scale) *
+                        Matrix.CreateFromAxisAngle(gameObjects.Items[i].RotateAxis, gameObjects.Items[i].Rotation);
+                    world.Translation = gameObjects.Items[i].Position;
 
                     var effect = meshPart.Effect;
                     effect.World = world;
@@ -596,9 +681,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
                     GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                    for (int i = 0; i < lodGameObjectCount[lod]; i++)
+                    for (int i = 0; i < lodGameObjects[lod].Count; i++)
                     {
-                        var gameObject = lodGameObjects[lod][i];
+                        var gameObject = lodGameObjects[lod].Items[i];
                         Matrix world =
                             Matrix.CreateScale(gameObject.Scale) *
                             Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
@@ -624,16 +709,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
 
             // インスタンス情報を一旦コピー
-            for (int i = 0; i < gameObjectCount; ++i)
+            for (int i = 0; i < gameObjects.Count; ++i)
             {
-                objectInstances[i].Position = gameObjects[i].Position;
-                objectInstances[i].Scale = gameObjects[i].Scale;
-                objectInstances[i].RotateAxis = gameObjects[i].RotateAxis;
-                objectInstances[i].Rotation = gameObjects[i].Rotation;
+                objectInstances[i].Position = gameObjects.Items[i].Position;
+                objectInstances[i].Scale = gameObjects.Items[i].Scale;
+                objectInstances[i].RotateAxis = gameObjects.Items[i].RotateAxis;
+                objectInstances[i].Rotation = gameObjects.Items[i].Rotation;
             }
 
             // インスタンス用の頂点バッファへ書き込む
-            int offset = instanceVertexBuffer.SetData(objectInstances, 0, gameObjectCount);
+            int offset = instanceVertexBuffer.SetData(objectInstances, 0, gameObjects.Count);
 
             instancedMesh.LevelOfDetail = 0;
 
@@ -649,7 +734,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 meshPart.Effect.Pass.Apply();
 
                 GraphicsDevice.DrawInstancedPrimitives(
-                    PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjectCount);
+                    PrimitiveType.TriangleList, 0, 0,
+                    meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjects.Count);
             }
         }
 
@@ -663,12 +749,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             for (int lod = 0; lod < lodSize; lod++)
             {
-                if (lodGameObjectCount[lod] == 0) continue;
+                if (lodGameObjects[lod].Count == 0) continue;
 
                 // インスタンス情報を一旦コピー
-                for (int i = 0; i < lodGameObjectCount[lod]; ++i)
+                for (int i = 0; i < lodGameObjects[lod].Count; ++i)
                 {
-                    var gameObject = lodGameObjects[lod][i];
+                    var gameObject = lodGameObjects[lod].Items[i];
                     objectInstances[i].Position = gameObject.Position;
                     objectInstances[i].Scale = gameObject.Scale;
                     objectInstances[i].RotateAxis = gameObject.RotateAxis;
@@ -676,7 +762,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 }
 
                 // インスタンス用の頂点バッファへ書き込む
-                int offset = instanceVertexBuffer.SetData(objectInstances, 0, lodGameObjectCount[lod]);
+                int offset = instanceVertexBuffer.SetData(objectInstances, 0, lodGameObjects[lod].Count);
 
                 instancedMesh.LevelOfDetail = lod;
 
@@ -692,7 +778,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     meshPart.Effect.Pass.Apply();
 
                     GraphicsDevice.DrawInstancedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjectCount[lod]);
+                        PrimitiveType.TriangleList, 0, 0,
+                        meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjects[lod].Count);
                 }
             }
         }
@@ -706,7 +793,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
 
             //　インスタンスをそのまま頂点バッファへコピー
-            int offset = directMappingVertexBuffer.SetData(gameObjects, 0, gameObjectCount);
+            int offset = directMappingVertexBuffer.SetData(gameObjects.Items, 0, gameObjects.Count);
 
             instancedMesh.LevelOfDetail = 0;
 
@@ -722,7 +809,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 meshPart.Effect.Pass.Apply();
 
                 GraphicsDevice.DrawInstancedPrimitives(
-                    PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjectCount);
+                    PrimitiveType.TriangleList, 0, 0,
+                    meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjects.Count);
             }
         }
 
@@ -736,10 +824,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             for (int lod = 0; lod < lodSize; lod++)
             {
-                if (lodGameObjectCount[lod] == 0) continue;
+                if (lodGameObjects[lod].Count == 0) continue;
 
                 //　インスタンスをそのまま頂点バッファへコピー
-                int offset = directMappingVertexBuffer.SetData(lodGameObjects[lod], 0, lodGameObjectCount[lod]);
+                int offset = directMappingVertexBuffer.SetData(lodGameObjects[lod].Items, 0, lodGameObjects[lod].Count);
 
                 instancedMesh.LevelOfDetail = lod;
 
@@ -755,7 +843,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     meshPart.Effect.Pass.Apply();
 
                     GraphicsDevice.DrawInstancedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjectCount[lod]);
+                        PrimitiveType.TriangleList, 0, 0,
+                        meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjects[lod].Count);
                 }
             }
         }
@@ -780,7 +869,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             statusString.Append(" Draw Method: ");
             statusString.Append(drawMethod.ToString());
             statusString.Append(" \n Objects: ");
-            statusString.Append(gameObjectCount);
+            statusString.Append(gameObjects.Count);
         }
     }
 }
