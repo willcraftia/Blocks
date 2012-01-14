@@ -14,7 +14,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// <summary>
     /// 立方体の頂点データを面ごとに管理するクラスです。
     /// </summary>
-    public sealed class CubeSurfaceVertexSource : IDisposable
+    public sealed class CubeSurfaceVertexSource
     {
         /// <summary>
         /// 辺のサイズを取得します。
@@ -61,47 +61,18 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <param name="normal">面の法線。</param>
         void InitializeSurface(SurfaceVertexSource source, Vector3 normal)
         {
-            var maker = new QuadrangleMaker();
+            var quadrangle = new Quadrangle();
             float s = Size * 0.5f;
 
             var side1 = new Vector3(normal.Y, normal.Z, normal.X);
             var side2 = Vector3.Cross(normal, side1);
 
-            maker.Position0 = (normal - side1 - side2) * s;
-            maker.Position1 = (normal - side1 + side2) * s;
-            maker.Position2 = (normal + side1 + side2) * s;
-            maker.Position3 = (normal + side1 - side2) * s;
-            maker.Normal = normal;
-            maker.Make(source);
+            quadrangle.Position0 = (normal - side1 - side2) * s;
+            quadrangle.Position1 = (normal - side1 + side2) * s;
+            quadrangle.Position2 = (normal + side1 + side2) * s;
+            quadrangle.Position3 = (normal + side1 - side2) * s;
+            quadrangle.Normal = normal;
+            quadrangle.Make(source);
         }
-
-        #region IDisposable
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        
-        bool disposed;
-
-        ~CubeSurfaceVertexSource()
-        {
-            Dispose(false);
-        }
-
-        void Dispose(bool disposing)
-        {
-            if (disposed) return;
-
-            if (disposing)
-            {
-                foreach (var surface in Surfaces) surface.Dispose();
-            }
-
-            disposed = true;
-        }
-
-        #endregion
     }
 }

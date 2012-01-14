@@ -403,10 +403,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
             cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
 
-            using (var source = cubeVertexSourceFactory.CreateVertexSource())
-            {
-                return Graphics.GeometricPrimitive.Create(GraphicsDevice, source);
-            }
+            var source = cubeVertexSourceFactory.CreateVertexSource();
+            return Graphics.GeometricPrimitive.Create(GraphicsDevice, source);
         }
     }
 }

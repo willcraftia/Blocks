@@ -9,9 +9,9 @@ using System.Collections.ObjectModel;
 namespace Willcraftia.Xna.Blocks.Graphics
 {
     /// <summary>
-    /// Block モデルを表すクラスです。
+    /// Block の Mesh を表すクラスです。
     /// </summary>
-    public sealed class BlockModel
+    public sealed class BlockMesh
     {
         /// <summary>
         /// IBlockEffect のリストを取得します。
@@ -19,9 +19,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public ReadOnlyCollection<IBlockEffect> Effects { get; private set; }
 
         /// <summary>
-        /// BlockModelMesh のリストを取得します。
+        /// BlockMeshPart のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<BlockModelMesh> Meshes { get; private set; }
+        public ReadOnlyCollection<BlockMeshPart> MeshParts { get; private set; }
 
         /// <summary>
         /// IBlockEffect のリストを取得します (内部処理用)。
@@ -29,20 +29,20 @@ namespace Willcraftia.Xna.Blocks.Graphics
         internal List<IBlockEffect> InternalEffects { get; private set; }
 
         /// <summary>
-        /// BlockModelMesh のリストを取得します (内部処理用)。
+        /// BlockMeshPart のリストを取得します (内部処理用)。
         /// </summary>
-        internal List<BlockModelMesh> InternalMeshes { get; private set; }
+        internal List<BlockMeshPart> InternalMeshParts { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します (内部処理用)。
         /// </summary>
-        internal BlockModel()
+        internal BlockMesh()
         {
             InternalEffects = new List<IBlockEffect>();
-            InternalMeshes = new List<BlockModelMesh>();
+            InternalMeshParts = new List<BlockMeshPart>();
 
             Effects = new ReadOnlyCollection<IBlockEffect>(InternalEffects);
-            Meshes = new ReadOnlyCollection<BlockModelMesh>(InternalMeshes);
+            MeshParts = new ReadOnlyCollection<BlockMeshPart>(InternalMeshParts);
         }
     }
 }

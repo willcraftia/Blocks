@@ -96,9 +96,9 @@
     <Compile Include="Graphics\BasicBlockEffect.cs" />
     <Compile Include="Graphics\BasicBlockEffectFactory.cs" />
     <Compile Include="Graphics\IBlockEffect.cs" />
-    <Compile Include="Graphics\BlockModel.cs" />
-    <Compile Include="Graphics\BlockModelFactory.cs" />
-    <Compile Include="Graphics\BlockModelMesh.cs" />
+    <Compile Include="Graphics\BlockMesh.cs" />
+    <Compile Include="Graphics\BlockMeshFactory.cs" />
+    <Compile Include="Graphics\BlockMeshPart.cs" />
     <Compile Include="Graphics\CubeSurfaces.cs" />
     <Compile Include="Graphics\CubeSurfaceVertexSource.cs" />
     <Compile Include="Graphics\IBlockEffectFactory.cs" />

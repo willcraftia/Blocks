@@ -60,8 +60,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         Effect instancingEffect;
 
-        BlockModelFactory modelFactory;
-        BlockModelFactory instancingModelFactory;
+        BlockMeshFactory blockMeshFactory;
+        BlockMeshFactory instancingBlockMeshFactory;
 
         TimeRuler timeRuler;
 
@@ -82,8 +82,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         int gameObjectCount;
 
         int levelSize = 4;
-        BlockModel[] lodModels;
-        BlockModel[] instancedLodModels;
+        BlockMesh[] lodMeshes;
+        BlockMesh[] instancedLodMeshes;
         GameObject[][] lodGameObjects;
         int[] lodGameObjectCount;
         float[] lodDistanceSquareds = { 80 * 80, 160 * 160, 240 * 240, 480 * 480 };
@@ -159,24 +159,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             font = Content.Load<SpriteFont>("Fonts/Default");
             fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
-            modelFactory = new BlockModelFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
+            blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
 
             instancingEffect = Content.Load<Effect>("Effects/Instancing");
-            instancingModelFactory = new BlockModelFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect));
+            instancingBlockMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect));
 
             // 実際のアプリケーションではファイルからロードします。
             var block = JsonHelper.FromJson<Block>(modelJson);
 
-            lodModels = modelFactory.CreateBlockModels(block, levelSize);
-            foreach (var model in lodModels)
+            lodMeshes = blockMeshFactory.CreateBlockMeshes(block, levelSize);
+            foreach (var mesh in lodMeshes)
             {
-                foreach (var effect in model.Effects) effect.EnableDefaultLighting();
+                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
             }
 
-            instancedLodModels = instancingModelFactory.CreateBlockModels(block, levelSize);
-            foreach (var model in instancedLodModels)
+            instancedLodMeshes = instancingBlockMeshFactory.CreateBlockMeshes(block, levelSize);
+            foreach (var mesh in instancedLodMeshes)
             {
-                foreach (var effect in model.Effects) effect.EnableDefaultLighting();
+                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
             }
 
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
@@ -504,7 +504,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithoutOptimization()
         {
-            foreach (var effect in lodModels[0].Effects)
+            foreach (var effect in lodMeshes[0].Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
@@ -517,10 +517,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
                 world.Translation = gameObjects[i].Position;
 
-                foreach (var mesh in lodModels[0].Meshes)
+                foreach (var meshPart in lodMeshes[0].MeshParts)
                 {
-                    mesh.Effect.World = mesh.Transform * world;
-                    mesh.Draw();
+                    meshPart.Effect.World = meshPart.Transform * world;
+                    meshPart.Draw();
                 }
             }
         }
@@ -529,7 +529,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
-                foreach (var effect in lodModels[lod].Effects)
+                foreach (var effect in lodMeshes[lod].Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
@@ -543,10 +543,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                     world.Translation = gameObject.Position;
 
-                    foreach (var mesh in lodModels[lod].Meshes)
+                    foreach (var meshPart in lodMeshes[lod].MeshParts)
                     {
-                        mesh.Effect.World = mesh.Transform * world;
-                        mesh.Draw();
+                        meshPart.Effect.World = meshPart.Transform * world;
+                        meshPart.Draw();
                     }
                 }
             }
@@ -554,16 +554,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
         void DrawGameObjectsWithBatch()
         {
-            foreach (var effect in lodModels[0].Effects)
+            foreach (var effect in lodMeshes[0].Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
             }
 
-            foreach (var mesh in lodModels[0].Meshes)
+            foreach (var meshPart in lodMeshes[0].MeshParts)
             {
-                GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer, mesh.VertexOffset);
-                GraphicsDevice.Indices = mesh.IndexBuffer;
+                GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
+                GraphicsDevice.Indices = meshPart.IndexBuffer;
 
                 for (int i = 0; i < gameObjectCount; i++)
                 {
@@ -572,11 +572,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
                     world.Translation = gameObjects[i].Position;
 
-                    var effect = mesh.Effect;
-                    effect.World = mesh.Transform * world;
+                    var effect = meshPart.Effect;
+                    effect.World = meshPart.Transform * world;
                     effect.Pass.Apply();
                     GraphicsDevice.DrawIndexedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
+                        PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount);
                 }
             }
         }
@@ -585,16 +585,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             for (int lod = 0; lod < lodGameObjectCount.Length; lod++)
             {
-                foreach (var effect in lodModels[lod].Effects)
+                foreach (var effect in lodMeshes[lod].Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
                 }
 
-                foreach (var mesh in lodModels[lod].Meshes)
+                foreach (var meshPart in lodMeshes[lod].MeshParts)
                 {
-                    GraphicsDevice.SetVertexBuffer(mesh.VertexBuffer, mesh.VertexOffset);
-                    GraphicsDevice.Indices = mesh.IndexBuffer;
+                    GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
+                    GraphicsDevice.Indices = meshPart.IndexBuffer;
 
                     for (int i = 0; i < lodGameObjectCount[lod]; i++)
                     {
@@ -604,11 +604,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                             Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                         world.Translation = gameObject.Position;
 
-                        var effect = mesh.Effect;
-                        effect.World = mesh.Transform * world;
+                        var effect = meshPart.Effect;
+                        effect.World = meshPart.Transform * world;
                         effect.Pass.Apply();
                         GraphicsDevice.DrawIndexedPrimitives(
-                            PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
+                            PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount);
                     }
                 }
             }
@@ -628,24 +628,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // インスタンス用の頂点バッファへ書き込む
             int offset = instanceVertexBuffer.SetData(objectInstances, 0, gameObjectCount);
 
-            foreach (InstancingBlockEffect effect in instancedLodModels[0].Effects)
+            foreach (InstancingBlockEffect effect in instancedLodMeshes[0].Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
             }
 
             // ゲームオブジェクトを描画
-            foreach (var mesh in instancedLodModels[0].Meshes)
+            foreach (var meshPart in instancedLodMeshes[0].MeshParts)
             {
-                vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                 vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
 
                 GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
-                GraphicsDevice.Indices = mesh.IndexBuffer;
+                GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                mesh.Effect.Pass.Apply();
+                meshPart.Effect.Pass.Apply();
                 GraphicsDevice.DrawInstancedPrimitives(
-                    PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
+                    PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjectCount);
             }
         }
 
@@ -668,24 +668,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 // インスタンス用の頂点バッファへ書き込む
                 int offset = instanceVertexBuffer.SetData(objectInstances, 0, lodGameObjectCount[lod]);
 
-                foreach (InstancingBlockEffect effect in instancedLodModels[lod].Effects)
+                foreach (InstancingBlockEffect effect in instancedLodMeshes[lod].Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
                 }
 
                 // ゲームオブジェクトを描画
-                foreach (var mesh in instancedLodModels[lod].Meshes)
+                foreach (var meshPart in instancedLodMeshes[lod].MeshParts)
                 {
-                    vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                    vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                     vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
 
                     GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
-                    GraphicsDevice.Indices = mesh.IndexBuffer;
+                    GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                    mesh.Effect.Pass.Apply();
+                    meshPart.Effect.Pass.Apply();
                     GraphicsDevice.DrawInstancedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
+                        PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjectCount[lod]);
                 }
             }
         }
@@ -695,24 +695,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             //　インスタンスをそのまま頂点バッファへコピー
             int offset = directMappingVertexBuffer.SetData(gameObjects, 0, gameObjectCount);
 
-            foreach (InstancingBlockEffect effect in instancedLodModels[0].Effects)
+            foreach (InstancingBlockEffect effect in instancedLodMeshes[0].Effects)
             {
                 effect.View = view;
                 effect.Projection = projection;
             }
 
             // ゲームオブジェクトを描画
-            foreach (var mesh in instancedLodModels[0].Meshes)
+            foreach (var meshPart in instancedLodMeshes[0].MeshParts)
             {
-                vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                 vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
 
                 GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
-                GraphicsDevice.Indices = mesh.IndexBuffer;
+                GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                mesh.Effect.Pass.Apply();
+                meshPart.Effect.Pass.Apply();
                 GraphicsDevice.DrawInstancedPrimitives(
-                    PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, gameObjectCount);
+                    PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjectCount);
             }
         }
 
@@ -725,24 +725,24 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 //　インスタンスをそのまま頂点バッファへコピー
                 int offset = directMappingVertexBuffer.SetData(lodGameObjects[lod], 0, lodGameObjectCount[lod]);
 
-                foreach (InstancingBlockEffect effect in instancedLodModels[lod].Effects)
+                foreach (InstancingBlockEffect effect in instancedLodMeshes[lod].Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
                 }
 
                 // ゲームオブジェクトを描画
-                foreach (var mesh in instancedLodModels[lod].Meshes)
+                foreach (var meshPart in instancedLodMeshes[lod].MeshParts)
                 {
-                    vertexBufferBindings[0] = new VertexBufferBinding(mesh.VertexBuffer, mesh.VertexOffset);
+                    vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                     vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
 
                     GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
-                    GraphicsDevice.Indices = mesh.IndexBuffer;
+                    GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                    mesh.Effect.Pass.Apply();
+                    meshPart.Effect.Pass.Apply();
                     GraphicsDevice.DrawInstancedPrimitives(
-                        PrimitiveType.TriangleList, 0, 0, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount, lodGameObjectCount[lod]);
+                        PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjectCount[lod]);
                 }
             }
         }

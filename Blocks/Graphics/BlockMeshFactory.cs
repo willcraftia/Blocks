@@ -13,13 +13,13 @@ using Willcraftia.Xna.Blocks.Serialization;
 
 namespace Willcraftia.Xna.Blocks.Graphics
 {
-    using MeshVertexSource = VertexSource<VertexPositionNormal, ushort>;
+    using MeshPartVertexSource = VertexSource<VertexPositionNormal, ushort>;
     using SurfaceVertexSource = VertexSource<VertexPositionNormal, ushort>;
 
     /// <summary>
-    /// 永続化用データ表現の Block から 3D モデル描画のための BlockModel を生成するクラスです。
+    /// 永続化用データ表現の Block から 3D モデル描画のための BlockMesh を生成するクラスです。
     /// </summary>
-    public sealed class BlockModelFactory
+    public sealed class BlockMeshFactory
     {
         #region ResolvedElement
 
@@ -110,12 +110,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
         #endregion
 
-        #region BlockMesh
+        #region Part
 
         /// <summary>
         /// Material ごとに ResolvedElement をまとめるクラスです。
         /// </summary>
-        class BlockMesh
+        class Part
         {
             /// <summary>
             /// 参照する Material のインデックス。
@@ -131,7 +131,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
             /// インスタンスを生成します。
             /// </summary>
             /// <param name="materialIndex">参照する Material のインデックス。</param>
-            public BlockMesh(int materialIndex)
+            public Part(int materialIndex)
             {
                 MaterialIndex = materialIndex;
             }
@@ -142,17 +142,16 @@ namespace Willcraftia.Xna.Blocks.Graphics
         #region ElementClassifier
 
         /// <summary>
-        /// ResolvedElement を BlockMesh へ分類するクラスです。
-        /// このクラスでは、IndexBuffer で使えるインデックスの最大値を考慮し、
-        /// その最大値を越える場合には、同じ Material を参照する Element であっても、
-        /// 新たに作成する BlockMesh へ分類します。
+        /// ResolvedElement を Part へ分類するクラスです。
+        /// 基本的には、同じ Material を参照する ResolvedElement を 1 つの Part へ纏めますが、
+        /// IndexBuffer で使えるインデックスの最大値を越える場合には、新たに作成する Part へ分類します。
         /// </summary>
         class ElementClassifier
         {
             /// <summary>
-            /// Material のインデックスをキーとし、BlockMesh のリストを値とするディクショナリ。
+            /// Material のインデックスをキーとし、Part のリストを値とするディクショナリ。
             /// </summary>
-            public Dictionary<int, List<BlockMesh>> MeshListMap = new Dictionary<int, List<BlockMesh>>();
+            public Dictionary<int, List<Part>> PartsMap = new Dictionary<int, List<Part>>();
 
             /// <summary>
             /// インスタンスを生成します。
@@ -181,35 +180,35 @@ namespace Willcraftia.Xna.Blocks.Graphics
             }
 
             /// <summary>
-            /// ResolvedElement を BlockMesh へ分類します。
+            /// ResolvedElement を Part へ分類します。
             /// </summary>
             /// <param name="resolvedElement">分類する ResolvedElement。</param>
             void Classify(ResolvedElement resolvedElement)
             {
-                // 対象とする BlockMesh のリストを取得します。
-                List<BlockMesh> meshList;
-                if (!MeshListMap.TryGetValue(resolvedElement.Element.MaterialIndex, out meshList))
+                // 対象とする Part のリストを取得します。
+                List<Part> partList;
+                if (!PartsMap.TryGetValue(resolvedElement.Element.MaterialIndex, out partList))
                 {
-                    meshList = new List<BlockMesh>();
-                    meshList.Add(new BlockMesh(resolvedElement.Element.MaterialIndex));
-                    MeshListMap[resolvedElement.Element.MaterialIndex] = meshList;
+                    partList = new List<Part>();
+                    partList.Add(new Part(resolvedElement.Element.MaterialIndex));
+                    PartsMap[resolvedElement.Element.MaterialIndex] = partList;
                 }
 
-                // リストの最後の BlockMesh を取得します。
-                var lastMesh = meshList[meshList.Count - 1];
+                // リストの最後の Part を取得します。
+                var part = partList[partList.Count - 1];
 
                 // IndexBuffer の最大サイズを超えるならば、
-                // 新たな BlockMesh へ Element を追加するようにします。
+                // 新たな Part へ Element を追加するようにします。
                 // Reach Profile では 16 ビットが最大サイズ (ushort) であり、
                 // また、立方体の表現に必要なインデックス数は 36 です。
-                if (ushort.MaxValue < (lastMesh.ResolvedElements.Count + 1) * 36)
+                if (ushort.MaxValue < (part.ResolvedElements.Count + 1) * 36)
                 {
-                    lastMesh = new BlockMesh(resolvedElement.Element.MaterialIndex);
-                    meshList.Add(lastMesh);
+                    part = new Part(resolvedElement.Element.MaterialIndex);
+                    partList.Add(part);
                 }
 
-                // リストの最後の BlockMesh へ Element を追加します。
-                lastMesh.ResolvedElements.Add(resolvedElement);
+                // リストの最後の Part へ Element を追加します。
+                part.ResolvedElements.Add(resolvedElement);
             }
         }
 
@@ -230,7 +229,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
         /// <param name="blockEffectFactory">IBlockEffectFactory。</param>
-        public BlockModelFactory(GraphicsDevice graphicsDevice, IBlockEffectFactory blockEffectFactory)
+        public BlockMeshFactory(GraphicsDevice graphicsDevice, IBlockEffectFactory blockEffectFactory)
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             if (blockEffectFactory == null) throw new ArgumentNullException("blockEffectFactory");
@@ -239,61 +238,59 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// 指定された LOD サイズの分だけ BlockModel を生成します。
+        /// 指定された LOD サイズの分だけ BlockMesh を生成します。
         /// </summary>
         /// <param name="block">Block。</param>
         /// <param name="levelSize">LOD のサイズ。</param>
-        /// <returns>生成された BlockModel の配列。</returns>
-        public BlockModel[] CreateBlockModels(Block block, int levelSize)
+        /// <returns>生成された BlockMesh の配列。</returns>
+        public BlockMesh[] CreateBlockMeshes(Block block, int levelSize)
         {
             if (levelSize < 1 || InterBlock.MaxDetailLevelSize < levelSize) throw new ArgumentOutOfRangeException("levelSize");
 
-            var models = new BlockModel[levelSize];
+            var meshes = new BlockMesh[levelSize];
 
             var interBlocks = InterBlock.CreateInterBlock(block, levelSize);
-            for (int i = 0; i < levelSize; i++) models[i] = CreateBlockModel(interBlocks[i]);
+            for (int i = 0; i < levelSize; i++) meshes[i] = CreateBlockMesh(interBlocks[i]);
 
-            return models;
+            return meshes;
         }
 
         /// <summary>
-        /// BlockModel を生成します。
+        /// BlockMesh を生成します。
         /// </summary>
         /// <param name="block">InterBlock。</param>
-        /// <returns>生成された BlockModel。</returns>
-        BlockModel CreateBlockModel(InterBlock block)
+        /// <returns>生成された BlockMesh。</returns>
+        BlockMesh CreateBlockMesh(InterBlock block)
         {
-            // BlockModel を生成します。
-            var model = new BlockModel();
+            // BlockMesh を生成します。
+            var mesh = new BlockMesh();
 
-            // BlockModelMaterial を生成して登録します。
+            // IBlockEffect を生成して登録します。
             foreach (var material in block.Materials)
             {
                 var effect = CreateBlockEffect(material);
-                model.InternalEffects.Add(effect);
+                mesh.InternalEffects.Add(effect);
             }
 
             // Element を分類します。
             var elementClassifier = ElementClassifier.Classify(block.Elements);
 
-            // BlockModelMesh を生成して登録します。
-            using (var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(block.ElementSize))
+            // BlocklMeshPart を生成して登録します。
+            var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(block.ElementSize);
+            foreach (var partList in elementClassifier.PartsMap.Values)
             {
-                foreach (var meshList in elementClassifier.MeshListMap.Values)
+                foreach (var part in partList)
                 {
-                    foreach (var mesh in meshList)
-                    {
-                        // BlockModelMesh を生成します。
-                        var modelMesh = CreateBlockModelMesh(mesh, cubeSurfaceVertexSource, block.ElementSize);
-                        // BlockModelMaterial への参照を設定します。
-                        modelMesh.Effect = model.InternalEffects[mesh.MaterialIndex];
-                        // BlockModel へ登録します。
-                        model.InternalMeshes.Add(modelMesh);
-                    }
+                    // BlocklMeshPart を生成します。
+                    var meshPart = CreateBlockMeshPart(part, cubeSurfaceVertexSource, block.ElementSize);
+                    // IBlockEffect への参照を設定します。
+                    meshPart.Effect = mesh.InternalEffects[part.MaterialIndex];
+                    // BlockMesh へ登録します。
+                    mesh.InternalMeshParts.Add(meshPart);
                 }
             }
 
-            return model;
+            return mesh;
         }
 
         /// <summary>
@@ -316,66 +313,65 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// BlockModelMesh を生成します。
+        /// BlockMeshPart を生成します。
         /// </summary>
-        /// <param name="mesh">BlockMesh。</param>
+        /// <param name="part">Part。</param>
         /// <param name="cubeSurfaceVertexSource">立方体の面の頂点データを提供する VertexSource。</param>
-        /// <returns>生成された BlockModelMesh。</returns>
-        BlockModelMesh CreateBlockModelMesh(BlockMesh mesh, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementScale)
+        /// <returns>生成された BlockMeshPart。</returns>
+        BlockMeshPart CreateBlockMeshPart(Part part, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementScale)
         {
-            // BlockModelMesh 用 VertexSource に頂点データを詰めていきます。
-            using (var meshVertexSource = new MeshVertexSource())
+            // BlockMeshPart 用 VertexSource に頂点データを詰めていきます。
+            var meshPartVertexSource = new MeshPartVertexSource();
+
+            // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
+            // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
+            Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementScale * 0.5f));
+
+            for (int i = 0; i < part.ResolvedElements.Count; i++)
             {
-                // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
-                // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
-                Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementScale * 0.5f));
+                var resolvedElement = part.ResolvedElements[i];
 
-                for (int i = 0; i < mesh.ResolvedElements.Count; i++)
+                // グリッド内位置へ移動させるための移動行列を作成します。
+                var gridPosition = resolvedElement.Element.Position.ToVector3() * elementScale;
+                Matrix gridTranslation = Matrix.CreateTranslation(gridPosition);
+
+                // 立方体の最終的な移動行列を作成します。
+                Matrix finalTranslation;
+                Matrix.Multiply(ref elementOriginTranslation, ref gridTranslation, out finalTranslation);
+
+                // 表示すべき面の頂点データを VertexSource へ設定します。
+                for (int surfaceIndex = 0; surfaceIndex < 6; surfaceIndex++)
                 {
-                    var resolvedElement = mesh.ResolvedElements[i];
-
-                    // グリッド内位置へ移動させるための移動行列を作成します。
-                    var gridPosition = resolvedElement.Element.Position.ToVector3() * elementScale;
-                    Matrix gridTranslation = Matrix.CreateTranslation(gridPosition);
-
-                    // 立方体の最終的な移動行列を作成します。
-                    Matrix finalTranslation;
-                    Matrix.Multiply(ref elementOriginTranslation, ref gridTranslation, out finalTranslation);
-
-                    // 表示すべき面の頂点データを VertexSource へ設定します。
-                    for (int surfaceIndex = 0; surfaceIndex < 6; surfaceIndex++)
+                    if (resolvedElement.SurfaceVisible[surfaceIndex])
                     {
-                        if (resolvedElement.SurfaceVisible[surfaceIndex])
-                        {
-                            AddSurfaceVertices(meshVertexSource, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTranslation);
-                        }
+                        AddSurfaceVertices(meshPartVertexSource, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTranslation);
                     }
                 }
-
-                return BlockModelMesh.Create(GraphicsDevice, meshVertexSource.Vertices.ToArray(), meshVertexSource.Indices.ToArray());
             }
+
+            return BlockMeshPart.Create(GraphicsDevice, meshPartVertexSource.Vertices.ToArray(), meshPartVertexSource.Indices.ToArray());
         }
 
         /// <summary>
-        /// 面の頂点データをメッシュの頂点データへ設定します。
+        /// 面の頂点データを BlockMeshPart の頂点データへ設定します。
         /// </summary>
-        /// <param name="meshVertexSource">メッシュの頂点データを提供する VertexSource。</param>
+        /// <param name="meshPartVertexSource">BlockMeshPart の頂点データを提供する VertexSource。</param>
         /// <param name="surfaceVertexSource">面の頂点データを提供する VertexSource。</param>
         /// <param name="transform">設定前に適用する変換行列。</param>
-        void AddSurfaceVertices(MeshVertexSource meshVertexSource, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
+        void AddSurfaceVertices(MeshPartVertexSource meshPartVertexSource, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
         {
-            var startIndex = meshVertexSource.Vertices.Count;
+            var startIndex = meshPartVertexSource.Vertices.Count;
             var vertexSource = surfaceVertexSource;
             foreach (var index in vertexSource.Indices)
             {
-                meshVertexSource.Indices.Add((ushort) (startIndex + index));
+                meshPartVertexSource.Indices.Add((ushort) (startIndex + index));
             }
             for (int i = 0; i < vertexSource.Vertices.Count; i++)
             {
                 var cubeVertex = vertexSource.Vertices[i];
                 Vector3 transformedVertexPosition;
                 Vector3.Transform(ref cubeVertex.Position, ref transform, out transformedVertexPosition);
-                meshVertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
+                meshPartVertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
             }
         }
     }

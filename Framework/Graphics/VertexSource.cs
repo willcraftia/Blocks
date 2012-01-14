@@ -13,7 +13,7 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// </summary>
     /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
     /// <typeparam name="TIndex">インデックスの型。</typeparam>
-    public sealed class VertexSource<TVertex, TIndex> : IDisposable
+    public sealed class VertexSource<TVertex, TIndex>
         where TVertex : struct
         where TIndex : struct
     {
@@ -61,35 +61,5 @@ namespace Willcraftia.Xna.Framework.Graphics
         {
             Indices.Add(index);
         }
-
-        #region IDisposable
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        
-        bool disposed;
-
-        ~VertexSource()
-        {
-            Dispose(false);
-        }
-
-        void Dispose(bool disposing)
-        {
-            if (disposed) return;
-
-            if (disposing)
-            {
-                Vertices.Clear();
-                Indices.Clear();
-            }
-
-            disposed = true;
-        }
-
-        #endregion
     }
 }

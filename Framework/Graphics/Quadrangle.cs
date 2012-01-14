@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework;
 namespace Willcraftia.Xna.Framework.Graphics
 {
     /// <summary>
-    /// 四角形の頂点データを表し、VertexSource への追加を行う構造体です。
+    /// 四角形の頂点データを表す構造体です。
     /// </summary>
-    public struct QuadrangleMaker
+    public struct Quadrangle
     {
         /// <summary>
         /// 位置 0。

@@ -10,7 +10,7 @@ using Willcraftia.Xna.Blocks.Serialization;
 namespace Willcraftia.Xna.Blocks.Graphics
 {
     /// <summary>
-    /// Block から BlockModel を生成する際に利用する、Block の中間データを表すクラスです。
+    /// Block から BlockMesh を生成する際に利用する、Block の中間データを表すクラスです。
     /// </summary>
     public sealed class InterBlock
     {

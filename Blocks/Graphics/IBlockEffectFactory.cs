@@ -7,10 +7,10 @@ using System;
 namespace Willcraftia.Xna.Blocks.Graphics
 {
     /// <summary>
-    /// IBlockModelFactory が IBlockEffect の生成を委譲するクラスのインタフェースです。
+    /// BlockMeshFactory が IBlockEffect の生成を委譲するクラスのインタフェースです。
     /// </summary>
     /// <remarks>
-    /// IBlockModelFactory が IBlockEffect を生成する際の Storategy として振る舞います。
+    /// BlockMeshFactory が IBlockEffect を生成する際の Storategy として振る舞います。
     /// </remarks>
     public interface IBlockEffectFactory
     {

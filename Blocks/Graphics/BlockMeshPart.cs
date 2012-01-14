@@ -10,9 +10,9 @@ using Willcraftia.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Blocks.Graphics
 {
     /// <summary>
-    /// BlockModel の Mesh を表すクラスです。
+    /// Material ごとに頂点データが分けられた BlockMesh のパーツを表すクラスです。
     /// </summary>
-    public sealed class BlockModelMesh : IDisposable
+    public sealed class BlockMeshPart : IDisposable
     {
         /// <summary>
         /// GraphicsDevice。
@@ -50,7 +50,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public int PrimitiveCount { get; private set; }
 
         /// <summary>
-        /// BlockModel に対する変換行列。
+        /// BlockMesh に対する変換行列。
         /// </summary>
         public Matrix Transform { get; set; }
 
@@ -62,7 +62,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <summary>
         /// インスタンスを生成します (内部処理用)。
         /// </summary>
-        internal BlockModelMesh(GraphicsDevice graphicsDevice)
+        internal BlockMeshPart(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
@@ -70,27 +70,27 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// 指定された頂点とインデックスのデータから GeometricPrimitive を生成します。
+        /// 指定された頂点とインデックスのデータから BlockMeshPart を生成します。
         /// </summary>
         /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
         /// <typeparam name="TIndex">インデックスの型。</typeparam>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
         /// <param name="vertices">頂点データの配列。</param>
         /// <param name="indices">インデックス データの配列。</param>
-        /// <returns>生成された BlockModelMesh。</returns>
-        public static BlockModelMesh Create<TVertex, TIndex>(GraphicsDevice graphicsDevice, TVertex[] vertices, TIndex[] indices)
+        /// <returns>生成された BlockMeshPart。</returns>
+        public static BlockMeshPart Create<TVertex, TIndex>(GraphicsDevice graphicsDevice, TVertex[] vertices, TIndex[] indices)
             where TVertex : struct
             where TIndex : struct
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
 
-            var instance = new BlockModelMesh(graphicsDevice);
+            var instance = new BlockMeshPart(graphicsDevice);
             instance.Initialize(vertices, indices);
             return instance;
         }
 
         /// <summary>
-        /// この BlockModelMesh が参照する IBlockEffect で描画します。
+        /// この BlockMeshPart が参照する IBlockEffect で描画します。
         /// </summary>
         public void Draw()
         {
@@ -118,7 +118,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// 指定された頂点とインデックスのデータで BlockModelMesh を初期化します。
+        /// 指定された頂点とインデックスのデータで初期化します。
         /// </summary>
         /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
         /// <typeparam name="TIndex">インデックスの型。</typeparam>
@@ -152,7 +152,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         
         bool disposed;
 
-        ~BlockModelMesh()
+        ~BlockMeshPart()
         {
             Dispose(false);
         }

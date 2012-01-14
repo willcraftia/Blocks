@@ -29,7 +29,7 @@ namespace Willcraftia.Xna.Framework.Graphics
         public VertexSource<VertexPositionNormal, ushort> CreateVertexSource()
         {
             var source = new VertexSource<VertexPositionNormal, ushort>();
-            var maker = new QuadrangleMaker();
+            var quadrangle = new Quadrangle();
             float s = Size * 0.5f;
 
             // REFERENCE: 立方体頂点計算アルゴリズムは XNA の Primitive3D サンプル コードより。
@@ -49,12 +49,12 @@ namespace Willcraftia.Xna.Framework.Graphics
                 var side1 = new Vector3(normal.Y, normal.Z, normal.X);
                 var side2 = Vector3.Cross(normal, side1);
 
-                maker.Position0 = (normal - side1 - side2) * s;
-                maker.Position1 = (normal - side1 + side2) * s;
-                maker.Position2 = (normal + side1 + side2) * s;
-                maker.Position3 = (normal + side1 - side2) * s;
-                maker.Normal = normal;
-                maker.Make(source);
+                quadrangle.Position0 = (normal - side1 - side2) * s;
+                quadrangle.Position1 = (normal - side1 + side2) * s;
+                quadrangle.Position2 = (normal + side1 + side2) * s;
+                quadrangle.Position3 = (normal + side1 - side2) * s;
+                quadrangle.Normal = normal;
+                quadrangle.Make(source);
             }
 
             return source;

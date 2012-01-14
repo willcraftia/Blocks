@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Blocks.Graphics
 {
     /// <summary>
-    /// BlockModel の Effect を制御するクラスのインタフェースです。
+    /// BlockMesh の Effect を制御するクラスのインタフェースです。
     /// </summary>
     public interface IBlockEffect : IEffectMatrices, IEffectLights, IEffectFog
     {
