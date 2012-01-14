@@ -44,5 +44,13 @@ namespace Willcraftia.Xna.Blocks.Graphics
             Effects = new ReadOnlyCollection<IBlockEffect>(InternalEffects);
             MeshParts = new ReadOnlyCollection<BlockMeshPart>(InternalMeshParts);
         }
+
+        /// <summary>
+        /// 描画します。
+        /// </summary>
+        public void Draw()
+        {
+            foreach (var meshPart in InternalMeshParts) meshPart.Draw();
+        }
     }
 }

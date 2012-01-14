@@ -50,11 +50,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public int PrimitiveCount { get; private set; }
 
         /// <summary>
-        /// BlockMesh に対する変換行列。
-        /// </summary>
-        public Matrix Transform { get; set; }
-
-        /// <summary>
         /// 参照する IBlockEffect。
         /// </summary>
         public IBlockEffect Effect { get; internal set; }
@@ -65,8 +60,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
         internal BlockMeshPart(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-
-            Transform = Matrix.Identity;
         }
 
         /// <summary>

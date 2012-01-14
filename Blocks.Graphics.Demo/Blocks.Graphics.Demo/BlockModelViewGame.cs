@@ -517,11 +517,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     Matrix.CreateFromAxisAngle(gameObjects[i].RotateAxis, gameObjects[i].Rotation);
                 world.Translation = gameObjects[i].Position;
 
-                foreach (var meshPart in lodMeshes[0].MeshParts)
-                {
-                    meshPart.Effect.World = meshPart.Transform * world;
-                    meshPart.Draw();
-                }
+                foreach (var effect in lodMeshes[0].Effects) effect.World = world;
+
+                lodMeshes[0].Draw();
             }
         }
 
@@ -543,11 +541,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                     world.Translation = gameObject.Position;
 
-                    foreach (var meshPart in lodMeshes[lod].MeshParts)
-                    {
-                        meshPart.Effect.World = meshPart.Transform * world;
-                        meshPart.Draw();
-                    }
+                    foreach (var effect in lodMeshes[lod].Effects) effect.World = world;
+
+                    lodMeshes[lod].Draw();
                 }
             }
         }
@@ -573,8 +569,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     world.Translation = gameObjects[i].Position;
 
                     var effect = meshPart.Effect;
-                    effect.World = meshPart.Transform * world;
+                    effect.World = world;
                     effect.Pass.Apply();
+
                     GraphicsDevice.DrawIndexedPrimitives(
                         PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount);
                 }
@@ -605,8 +602,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         world.Translation = gameObject.Position;
 
                         var effect = meshPart.Effect;
-                        effect.World = meshPart.Transform * world;
+                        effect.World = world;
                         effect.Pass.Apply();
+
                         GraphicsDevice.DrawIndexedPrimitives(
                             PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount);
                     }
@@ -644,6 +642,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.Indices = meshPart.IndexBuffer;
 
                 meshPart.Effect.Pass.Apply();
+
                 GraphicsDevice.DrawInstancedPrimitives(
                     PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjectCount);
             }
@@ -684,6 +683,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.Indices = meshPart.IndexBuffer;
 
                     meshPart.Effect.Pass.Apply();
+
                     GraphicsDevice.DrawInstancedPrimitives(
                         PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjectCount[lod]);
                 }
@@ -711,6 +711,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.Indices = meshPart.IndexBuffer;
 
                 meshPart.Effect.Pass.Apply();
+
                 GraphicsDevice.DrawInstancedPrimitives(
                     PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, gameObjectCount);
             }
@@ -741,6 +742,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.Indices = meshPart.IndexBuffer;
 
                     meshPart.Effect.Pass.Apply();
+
                     GraphicsDevice.DrawInstancedPrimitives(
                         PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount, lodGameObjectCount[lod]);
                 }
