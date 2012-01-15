@@ -2,10 +2,11 @@
 
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Blocks.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.Graphics
+namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
     /// BasicBlockEffect を生成する IBlockEffectFactory の実装クラスです。
@@ -30,7 +31,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         // I/F
         public IBlockEffect CreateBlockEffect()
         {
-            return new BasicBlockEffect(new BasicEffect(GraphicsDevice));
+            return new BasicBlockEffect(GraphicsDevice);
         }
     }
 }

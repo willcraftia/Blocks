@@ -2,10 +2,11 @@
 
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Blocks.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.Graphics
+namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
     /// InstancingBlockEffect を生成する IBlockEffectFactory の実装クラスです。

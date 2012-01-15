@@ -11,7 +11,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// <summary>
     /// BlockMesh の Effect を制御するクラスのインタフェースです。
     /// </summary>
-    public interface IBlockEffect : IEffectMatrices, IEffectLights, IEffectFog
+    public interface IBlockEffect : IEffectMatrices, IEffectLights, IEffectFog, IDisposable
     {
         /// <summary>
         /// Diffuse 色を取得または設定します。

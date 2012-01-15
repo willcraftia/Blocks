@@ -1,10 +1,11 @@
 ﻿#region Using
 
 using System;
+using Willcraftia.Xna.Blocks.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.Graphics
+namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
     /// BlockMeshFactory が IBlockEffect の生成を委譲するクラスのインタフェースです。

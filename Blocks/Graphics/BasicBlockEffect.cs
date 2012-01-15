@@ -143,11 +143,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="backingEffect">BasicEffect。</param>
-        public BasicBlockEffect(BasicEffect backingEffect)
+        /// <param name="graphicsDevice">GraphicsDevice。</param>
+        public BasicBlockEffect(GraphicsDevice graphicsDevice)
         {
-            if (backingEffect == null) throw new ArgumentNullException("backingEffect");
-            this.backingEffect = backingEffect;
+            if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
+            backingEffect = new BasicEffect(graphicsDevice);
         }
 
         // I/F
@@ -155,5 +155,31 @@ namespace Willcraftia.Xna.Blocks.Graphics
         {
             backingEffect.EnableDefaultLighting();
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        bool disposed;
+
+        ~BasicBlockEffect()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing) backingEffect.Dispose();
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

@@ -7,12 +7,12 @@ using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.Graphics
+namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
     /// Block から BlockMesh を生成する際に利用する、Block の中間データを表すクラスです。
     /// </summary>
-    public sealed class InterBlock
+    internal sealed class InterBlock
     {
         /// <summary>
         /// 最大 LOD のグリッド サイズ。

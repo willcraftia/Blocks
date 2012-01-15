@@ -11,7 +11,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
     /// <summary>
     /// Block の Mesh を表すクラスです。
     /// </summary>
-    public sealed class BlockMesh
+    public sealed class BlockMesh : IDisposable
     {
         /// <summary>
         /// IBlockEffect のリスト。
@@ -78,5 +78,55 @@ namespace Willcraftia.Xna.Blocks.Graphics
         {
             lodMeshParts[lod] = new ReadOnlyCollection<BlockMeshPart>(meshParts);
         }
+
+        /// <summary>
+        /// 指定の LOD の BlockMeshPart リストに上位と同じ物を設定します。
+        /// </summary>
+        /// <param name="lod">LOD。</param>
+        internal void InheritLODMeshParts(int lod)
+        {
+            if (lod == 0) throw new ArgumentOutOfRangeException("lod");
+
+            lodMeshParts[lod] = lodMeshParts[lod - 1];
+        }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        bool disposed;
+
+        ~BlockMesh()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing)
+            {
+                if (effects != null)
+                {
+                    foreach (var effect in effects) effect.Dispose();
+                }
+                if (lodMeshParts != null)
+                {
+                    foreach (var meshParts in lodMeshParts)
+                    {
+                        foreach (var meshPart in meshParts) meshPart.Dispose();
+                    }
+                }
+            }
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

@@ -13,6 +13,7 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Serialization;
+using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
@@ -135,14 +136,14 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         Effect instancingEffect;
 
         /// <summary>
-        /// 通常の Mesh を生成する BlockMeshFactory。
+        /// 通常の Mesh を管理する BlockMeshManager。
         /// </summary>
-        BlockMeshFactory blockMeshFactory;
+        BlockMeshManager meshManager;
 
         /// <summary>
-        /// インスタンシング用の Mesh を生成する BlockMeshFactory。
+        /// インスタンシング用の Mesh を管理する BlockMeshManager。
         /// </summary>
-        BlockMeshFactory instancingBlockMeshFactory;
+        BlockMeshManager instancedMeshManager;
 
         /// <summary>
         /// LOD サイズ。
@@ -295,22 +296,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             font = Content.Load<SpriteFont>("Fonts/Default");
             fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
 
-            blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
-
-            instancingEffect = Content.Load<Effect>("Effects/Instancing");
-            instancingBlockMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect));
-
-            // 実際のアプリケーションではファイルからロードします。
-            var block = JsonHelper.FromJson<Block>(blockJson);
-
-            mesh = blockMeshFactory.CreateBlockMesh(block, lodSize);
-            foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
-
-            instancedMesh = instancingBlockMeshFactory.CreateBlockMesh(block, lodSize);
-            foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
-
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
-
             cameraPosition = new Vector3(0, 0, 30);
             view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(30), aspectRatio, 1, 1000);
@@ -326,6 +312,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             Sandbox.Max.X = sandBoxSize * 0.5f * aspectRatio;
             Sandbox.Max.Y = sandBoxSize * 0.5f;
 
+            // BlockMesh をロードします。
+            LoadBlockMesh();
+
             // ゲームオブジェクトの初期化
             InitializeGameObjects();
         }
@@ -336,7 +325,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             Services.GetRequiredService<ITimeRulerService>().ReleaseMarker(drawMarker);
             if (spriteBatch != null) spriteBatch.Dispose();
             if (fillTexture != null) fillTexture.Dispose();
-            if (instancingEffect != null) instancingEffect.Dispose();
+
+            UnloadBlockMesh();
         }
 
         protected override void Update(GameTime gameTime)
@@ -536,6 +526,39 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             }
 
             return block;
+        }
+
+        /// <summary>
+        /// BlockMesh をロードします。
+        /// </summary>
+        void LoadBlockMesh()
+        {
+            var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), lodSize);
+            meshManager = new BlockMeshManager(meshFactory);
+
+            instancingEffect = Content.Load<Effect>("Effects/Instancing");
+            var instancedMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect), lodSize);
+            instancedMeshManager = new BlockMeshManager(instancedMeshFactory);
+
+            // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。
+
+            // 通常の BlockMesh をロードします。
+            mesh = meshManager.Load(new StringBlockResource(blockJson));
+            foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
+
+            // インスタンシング用の BlockMesh をロードします。
+            instancedMesh = instancedMeshManager.Load(new StringBlockResource(blockJson));
+            foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
+        }
+
+        /// <summary>
+        /// BlockMesh をアンロードします。
+        /// </summary>
+        void UnloadBlockMesh()
+        {
+            if (instancingEffect != null) instancingEffect.Dispose();
+            if (meshManager != null) meshManager.Unload();
+            if (instancedMeshManager != null) instancedMeshManager.Unload();
         }
 
         /// <summary>

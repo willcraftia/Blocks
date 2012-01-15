@@ -7,11 +7,12 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Graphics;
+using Willcraftia.Xna.Blocks.Graphics;
 using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.Graphics
+namespace Willcraftia.Xna.Blocks.Content
 {
     using MeshPartVertexSource = VertexSource<VertexPositionNormal, ushort>;
     using SurfaceVertexSource = VertexSource<VertexPositionNormal, ushort>;
@@ -235,17 +236,22 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         public IBlockEffectFactory BlockEffectFactory { get; private set; }
 
+        public int LODSize { get; private set; }
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="graphicsDevice">GraphicsDevice。</param>
         /// <param name="blockEffectFactory">IBlockEffectFactory。</param>
-        public BlockMeshFactory(GraphicsDevice graphicsDevice, IBlockEffectFactory blockEffectFactory)
+        /// <param name="lodSize">LOD のサイズ。</param>
+        public BlockMeshFactory(GraphicsDevice graphicsDevice, IBlockEffectFactory blockEffectFactory, int lodSize)
         {
             if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
             if (blockEffectFactory == null) throw new ArgumentNullException("blockEffectFactory");
+            if (lodSize < 1 || InterBlock.MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
             GraphicsDevice = graphicsDevice;
             BlockEffectFactory = blockEffectFactory;
+            LODSize = lodSize;
         }
 
         /// <summary>
@@ -254,12 +260,10 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <param name="block">Block。</param>
         /// <param name="lodSize">LOD のサイズ。</param>
         /// <returns>生成された BlockMesh の配列。</returns>
-        public BlockMesh CreateBlockMesh(Block block, int lodSize)
+        public BlockMesh CreateBlockMesh(Block block)
         {
-            if (lodSize < 1 || InterBlock.MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
-
             // 中間データを作成します。
-            var interBlocks = InterBlock.CreateInterBlock(block, lodSize);
+            var interBlocks = InterBlock.CreateInterBlock(block, LODSize);
 
             // 中間データから BlockMesh を作成します。
             return CreateBlockMesh(interBlocks);
@@ -289,6 +293,15 @@ namespace Willcraftia.Xna.Blocks.Graphics
             {
                 // Element を分類します。
                 var elementClassifier = ElementClassifier.Classify(lodBlocks[lod].Elements);
+
+                // Parts が空となる LOD の場合は、上位 LOD で十分に頂点数が少ないとみなし、
+                // 上位の BlockMesh を設定します。
+                // なお、最大 LOD の BlockMesh が空ではないことを仮定します。
+                if (elementClassifier.Parts.Count == 0)
+                {
+                    mesh.InheritLODMeshParts(lod);
+                    continue;
+                }
 
                 // BlocklMeshPart を生成して登録します。
                 var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(lodBlocks[lod].ElementSize);

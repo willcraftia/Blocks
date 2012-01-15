@@ -315,5 +315,31 @@ namespace Willcraftia.Xna.Blocks.Graphics
             // 同様の方法で EyePosition を View から設定しているのではないか、と・・・。
             eyePosition = backingEffect.Parameters["EyePosition"];
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        bool disposed;
+
+        ~InstancingBlockEffect()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing) backingEffect.Dispose();
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

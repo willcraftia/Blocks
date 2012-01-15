@@ -93,19 +93,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\BlockMeshManager.cs" />
+    <Compile Include="Content\DirectBlockResource.cs" />
+    <Compile Include="Content\IBlockResource.cs" />
+    <Compile Include="Content\StringBlockResource.cs" />
     <Compile Include="Graphics\BasicBlockEffect.cs" />
-    <Compile Include="Graphics\BasicBlockEffectFactory.cs" />
+    <Compile Include="Content\BasicBlockEffectFactory.cs" />
     <Compile Include="Graphics\IBlockEffect.cs" />
     <Compile Include="Graphics\BlockMesh.cs" />
-    <Compile Include="Graphics\BlockMeshFactory.cs" />
+    <Compile Include="Content\BlockMeshFactory.cs" />
     <Compile Include="Graphics\BlockMeshPart.cs" />
     <Compile Include="Graphics\CubeSurfaces.cs" />
     <Compile Include="Graphics\CubeSurfaceVertexSource.cs" />
-    <Compile Include="Graphics\IBlockEffectFactory.cs" />
+    <Compile Include="Content\IBlockEffectFactory.cs" />
     <Compile Include="Graphics\InstancingBlockEffect.cs" />
-    <Compile Include="Graphics\InstancingBlockEffectFactory.cs" />
-    <Compile Include="Graphics\InterBlock.cs" />
-    <Compile Include="Graphics\InterElementCollection.cs" />
+    <Compile Include="Content\InstancingBlockEffectFactory.cs" />
+    <Compile Include="Content\InterBlock.cs" />
+    <Compile Include="Content\InterElementCollection.cs" />
     <Compile Include="Serialization\Block.cs" />
     <Compile Include="Serialization\Element.cs" />
     <Compile Include="Serialization\MaterialColor.cs" />
