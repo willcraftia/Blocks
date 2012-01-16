@@ -202,6 +202,9 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 // 親も再計測が必要ならば、親の再計測の中で再計測するものとし、スキップします。
                 if (control.Parent != null && !control.Parent.Measured) continue;
+                // 親の再計測により計測済みになったものもスキップします。
+                if (control.Measured) continue;
+
 
                 // 再計測します。
                 control.Remeasure();
@@ -213,6 +216,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 // 親も再配置が必要ならば、親の再配置の中で再配置するものとし、スキップします。
                 if (control.Parent != null && !control.Parent.Arranged) continue;
+                // 親の再配置により配置済みになったものもスキップします。
+                if (control.Arranged) continue;
 
                 // 再配置します。
                 // 配置で親が指定する矩形領域は、計測結果を元に算出されます。
