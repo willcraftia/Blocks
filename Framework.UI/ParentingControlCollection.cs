@@ -87,8 +87,8 @@ namespace Willcraftia.Xna.Framework.UI
             // 親を設定します。
             item.Parent = parent;
 
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
+            // 再測定を促します。
+            parent.Measured = false;
         }
 
         protected override void RemoveItem(int index)
@@ -98,8 +98,8 @@ namespace Willcraftia.Xna.Framework.UI
 
             base.RemoveItem(index);
 
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
+            // 再測定を促します。
+            parent.Measured = false;
         }
 
         protected override void SetItem(int index, Control item)
@@ -115,8 +115,8 @@ namespace Willcraftia.Xna.Framework.UI
             // 親を設定します。
             item.Parent = parent;
 
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
+            // 再測定を促します。
+            parent.Measured = false;
         }
 
         protected override void ClearItems()
@@ -125,8 +125,8 @@ namespace Willcraftia.Xna.Framework.UI
 
             base.ClearItems();
 
-            // コレクションの変化を通知します。
-            parent.ProcessChildrenCollectionChanged();
+            // 再測定を促します。
+            parent.Measured = false;
         }
 
         /// <summary>

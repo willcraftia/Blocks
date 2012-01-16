@@ -90,7 +90,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 child.Measure(size);
                 var childMeasuredSize = child.MeasuredSize;
                 var childMargin = child.Margin;
-                measuredWidth += childMeasuredSize.Width + margin.Left + margin.Right;
+                measuredWidth += childMeasuredSize.Width + childMargin.Left + childMargin.Right;
             }
 
             return new Size(measuredWidth, size.Height);

@@ -101,11 +101,6 @@ namespace Willcraftia.Xna.Framework.UI
         Rect arrangedBounds = Rect.Empty;
 
         /// <summary>
-        /// 自身あるいは子のうちのアクティブな Control。
-        /// </summary>
-        Control activatedControl;
-
-        /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
         /// </summary>
         Control mouseOverControl;
@@ -126,9 +121,19 @@ namespace Willcraftia.Xna.Framework.UI
         bool measured;
 
         /// <summary>
+        /// Measure メソッドで受け取った availableSize の値。
+        /// </summary>
+        Size lastAvailableSize;
+
+        /// <summary>
         /// true (配置済みである場合)、false (それ以外の場合)。
         /// </summary>
         bool arranged;
+
+        /// <summary>
+        /// Arrange メソッドで受け取った finalBounds の値。
+        /// </summary>
+        Rect lastFinalBounds;
 
         /// <summary>
         /// true (アクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
@@ -315,7 +320,7 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 測定済みかどうかを示す値を取得します。
+        /// 測定済みかどうかを示す値を取得または設定します。
         /// </summary>
         /// <value>
         /// true (測定済みである場合)、false (それ以外の場合)。
@@ -323,15 +328,18 @@ namespace Willcraftia.Xna.Framework.UI
         public bool Measured
         {
             get { return measured; }
-            protected set
+            set
             {
                 if (measured == value) return;
                 measured = value;
+
+                // Screen の測定実行リストに追加します。
+                if (!measured && Screen != null) Screen.AddMeasuredControl(this);
             }
         }
 
         /// <summary>
-        /// 配置済みであるかどうかを示す値を取得します。
+        /// 配置済みであるかどうかを示す値を取得または設定します。
         /// </summary>
         /// <value>
         /// true (配置済みである場合)、false (それ以外の場合)。
@@ -339,10 +347,13 @@ namespace Willcraftia.Xna.Framework.UI
         public bool Arranged
         {
             get { return arranged; }
-            protected set
+            set
             {
                 if (arranged == value) return;
                 arranged = value;
+
+                // Screen の配置実行リストに追加します。
+                if (!arranged && Screen != null) Screen.AddArrangedControl(this);
             }
         }
 
@@ -427,10 +438,10 @@ namespace Willcraftia.Xna.Framework.UI
 
                 parent = value;
 
-                Measured = false;
-
                 // 親と同じ Screen に属します。
                 if (parent != null) Screen = parent.Screen;
+
+                Measured = false;
             }
         }
 
@@ -517,6 +528,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 自身あるいは子のうちのアクティブな Control を取得または設定します。
+        /// </summary>
+        protected Control ActivatedControl { get; set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Control() : this(false) { }
@@ -550,6 +566,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="availableSize">親 Control が指定する利用可能なサイズ。</param>
         public void Measure(Size availableSize)
         {
+            lastAvailableSize = availableSize;
+
             measuredSize = MeasureOverride(availableSize);
 
             // 測定済みにします。
@@ -564,6 +582,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="finalBounds">親 Control が指定する配置に使用可能な領域。</param>
         public void Arrange(Rect finalBounds)
         {
+            lastFinalBounds = finalBounds;
+
             var size = ArrangeOverride(finalBounds.Size);
 
             // 配置結果の領域を設定します。
@@ -597,28 +617,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// Control を更新します。
         /// </summary>
         /// <param name="gameTime"></param>
-        public virtual void Update(GameTime gameTime)
-        {
-            if (!Enabled) throw new InvalidOperationException("This control is disabled.");
-
-            // 未測定の子があるならば測定します。
-            foreach (var child in Children)
-            {
-                if (!child.Measured) Measure(MeasuredSize);
-            }
-
-            // 未配置の子があるならば配置します。
-            foreach (var child in Children)
-            {
-                if (!child.Arranged) Arrange(ArrangedBounds);
-            }
-
-            // 再帰的に子 Control を更新します。
-            foreach (var child in Children)
-            {
-                if (child.Enabled) child.Update(gameTime);
-            }
-        }
+        public virtual void Update(GameTime gameTime) { }
 
         /// <summary>
         /// Control を描画します。
@@ -629,6 +628,22 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         /// <param name="drawContext"></param>
         public virtual void Draw(GameTime gameTime, IDrawContext drawContext) { }
+
+        /// <summary>
+        /// 再計測します。
+        /// </summary>
+        internal void Remeasure()
+        {
+            Measure(lastAvailableSize);
+        }
+
+        /// <summary>
+        /// 再配置します。
+        /// </summary>
+        internal void Rearrange()
+        {
+            Arrange(lastFinalBounds);
+        }
 
         /// <summary>
         /// マウス カーソル移動を処理します。
@@ -646,12 +661,12 @@ namespace Willcraftia.Xna.Framework.UI
             float localX = x - arrangedBounds.X;
             float localY = y - arrangedBounds.Y;
 
-            if (activatedControl != null)
+            if (ActivatedControl != null)
             {
-                if (activatedControl != this)
+                if (ActivatedControl != this)
                 {
                     // アクティブな子 Control へ通知します。
-                    activatedControl.ProcessMouseMoved(localX, localY);
+                    ActivatedControl.ProcessMouseMoved(localX, localY);
                 }
                 else
                 {
@@ -673,7 +688,7 @@ namespace Willcraftia.Xna.Framework.UI
                 SwitchMouseOverControl(child);
 
                 // アクティブな子 Control は先の処理で通知を受けているので、その他ならば通知します。
-                if (mouseOverControl != activatedControl)
+                if (mouseOverControl != ActivatedControl)
                 {
                     child.ProcessMouseMoved(localX, localY);
                 }
@@ -686,7 +701,7 @@ namespace Willcraftia.Xna.Framework.UI
                 // 自分の領域内ならば、自分をマウス オーバ状態にします。
                 SwitchMouseOverControl(this);
                 // 自身がアクティブの場合は先の処理で通知を受けているので、非アクティブならば通知します。
-                if (activatedControl == null) OnMouseMoved(localX, localY);
+                if (ActivatedControl == null) OnMouseMoved(localX, localY);
             }
             else
             {
@@ -731,19 +746,19 @@ namespace Willcraftia.Xna.Framework.UI
             // 不可視の場合は処理しません。
             if (!Visible) return false;
 
-            if (activatedControl == null)
+            if (ActivatedControl == null)
             {
                 // マウス オーバ状態の Control をアクティブにします。
-                activatedControl = mouseOverControl;
+                ActivatedControl = mouseOverControl;
                 // アクティブな Control がなければ処理を終えます。
-                if (activatedControl == null) return false;
+                if (ActivatedControl == null) return false;
 
                 // 子がアクティブならば、子リストの中で最前面への移動を試みます。
-                if (activatedControl != this && activatedControl.affectsOrdering) Children.MoveToTopMost(activatedControl);
+                //if (ActivatedControl != this && ActivatedControl.affectsOrdering) Children.MoveToTopMost(ActivatedControl);
             }
 
             // 子がアクティブならばマウス ボタンが押されたことを通知します。
-            if (activatedControl != this) return activatedControl.ProcessMouseButtonPressed(button);
+            if (ActivatedControl != this) return ActivatedControl.ProcessMouseButtonPressed(button);
 
             // フォーカスを得ます。
             Focus();
@@ -763,12 +778,12 @@ namespace Willcraftia.Xna.Framework.UI
             //if (!Visible) return;
 
             // アクティブな Control がなければ処理しません。
-            if (activatedControl == null) return;
+            if (ActivatedControl == null) return;
 
             // 子がアクティブならばマウス ボタン押下の解放を通知します。
-            if (activatedControl != this)
+            if (ActivatedControl != this)
             {
-                activatedControl.ProcessMouseButtonReleased(button);
+                ActivatedControl.ProcessMouseButtonReleased(button);
             }
             else
             {
@@ -776,7 +791,7 @@ namespace Willcraftia.Xna.Framework.UI
                 OnMouseButtonReleased(button);
             }
 
-            activatedControl = null;
+            ActivatedControl = null;
         }
 
         /// <summary>
@@ -807,18 +822,6 @@ namespace Willcraftia.Xna.Framework.UI
         internal void ProcessCharacterEntered(char character)
         {
             OnCharacterEntered(character);
-        }
-
-        /// <summary>
-        /// Children が変更された場合に呼び出されます。
-        /// </summary>
-        internal void ProcessChildrenCollectionChanged()
-        {
-            // マウス オーバ状態の再判定を促すために、Screen にマウス カーソル位置を再通知させます。
-            if (Screen != null) Screen.NotifyLastMousePosition();
-            // 再測定と再配置を行います。
-            Measured = false;
-            Arranged = false;
         }
 
         /// <summary>

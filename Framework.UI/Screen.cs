@@ -29,6 +29,16 @@ namespace Willcraftia.Xna.Framework.UI
         Point lastMousePosition;
 
         /// <summary>
+        /// 測定する必要のある Control のリスト。
+        /// </summary>
+        List<Control> measuredControls = new List<Control>();
+
+        /// <summary>
+        /// 配置する必要のある Control のリスト。
+        /// </summary>
+        List<Control> arrangedControls = new List<Control>();
+
+        /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -73,6 +83,17 @@ namespace Willcraftia.Xna.Framework.UI
         /// Animation コレクションを取得します。
         /// </summary>
         public AnimationCollection Animations { get; private set; }
+
+        /// <summary>
+        /// UpdateLayput メソッドの呼び出しが必要かどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (UpdateLayput メソッドの呼び出しが必要な場合)、false (それ以外の場合)。
+        /// </value>
+        public bool UpdateLayoutNeeded
+        {
+            get { return measuredControls.Count != 0 || arrangedControls.Count != 0; }
+        }
 
         // TODO
         // protected にする？
@@ -161,7 +182,53 @@ namespace Willcraftia.Xna.Framework.UI
 
             LoadContent();
 
+            // Desktop を測定します。
+            // 自分のサイズで測定を開始します。
+            Desktop.Measure(new Size(Desktop.Width, Desktop.Height));
+            // Desktop を配置します。
+            // 自分のマージンとサイズで配置を開始します。
+            var margin = Desktop.Margin;
+            Desktop.Arrange(new Rect(margin.Left, margin.Top, Desktop.Width, Desktop.Height));
+
             Initialized = true;
+        }
+
+        /// <summary>
+        /// レイアウトを更新します。
+        /// </summary>
+        public void UpdateLayout()
+        {
+            foreach (var control in measuredControls)
+            {
+                // 親も再計測が必要ならば、親の再計測の中で再計測するものとし、スキップします。
+                if (control.Parent != null && !control.Parent.Measured) continue;
+
+                // 再計測します。
+                control.Remeasure();
+            }
+            // リストをリセットします。
+            measuredControls.Clear();
+
+            foreach (var control in arrangedControls)
+            {
+                // 親も再配置が必要ならば、親の再配置の中で再配置するものとし、スキップします。
+                if (control.Parent != null && !control.Parent.Arranged) continue;
+
+                // 再配置します。
+                // 配置で親が指定する矩形領域は、計測結果を元に算出されます。
+                // したがって、親に対して再配置を要求します (親は配置済み)。
+                if (control.Parent == null)
+                {
+                    // ルートは例外です。
+                    control.Rearrange();
+                }
+                else
+                {
+                    control.Parent.Rearrange();
+                }
+            }
+            // リストをリセットします。
+            arrangedControls.Clear();
         }
 
         /// <summary>
@@ -188,6 +255,28 @@ namespace Willcraftia.Xna.Framework.UI
         /// このメソッドは、Dispose メソッドの呼び出しか、ガベージコレクションによるインスタンス破棄の際に呼び出されます。
         /// </remarks>
         protected virtual void UnloadContent() { }
+
+        /// <summary>
+        /// 計測実行リストへ Control を追加します。
+        /// </summary>
+        /// <param name="control">Control。</param>
+        internal void AddMeasuredControl(Control control)
+        {
+            if (control.Measured) throw new InvalidOperationException("Control is measured.");
+
+            if (!measuredControls.Contains(control)) measuredControls.Add(control);
+        }
+
+        /// <summary>
+        /// 配置実行リストへ Control を追加します。
+        /// </summary>
+        /// <param name="control">Control。</param>
+        internal void AddArrangedControl(Control control)
+        {
+            if (control.Arranged) throw new InvalidOperationException("Control is arranged.");
+
+            if (!arrangedControls.Contains(control)) arrangedControls.Add(control);
+        }
 
         /// <summary>
         /// 指定の Control がフォーカスを持つかどうかを判定します。

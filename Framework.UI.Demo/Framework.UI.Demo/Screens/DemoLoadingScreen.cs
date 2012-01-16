@@ -89,7 +89,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     {
                         // NextScreen を表示させます。
                         var uiService = Game.Services.GetRequiredService<IUIService>();
-                        uiService.Screen = NextScreen;
+                        uiService.PrepareNextScreen(NextScreen);
                     };
                     Animations.Add(animation);
                 }

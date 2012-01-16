@@ -70,7 +70,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         public override void Draw(Control control, IDrawContext drawContext)
         {
-            var window = control as Controls.Window;
+            var window = control as Window;
             if (window == null) return;
 
             var color = window.BackgroundColor * drawContext.Opacity;

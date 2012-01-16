@@ -99,7 +99,7 @@
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Controls\Label.cs" />
-    <Compile Include="Controls\SizeToContent.cs" />
+    <Compile Include="SizeToContent.cs" />
     <Compile Include="DefaultScreenFactory.cs" />
     <Compile Include="Desktop.cs" />
     <Compile Include="IDrawContext.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="Lafs\Sprite\SpriteControlLafSource.cs" />
     <Compile Include="Lafs\Sprite\WindowLaf.cs" />
     <Compile Include="Lafs\TextHelper.cs" />
-    <Compile Include="Controls\Window.cs" />
+    <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework.Input\Framework.Input.csproj">

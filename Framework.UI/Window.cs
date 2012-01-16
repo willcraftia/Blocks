@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Controls
+namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
     /// Window を表す Control です。
@@ -21,6 +21,16 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// Window が閉じた後に発生します。
         /// </summary>
         public event EventHandler Closed;
+
+        /// <summary>
+        /// Window がアクティブ化された時に発生します。
+        /// </summary>
+        public event EventHandler Activated;
+
+        /// <summary>
+        /// Window が非アクティブ化された時に発生します。
+        /// </summary>
+        public event EventHandler Deactivated;
 
         /// <summary>
         /// この Window を所有する Window。
@@ -42,17 +52,11 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             {
                 if (owner == value) return;
 
-                if (owner != null)
-                {
-                    owner.Closing -= new EventHandler(OnOwnerClosing);
-                }
+                if (owner != null) owner.Closing -= new EventHandler(OnOwnerClosing);
 
                 owner = value;
 
-                if (owner != null)
-                {
-                    owner.Closing += new EventHandler(OnOwnerClosing);
-                }
+                if (owner != null) owner.Closing += new EventHandler(OnOwnerClosing);
             }
         }
 
@@ -68,10 +72,12 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// Window を表示します。
         /// </summary>
-        public void Show(Screen screen)
+        public virtual void Show(Screen screen)
         {
             // Desktop へ登録します。
             screen.Desktop.Children.Add(this);
+            // アクティブにします。
+            Activate();
         }
 
         /// <summary>
@@ -79,6 +85,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// </summary>
         public void Close()
         {
+            // 非アクティブ化します。
+            Deactivate();
             // Closing イベントを発生させます。
             RaiseClosing();
             // Desktop から登録を解除します。
@@ -86,6 +94,44 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             // Closed イベントを発生させます。
             RaiseClosed();
         }
+
+        /// <summary>
+        /// Window をアクティブ化します。
+        /// </summary>
+        public void Activate()
+        {
+            if (Screen == null) throw new InvalidOperationException("Window dose not belongs to any screens.");
+
+            Screen.Desktop.ActivateWindow(this);
+            RaiseActivated();
+
+            // フォーカスを得ます。
+            Focus();
+        }
+
+        /// <summary>
+        /// Window を非アクティブ化します。
+        /// </summary>
+        public void Deactivate()
+        {
+            if (Screen == null) throw new InvalidOperationException("Window dose not belongs to any screens.");
+
+            // フォーカスを破棄します。
+            Defocus();
+
+            Screen.Desktop.DeactivateWindow(this);
+            RaiseDeactivated();
+        }
+
+        /// <summary>
+        /// Window がアクティブ化された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnActivated() { }
+
+        /// <summary>
+        /// Window が非アクティブ化された時に呼び出されます。
+        /// </summary>
+        protected virtual void OnDeactivated() { }
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -218,6 +264,24 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         void OnOwnerClosing(object sender, EventArgs e)
         {
             Close();
+        }
+
+        /// <summary>
+        /// Activated イベントを発生させます。
+        /// </summary>
+        void RaiseActivated()
+        {
+            OnActivated();
+            if (Activated != null) Activated(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Deactivated イベントを発生させます。
+        /// </summary>
+        void RaiseDeactivated()
+        {
+            OnDeactivated();
+            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 
         /// <summary>

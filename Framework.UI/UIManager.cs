@@ -174,7 +174,17 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 表示対象の Screen。
         /// </summary>
-        Screen screen;
+        Screen currentScreen;
+
+        /// <summary>
+        /// 次に表示する Screen。
+        /// </summary>
+        Screen nextScreen;
+
+        /// <summary>
+        /// nextScreen の更新で lock するオブジェクト。
+        /// </summary>
+        object nextScreenLock = new object();
 
         /// <summary>
         /// 描画に用いる IControlLafSource。
@@ -190,37 +200,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// 描画に用いる SpriteBatch。
         /// </summary>
         SpriteBatch spriteBatch;
-
-        // I/F
-        public Screen Screen
-        {
-            get { return screen; }
-            set
-            {
-                if (screen == value) return;
-
-                if (screen != null)
-                {
-                    // InputReceiver から Screen をアンバインドします。
-                    inputCapturer.InputReceiver = null;
-
-                    // 破棄します。
-                    // MEMO: 恐らく他のタイミングでは明示的に Dispose を呼ぶのが難しい。
-                    screen.Dispose();
-                }
-
-                screen = value;
-
-                if (screen != null)
-                {
-                    // InputReceiver に Screen をバインドします。
-                    if (inputCapturer != null) inputCapturer.InputReceiver = screen;
-
-                    // 必要ならば初期化します。
-                    if (!screen.Initialized) screen.Initialize();
-                }
-            }
-        }
 
         /// <summary>
         /// IInputCapturer を取得または設定します。
@@ -238,7 +217,7 @@ namespace Willcraftia.Xna.Framework.UI
                 inputCapturer = value;
 
                 // InputCapturer に Screen をバインドします。
-                if (inputCapturer != null && Screen != null) inputCapturer.InputReceiver = Screen;
+                if (inputCapturer != null && currentScreen != null) inputCapturer.InputReceiver = currentScreen;
             }
         }
 
@@ -301,7 +280,18 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void Show(string screenName)
         {
-            Screen = ScreenFactory.CreateScreen(screenName);
+            SetCurrentScreen(ScreenFactory.CreateScreen(screenName));
+        }
+
+        // I/F
+        public void PrepareNextScreen(Screen nextScreen)
+        {
+            if (nextScreen == null) throw new ArgumentNullException("nextScreen");
+
+            lock (nextScreenLock)
+            {
+                this.nextScreen = nextScreen;
+            }
         }
 
         public override void Initialize()
@@ -314,41 +304,39 @@ namespace Willcraftia.Xna.Framework.UI
 
         public override void Update(GameTime gameTime)
         {
-            if (Screen == null) return;
+            if (currentScreen == null) return;
 
             // Animation を更新します。
-            foreach (var animation in Screen.Animations)
+            foreach (var animation in currentScreen.Animations)
             {
                 if (animation.Enabled) animation.Update(gameTime);
             }
 
-            // Screen は自分のサイズで測定を開始します。
-            if (!Screen.Desktop.Measured)
-            {
-                Screen.Desktop.Measure(new Size(Screen.Desktop.Width, Screen.Desktop.Height));
-            }
-            // Screen は自分のマージンとサイズで配置を開始します。
-            if (!Screen.Desktop.Arranged)
-            {
-                var margin = Screen.Desktop.Margin;
-                Screen.Desktop.Arrange(new Rect(margin.Left, margin.Top, Screen.Desktop.Width, Screen.Desktop.Height));
-            }
+            // Screen のレイアウトを更新します。
+            if (currentScreen.UpdateLayoutNeeded) currentScreen.UpdateLayout();
 
             // Control を更新します。
-            Screen.Desktop.Update(gameTime);
+            currentScreen.Desktop.Update(gameTime);
+
+            // 次の Screen が設定されているならば切り替えます。
+            if (nextScreen != null)
+            {
+                SetCurrentScreen(nextScreen);
+                nextScreen = null;
+            }
 
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            if (Screen == null) return;
+            if (currentScreen == null) return;
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
 
             using (var drawContext = new DrawContext(this))
             {
-                var desktop = Screen.Desktop;
+                var desktop = currentScreen.Desktop;
                 drawContext.Bounds = desktop.ArrangedBounds.ToXnaRectangle();
                 drawContext.Opacity = desktop.Opacity;
                 DrawControl(gameTime, desktop, drawContext);
@@ -375,6 +363,34 @@ namespace Willcraftia.Xna.Framework.UI
             if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
 
             base.UnloadContent();
+        }
+
+        /// <summary>
+        /// Screen を表示対象へ設定します。
+        /// </summary>
+        /// <param name="screen">表示する Screen。</param>
+        void SetCurrentScreen(Screen screen)
+        {
+            if (currentScreen != null)
+            {
+                // InputReceiver から Screen をアンバインドします。
+                inputCapturer.InputReceiver = null;
+
+                // 破棄します。
+                // MEMO: 恐らく他のタイミングでは明示的に Dispose を呼ぶのが難しい。
+                currentScreen.Dispose();
+            }
+
+            currentScreen = screen;
+
+            if (currentScreen != null)
+            {
+                // InputReceiver に Screen をバインドします。
+                if (inputCapturer != null) inputCapturer.InputReceiver = currentScreen;
+
+                // 必要ならば初期化します。
+                if (!currentScreen.Initialized) currentScreen.Initialize();
+            }
         }
 
         /// <summary>

@@ -186,11 +186,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         var subWindow = new Window()
                         {
                             Width = u * 7,
-                            SizeToContent = Controls.SizeToContent.Height,
+                            SizeToContent = SizeToContent.Height,
                             Margin = new Thickness(u * 4, u * 6, 0, 0),
                             BackgroundColor = Color.Green
                         };
                         overlay.Children.Add(subWindow);
+                        subWindow.Owner = overlay;
 
                         var subStackPanel = new StackPanel()
                         {
@@ -221,11 +222,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                                 var subSubWindow = new Window()
                                 {
-                                    SizeToContent = Controls.SizeToContent.WidthAndHeight,
+                                    SizeToContent = SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
                                     BackgroundColor = Color.Brown
                                 };
                                 subOverlay.Children.Add(subSubWindow);
+                                subSubWindow.Owner = subOverlay;
 
                                 {
                                     var subSubButton = new Button()

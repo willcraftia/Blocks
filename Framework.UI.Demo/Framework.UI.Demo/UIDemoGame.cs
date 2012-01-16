@@ -80,8 +80,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             spriteControlLafSource = new SpriteControlLafSource(this);
             spriteControlLafSource.Content.RootDirectory = "Content/UI/Sprite";
 
-            //uiManager.ControlLafSource = debugControlLafSource;
-            uiManager.ControlLafSource = spriteControlLafSource;
+            uiManager.ControlLafSource = debugControlLafSource;
+            //uiManager.ControlLafSource = spriteControlLafSource;
 
             IsMouseVisible = true;
 
