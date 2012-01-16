@@ -229,13 +229,9 @@ namespace Willcraftia.Xna.Framework.UI
             }
             // リストをリセットします。
             arrangedControls.Clear();
-        }
 
-        /// <summary>
-        /// 最後に Screen が得たマウス カーソルの位置を Control に通知します。
-        /// </summary>
-        public void NotifyLastMousePosition()
-        {
+            // マウス オーバ状態が変化する可能性があるので、
+            // 最後に Screen が得たマウス カーソルの位置を再送します。
             Desktop.ProcessMouseMoved(lastMousePosition.X, lastMousePosition.Y);
         }
 
