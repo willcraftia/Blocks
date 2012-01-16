@@ -183,25 +183,25 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                             BackgroundColor = Color.Black
                         };
 
-                        var subWindow = new Window()
+                        var overlayWindow = new Window()
                         {
                             Width = u * 7,
                             SizeToContent = SizeToContent.Height,
                             Margin = new Thickness(u * 4, u * 6, 0, 0),
                             BackgroundColor = Color.Green
                         };
-                        overlay.Children.Add(subWindow);
-                        subWindow.Owner = overlay;
+                        // Owner を関連付けると Owner が閉じると自動的に閉じます。
+                        overlayWindow.Owner = overlay;
 
-                        var subStackPanel = new StackPanel()
+                        var overlayWindowStackPanel = new StackPanel()
                         {
                             Margin = new Thickness(8),
                             Orientation = Orientation.Vertical
                         };
-                        subWindow.Children.Add(subStackPanel);
+                        overlayWindow.Children.Add(overlayWindowStackPanel);
 
                         {
-                            var subButton = new Button()
+                            var overlayWindowButton = new Button()
                             {
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -211,8 +211,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
-                            subStackPanel.Children.Add(subButton);
-                            subButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
+                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 var subOverlay = new Overlay()
                                 {
@@ -220,17 +220,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                     BackgroundColor = Color.Black
                                 };
 
-                                var subSubWindow = new Window()
+                                var subOverlayWindow = new Window()
                                 {
                                     SizeToContent = SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
                                     BackgroundColor = Color.Brown
                                 };
-                                subOverlay.Children.Add(subSubWindow);
-                                subSubWindow.Owner = subOverlay;
+                                // Owner を関連付けると Owner が閉じると自動的に閉じます。
+                                subOverlayWindow.Owner = subOverlay;
 
                                 {
-                                    var subSubButton = new Button()
+                                    var subOverlayWindowButton = new Button()
                                     {
                                         Text = "Close",
                                         TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -239,18 +239,19 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                         Height = u,
                                         Margin = new Thickness(u)
                                     };
-                                    subSubButton.Clicked += delegate(object subBs, EventArgs subBe)
+                                    subOverlayWindowButton.Clicked += delegate(object subBs, EventArgs subBe)
                                     {
                                         subOverlay.Close();
                                     };
-                                    subSubWindow.Children.Add(subSubButton);
+                                    subOverlayWindow.Children.Add(subOverlayWindowButton);
                                 }
 
                                 subOverlay.Show(this);
+                                subOverlayWindow.Show(this);
                             };
                         }
                         {
-                            var subButton = new Button()
+                            var overlayWindowButton = new Button()
                             {
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -260,14 +261,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
-                            subStackPanel.Children.Add(subButton);
-                            subButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
+                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 overlay.Close();
                             };
                         }
                         {
-                            var subButton = new Button()
+                            var overlayWindowButton = new Button()
                             {
                                 Text = "Switch Screen",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -277,8 +278,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
-                            subStackPanel.Children.Add(subButton);
-                            subButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
+                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 var exitOverlay = new Overlay()
                                 {
@@ -307,7 +308,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                             };
                         }
                         {
-                            var subButton = new Button()
+                            var overlayWindowButton = new Button()
                             {
                                 Text = "Exit",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -317,8 +318,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 Height = u,
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
-                            subStackPanel.Children.Add(subButton);
-                            subButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
+                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
                             {
                                 var exitOverlay = new Overlay()
                                 {
@@ -347,6 +348,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         }
 
                         overlay.Show(this);
+                        overlayWindow.Show(this);
                     };
                 }
                 {
