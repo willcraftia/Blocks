@@ -9,15 +9,21 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Willcraftia.Xna.Framework.Input
 {
+    /// <summary>
+    /// ユーザ入力を管理するクラスです。
+    /// </summary>
     public class InputManager : GameComponent, IInputService
     {
-        IMouse mouse;
+        // I/F
+        public MouseDevice Mouse { get; private set; }
 
-        public IMouse Mouse
-        {
-            get { return mouse; }
-        }
+        // I/F
+        public KeyboardDevice Keyboard { get; private set; }
 
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="game">Game。</param>
         public InputManager(Game game)
             : base(game)
         {
@@ -26,14 +32,16 @@ namespace Willcraftia.Xna.Framework.Input
 
         public override void Initialize()
         {
-            mouse = new DefaultMouse();
+            Mouse = new MouseDevice();
+            Keyboard = new KeyboardDevice();
 
             base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-            mouse.Update();
+            Mouse.Update();
+            Keyboard.Update();
 
             base.Update(gameTime);
         }

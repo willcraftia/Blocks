@@ -4,6 +4,9 @@
 
 namespace Willcraftia.Xna.Framework.Input
 {
+    /// <summary>
+    /// 入力デバイスのインタフェースです。
+    /// </summary>
     public interface IInputDevice
     {
         /// <summary>

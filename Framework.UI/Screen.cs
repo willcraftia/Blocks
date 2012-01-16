@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
 
 #endregion
@@ -115,6 +116,33 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void NotifyMouseWheelRotated(int ticks)
         {
+        }
+
+        // I/F
+        public void NotifyKeyPressed(Keys key)
+        {
+            if (focusedControl != null)
+            {
+                if (focusedControl.ProcessKeyPressed(key)) return;
+            }
+        }
+
+        // I/F
+        public void NotifyKeyReleased(Keys key)
+        {
+            if (focusedControl != null)
+            {
+                focusedControl.ProcessKeyReleased(key);
+            }
+        }
+
+        // I/F
+        public void NotifyCharacterEntered(char character)
+        {
+            if (focusedControl != null)
+            {
+                focusedControl.ProcessCharacterEntered(character);
+            }
         }
 
         /// <summary>

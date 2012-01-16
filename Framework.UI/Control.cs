@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
 
 #endregion
@@ -753,7 +754,7 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// マウス ボタン押下の解除を処理します。
+        /// マウス ボタン押下の解放を処理します。
         /// </summary>
         /// <param name="button"></param>
         internal void ProcessMouseButtonReleased(MouseButtons button)
@@ -764,18 +765,48 @@ namespace Willcraftia.Xna.Framework.UI
             // アクティブな Control がなければ処理しません。
             if (activatedControl == null) return;
 
-            // 子がアクティブならばマウス ボタン押下の解除を通知します。
+            // 子がアクティブならばマウス ボタン押下の解放を通知します。
             if (activatedControl != this)
             {
                 activatedControl.ProcessMouseButtonReleased(button);
             }
             else
             {
-                // マウス ボタン押下の解除を通知します。
+                // マウス ボタン押下の解放を通知します。
                 OnMouseButtonReleased(button);
             }
 
             activatedControl = null;
+        }
+
+        /// <summary>
+        /// キー押下を処理します。
+        /// </summary>
+        /// <param name="key">キー。</param>
+        /// <returns>
+        /// true (キー押下を処理した場合)、false (それ以外の場合)。
+        /// </returns>
+        internal bool ProcessKeyPressed(Keys key)
+        {
+            return OnKeyPressed(key);
+        }
+
+        /// <summary>
+        /// キー押下の解放を処理します。
+        /// </summary>
+        /// <param name="key">キー。</param>
+        internal void ProcessKeyReleased(Keys key)
+        {
+            OnKeyReleased(key);
+        }
+
+        /// <summary>
+        /// 文字の入力を処理します。
+        /// </summary>
+        /// <param name="character">文字。</param>
+        internal void ProcessCharacterEntered(char character)
+        {
+            OnCharacterEntered(character);
         }
 
         /// <summary>
@@ -887,31 +918,52 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void OnMouseMoved(float x, float y) { }
 
         /// <summary>
-        /// マウス カーソルがこの Control に入った時 (この Control がマウス オーバ状態になった時) に呼び出されます。
+        /// マウス カーソルが入った時 (この Control がマウス オーバ状態になった時) に呼び出されます。
         /// </summary>
         protected virtual void OnMouseEntered() { }
 
         /// <summary>
-        /// マウス カーソルがこの Control から出た時 (この Control のマウス オーバ状態が解除された時) に呼び出されます。
+        /// マウス カーソルが出た時 (この Control のマウス オーバ状態が解除された時) に呼び出されます。
         /// </summary>
         protected virtual void OnMouseLeft() { }
 
         /// <summary>
-        /// マウス ボタンがこの Control で押された時に呼び出されます。
+        /// マウス ボタンが押下された時に呼び出されます。
         /// </summary>
-        /// <param name="button"></param>
+        /// <param name="button">マウス ボタン。</param>
         protected virtual void OnMouseButtonPressed(MouseButtons button) { }
 
         /// <summary>
-        /// マウス ボタンがこの Control で離された時に呼び出されます。
+        /// マウス ボタン押下が解放された時に呼び出されます。
         /// </summary>
-        /// <param name="button"></param>
+        /// <param name="button">マウス ボタン。</param>
         protected virtual void OnMouseButtonReleased(MouseButtons button) { }
+
+        /// <summary>
+        /// キーが押下された時に呼び出されます。
+        /// </summary>
+        /// <param name="key">キー。</param>
+        /// <returns>
+        /// true (キー押下を処理した場合)、false (それ以外の場合)。
+        /// </returns>
+        protected virtual bool OnKeyPressed(Keys key) { return false; }
+
+        /// <summary>
+        /// キー押下が解放された時に呼び出されます。
+        /// </summary>
+        /// <param name="key"></param>
+        protected virtual void OnKeyReleased(Keys key) { }
+
+        /// <summary>
+        /// 文字が入力された時に呼び出されます。
+        /// </summary>
+        /// <param name="character"></param>
+        protected virtual void OnCharacterEntered(char character) { }
 
         /// <summary>
         /// マウス オーバ状態の Control を新しい Control へ切り替えます。
         /// </summary>
-        /// <param name="newControl"></param>
+        /// <param name="newControl">Control。</param>
         void SwitchMouseOverControl(Control newControl)
         {
             if (mouseOverControl == newControl) return;

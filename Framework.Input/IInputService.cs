@@ -1,16 +1,24 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.Input
 {
+    /// <summary>
+    /// 入力サービスのインタフェースです。
+    /// </summary>
     public interface IInputService
     {
-        IMouse Mouse { get; }
+        /// <summary>
+        /// MouseDevice を取得します。
+        /// </summary>
+        MouseDevice Mouse { get; }
+
+        /// <summary>
+        /// KeyboardDevice を取得します。
+        /// </summary>
+        KeyboardDevice Keyboard { get; }
     }
 }
