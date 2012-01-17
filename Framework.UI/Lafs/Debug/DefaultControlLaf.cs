@@ -14,16 +14,68 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {
-            // 枠のために白で塗り潰します。
-            drawContext.SpriteBatch.Draw(Source.FillTexture, drawContext.Bounds, Color.White * drawContext.Opacity);
+            // 背景を BackgroundColor で塗り潰します。
+            drawContext.SpriteBatch.Draw(Source.FillTexture, drawContext.Bounds, control.BackgroundColor * drawContext.Opacity);
 
-            // 少し小さくした領域を背景色で覆います。
-            var inBounds = drawContext.Bounds;
-            inBounds.X += 1;
-            inBounds.Y += 1;
-            inBounds.Width -= 2;
-            inBounds.Height -= 2;
-            drawContext.SpriteBatch.Draw(Source.FillTexture, inBounds, control.BackgroundColor * drawContext.Opacity);
+            // 枠を White で描画します。
+            // ただし、背景色が White の場合には区別が付くように Gray にします。
+            {
+                var borderColor = Color.White;
+                if (control.BackgroundColor == Color.White) borderColor = Color.DimGray;
+
+                Rectangle lineBounds;
+
+                lineBounds = drawContext.Bounds;
+                lineBounds.Height = 1;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, lineBounds, borderColor * drawContext.Opacity);
+
+                lineBounds = drawContext.Bounds;
+                lineBounds.Y += lineBounds.Height - 1;
+                lineBounds.Height = 1;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, lineBounds, borderColor * drawContext.Opacity);
+
+                lineBounds = drawContext.Bounds;
+                lineBounds.Width = 1;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, lineBounds, borderColor * drawContext.Opacity);
+
+                lineBounds = drawContext.Bounds;
+                lineBounds.X += lineBounds.Width - 1;
+                lineBounds.Width = 1;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, lineBounds, borderColor * drawContext.Opacity);
+            }
+
+            // フォーカスを持つ場合に枠の四隅に Magenta の矩形を描画します。
+            if (control.Focused)
+            {
+                var focusColor = Color.Magenta;
+
+                Rectangle focusBounds;
+                int size = 8;
+
+                focusBounds = drawContext.Bounds;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, focusBounds, focusColor * drawContext.Opacity);
+
+                focusBounds = drawContext.Bounds;
+                focusBounds.X += drawContext.Bounds.Width - size;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, focusBounds, focusColor * drawContext.Opacity);
+
+                focusBounds = drawContext.Bounds;
+                focusBounds.Y += drawContext.Bounds.Height - size;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, focusBounds, focusColor * drawContext.Opacity);
+
+                focusBounds = drawContext.Bounds;
+                focusBounds.X += drawContext.Bounds.Width - size;
+                focusBounds.Y += drawContext.Bounds.Height - size;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                drawContext.SpriteBatch.Draw(Source.FillTexture, focusBounds, focusColor * drawContext.Opacity);
+            }
         }
     }
 }
