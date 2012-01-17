@@ -86,9 +86,6 @@ namespace Willcraftia.Xna.Framework.UI
             
             // 親を設定します。
             item.Parent = parent;
-
-            // 再測定を促します。
-            parent.Measured = false;
         }
 
         protected override void RemoveItem(int index)
@@ -97,9 +94,6 @@ namespace Willcraftia.Xna.Framework.UI
             base[index].Parent = null;
 
             base.RemoveItem(index);
-
-            // 再測定を促します。
-            parent.Measured = false;
         }
 
         protected override void SetItem(int index, Control item)
@@ -114,9 +108,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 親を設定します。
             item.Parent = parent;
-
-            // 再測定を促します。
-            parent.Measured = false;
         }
 
         protected override void ClearItems()
@@ -124,9 +115,6 @@ namespace Willcraftia.Xna.Framework.UI
             foreach (var item in this) item.Parent = null;
 
             base.ClearItems();
-
-            // 再測定を促します。
-            parent.Measured = false;
         }
 
         /// <summary>

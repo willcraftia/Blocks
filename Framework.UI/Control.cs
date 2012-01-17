@@ -116,19 +116,9 @@ namespace Willcraftia.Xna.Framework.UI
         bool visible = true;
 
         /// <summary>
-        /// true (測定済みである場合)、false (それ以外の場合)。
-        /// </summary>
-        bool measured;
-
-        /// <summary>
         /// Measure メソッドで受け取った availableSize の値。
         /// </summary>
         Size lastAvailableSize;
-
-        /// <summary>
-        /// true (配置済みである場合)、false (それ以外の場合)。
-        /// </summary>
-        bool arranged;
 
         /// <summary>
         /// Arrange メソッドで受け取った finalBounds の値。
@@ -177,8 +167,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (margin == value) return;
                 margin = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
 
@@ -192,8 +180,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (padding == value) return;
                 padding = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
 
@@ -207,8 +193,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (minWidth == value) return;
                 minWidth = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
 
@@ -222,8 +206,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (minHeight == value) return;
                 minHeight = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
         
@@ -237,8 +219,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (maxWidth == value) return;
                 maxWidth = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
         
@@ -252,8 +232,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (maxHeight == value) return;
                 maxHeight = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
 
@@ -267,8 +245,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (width == value) return;
                 width = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
 
@@ -282,8 +258,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (height == value) return;
                 height = value;
-                // 再測定させます。
-                Measured = false;
             }
         }
 
@@ -320,44 +294,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 測定済みかどうかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// true (測定済みである場合)、false (それ以外の場合)。
-        /// </value>
-        public bool Measured
-        {
-            get { return measured; }
-            set
-            {
-                if (measured == value) return;
-                measured = value;
-
-                // Screen の測定実行リストに追加します。
-                if (!measured && Screen != null) Screen.AddMeasuredControl(this);
-            }
-        }
-
-        /// <summary>
-        /// 配置済みであるかどうかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// true (配置済みである場合)、false (それ以外の場合)。
-        /// </value>
-        public bool Arranged
-        {
-            get { return arranged; }
-            set
-            {
-                if (arranged == value) return;
-                arranged = value;
-
-                // Screen の配置実行リストに追加します。
-                if (!arranged && Screen != null) Screen.AddArrangedControl(this);
-            }
-        }
-
-        /// <summary>
         /// 親の描画領域でクリップするかどうかを示す値を取得または設定します。
         /// </summary>
         /// <value>
@@ -375,7 +311,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (font == value) return;
                 font = value;
-                Measured = false;
             }
         }
 
@@ -389,7 +324,6 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (fontStretch == value) return;
                 fontStretch = value;
-                Measured = false;
             }
         }
 
@@ -440,8 +374,6 @@ namespace Willcraftia.Xna.Framework.UI
 
                 // 親と同じ Screen に属します。
                 if (parent != null) Screen = parent.Screen;
-
-                Measured = false;
             }
         }
 
@@ -456,8 +388,6 @@ namespace Willcraftia.Xna.Framework.UI
                 if (screen == value) return;
 
                 screen = value;
-
-                Measured = false;
 
                 // 子を同じ Screen に属させます。
                 if (screen != null)
@@ -568,12 +498,9 @@ namespace Willcraftia.Xna.Framework.UI
         {
             lastAvailableSize = availableSize;
 
-            measuredSize = MeasureOverride(availableSize);
+            var lastMeasuredSize = measuredSize;
 
-            // 測定済みにします。
-            Measured = true;
-            // 未配置にします。
-            Arranged = false;
+            measuredSize = MeasureOverride(availableSize);
         }
 
         /// <summary>
@@ -588,9 +515,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 配置結果の領域を設定します。
             arrangedBounds = new Rect(finalBounds.TopLeft, size);
-
-            // 配置済にします。
-            Arranged = true;
         }
 
         /// <summary>

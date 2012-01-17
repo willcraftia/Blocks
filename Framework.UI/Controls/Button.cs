@@ -39,7 +39,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             {
                 if (text == value) return;
                 text = value;
-                Measured = false;
             }
         }
 

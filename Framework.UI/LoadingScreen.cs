@@ -15,10 +15,10 @@ namespace Willcraftia.Xna.Framework.UI
 
         LoadScreenAsyncCaller loadScreenAsyncCaller;
 
-        public Screen NextScreen { get; private set; }
-
         // I/F
         public IScreenFactory ScreenFactory { get; set; }
+
+        public Screen NextScreen { get; private set; }
 
         public string NextScreenName { get; set; }
 

@@ -313,7 +313,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // Screen のレイアウトを更新します。
-            if (currentScreen.UpdateLayoutNeeded) currentScreen.UpdateLayout();
+            currentScreen.UpdateLayout();
 
             // Control を更新します。
             currentScreen.Desktop.Update(gameTime);
