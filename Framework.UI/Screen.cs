@@ -74,12 +74,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public AnimationCollection Animations { get; private set; }
 
-        // TODO
-        // protected にする？
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Screen(Game game)
+        /// <param name="game">Game。</param>
+        protected Screen(Game game)
         {
             Game = game;
             GraphicsDevice = game.GraphicsDevice;

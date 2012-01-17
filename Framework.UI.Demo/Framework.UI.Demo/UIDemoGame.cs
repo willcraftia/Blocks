@@ -66,7 +66,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
 
                 var loadingWindowDemoScreen = new ScreenDefinition("WindowDemoScreen", typeof(Screens.DemoLoadingScreen));
-                loadingWindowDemoScreen.Properties["NextScreenName"] = "WindowDemoScreenImpl";
+                loadingWindowDemoScreen.Properties["LoadingScreenName"] = "WindowDemoScreenImpl";
 
                 screenFactory.Definitions.Add(loadingWindowDemoScreen);
                 screenFactory.Definitions.Add(new ScreenDefinition("WindowDemoScreenImpl", typeof(Screens.WindowDemoScreen)));

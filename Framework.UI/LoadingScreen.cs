@@ -7,53 +7,94 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework.UI
 {
+    /// <summary>
+    /// ロード中画面を表示し、次に表示する Screen を非同期でロードするクラスです。
+    /// </summary>
     public class LoadingScreen : Screen, IScreenFactoryAware
     {
-        public event EventHandler NextScreenLoadCompleted;
+        /// <summary>
+        /// 非同期 Screen ローディングが完了した場合に発生します。
+        /// </summary>
+        public event EventHandler ScreenLoadCompleted;
 
+        /// <summary>
+        /// 非同期 Screen ローディングの delegate。
+        /// </summary>
+        /// <returns>ロードが完了した次 Screen。</returns>
         delegate Screen LoadScreenAsyncCaller();
 
+        /// <summary>
+        /// Screen の非同期呼び出し。
+        /// </summary>
         LoadScreenAsyncCaller loadScreenAsyncCaller;
 
         // I/F
         public IScreenFactory ScreenFactory { get; set; }
 
-        public Screen NextScreen { get; private set; }
+        /// <summary>
+        /// ロードされた Screen を取得します。
+        /// </summary>
+        public Screen LoadedScreen { get; private set; }
 
-        public string NextScreenName { get; set; }
+        /// <summary>
+        /// ロードする Screan の名前を取得または設定します。
+        /// </summary>
+        public string LoadingScreenName { get; set; }
 
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="game"></param>
         public LoadingScreen(Game game) : base(game) { }
 
         protected override void LoadContent()
         {
-            LoadNextScreenAsync();
+            // 非同期 Screen ローディングを開始します。
+            LoadScreenAsync();
 
             base.LoadContent();
         }
 
+        /// <summary>
+        /// LoadingScreenName が示す Screen をロードします。
+        /// </summary>
+        /// <returns>ロードされた Screen。</returns>
         protected virtual Screen LoadScreen()
         {
-            return ScreenFactory.CreateScreen(NextScreenName);
+            return ScreenFactory.CreateScreen(LoadingScreenName);
         }
 
-        protected virtual void OnNextScreenLoadCompleted() { }
+        /// <summary>
+        /// 非同期 Screen ローディングが完了した場合に呼び出されます。
+        /// </summary>
+        protected virtual void OnScreenLoadCompleted() { }
 
-        void LoadNextScreenAsync()
+        /// <summary>
+        /// 非同期 Screen ローディングを開始します。
+        /// </summary>
+        void LoadScreenAsync()
         {
             loadScreenAsyncCaller = new LoadScreenAsyncCaller(LoadScreen);
             loadScreenAsyncCaller.BeginInvoke(LoadScreenAsyncCallerCallback, null);
         }
 
+        /// <summary>
+        /// 非同期 Screen ローディングの完了を受け取るコールバック メソッドです。
+        /// </summary>
+        /// <param name="result"></param>
         void LoadScreenAsyncCallerCallback(IAsyncResult result)
         {
-            NextScreen = loadScreenAsyncCaller.EndInvoke(result);
+            LoadedScreen = loadScreenAsyncCaller.EndInvoke(result);
             RaiseNextScreenLoadCompleted();
         }
 
+        /// <summary>
+        /// ScreenLoadCompleted イベントを発生させます。
+        /// </summary>
         void RaiseNextScreenLoadCompleted()
         {
-            OnNextScreenLoadCompleted();
-            if (NextScreenLoadCompleted != null) NextScreenLoadCompleted(this, EventArgs.Empty);
+            OnScreenLoadCompleted();
+            if (ScreenLoadCompleted != null) ScreenLoadCompleted(this, EventArgs.Empty);
         }
     }
 }

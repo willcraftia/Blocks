@@ -116,16 +116,6 @@ namespace Willcraftia.Xna.Framework.UI
         bool visible = true;
 
         /// <summary>
-        /// Measure メソッドで受け取った availableSize の値。
-        /// </summary>
-        Size lastAvailableSize;
-
-        /// <summary>
-        /// Arrange メソッドで受け取った finalBounds の値。
-        /// </summary>
-        Rect lastFinalBounds;
-
-        /// <summary>
         /// true (アクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
         /// </summary>
         bool affectsOrdering;
@@ -496,10 +486,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="availableSize">親 Control が指定する利用可能なサイズ。</param>
         public void Measure(Size availableSize)
         {
-            lastAvailableSize = availableSize;
-
-            var lastMeasuredSize = measuredSize;
-
             measuredSize = MeasureOverride(availableSize);
         }
 
@@ -509,8 +495,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="finalBounds">親 Control が指定する配置に使用可能な領域。</param>
         public void Arrange(Rect finalBounds)
         {
-            lastFinalBounds = finalBounds;
-
             var size = ArrangeOverride(finalBounds.Size);
 
             // 配置結果の領域を設定します。
@@ -552,22 +536,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         /// <param name="drawContext"></param>
         public virtual void Draw(GameTime gameTime, IDrawContext drawContext) { }
-
-        /// <summary>
-        /// 再計測します。
-        /// </summary>
-        internal void Remeasure()
-        {
-            Measure(lastAvailableSize);
-        }
-
-        /// <summary>
-        /// 再配置します。
-        /// </summary>
-        internal void Rearrange()
-        {
-            Arrange(lastFinalBounds);
-        }
 
         /// <summary>
         /// マウス カーソル移動を処理します。

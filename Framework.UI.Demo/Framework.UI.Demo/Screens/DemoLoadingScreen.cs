@@ -67,7 +67,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             label.Margin = new Thickness((Desktop.Width - label.Width) * 0.5f, (Desktop.Height - label.Height) * 0.5f, 0, 0);
             Desktop.Children.Add(label);
 
-            NextScreenLoadCompleted += delegate(object s, EventArgs e)
+            ScreenLoadCompleted += delegate(object s, EventArgs e)
             {
                 var exitOverlay = new Overlay()
                 {
@@ -89,7 +89,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     {
                         // NextScreen を表示させます。
                         var uiService = Game.Services.GetRequiredService<IUIService>();
-                        uiService.PrepareNextScreen(NextScreen);
+                        uiService.PrepareNextScreen(LoadedScreen);
                     };
                     Animations.Add(animation);
                 }
