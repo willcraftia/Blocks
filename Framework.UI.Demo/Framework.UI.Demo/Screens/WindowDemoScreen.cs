@@ -34,13 +34,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
-            var screenOverlay = new Overlay()
+            var screenOverlay = new Overlay
             {
                 Opacity = 1,
                 BackgroundColor = Color.Black
             };
             {
-                var animation = new PropertyLerpAnimation()
+                var animation = new PropertyLerpAnimation
                 {
                     Target = screenOverlay,
                     PropertyName = "Opacity",
@@ -50,15 +50,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
-                {
-                    screenOverlay.Close();
-                };
+                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => screenOverlay.Close();
                 Animations.Add(animation);
             }
 
             {
-                var window = new Window()
+                var window = new Window
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -66,7 +63,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     BackgroundColor = Color.Red
                 };
                 {
-                    var animation = new PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation
                     {
                         Target = window,
                         PropertyName = "Width",
@@ -80,7 +77,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Animations.Add(animation);
                 }
                 {
-                    var animation = new PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation
                     {
                         Target = window,
                         PropertyName = "Height",
@@ -97,7 +94,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             }
 
             {
-                var window = new Window()
+                var window = new Window
                 {
                     Width = u * 10,
                     Height = u * 10,
@@ -105,7 +102,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     BackgroundColor = Color.Green
                 };
                 {
-                    var animation = new PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation
                     {
                         Target = window,
                         PropertyName = "Opacity",
@@ -123,7 +120,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             }
 
             {
-                var window = new Window()
+                var window = new Window
                 {
                     Width = u * 15,
                     Height = u * 10,
@@ -131,7 +128,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     BackgroundColor = Color.Blue
                 };
                 {
-                    var animation = new PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation
                     {
                         Target = window,
                         PropertyName = "Width",
@@ -144,7 +141,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Animations.Add(animation);
                 }
                 {
-                    var animation = new PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation
                     {
                         Target = window,
                         PropertyName = "Height",
@@ -157,7 +154,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Animations.Add(animation);
                 }
 
-                var stackPanel = new StackPanel()
+                var stackPanel = new StackPanel
                 {
                     Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
@@ -165,7 +162,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 window.Children.Add(stackPanel);
 
                 {
-                    var button = new Button()
+                    var button = new Button
                     {
                         Text = "Open new dialog",
                         FontStretch = new Vector2(1.0f, 2.0f),
@@ -175,15 +172,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         Padding = new Thickness(8)
                     };
                     stackPanel.Children.Add(button);
-                    button.Clicked += delegate(object s, EventArgs e)
+                    button.Clicked += (s, e) =>
                     {
-                        var overlay = new Overlay()
+                        var overlay = new Overlay
                         {
                             Opacity = 0.5f,
                             BackgroundColor = Color.Black
                         };
 
-                        var overlayWindow = new Window()
+                        var overlayWindow = new Window
                         {
                             Width = u * 7,
                             SizeToContent = SizeToContent.Height,
@@ -193,7 +190,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         // Owner を関連付けると Owner が閉じると自動的に閉じます。
                         overlayWindow.Owner = overlay;
 
-                        var overlayWindowStackPanel = new StackPanel()
+                        var overlayWindowStackPanel = new StackPanel
                         {
                             Margin = new Thickness(8),
                             Orientation = Orientation.Vertical
@@ -201,7 +198,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         overlayWindow.Children.Add(overlayWindowStackPanel);
 
                         {
-                            var overlayWindowButton = new Button()
+                            var overlayWindowButton = new Button
                             {
                                 Text = "Open new dialog",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -212,15 +209,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowButton.Clicked += (bs, be) =>
                             {
-                                var subOverlay = new Overlay()
+                                var subOverlay = new Overlay
                                 {
                                     Opacity = 0.5f,
                                     BackgroundColor = Color.Black
                                 };
 
-                                var subOverlayWindow = new Window()
+                                var subOverlayWindow = new Window
                                 {
                                     SizeToContent = SizeToContent.WidthAndHeight,
                                     Margin = new Thickness(u * 1, u * 4, 0, 0),
@@ -230,7 +227,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 subOverlayWindow.Owner = subOverlay;
 
                                 {
-                                    var subOverlayWindowButton = new Button()
+                                    var subOverlayWindowButton = new Button
                                     {
                                         Text = "Close",
                                         TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -239,10 +236,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                         Height = u,
                                         Margin = new Thickness(u)
                                     };
-                                    subOverlayWindowButton.Clicked += delegate(object subBs, EventArgs subBe)
-                                    {
-                                        subOverlay.Close();
-                                    };
+                                    subOverlayWindowButton.Clicked += (subBs, subBe) => subOverlay.Close();
                                     subOverlayWindow.Children.Add(subOverlayWindowButton);
                                 }
 
@@ -251,7 +245,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                             };
                         }
                         {
-                            var overlayWindowButton = new Button()
+                            var overlayWindowButton = new Button
                             {
                                 Text = "Close",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -262,13 +256,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
-                            {
-                                overlay.Close();
-                            };
+                            overlayWindowButton.Clicked += (bs, be) => overlay.Close();
                         }
                         {
-                            var overlayWindowButton = new Button()
+                            var overlayWindowButton = new Button
                             {
                                 Text = "Switch Screen",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -279,15 +270,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowButton.Clicked += (bs, be) =>
                             {
-                                var exitOverlay = new Overlay()
+                                var exitOverlay = new Overlay
                                 {
                                     Opacity = 0,
                                     BackgroundColor = Color.Black
                                 };
                                 {
-                                    var animation = new PropertyLerpAnimation()
+                                    var animation = new PropertyLerpAnimation
                                     {
                                         Target = exitOverlay,
                                         PropertyName = "Opacity",
@@ -297,7 +288,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                         Duration = TimeSpan.FromSeconds(0.5d),
                                         Enabled = true
                                     };
-                                    animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
+                                    animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
                                     {
                                         var uiService = Game.Services.GetRequiredService<IUIService>();
                                         uiService.Show("MainMenuDemoScreen");
@@ -308,7 +299,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                             };
                         }
                         {
-                            var overlayWindowButton = new Button()
+                            var overlayWindowButton = new Button
                             {
                                 Text = "Exit",
                                 TextHorizontalAlignment = HorizontalAlignment.Left,
@@ -319,15 +310,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += delegate(object bs, EventArgs be)
+                            overlayWindowButton.Clicked += (bs, be) =>
                             {
-                                var exitOverlay = new Overlay()
+                                var exitOverlay = new Overlay
                                 {
                                     Opacity = 0,
                                     BackgroundColor = Color.Black
                                 };
                                 {
-                                    var animation = new PropertyLerpAnimation()
+                                    var animation = new PropertyLerpAnimation
                                     {
                                         Target = exitOverlay,
                                         PropertyName = "Opacity",
@@ -337,10 +328,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                         Duration = TimeSpan.FromSeconds(0.5d),
                                         Enabled = true
                                     };
-                                    animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
-                                    {
-                                        Game.Exit();
-                                    };
+                                    animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => Game.Exit();
                                     Animations.Add(animation);
                                 }
                                 exitOverlay.Show(this);
@@ -352,7 +340,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     };
                 }
                 {
-                    var button = new CubeControl()
+                    var button = new CubeControl
                     {
                         CubePrimitive = CreateCubePrimitive(),
                         Clipped = false,
@@ -361,7 +349,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     };
                     stackPanel.Children.Add(button);
 
-                    var rotateCubeTimelineAnimation = new RotateCubeAnimation()
+                    var rotateCubeTimelineAnimation = new RotateCubeAnimation
                     {
                         CubeButton = button,
                         From = 0,
@@ -372,12 +360,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     };
                     Animations.Add(rotateCubeTimelineAnimation);
 
-                    button.MouseEntered += delegate(object s, EventArgs e)
+                    button.MouseEntered += (s, e) =>
                     {
                         button.Scale = 1.5f;
                         rotateCubeTimelineAnimation.Enabled = true;
                     };
-                    button.MouseLeft += delegate(object s, EventArgs e)
+                    button.MouseLeft += (s, e) =>
                     {
                         button.Scale = 1;
                         rotateCubeTimelineAnimation.Enabled = false;

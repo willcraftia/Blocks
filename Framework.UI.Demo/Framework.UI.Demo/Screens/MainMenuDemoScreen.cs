@@ -29,13 +29,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
-            var screenOverlay = new Overlay()
+            var screenOverlay = new Overlay
             {
                 Opacity = 1,
                 BackgroundColor = Color.Black
             };
             {
-                var animation = new PropertyLerpAnimation()
+                var animation = new PropertyLerpAnimation
                 {
                     Target = screenOverlay,
                     PropertyName = "Opacity",
@@ -45,14 +45,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
-                {
-                    screenOverlay.Close();
-                };
+                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => screenOverlay.Close();
                 Animations.Add(animation);
             }
 
-            var window = new Window()
+            var window = new Window
             {
                 Width = u * 10,
                 Height = u * 4,
@@ -61,7 +58,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             window.Margin = new Thickness((Desktop.Width - window.Width) * 0.5f, (Desktop.Height - window.Height) * 0.5f, 0, 0);
 
             {
-                var stackPanel = new StackPanel()
+                var stackPanel = new StackPanel
                 {
                     Margin = new Thickness(8),
                     Orientation = Orientation.Vertical
@@ -69,7 +66,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 window.Children.Add(stackPanel);
                 {
                     {
-                        var button = new Button()
+                        var button = new Button
                         {
                             Text = "NEW GAME (DUMMY)",
                             Height = u,
@@ -78,22 +75,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         stackPanel.Children.Add(button);
                     }
                     {
-                        var button = new Button()
+                        var button = new Button
                         {
                             Text = "SWITCH SCREEN",
                             Height = u,
                             Padding = new Thickness(8)
                         };
                         stackPanel.Children.Add(button);
-                        button.Clicked += delegate(object bs, EventArgs be)
+                        button.Clicked += (bs, be) =>
                         {
-                            var exitOverlay = new Overlay()
+                            var exitOverlay = new Overlay
                             {
                                 Opacity = 0,
                                 BackgroundColor = Color.Black
                             };
                             {
-                                var animation = new PropertyLerpAnimation()
+                                var animation = new PropertyLerpAnimation
                                 {
                                     Target = exitOverlay,
                                     PropertyName = "Opacity",
@@ -103,7 +100,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                     Duration = TimeSpan.FromSeconds(0.5d),
                                     Enabled = true
                                 };
-                                animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
+                                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
                                 {
                                     var uiService = Game.Services.GetRequiredService<IUIService>();
                                     uiService.Show("WindowDemoScreen");
@@ -114,22 +111,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         };
                     }
                     {
-                        var button = new Button()
+                        var button = new Button
                         {
                             Text = "EXIT",
                             Height = u,
                             Padding = new Thickness(8)
                         };
                         stackPanel.Children.Add(button);
-                        button.Clicked += delegate(object bs, EventArgs be)
+                        button.Clicked += (bs, be) =>
                         {
-                            var exitOverlay = new Overlay()
+                            var exitOverlay = new Overlay
                             {
                                 Opacity = 0,
                                 BackgroundColor = Color.Black
                             };
                             {
-                                var animation = new PropertyLerpAnimation()
+                                var animation = new PropertyLerpAnimation
                                 {
                                     Target = exitOverlay,
                                     PropertyName = "Opacity",
@@ -139,10 +136,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                     Duration = TimeSpan.FromSeconds(0.5d),
                                     Enabled = true
                                 };
-                                animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
-                                {
-                                    Game.Exit();
-                                };
+                                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => Game.Exit();
                                 Animations.Add(animation);
                             }
                             exitOverlay.Show(this);

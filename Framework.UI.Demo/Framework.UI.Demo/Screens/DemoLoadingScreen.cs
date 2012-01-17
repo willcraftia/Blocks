@@ -33,13 +33,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
-            var screenOverlay = new Overlay()
+            var screenOverlay = new Overlay
             {
                 Opacity = 1,
                 BackgroundColor = Color.Black
             };
             {
-                var animation = new PropertyLerpAnimation()
+                var animation = new PropertyLerpAnimation
                 {
                     Target = screenOverlay,
                     PropertyName = "Opacity",
@@ -49,14 +49,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
-                {
-                    screenOverlay.Close();
-                };
+                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => screenOverlay.Close();
                 Animations.Add(animation);
             }
 
-            var label = new Label()
+            var label = new Label
             {
                 Text = "NOW LOADING...",
                 FontStretch = new Vector2(2),
@@ -67,15 +64,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             label.Margin = new Thickness((Desktop.Width - label.Width) * 0.5f, (Desktop.Height - label.Height) * 0.5f, 0, 0);
             Desktop.Children.Add(label);
 
-            ScreenLoadCompleted += delegate(object s, EventArgs e)
+            ScreenLoadCompleted += (s, e) =>
             {
-                var exitOverlay = new Overlay()
+                var exitOverlay = new Overlay
                 {
                     Opacity = 0,
                     BackgroundColor = Color.Black
                 };
                 {
-                    var animation = new PropertyLerpAnimation()
+                    var animation = new PropertyLerpAnimation
                     {
                         Target = exitOverlay,
                         PropertyName = "Opacity",
@@ -85,7 +82,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         Duration = TimeSpan.FromSeconds(0.5d),
                         Enabled = true
                     };
-                    animation.Completed += delegate(object exitOverlayAnimationSender, EventArgs exitOverlayAnimationEvent)
+                    animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
                     {
                         // NextScreen を表示させます。
                         var uiService = Game.Services.GetRequiredService<IUIService>();
