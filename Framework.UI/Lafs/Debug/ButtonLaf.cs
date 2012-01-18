@@ -25,7 +25,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             var bounds = drawContext.Bounds;
             var foregroundColor = button.ForegroundColor * opacity;
 
-            if (button.MouseHovering)
+            if (button.MouseDirectlyOver)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
                 spriteBatch.Draw(Source.FillTexture, bounds, foregroundColor * 0.5f);
@@ -41,18 +41,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                     offset.X += 2;
                     offset.Y += 2;
                 }
-
-                var padding = button.Padding;
-                var paddedBounds = bounds;
-                paddedBounds.X += (int) padding.Left;
-                paddedBounds.Y += (int) padding.Top;
-                paddedBounds.Width -= (int) (padding.Left + padding.Right);
-                paddedBounds.Height -= (int) (padding.Top + padding.Bottom);
-
-                var position = TextHelper.CalculateTextPosition(
-                    paddedBounds, font, button.Text, button.FontStretch, button.TextHorizontalAlignment, button.TextVerticalAlignment) + offset;
-
-                spriteBatch.DrawString(font, button.Text, position, foregroundColor, 0, Vector2.Zero, button.FontStretch, SpriteEffects.None, 0);
+                TextHelper.DrawString(
+                    spriteBatch, bounds, font, button.Text, button.FontStretch,
+                    button.TextHorizontalAlignment, button.TextVerticalAlignment,
+                    foregroundColor, button.Padding, offset);
             }
         }
     }

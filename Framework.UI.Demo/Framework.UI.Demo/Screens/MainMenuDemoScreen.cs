@@ -82,7 +82,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                             Padding = new Thickness(8)
                         };
                         stackPanel.Children.Add(button);
-                        button.Clicked += (bs, be) =>
+                        button.Click += (bs, be) =>
                         {
                             var exitOverlay = new Overlay
                             {
@@ -118,7 +118,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                             Padding = new Thickness(8)
                         };
                         stackPanel.Children.Add(button);
-                        button.Clicked += (bs, be) =>
+                        button.Click += (bs, be) =>
                         {
                             var exitOverlay = new Overlay
                             {

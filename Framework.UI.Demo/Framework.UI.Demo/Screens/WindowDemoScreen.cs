@@ -172,7 +172,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         Padding = new Thickness(8)
                     };
                     stackPanel.Children.Add(button);
-                    button.Clicked += (s, e) =>
+                    button.Click += (s, e) =>
                     {
                         var overlay = new Overlay
                         {
@@ -209,7 +209,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += (bs, be) =>
+                            overlayWindowButton.Click += (bs, be) =>
                             {
                                 var subOverlay = new Overlay
                                 {
@@ -236,7 +236,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                         Height = u,
                                         Margin = new Thickness(u)
                                     };
-                                    subOverlayWindowButton.Clicked += (subBs, subBe) => subOverlay.Close();
+                                    subOverlayWindowButton.Click += (subBs, subBe) => subOverlay.Close();
                                     subOverlayWindow.Children.Add(subOverlayWindowButton);
                                 }
 
@@ -256,7 +256,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += (bs, be) => overlay.Close();
+                            overlayWindowButton.Click += (bs, be) => overlay.Close();
                         }
                         {
                             var overlayWindowButton = new Button
@@ -270,7 +270,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += (bs, be) =>
+                            overlayWindowButton.Click += (bs, be) =>
                             {
                                 var exitOverlay = new Overlay
                                 {
@@ -310,7 +310,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                                 HorizontalAlignment = HorizontalAlignment.Left
                             };
                             overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Clicked += (bs, be) =>
+                            overlayWindowButton.Click += (bs, be) =>
                             {
                                 var exitOverlay = new Overlay
                                 {

@@ -102,6 +102,9 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
+        /// 自身がマウス オーバかつ子がマウス オーバの場合、子を設定します。
+        /// 自身がマウス オーバかつ子が非マウス オーバの場合、自身を設定します。
+        /// 自身が非マウス オーバの場合、null を設定します。
         /// </summary>
         Control mouseOverControl;
 
@@ -121,7 +124,7 @@ namespace Willcraftia.Xna.Framework.UI
         bool affectsOrdering;
 
         /// <summary>
-        /// SpriteFont。
+        /// フォント。
         /// </summary>
         SpriteFont font;
 
@@ -433,6 +436,32 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// マウス カーソルが自身あるいは子の上にあるかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (マウス カーソルが自身あるいは子の上にある場合)、false (それ以外の場合)。
+        /// </value>
+        public bool MouseOver
+        {
+            get { return mouseOverControl != null; }
+        }
+
+        /// <summary>
+        /// マウス カーソルが自身の上にあるかどうかを示す値を取得します。
+        /// </summary>
+        /// <remarks>
+        /// MouseOver プロパティが true であっても、子の上にマウス カーソルがある場合、
+        /// MouseDirectlyOver プロパティは false となります。
+        /// </remarks>
+        /// <value>
+        /// true (マウス カーソルが自身の上にある場合)、false (それ以外の場合)。
+        /// </value>
+        public bool MouseDirectlyOver
+        {
+            get { return mouseOverControl == this; }
+        }
+
+        /// <summary>
         /// Control がフォーカスを得られるかどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control がフォーカスを得られる場合)、false (それ以外の場合)。</value>
@@ -539,9 +568,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="y">親を基準としたカーソルの Y 座標。</param>
         internal void ProcessMouseMove(float x, float y)
         {
-            // 不可視の場合は処理しません。
-            if (!Visible) return;
-
             // x と y は親を基準としたカーソルの相対座標です。
 
             // 自分を基準としたカーソルの相対座標を算出します。
@@ -577,9 +603,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         internal void ProcessMouseLeave()
         {
-            // 不可視の場合は処理しません。
-            if (!Visible) return;
-
             // マウス オーバ状態の Control がなければ処理しません。
             if (mouseOverControl == null) return;
 
@@ -605,9 +628,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns></returns>
         internal bool ProcessMouseDown(MouseButtons button)
         {
-            // 不可視の場合は処理しません。
-            if (!Visible) return false;
-
             // 非マウス オーバ状態で呼ばれたならば処理しません。
             if (mouseOverControl == null) return false;
 
@@ -628,9 +648,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="button"></param>
         internal void ProcessMouseUp(MouseButtons button)
         {
-            // 不可視の場合は処理しません。
-            //if (!Visible) return;
-
             // 非マウス オーバ状態で呼ばれたならば処理しません。
             if (mouseOverControl == null) return;
 

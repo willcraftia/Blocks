@@ -20,8 +20,12 @@ namespace Willcraftia.Xna.Framework.Input
     public delegate void CharacterDelegate(char character);
 
     /// <summary>
-    /// IKeyboard のデフォルト実装クラスです。
+    /// キーボード状態の変化からイベントを発生させるクラスです。
     /// </summary>
+    /// <remarks>
+    /// KeyboardDevice はイベント処理のためのクラスです。
+    /// キーボード状態を参照したい場合は、XNA の Keyboard クラスから KeyboardState を取得して参照します。
+    /// </remarks>
     public class KeyboardDevice : IInputDevice
     {
         /// <summary>
