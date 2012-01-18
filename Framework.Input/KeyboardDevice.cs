@@ -81,7 +81,7 @@ namespace Willcraftia.Xna.Framework.Input
             foreach (var key in allKeys)
             {
                 var previousState = previouseKeyboard[key];
-                var currentState = previouseKeyboard[key];
+                var currentState = currentKeyboard[key];
                 if (previousState == currentState) continue;
 
                 if (currentState == KeyState.Down)

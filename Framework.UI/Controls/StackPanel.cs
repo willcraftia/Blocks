@@ -22,6 +22,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// </summary>
         public StackPanel()
         {
+            FocusNavigationMode = FocusNavigationMode.Continue;
             Orientation = Orientation.Horizontal;
         }
 

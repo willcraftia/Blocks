@@ -363,10 +363,14 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (parent == value) return;
 
+                // 親の mouseOverControl から切り離します。
+                if (parent != null && parent.mouseOverControl == this) parent.mouseOverControl = parent;
+
                 parent = value;
 
                 // 親と同じ Screen に属します。
-                if (parent != null) Screen = parent.Screen;
+                // 親が null ならば Screen から切り離します。
+                Screen = (parent != null) ? parent.Screen : null;
             }
         }
 
@@ -380,13 +384,13 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (screen == value) return;
 
+                // フォーカスを解除します。
+                if (screen != null) Defocus();
+
                 screen = value;
 
-                // 子を同じ Screen に属させます。
-                if (screen != null)
-                {
-                    foreach (var child in Children) child.Screen = screen;
-                }
+                // 子も同じ Screen の状態にします (Screen が null の場合も含めて)。
+                foreach (var child in Children) child.Screen = screen;
             }
         }
 
@@ -671,7 +675,21 @@ namespace Willcraftia.Xna.Framework.UI
         /// </returns>
         internal bool ProcessKeyDown(Keys key)
         {
-            return OnKeyDown(key);
+            if (OnKeyDown(key)) return true;
+
+            switch (key)
+            {
+                case Keys.Up:
+                    return MoveFocus(FocusNavigation.Up);
+                case Keys.Down:
+                    return MoveFocus(FocusNavigation.Down);
+                case Keys.Left:
+                    return MoveFocus(FocusNavigation.Left);
+                case Keys.Right:
+                    return MoveFocus(FocusNavigation.Right);
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -769,6 +787,93 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             return finalSize;
+        }
+
+        /// <summary>
+        /// KeyNavigationMode を取得または設定します。
+        /// </summary>
+        public FocusNavigationMode FocusNavigationMode { get; set; }
+
+        protected virtual bool MoveFocus(FocusNavigation navigation)
+        {
+            switch (navigation)
+            {
+                case FocusNavigation.Forward:
+                case FocusNavigation.Down:
+                case FocusNavigation.Right:
+                    {
+                        return ForwardFocus();
+                    }
+                case FocusNavigation.Backward:
+                case FocusNavigation.Up:
+                case FocusNavigation.Left:
+                    {
+                        return BackwardFocus();
+                    }
+            }
+            return false;
+        }
+
+        protected virtual bool ForwardFocus()
+        {
+            // ルートならば処理失敗で終えます。
+            if (Parent == null) return false;
+
+            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
+            return Parent.ForwardFocus(this);
+        }
+
+        protected bool ForwardFocus(Control child)
+        {
+            // ナビゲーション不可ならば処理失敗で終えます。
+            if (FocusNavigationMode == FocusNavigationMode.None) return false;
+
+            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
+            for (int i = Children.IndexOf(child) + 1; i < Children.Count; i++)
+            {
+                var sibling = Children[i];
+                if (sibling.Focusable)
+                {
+                    // Focusable な兄弟へフォーカスを移動します。
+                    sibling.Focus();
+                    return true;
+                }
+
+                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
+                if (sibling.FocusFirstFocusableDesendent()) return true;
+            }
+
+            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
+            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusFirstFocusableDesendent();
+
+            // 以下、Continue の場合となります。
+
+            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
+            if (Parent == null) return false;
+
+            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
+            return Parent.ForwardFocus(this);
+        }
+
+        public bool FocusFirstFocusableDesendent()
+        {
+            foreach (var child in Children)
+            {
+                if (child.FocusFirstFocusableDesendent()) return true;
+            }
+
+            if (Focusable)
+            {
+                Focus();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected virtual bool BackwardFocus()
+        {
+            return false;
         }
 
         /// <summary>

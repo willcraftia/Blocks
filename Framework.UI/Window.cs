@@ -66,6 +66,7 @@ namespace Willcraftia.Xna.Framework.UI
         public Window()
             : base(true)
         {
+            FocusNavigationMode = FocusNavigationMode.Cycle;
             SizeToContent = SizeToContent.Manual;
         }
 
@@ -85,8 +86,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void Close()
         {
-            // フォーカスを破棄します。
-            Defocus();
             // Closing イベントを発生させます。
             RaiseClosing();
             // Desktop から登録を解除します。
@@ -106,7 +105,7 @@ namespace Willcraftia.Xna.Framework.UI
             RaiseActivated();
 
             // フォーカスを得ます。
-            Focus();
+            FocusFirstFocusableDesendent();
         }
 
         /// <summary>

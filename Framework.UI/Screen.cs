@@ -85,10 +85,10 @@ namespace Willcraftia.Xna.Framework.UI
             Content = new ContentManager(game.Services);
 
             Animations = new AnimationCollection(this);
-            Desktop = new Desktop()
-            {
-                Screen = this
-            };
+            Desktop = new Desktop { Screen = this };
+
+            // フォーカスは Desktop に設定しておきます。
+            focusedControl = Desktop;
         }
 
         // I/F
@@ -120,28 +120,19 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void NotifyKeyDown(Keys key)
         {
-            if (focusedControl != null)
-            {
-                if (focusedControl.ProcessKeyDown(key)) return;
-            }
+            focusedControl.ProcessKeyDown(key);
         }
 
         // I/F
         public void NotifyKeyUp(Keys key)
         {
-            if (focusedControl != null)
-            {
-                focusedControl.ProcessKeyUp(key);
-            }
+            focusedControl.ProcessKeyUp(key);
         }
 
         // I/F
         public void NotifyCharacterEnter(char character)
         {
-            if (focusedControl != null)
-            {
-                focusedControl.ProcessCharacterEnter(character);
-            }
+            focusedControl.ProcessCharacterEnter(character);
         }
 
         /// <summary>
@@ -229,7 +220,7 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 指定の Control のフォーカスを解除します。
+        /// 指定の Control のフォーカスを解除し、Desktop にフォーカスを移動させます。
         /// </summary>
         /// <param name="control">フォーカスを解除したい Control。</param>
         internal void Defocus(Control control)
@@ -237,7 +228,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (control == null) throw new ArgumentNullException("control");
             EnsureControlState(control);
 
-            if (HasFocus(control)) focusedControl = null;
+            if (HasFocus(control)) focusedControl = Desktop;
         }
 
         /// <summary>

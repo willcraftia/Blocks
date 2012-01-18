@@ -35,11 +35,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
         {
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Control), new DefaultControlLaf());
-            RegisterControlLaf(typeof(Desktop), new DesktopLaf());
-            RegisterControlLaf(typeof(Window), new WindowLaf());
             RegisterControlLaf(typeof(Controls.Label), new LabelLaf());
             RegisterControlLaf(typeof(Controls.Button), new ButtonLaf());
-            RegisterControlLaf(typeof(Controls.Overlay), new OverlayLaf());
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="key">キー。</param>
         void OnKeyDown(Keys key)
         {
-            throw new NotImplementedException();
+            if (InputReceiver != null) InputReceiver.NotifyKeyDown(key);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="key">キー。</param>
         void OnKeyUp(Keys key)
         {
-            throw new NotImplementedException();
+            if (InputReceiver != null) InputReceiver.NotifyKeyUp(key);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="character">文字。</param>
         void OnCharacterEnter(char character)
         {
-            throw new NotImplementedException();
+            if (InputReceiver != null) InputReceiver.NotifyCharacterEnter(character);
         }
     }
 }

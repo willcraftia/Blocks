@@ -99,6 +99,8 @@
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Controls\Label.cs" />
+    <Compile Include="FocusNavigation.cs" />
+    <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="SizeToContent.cs" />
     <Compile Include="DefaultScreenFactory.cs" />
     <Compile Include="Desktop.cs" />
@@ -112,7 +114,6 @@
     <Compile Include="IControlLafSource.cs" />
     <Compile Include="Controls\Overlay.cs" />
     <Compile Include="Lafs\Debug\DefaultControlLaf.cs" />
-    <Compile Include="Lafs\Debug\DesktopLaf.cs" />
     <Compile Include="Lafs\Debug\LabelLaf.cs" />
     <Compile Include="Lafs\Sprite\DesktopLaf.cs" />
     <Compile Include="Lafs\Sprite\LabelLaf.cs" />
@@ -139,8 +140,6 @@
     <Compile Include="Lafs\Debug\ButtonLaf.cs" />
     <Compile Include="Lafs\Debug\DebugControlLafBase.cs" />
     <Compile Include="Lafs\Debug\DebugControlLafSource.cs" />
-    <Compile Include="Lafs\Debug\OverlayLaf.cs" />
-    <Compile Include="Lafs\Debug\WindowLaf.cs" />
     <Compile Include="Lafs\Sprite\ButtonLaf.cs" />
     <Compile Include="Lafs\Sprite\SpriteControlLafBase.cs" />
     <Compile Include="Lafs\Sprite\OverlayLaf.cs" />
