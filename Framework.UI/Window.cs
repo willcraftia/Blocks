@@ -85,8 +85,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void Close()
         {
-            // 非アクティブ化します。
-            Deactivate();
+            // フォーカスを破棄します。
+            Defocus();
             // Closing イベントを発生させます。
             RaiseClosing();
             // Desktop から登録を解除します。
@@ -107,20 +107,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // フォーカスを得ます。
             Focus();
-        }
-
-        /// <summary>
-        /// Window を非アクティブ化します。
-        /// </summary>
-        public void Deactivate()
-        {
-            if (Screen == null) throw new InvalidOperationException("Window dose not belongs to any screens.");
-
-            // フォーカスを破棄します。
-            Defocus();
-
-            Screen.Desktop.DeactivateWindow(this);
-            RaiseDeactivated();
         }
 
         /// <summary>

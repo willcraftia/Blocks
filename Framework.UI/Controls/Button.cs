@@ -162,17 +162,17 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             return size;
         }
 
-        protected override void OnMouseEntered()
+        protected override void OnMouseEnter()
         {
             MouseHovering = true;
         }
 
-        protected override void OnMouseLeft()
+        protected override void OnMouseLeave()
         {
             MouseHovering = false;
         }
 
-        protected override void OnMouseButtonPressed(MouseButtons button)
+        protected override void OnMouseDown(MouseButtons button)
         {
             // 機能が無効に設定されているならば、イベントを無視します。
             if (!Enabled) return;
@@ -180,7 +180,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             if (button == MouseButtons.Left) pressedByMouse = true;
         }
 
-        protected override void OnMouseButtonReleased(MouseButtons button)
+        protected override void OnMouseUp(MouseButtons button)
         {
             // Button が押された状態で機能が無効に設定される場合を考慮し、機能が有効かどうかに関わらず処理を進めます。
 

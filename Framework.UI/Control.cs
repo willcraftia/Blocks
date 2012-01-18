@@ -28,12 +28,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// マウス カーソルが Control に入った時に発生します。
         /// </summary>
-        public event EventHandler MouseEntered;
+        public event EventHandler MouseEnter;
 
         /// <summary>
         /// マウス カーソルが Control から出た時に発生します。
         /// </summary>
-        public event EventHandler MouseLeft;
+        public event EventHandler MouseLeave;
 
         /// <summary>
         /// 名前。
@@ -448,11 +448,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 自身あるいは子のうちのアクティブな Control を取得または設定します。
-        /// </summary>
-        protected Control ActivatedControl { get; set; }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
         public Control() : this(false) { }
@@ -542,7 +537,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="x">親を基準としたカーソルの X 座標。</param>
         /// <param name="y">親を基準としたカーソルの Y 座標。</param>
-        internal void ProcessMouseMoved(float x, float y)
+        internal void ProcessMouseMove(float x, float y)
         {
             // 不可視の場合は処理しません。
             if (!Visible) return;
@@ -553,18 +548,7 @@ namespace Willcraftia.Xna.Framework.UI
             float localX = x - arrangedBounds.X;
             float localY = y - arrangedBounds.Y;
 
-            if (ActivatedControl != null)
-            {
-                if (ActivatedControl != this)
-                {
-                    // アクティブな子 Control へ通知します。
-                    ActivatedControl.ProcessMouseMoved(localX, localY);
-                }
-                else
-                {
-                    OnMouseMoved(localX, localY);
-                }
-            }
+            OnMouseMove(localX, localY);
 
             for (int i = Children.Count - 1; 0 <= i; i--)
             {
@@ -576,36 +560,22 @@ namespace Willcraftia.Xna.Framework.UI
                 // 領域の外ならばスキップします。
                 if (!child.ArrangedBounds.Contains(localX, localY)) continue;
 
+                // 子に通知します。
+                child.ProcessMouseMove(localX, localY);
+
                 // 子をマウス オーバ状態にします。
                 SwitchMouseOverControl(child);
-
-                // アクティブな子 Control は先の処理で通知を受けているので、その他ならば通知します。
-                if (mouseOverControl != ActivatedControl)
-                {
-                    child.ProcessMouseMoved(localX, localY);
-                }
                 return;
             }
 
-            // マウス オーバ状態にできる子がなく、
-            if (arrangedBounds.Contains(x, y))
-            {
-                // 自分の領域内ならば、自分をマウス オーバ状態にします。
-                SwitchMouseOverControl(this);
-                // 自身がアクティブの場合は先の処理で通知を受けているので、非アクティブならば通知します。
-                if (ActivatedControl == null) OnMouseMoved(localX, localY);
-            }
-            else
-            {
-                // 自分の領域外ならばマウスが外にでたことを通知します。
-                ProcessMouseLeft();
-            }
+            // マウス オーバ状態にできる子がないならば、自分をマウス オーバ状態にします。
+            SwitchMouseOverControl(this);
         }
 
         /// <summary>
         /// マウス カーソルが Control の領域外に移動したことを処理します。
         /// </summary>
-        internal void ProcessMouseLeft()
+        internal void ProcessMouseLeave()
         {
             // 不可視の場合は処理しません。
             if (!Visible) return;
@@ -616,12 +586,12 @@ namespace Willcraftia.Xna.Framework.UI
             if (mouseOverControl != this)
             {
                 // マウス オーバ状態の子へ処理を転送します。
-                mouseOverControl.ProcessMouseLeft();
+                mouseOverControl.ProcessMouseLeave();
             }
             else
             {
                 // 自分がマウス オーバ状態なのでイベント ハンドラを呼びます。
-                RaiseMouseLeft();
+                RaiseMouseLeave();
             }
 
             // マウス オーバ状態を解除します。
@@ -633,30 +603,22 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="button">押下されたマウス ボタン。</param>
         /// <returns></returns>
-        internal bool ProcessMouseButtonPressed(MouseButtons button)
+        internal bool ProcessMouseDown(MouseButtons button)
         {
             // 不可視の場合は処理しません。
             if (!Visible) return false;
 
-            if (ActivatedControl == null)
-            {
-                // マウス オーバ状態の Control をアクティブにします。
-                ActivatedControl = mouseOverControl;
-                // アクティブな Control がなければ処理を終えます。
-                if (ActivatedControl == null) return false;
+            // 非マウス オーバ状態で呼ばれたならば処理しません。
+            if (mouseOverControl == null) return false;
 
-                // 子がアクティブならば、子リストの中で最前面への移動を試みます。
-                //if (ActivatedControl != this && ActivatedControl.affectsOrdering) Children.MoveToTopMost(ActivatedControl);
-            }
-
-            // 子がアクティブならばマウス ボタンが押されたことを通知します。
-            if (ActivatedControl != this) return ActivatedControl.ProcessMouseButtonPressed(button);
+            // 子がマウス オーバ状態ならば子へ通知します。
+            if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown(button);
 
             // フォーカスを得ます。
             Focus();
 
-            // マウス ボタンが押されたことを通知します。
-            OnMouseButtonPressed(button);
+            // 自分へ通知します。
+            OnMouseDown(button);
             return true;
         }
 
@@ -664,26 +626,23 @@ namespace Willcraftia.Xna.Framework.UI
         /// マウス ボタン押下の解放を処理します。
         /// </summary>
         /// <param name="button"></param>
-        internal void ProcessMouseButtonReleased(MouseButtons button)
+        internal void ProcessMouseUp(MouseButtons button)
         {
             // 不可視の場合は処理しません。
             //if (!Visible) return;
 
-            // アクティブな Control がなければ処理しません。
-            if (ActivatedControl == null) return;
+            // 非マウス オーバ状態で呼ばれたならば処理しません。
+            if (mouseOverControl == null) return;
 
-            // 子がアクティブならばマウス ボタン押下の解放を通知します。
-            if (ActivatedControl != this)
+            // 子がマウス オーバ状態ならば子へ通知します。
+            if (mouseOverControl != this)
             {
-                ActivatedControl.ProcessMouseButtonReleased(button);
-            }
-            else
-            {
-                // マウス ボタン押下の解放を通知します。
-                OnMouseButtonReleased(button);
+                mouseOverControl.ProcessMouseUp(button);
+                return;
             }
 
-            ActivatedControl = null;
+            // 自分へ通知します。
+            OnMouseUp(button);
         }
 
         /// <summary>
@@ -693,27 +652,27 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>
         /// true (キー押下を処理した場合)、false (それ以外の場合)。
         /// </returns>
-        internal bool ProcessKeyPressed(Keys key)
+        internal bool ProcessKeyDown(Keys key)
         {
-            return OnKeyPressed(key);
+            return OnKeyDown(key);
         }
 
         /// <summary>
         /// キー押下の解放を処理します。
         /// </summary>
         /// <param name="key">キー。</param>
-        internal void ProcessKeyReleased(Keys key)
+        internal void ProcessKeyUp(Keys key)
         {
-            OnKeyReleased(key);
+            OnKeyUp(key);
         }
 
         /// <summary>
         /// 文字の入力を処理します。
         /// </summary>
         /// <param name="character">文字。</param>
-        internal void ProcessCharacterEntered(char character)
+        internal void ProcessCharacterEnter(char character)
         {
-            OnCharacterEntered(character);
+            OnCharacterEnter(character);
         }
 
         /// <summary>
@@ -810,29 +769,29 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="x">この Control の矩形位置を基準としたカーソルの X 座標。</param>
         /// <param name="y">この Control の矩形位置を基準としたカーソルの Y 座標。</param>
-        protected virtual void OnMouseMoved(float x, float y) { }
+        protected virtual void OnMouseMove(float x, float y) { }
 
         /// <summary>
-        /// マウス カーソルが入った時 (この Control がマウス オーバ状態になった時) に呼び出されます。
+        /// マウス カーソルが入った時に呼び出されます。
         /// </summary>
-        protected virtual void OnMouseEntered() { }
+        protected virtual void OnMouseEnter() { }
 
         /// <summary>
-        /// マウス カーソルが出た時 (この Control のマウス オーバ状態が解除された時) に呼び出されます。
+        /// マウス カーソルが出た時に呼び出されます。
         /// </summary>
-        protected virtual void OnMouseLeft() { }
+        protected virtual void OnMouseLeave() { }
 
         /// <summary>
         /// マウス ボタンが押下された時に呼び出されます。
         /// </summary>
         /// <param name="button">マウス ボタン。</param>
-        protected virtual void OnMouseButtonPressed(MouseButtons button) { }
+        protected virtual void OnMouseDown(MouseButtons button) { }
 
         /// <summary>
         /// マウス ボタン押下が解放された時に呼び出されます。
         /// </summary>
         /// <param name="button">マウス ボタン。</param>
-        protected virtual void OnMouseButtonReleased(MouseButtons button) { }
+        protected virtual void OnMouseUp(MouseButtons button) { }
 
         /// <summary>
         /// キーが押下された時に呼び出されます。
@@ -841,19 +800,19 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>
         /// true (キー押下を処理した場合)、false (それ以外の場合)。
         /// </returns>
-        protected virtual bool OnKeyPressed(Keys key) { return false; }
+        protected virtual bool OnKeyDown(Keys key) { return false; }
 
         /// <summary>
         /// キー押下が解放された時に呼び出されます。
         /// </summary>
         /// <param name="key"></param>
-        protected virtual void OnKeyReleased(Keys key) { }
+        protected virtual void OnKeyUp(Keys key) { }
 
         /// <summary>
         /// 文字が入力された時に呼び出されます。
         /// </summary>
         /// <param name="character"></param>
-        protected virtual void OnCharacterEntered(char character) { }
+        protected virtual void OnCharacterEnter(char character) { }
 
         /// <summary>
         /// マウス オーバ状態の Control を新しい Control へ切り替えます。
@@ -864,11 +823,11 @@ namespace Willcraftia.Xna.Framework.UI
             if (mouseOverControl == newControl) return;
 
             // これまでマウス オーバ状態にあった Control に変更を通知します。
-            if (mouseOverControl != null) mouseOverControl.ProcessMouseLeft();
+            if (mouseOverControl != null) mouseOverControl.ProcessMouseLeave();
 
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
-            mouseOverControl.RaiseMouseEntered();
+            mouseOverControl.RaiseMouseEnter();
         }
 
         /// <summary>
@@ -892,19 +851,19 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// MouseEntered イベントを発生させます。
         /// </summary>
-        void RaiseMouseEntered()
+        void RaiseMouseEnter()
         {
-            OnMouseEntered();
-            if (MouseEntered != null) MouseEntered(this, EventArgs.Empty);
+            OnMouseEnter();
+            if (MouseEnter != null) MouseEnter(this, EventArgs.Empty);
         }
 
         /// <summary>
         /// MouseLeft イベントを発生させます。
         /// </summary>
-        void RaiseMouseLeft()
+        void RaiseMouseLeave()
         {
-            OnMouseLeft();
-            if (MouseLeft != null) MouseLeft(this, EventArgs.Empty);
+            OnMouseLeave();
+            if (MouseLeave != null) MouseLeave(this, EventArgs.Empty);
         }
     }
 }

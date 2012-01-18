@@ -32,7 +32,7 @@ namespace Willcraftia.Xna.Framework.UI
         public IInputReceiver InputReceiver { get; set; }
 
         /// <summary>
-        /// 指定の IInputService が提供する IInputDevice の状態をキャプチャするインスタンスを生成します。
+        /// 指定の IInputService が提供する IInputDevice をキャプチャするインスタンスを生成します。
         /// </summary>
         /// <param name="inputService">IInputService。</param>
         public DefaultInputCapturer(IInputService inputService)
@@ -50,77 +50,77 @@ namespace Willcraftia.Xna.Framework.UI
         void BindInputDevices()
         {
             mouse = inputService.Mouse;
-            mouse.MouseMoved += new MouseMoveDelegate(OnMouseMoved);
-            mouse.MouseButtonPressed += new MouseButtonDelegate(OnMouseButtonPressed);
-            mouse.MouseButtonReleased += new MouseButtonDelegate(OnMouseButtonReleased);
-            mouse.MouseWheelRotated += new MouseWheelDelegate(OnMouseWheelRotated);
+            mouse.MouseMove += new MouseMoveDelegate(OnMouseMove);
+            mouse.MouseDown += new MouseButtonDelegate(OnMouseDown);
+            mouse.MouseUp += new MouseButtonDelegate(OnMouseUp);
+            mouse.MouseWheel += new MouseWheelDelegate(OnMouseWheel);
 
             keyboard = inputService.Keyboard;
-            keyboard.KeyPressed += new KeyDelegate(OnKeyPressed);
-            keyboard.KeyReleased += new KeyDelegate(OnKeyReleased);
-            keyboard.CharacterEntered += new CharacterDelegate(OnCharacterEntered);
+            keyboard.KeyDown += new KeyDelegate(OnKeyDown);
+            keyboard.KeyUp += new KeyDelegate(OnKeyUp);
+            keyboard.CharacterEnter += new CharacterDelegate(OnCharacterEnter);
         }
 
         /// <summary>
-        /// MouseMoved イベントのハンドラです。
+        /// MouseMove イベントのハンドラです。
         /// </summary>
         /// <param name="x">マウス カーソルの x 座標。</param>
         /// <param name="y">マウス カーソルの y 座標。</param>
-        void OnMouseMoved(int x, int y)
+        void OnMouseMove(int x, int y)
         {
-            if (InputReceiver != null) InputReceiver.NotifyMouseMoved(x, y);
+            if (InputReceiver != null) InputReceiver.NotifyMouseMove(x, y);
         }
 
         /// <summary>
-        /// MouseButtonPressed イベントのハンドラです。
+        /// MouseDown イベントのハンドラです。
         /// </summary>
         /// <param name="buttons">マウス ボタン。</param>
-        void OnMouseButtonPressed(MouseButtons buttons)
+        void OnMouseDown(MouseButtons buttons)
         {
-            if (InputReceiver != null) InputReceiver.NotifyMouseButtonPressed(buttons);
+            if (InputReceiver != null) InputReceiver.NotifyMouseDown(buttons);
         }
 
         /// <summary>
-        /// MouseButtonReleased イベントのハンドラです。
+        /// MouseUp イベントのハンドラです。
         /// </summary>
         /// <param name="buttons">マウス ボタン。</param>
-        void OnMouseButtonReleased(MouseButtons buttons)
+        void OnMouseUp(MouseButtons buttons)
         {
-            if (InputReceiver != null) InputReceiver.NotifyMouseButtonReleased(buttons);
+            if (InputReceiver != null) InputReceiver.NotifyMouseUp(buttons);
         }
 
         /// <summary>
-        /// MouseWheelRotated イベントのハンドラです。
+        /// MouseWheel イベントのハンドラです。
         /// </summary>
         /// <param name="ticks">マウス ホイールの回転量。</param>
-        void OnMouseWheelRotated(int ticks)
+        void OnMouseWheel(int ticks)
         {
-            if (InputReceiver != null) InputReceiver.NotifyMouseWheelRotated(ticks);
+            if (InputReceiver != null) InputReceiver.NotifyMouseWheel(ticks);
         }
 
         /// <summary>
-        /// KeyPressed イベントのハンドラです。
+        /// KeyDown イベントのハンドラです。
         /// </summary>
         /// <param name="key">キー。</param>
-        void OnKeyPressed(Keys key)
+        void OnKeyDown(Keys key)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// KeyReleased イベントのハンドラです。
+        /// KeyUp イベントのハンドラです。
         /// </summary>
         /// <param name="key">キー。</param>
-        void OnKeyReleased(Keys key)
+        void OnKeyUp(Keys key)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// CharacterEntered イベントのハンドラです。
+        /// CharacterEnter イベントのハンドラです。
         /// </summary>
         /// <param name="character">文字。</param>
-        void OnCharacterEntered(char character)
+        void OnCharacterEnter(char character)
         {
             throw new NotImplementedException();
         }

@@ -27,17 +27,17 @@ namespace Willcraftia.Xna.Framework.Input
         /// <summary>
         /// キーが押下された時に発生します。
         /// </summary>
-        public event KeyDelegate KeyPressed;
+        public event KeyDelegate KeyDown;
 
         /// <summary>
         /// キーの押下が解放された時に発生します。
         /// </summary>
-        public event KeyDelegate KeyReleased;
+        public event KeyDelegate KeyUp;
 
         /// <summary>
         /// 文字が入力された時に発生します。
         /// </summary>
-        public event CharacterDelegate CharacterEntered;
+        public event CharacterDelegate CharacterEnter;
 
         /// <summary>
         /// Keys で定義された列挙値の配列。
@@ -72,7 +72,7 @@ namespace Willcraftia.Xna.Framework.Input
             previouseKeyboard = currentKeyboard;
             currentKeyboard = Keyboard.GetState();
 
-            if (KeyPressed == null && KeyReleased == null && CharacterEntered == null) return;
+            if (KeyDown == null && KeyUp == null && CharacterEnter == null) return;
 
             foreach (var key in allKeys)
             {
@@ -82,46 +82,46 @@ namespace Willcraftia.Xna.Framework.Input
 
                 if (currentState == KeyState.Down)
                 {
-                    RaiseKeyPressed(key);
-                    RaiseCharacterEvent(key);
+                    RaiseKeyDown(key);
+                    RaiseCharacterEnter(key);
                 }
                 else
                 {
-                    RaiseKeyReleased(key);
+                    RaiseKeyUp(key);
                 }
             }
         }
 
         /// <summary>
-        /// KeyPressed イベントを発生させます。
+        /// KeyDown イベントを発生させます。
         /// </summary>
         /// <param name="key">キー。</param>
-        void RaiseKeyPressed(Keys key)
+        void RaiseKeyDown(Keys key)
         {
-            if (KeyPressed != null) KeyPressed(key);
+            if (KeyDown != null) KeyDown(key);
         }
 
         /// <summary>
-        /// KeyReleased イベントを発生させます。
+        /// KeyUp イベントを発生させます。
         /// </summary>
         /// <param name="key">キー。</param>
-        void RaiseKeyReleased(Keys key)
+        void RaiseKeyUp(Keys key)
         {
-            if (KeyReleased != null) KeyReleased(key);
+            if (KeyUp != null) KeyUp(key);
         }
 
         /// <summary>
-        /// CharacterEntered イベントを発生させます。
+        /// CharacterEnter イベントを発生させます。
         /// </summary>
         /// <param name="key">キー。</param>
-        void RaiseCharacterEvent(Keys key)
+        void RaiseCharacterEnter(Keys key)
         {
             var shiftPressed = (currentKeyboard.IsKeyDown(Keys.LeftShift) || currentKeyboard.IsKeyDown(Keys.RightShift));
 
             char character;
             if (KeyboardHelper.KeyToCharacter(key, shiftPressed, out character))
             {
-                if (CharacterEntered != null) CharacterEntered(character);
+                if (CharacterEnter != null) CharacterEnter(character);
             }
         }
     }

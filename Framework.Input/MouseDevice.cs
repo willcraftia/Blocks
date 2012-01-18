@@ -35,22 +35,22 @@ namespace Willcraftia.Xna.Framework.Input
         /// <summary>
         /// マウス カーソルが移動した場合に発生します。
         /// </summary>
-        public event MouseMoveDelegate MouseMoved;
+        public event MouseMoveDelegate MouseMove;
 
         /// <summary>
         /// マウス ボタンが押下された場合に発生します。
         /// </summary>
-        public event MouseButtonDelegate MouseButtonPressed;
+        public event MouseButtonDelegate MouseDown;
 
         /// <summary>
-        /// マウス ボタンの押下が解放された場合に発生します。
+        /// マウス ボタン押下が解放された場合に発生します。
         /// </summary>
-        public event MouseButtonDelegate MouseButtonReleased;
+        public event MouseButtonDelegate MouseUp;
 
         /// <summary>
         /// マウス ホイールが回転された場合に発生します。
         /// </summary>
-        public event MouseWheelDelegate MouseWheelRotated;
+        public event MouseWheelDelegate MouseWheel;
 
         /// <summary>
         /// 前回の Update メソッドにおける MouseState。
@@ -84,7 +84,7 @@ namespace Willcraftia.Xna.Framework.Input
             if (previousMouseState.X != currentMouseState.X || previousMouseState.Y != currentMouseState.Y)
             {
                 // イベント発生
-                RaiseMouseMoved(currentMouseState.X, currentMouseState.Y);
+                RaiseMouseMove(currentMouseState.X, currentMouseState.Y);
             }
 
             // ボタン押下状態の判定
@@ -92,41 +92,41 @@ namespace Willcraftia.Xna.Framework.Input
             if (previousMouseState.LeftButton == ButtonState.Released)
             {
                 // 押されたかどうか
-                if (currentMouseState.LeftButton == ButtonState.Pressed) RaiseMouseButtonPressed(MouseButtons.Left);
+                if (currentMouseState.LeftButton == ButtonState.Pressed) RaiseMouseDown(MouseButtons.Left);
             }
             else
             {
                 // 離されたかどうか
-                if (currentMouseState.LeftButton == ButtonState.Released) RaiseMouseButtonReleased(MouseButtons.Left);
+                if (currentMouseState.LeftButton == ButtonState.Released) RaiseMouseUp(MouseButtons.Left);
             }
             // 右ボタン判定
             if (previousMouseState.RightButton == ButtonState.Released)
             {
                 // 押されたかどうか
-                if (currentMouseState.RightButton == ButtonState.Pressed) RaiseMouseButtonPressed(MouseButtons.Right);
+                if (currentMouseState.RightButton == ButtonState.Pressed) RaiseMouseDown(MouseButtons.Right);
             }
             else
             {
                 // 離されたかどうか
-                if (currentMouseState.RightButton == ButtonState.Released) RaiseMouseButtonReleased(MouseButtons.Right);
+                if (currentMouseState.RightButton == ButtonState.Released) RaiseMouseUp(MouseButtons.Right);
             }
             // 中央ボタン判定
             if (previousMouseState.MiddleButton == ButtonState.Released)
             {
                 // 押されたかどうか
-                if (currentMouseState.MiddleButton == ButtonState.Pressed) RaiseMouseButtonPressed(MouseButtons.Middle);
+                if (currentMouseState.MiddleButton == ButtonState.Pressed) RaiseMouseDown(MouseButtons.Middle);
             }
             else
             {
                 // 離されたかどうか
-                if (currentMouseState.MiddleButton == ButtonState.Released) RaiseMouseButtonReleased(MouseButtons.Middle);
+                if (currentMouseState.MiddleButton == ButtonState.Released) RaiseMouseUp(MouseButtons.Middle);
             }
 
             // マウス ホイールの回転量から前回から変化したかどうか
             if (previousMouseState.ScrollWheelValue != currentMouseState.ScrollWheelValue)
             {
                 // 前回からの移動量の通知でイベント発生
-                RaiseMouseWheelRotated(currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue);
+                RaiseMouseWheel(currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue);
             }
         }
 
@@ -141,40 +141,40 @@ namespace Willcraftia.Xna.Framework.Input
         }
 
         /// <summary>
-        /// MouseMoved イベントを発生させます。
+        /// MouseMove イベントを発生させます。
         /// </summary>
         /// <param name="x">マウス カーソルの x 座標。</param>
         /// <param name="y">マウス カーソルの y 座標。</param>
-        void RaiseMouseMoved(int x, int y)
+        void RaiseMouseMove(int x, int y)
         {
-            if (MouseMoved != null) MouseMoved(x, y);
+            if (MouseMove != null) MouseMove(x, y);
         }
 
         /// <summary>
-        /// MouseButtonPressed イベントを発生させます。
+        /// MouseDown イベントを発生させます。
         /// </summary>
         /// <param name="button">押下されているマウス ボタン。</param>
-        void RaiseMouseButtonPressed(MouseButtons button)
+        void RaiseMouseDown(MouseButtons button)
         {
-            if (MouseButtonPressed != null) MouseButtonPressed(button);
+            if (MouseDown != null) MouseDown(button);
         }
 
         /// <summary>
-        /// MouseButtonReleased イベントを発生させます。
+        /// MouseUp イベントを発生させます。
         /// </summary>
         /// <param name="button">押下が解放されたマウス ボタン。</param>
-        void RaiseMouseButtonReleased(MouseButtons button)
+        void RaiseMouseUp(MouseButtons button)
         {
-            if (MouseButtonReleased != null) MouseButtonReleased(button);
+            if (MouseUp != null) MouseUp(button);
         }
 
         /// <summary>
-        /// MouseWheelRotated イベントを発生させます。
+        /// MouseWheel イベントを発生させます。
         /// </summary>
         /// <param name="ticks">ホイール回転量。</param>
-        void RaiseMouseWheelRotated(int ticks)
+        void RaiseMouseWheel(int ticks)
         {
-            if (MouseWheelRotated != null) MouseWheelRotated(ticks);
+            if (MouseWheel != null) MouseWheel(ticks);
         }
     }
 }

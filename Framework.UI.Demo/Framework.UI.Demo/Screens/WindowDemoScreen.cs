@@ -360,12 +360,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     };
                     Animations.Add(rotateCubeTimelineAnimation);
 
-                    button.MouseEntered += (s, e) =>
+                    button.MouseEnter += (s, e) =>
                     {
                         button.Scale = 1.5f;
                         rotateCubeTimelineAnimation.Enabled = true;
                     };
-                    button.MouseLeft += (s, e) =>
+                    button.MouseLeave += (s, e) =>
                     {
                         button.Scale = 1;
                         rotateCubeTimelineAnimation.Enabled = false;

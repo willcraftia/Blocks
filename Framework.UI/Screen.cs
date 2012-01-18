@@ -92,55 +92,55 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         // I/F
-        public void NotifyMouseMoved(int x, int y)
+        public void NotifyMouseMove(int x, int y)
         {
-            Desktop.ProcessMouseMoved(x, y);
+            Desktop.ProcessMouseMove(x, y);
 
             lastMousePosition.X = x;
             lastMousePosition.Y = y;
         }
 
         // I/F
-        public void NotifyMouseButtonPressed(MouseButtons button)
+        public void NotifyMouseDown(MouseButtons button)
         {
-            Desktop.ProcessMouseButtonPressed(button);
+            Desktop.ProcessMouseDown(button);
         }
 
         // I/F
-        public void NotifyMouseButtonReleased(MouseButtons button)
+        public void NotifyMouseUp(MouseButtons button)
         {
-            Desktop.ProcessMouseButtonReleased(button);
+            Desktop.ProcessMouseUp(button);
         }
 
         // I/F
-        public void NotifyMouseWheelRotated(int ticks)
+        public void NotifyMouseWheel(int ticks)
         {
         }
 
         // I/F
-        public void NotifyKeyPressed(Keys key)
+        public void NotifyKeyDown(Keys key)
         {
             if (focusedControl != null)
             {
-                if (focusedControl.ProcessKeyPressed(key)) return;
+                if (focusedControl.ProcessKeyDown(key)) return;
             }
         }
 
         // I/F
-        public void NotifyKeyReleased(Keys key)
+        public void NotifyKeyUp(Keys key)
         {
             if (focusedControl != null)
             {
-                focusedControl.ProcessKeyReleased(key);
+                focusedControl.ProcessKeyUp(key);
             }
         }
 
         // I/F
-        public void NotifyCharacterEntered(char character)
+        public void NotifyCharacterEnter(char character)
         {
             if (focusedControl != null)
             {
-                focusedControl.ProcessCharacterEntered(character);
+                focusedControl.ProcessCharacterEnter(character);
             }
         }
 
@@ -179,7 +179,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             // マウス オーバ状態が変化する可能性があるので、
             // 最後に Screen が得たマウス カーソルの位置を再送します。
-            Desktop.ProcessMouseMoved(lastMousePosition.X, lastMousePosition.Y);
+            Desktop.ProcessMouseMove(lastMousePosition.X, lastMousePosition.Y);
         }
 
         /// <summary>
