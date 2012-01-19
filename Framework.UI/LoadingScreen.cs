@@ -66,8 +66,12 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// 非同期 Screen ローディングが完了した場合に呼び出されます。
+        /// ScreenLoadCompleted イベントを発生させます。
         /// </summary>
-        protected virtual void OnScreenLoadCompleted() { }
+        protected virtual void OnScreenLoadCompleted()
+        {
+            if (ScreenLoadCompleted != null) ScreenLoadCompleted(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// 非同期 Screen ローディングを開始します。
@@ -85,16 +89,7 @@ namespace Willcraftia.Xna.Framework.UI
         void LoadScreenAsyncCallerCallback(IAsyncResult result)
         {
             LoadedScreen = loadScreenAsyncCaller.EndInvoke(result);
-            RaiseNextScreenLoadCompleted();
-        }
-
-        /// <summary>
-        /// ScreenLoadCompleted イベントを発生させます。
-        /// </summary>
-        void RaiseNextScreenLoadCompleted()
-        {
             OnScreenLoadCompleted();
-            if (ScreenLoadCompleted != null) ScreenLoadCompleted(this, EventArgs.Empty);
         }
     }
 }

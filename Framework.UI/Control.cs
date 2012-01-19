@@ -51,11 +51,6 @@ namespace Willcraftia.Xna.Framework.UI
         string name;
 
         /// <summary>
-        /// 属する Screen。
-        /// </summary>
-        Screen screen;
-
-        /// <summary>
         /// 親 Control。
         /// </summary>
         Control parent;
@@ -127,11 +122,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (Control が可視の場合)、false (それ以外の場合)。
         /// </summary>
         bool visible = true;
-
-        /// <summary>
-        /// true (アクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
-        /// </summary>
-        bool affectsOrdering;
 
         /// <summary>
         /// フォント。
@@ -378,31 +368,15 @@ namespace Willcraftia.Xna.Framework.UI
 
                 parent = value;
 
-                // 親と同じ Screen に属します。
-                // 親が null ならば Screen から切り離します。
-                Screen = (parent != null) ? parent.Screen : null;
+                // 自分あるいは子孫のフォーカスを解除します。
+                if (parent == null) DefocusDescent();
             }
         }
 
         /// <summary>
         /// Screen を取得します。
         /// </summary>
-        public Screen Screen
-        {
-            get { return screen; }
-            internal set
-            {
-                if (screen == value) return;
-
-                // フォーカスを解除します。
-                if (screen != null) Defocus();
-
-                screen = value;
-
-                // 子も同じ Screen の状態にします (Screen が null の場合も含めて)。
-                foreach (var child in Children) child.Screen = screen;
-            }
-        }
+        public Screen Screen { get; private set; }
 
         /// <summary>
         /// 子 Control のコレクションを取得します。
@@ -429,7 +403,7 @@ namespace Willcraftia.Xna.Framework.UI
                 // フォーカスを解除します。
                 Defocus();
                 // イベントを発生させます。
-                RaiseEnabledChanged();
+                OnEnabledChanged();
             }
         }
 
@@ -449,7 +423,7 @@ namespace Willcraftia.Xna.Framework.UI
                 // フォーカスを解除します。
                 Defocus();
                 // イベントを発生させます。
-                RaiseVisibleChanged();
+                OnVisibleChanged();
             }
         }
 
@@ -497,17 +471,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Control() : this(false) { }
-
-        /// <summary>
-        /// コンストラクタ。
-        /// </summary>
-        /// <param name="affectsOrdering">
-        /// true (Control がアクティブになった時に最前面へ移動する場合)、false (それ以外の場合)。
-        /// </param>
-        public Control(bool affectsOrdering)
+        /// <param name="screen">Screen。</param>
+        public Control(Screen screen)
         {
-            this.affectsOrdering = affectsOrdering;
+            if (screen == null) throw new ArgumentNullException("screen");
+            Screen = screen;
 
             Children = new ParentingControlCollection(this);
 
@@ -561,6 +529,18 @@ namespace Willcraftia.Xna.Framework.UI
             if (!Focused) return;
 
             Screen.Defocus(this);
+        }
+
+        /// <summary>
+        /// 自分あるいは子孫にあるフォーカスを探索して解除します。
+        /// </summary>
+        public void DefocusDescent()
+        {
+            if (!Focused) return;
+
+            Screen.Defocus(this);
+
+            foreach (var child in Children) child.DefocusDescent();
         }
 
         /// <summary>
@@ -632,7 +612,7 @@ namespace Willcraftia.Xna.Framework.UI
             else
             {
                 // 自分がマウス オーバ状態なのでイベント ハンドラを呼びます。
-                RaiseMouseLeave();
+                OnMouseLeave();
             }
 
             // マウス オーバ状態を解除します。
@@ -962,13 +942,21 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// Enabled プロパティが変更された時に呼び出されます。
+        /// EnabledChanged イベントを発生させます。
         /// </summary>
-        protected virtual void OnEnabledChanged() { }
+        protected virtual void OnEnabledChanged()
+        {
+            if (EnabledChanged != null) EnabledChanged(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Visible プロパティが変更された時に呼び出されます。
+        /// VisibleChanged イベントを発生させます。
         /// </summary>
-        protected virtual void OnVisibleChanged() { }
+        protected virtual void OnVisibleChanged()
+        {
+            if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// マウス カーソルが移動した時に呼び出されます。
@@ -979,13 +967,21 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// マウス カーソルが入った時に呼び出されます。
+        /// MouseEnter イベントを発生させます。
         /// </summary>
-        protected virtual void OnMouseEnter() { }
+        protected virtual void OnMouseEnter()
+        {
+            if (MouseEnter != null) MouseEnter(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// マウス カーソルが出た時に呼び出されます。
+        /// MouseLeave イベントを発生させます。
         /// </summary>
-        protected virtual void OnMouseLeave() { }
+        protected virtual void OnMouseLeave()
+        {
+            if (MouseLeave != null) MouseLeave(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// マウス ボタンが押下された時に呼び出されます。
@@ -1022,35 +1018,19 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// フォーカスを得た時に発生します。
-        /// </summary>
-        protected virtual void OnGotFocus() { }
-
-        /// <summary>
-        /// フォーカスを失った時に発生します。
-        /// </summary>
-        protected virtual void OnLostFocus() { }
-
-        /// <summary>
         /// GotFocus イベントを発生させます。
         /// </summary>
-        /// <remarks>
-        /// このメソッドは Screen から呼び出されます。
-        /// </remarks>
-        internal void RaiseGotFocus()
+        protected internal virtual void OnGotFocus()
         {
-            OnGotFocus();
             if (GotFocus != null) GotFocus(this, EventArgs.Empty);
         }
 
         /// <summary>
+        /// フォーカスを失った時に発生します。
         /// LostFocus イベントを発生させます。
         /// </summary>
-        /// <remarks>
-        /// このメソッドは Screen から呼び出されます。
-        /// </remarks>
-        internal void RaiseLostFocus()
+        protected internal virtual void OnLostFocus()
         {
-            OnLostFocus();
             if (LostFocus != null) LostFocus(this, EventArgs.Empty);
         }
 
@@ -1067,43 +1047,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
-            mouseOverControl.RaiseMouseEnter();
-        }
-
-        /// <summary>
-        /// EnabledChanged イベントを発生させます。
-        /// </summary>
-        void RaiseEnabledChanged()
-        {
-            OnEnabledChanged();
-            if (EnabledChanged != null) EnabledChanged(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// VisibleChanged イベントを発生させます。
-        /// </summary>
-        void RaiseVisibleChanged()
-        {
-            OnVisibleChanged();
-            if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// MouseEntered イベントを発生させます。
-        /// </summary>
-        void RaiseMouseEnter()
-        {
-            OnMouseEnter();
-            if (MouseEnter != null) MouseEnter(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// MouseLeft イベントを発生させます。
-        /// </summary>
-        void RaiseMouseLeave()
-        {
-            OnMouseLeave();
-            if (MouseLeave != null) MouseLeave(this, EventArgs.Empty);
+            mouseOverControl.OnMouseEnter();
         }
     }
 }

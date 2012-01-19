@@ -16,7 +16,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         public Matrix Orientation { get; set; }
 
-        public CubeControl()
+        public CubeControl(Screen screen)
+            : base(screen)
         {
             Scale = 1;
             Orientation = Matrix.Identity;

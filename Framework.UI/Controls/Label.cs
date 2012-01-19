@@ -43,7 +43,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Label()
+        /// <param name="screen">Screen。</param>
+        public Label(Screen screen)
+            : base(screen)
         {
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;

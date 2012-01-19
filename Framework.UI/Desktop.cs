@@ -14,7 +14,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        internal Desktop() { }
+        /// <param name="screen">Screen。</param>
+        internal Desktop(Screen screen) : base(screen)  { }
 
         /// <summary>
         /// Window をアクティブ化します。

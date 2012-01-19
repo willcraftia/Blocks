@@ -20,7 +20,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public StackPanel()
+        /// <param name="screen">Screen。</param>
+        public StackPanel(Screen screen)
+            : base(screen)
         {
             FocusNavigationMode = FocusNavigationMode.Continue;
             Orientation = Orientation.Horizontal;

@@ -62,7 +62,7 @@ namespace Willcraftia.Xna.Framework.UI
                 enabled = value;
 
                 // イベントを発生させます。
-                RaiseEnanbledChanged();
+                OnEnanbledChanged();
             }
         }
 
@@ -84,30 +84,20 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// Enabled プロパティが変更された時に呼び出されます。
+        /// EnanbledChanged イベントを発生させます。
         /// </summary>
-        protected virtual void OnEnanbledChanged() { }
-
-        /// <summary>
-        /// Completed イベントが発生される時に呼び出されます。
-        /// </summary>
-        protected virtual void OnCompleted() { }
-
-        /// <summary>
-        /// Completed イベントを発生させます。
-        /// </summary>
-        protected void RaiseCompleted()
+        protected virtual void OnEnanbledChanged()
         {
-            OnCompleted();
-            if (Completed != null) Completed(this, EventArgs.Empty);
+            if (EnanbledChanged != null) EnanbledChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// EnanbledChanged イベントを発生させます。
+        /// Completed イベントが発生される時に呼び出されます。
+        /// Completed イベントを発生させます。
         /// </summary>
-        void RaiseEnanbledChanged()
+        protected virtual void OnCompleted()
         {
-            OnEnanbledChanged();
-            if (EnanbledChanged != null) EnanbledChanged(this, EventArgs.Empty);
+            if (Completed != null) Completed(this, EventArgs.Empty);
         }
     }
 }

@@ -12,6 +12,383 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 {
     public sealed class WindowDemoScreen : Screen
     {
+        #region FirstWindow
+
+        class FirstWindow : Window
+        {
+            public FirstWindow(Screen screen)
+                : base(screen)
+            {
+                Width = unit * 10;
+                Height = unit * 10;
+                Margin = new Thickness(unit, unit, 0, 0);
+                BackgroundColor = Color.Red;
+
+                var firstWindow_widthAnimation = new PropertyLerpAnimation
+                {
+                    Target = this,
+                    PropertyName = "Width",
+                    From = 0,
+                    To = Width,
+                    Repeat = Repeat.Forever,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(2),
+                    Enabled = true
+                };
+                screen.Animations.Add(firstWindow_widthAnimation);
+                
+                var firstWindow_HeightAnimation = new PropertyLerpAnimation
+                {
+                    Target = this,
+                    PropertyName = "Height",
+                    From = 0,
+                    To = Height,
+                    Repeat = Repeat.Forever,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(2),
+                    Enabled = true
+                };
+                screen.Animations.Add(firstWindow_HeightAnimation);
+            }
+        }
+
+        #endregion
+
+        #region SecondWindow
+
+        class SecondWindow : Window
+        {
+            public SecondWindow(Screen screen)
+                : base(screen)
+            {
+                Width = unit * 10;
+                Height = unit * 10;
+                Margin = new Thickness(unit * 3, unit * 3, 0, 0);
+                BackgroundColor = Color.Green;
+
+                var opacityAnimation = new PropertyLerpAnimation
+                {
+                    Target = this,
+                    PropertyName = "Opacity",
+                    From = 0,
+                    To = 1,
+                    Repeat = Repeat.Forever,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(1),
+                    AutoReversed = true,
+                    Enabled = true
+                };
+                screen.Animations.Add(opacityAnimation);
+            }
+        }
+
+        #endregion
+
+        #region ThirdWindow
+
+        class ThirdWindow : Window
+        {
+            public ThirdWindow(Screen screen)
+                : base(screen)
+            {
+                Width = unit * 15;
+                Height = unit * 10;
+                Margin = new Thickness(unit * 5, unit * 5, 0, 0);
+                BackgroundColor = Color.Blue;
+
+                var stackPanel = new StackPanel(screen)
+                {
+                    Margin = new Thickness(8),
+                    Orientation = Orientation.Horizontal
+                };
+                Children.Add(stackPanel);
+
+                var openNewDialogButton = new Button(screen)
+                {
+                    Text = "Open new dialog",
+                    FontStretch = new Vector2(1.0f, 2.0f),
+                    ForegroundColor = Color.White,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(8),
+                    Padding = new Thickness(8)
+                };
+                stackPanel.Children.Add(openNewDialogButton);
+                openNewDialogButton.Click += (s, e) =>
+                {
+                    var firstDialog = new FirstDialog(screen);
+                    firstDialog.Show();
+                };
+
+                var cubeControl = new CubeControl(screen)
+                {
+                    CubePrimitive = CreateCubePrimitive(),
+                    Clipped = false,
+                    ForegroundColor = Color.White,
+                    Width = unit * 7
+                };
+                stackPanel.Children.Add(cubeControl);
+
+                var rotateCubeTimelineAnimation = new RotateCubeAnimation
+                {
+                    CubeButton = cubeControl,
+                    From = 0,
+                    To = MathHelper.TwoPi,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(4),
+                    Repeat = Repeat.Forever
+                };
+                screen.Animations.Add(rotateCubeTimelineAnimation);
+
+                cubeControl.MouseEnter += (s, e) =>
+                {
+                    cubeControl.Scale = 1.5f;
+                    rotateCubeTimelineAnimation.Enabled = true;
+                };
+                cubeControl.MouseLeave += (s, e) =>
+                {
+                    cubeControl.Scale = 1;
+                    rotateCubeTimelineAnimation.Enabled = false;
+                };
+
+                var thirdWindow_widthAnimation = new PropertyLerpAnimation
+                {
+                    Target = this,
+                    PropertyName = "Width",
+                    From = 0,
+                    To = Width,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(1),
+                    Enabled = true
+                };
+                screen.Animations.Add(thirdWindow_widthAnimation);
+                
+                var thirdWindow_heightAnimation = new PropertyLerpAnimation
+                {
+                    Target = this,
+                    PropertyName = "Height",
+                    From = 0,
+                    To = Height,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(1),
+                    Enabled = true
+                };
+                screen.Animations.Add(thirdWindow_heightAnimation);
+            }
+
+            /// <summary>
+            /// 立方体の GeometricPrimitive を生成します。
+            /// </summary>
+            /// <returns>生成された立方体の GeometricPrimitive。</returns>
+            Graphics.GeometricPrimitive CreateCubePrimitive()
+            {
+                //var cubeVertexSourceFactory = new Graphics.CubeVertexSourceFactory();
+                var cubeVertexSourceFactory = new Graphics.ColoredCubeVertexSourceFactory();
+                cubeVertexSourceFactory.TopSurfaceColor = Color.Green;
+                cubeVertexSourceFactory.BottomSurfaceColor = Color.GreenYellow;
+                cubeVertexSourceFactory.NorthSurfaceColor = Color.Blue;
+                cubeVertexSourceFactory.SouthSurfaceColor = Color.BlueViolet;
+                cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
+                cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
+
+                var source = cubeVertexSourceFactory.CreateVertexSource();
+                return Graphics.GeometricPrimitive.Create(Screen.GraphicsDevice, source);
+            }
+        }
+
+        #endregion
+
+        #region FirstDialog
+
+        class FirstDialog : Overlay
+        {
+            Window window;
+
+            public FirstDialog(Screen screen)
+                : base(screen)
+            {
+                Opacity = 0.5f;
+                BackgroundColor = Color.Black;
+
+                window = new Window(screen)
+                {
+                    Width = unit * 7,
+                    SizeToContent = SizeToContent.Height,
+                    Margin = new Thickness(unit * 4, unit * 6, 0, 0),
+                    BackgroundColor = Color.Green
+                };
+                // Owner を関連付けると Owner が閉じると自動的に閉じます。
+                window.Owner = this;
+
+                var stackPanel = new StackPanel(screen)
+                {
+                    Margin = new Thickness(8),
+                    Orientation = Orientation.Vertical
+                };
+                window.Children.Add(stackPanel);
+
+                var openNewDialogButton = new Button(screen)
+                {
+                    Text = "Open new dialog",
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(8),
+                    Padding = new Thickness(8),
+                    ForegroundColor = Color.White,
+                    Height = unit,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+                openNewDialogButton.Click += (s, e) =>
+                {
+                    var secondDialog = new SecondDialog(screen);
+                    secondDialog.Show();
+                };
+                stackPanel.Children.Add(openNewDialogButton);
+
+                var closeButton = new Button(screen)
+                {
+                    Text = "Close",
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(8),
+                    Padding = new Thickness(8),
+                    ForegroundColor = Color.White,
+                    Height = unit,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+                closeButton.Click += (s, e) => Close();
+                stackPanel.Children.Add(closeButton);
+
+                var switchScreenButton = new Button(screen)
+                {
+                    Text = "Switch Screen",
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(8),
+                    Padding = new Thickness(8),
+                    ForegroundColor = Color.White,
+                    Height = unit,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+                switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
+                stackPanel.Children.Add(switchScreenButton);
+
+                var exitButton = new Button(screen)
+                {
+                    Text = "Exit",
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(8),
+                    Padding = new Thickness(8),
+                    ForegroundColor = Color.White,
+                    Height = unit,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+                exitButton.Click += new EventHandler(OnExitButtonClick);
+                stackPanel.Children.Add(exitButton);
+            }
+
+            void OnExitButtonClick(object sender, EventArgs e)
+            {
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Show();
+
+                var opacityAnimation = new PropertyLerpAnimation
+                {
+                    Target = overlay,
+                    PropertyName = "Opacity",
+                    From = 0,
+                    To = 1,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
+                Screen.Animations.Add(opacityAnimation);
+            }
+
+            void OnSwitchScreenButtonClick(object sender, EventArgs e)
+            {
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Show();
+
+                var opacityAnimation = new PropertyLerpAnimation
+                {
+                    Target = overlay,
+                    PropertyName = "Opacity",
+                    From = 0,
+                    To = 1,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                opacityAnimation.Completed += (s, evt) =>
+                {
+                    var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
+                    uiService.Show("MainMenuDemoScreen");
+                };
+                Screen.Animations.Add(opacityAnimation);
+            }
+
+            public override void Show()
+            {
+                base.Show();
+
+                window.Show();
+            }
+        }
+
+        #endregion
+
+        #region SecondDialog
+
+        class SecondDialog : Overlay
+        {
+            Window window;
+
+            public SecondDialog(Screen screen)
+                : base(screen)
+            {
+                Opacity = 0.5f;
+                BackgroundColor = Color.Black;
+
+                window = new Window(screen)
+                {
+                    SizeToContent = SizeToContent.WidthAndHeight,
+                    Margin = new Thickness(unit * 1, unit * 4, 0, 0),
+                    BackgroundColor = Color.Brown
+                };
+                // Owner を関連付けると Owner が閉じると自動的に閉じます。
+                window.Owner = this;
+
+                var closeButton = new Button(screen)
+                {
+                    Text = "Close",
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    ForegroundColor = Color.White,
+                    Width = unit * 2,
+                    Height = unit,
+                    Margin = new Thickness(unit)
+                };
+                closeButton.Click += (s, e) => Close();
+                window.Children.Add(closeButton);
+            }
+
+            public override void Show()
+            {
+                base.Show();
+
+                window.Show();
+            }
+        }
+
+        #endregion
+
+        const int unit = 32;
+
         public WindowDemoScreen(Game game)
             : base(game)
         {
@@ -23,380 +400,46 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             // 重いロードのテスト用にスリープさせてます。
             System.Threading.Thread.Sleep(2000);
 
-            var cubeVertexSourceFactory = new Graphics.CubeVertexSourceFactory();
-
-            // Unit size.
-            int u = 32;
-
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             Desktop.BackgroundColor = Color.CornflowerBlue;
             Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
-            var screenOverlay = new Overlay
+            var firstWindow = new FirstWindow(this);
+            firstWindow.Show();
+
+            var secondWindow = new SecondWindow(this);
+            secondWindow.Show();
+
+            var thirdWindow = new ThirdWindow(this);
+            thirdWindow.Show();
+
+            var startEffectOverlay = new Overlay(this)
             {
                 Opacity = 1,
                 BackgroundColor = Color.Black
             };
+            startEffectOverlay.Show();
+
+            var startEffectOverlay_opacityAnimation = new PropertyLerpAnimation
             {
-                var animation = new PropertyLerpAnimation
-                {
-                    Target = screenOverlay,
-                    PropertyName = "Opacity",
-                    From = 1,
-                    To = 0,
-                    BeginTime = TimeSpan.Zero,
-                    Duration = TimeSpan.FromSeconds(0.5d),
-                    Enabled = true
-                };
-                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => screenOverlay.Close();
-                Animations.Add(animation);
-            }
-
+                Target = startEffectOverlay,
+                PropertyName = "Opacity",
+                From = 1,
+                To = 0,
+                BeginTime = TimeSpan.Zero,
+                Duration = TimeSpan.FromSeconds(0.5d),
+                Enabled = true
+            };
+            startEffectOverlay_opacityAnimation.Completed += (s, e) =>
             {
-                var window = new Window
-                {
-                    Width = u * 10,
-                    Height = u * 10,
-                    Margin = new Thickness(u, u, 0, 0),
-                    BackgroundColor = Color.Red
-                };
-                {
-                    var animation = new PropertyLerpAnimation
-                    {
-                        Target = window,
-                        PropertyName = "Width",
-                        From = 0,
-                        To = window.Width,
-                        Repeat = Repeat.Forever,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(2),
-                        Enabled = true
-                    };
-                    Animations.Add(animation);
-                }
-                {
-                    var animation = new PropertyLerpAnimation
-                    {
-                        Target = window,
-                        PropertyName = "Height",
-                        From = 0,
-                        To = window.Height,
-                        Repeat = Repeat.Forever,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(2),
-                        Enabled = true
-                    };
-                    Animations.Add(animation);
-                }
-                window.Show(this);
-            }
-
-            {
-                var window = new Window
-                {
-                    Width = u * 10,
-                    Height = u * 10,
-                    Margin = new Thickness(u * 3, u * 3, 0, 0),
-                    BackgroundColor = Color.Green
-                };
-                {
-                    var animation = new PropertyLerpAnimation
-                    {
-                        Target = window,
-                        PropertyName = "Opacity",
-                        From = 0,
-                        To = 1,
-                        Repeat = Repeat.Forever,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(1),
-                        AutoReversed = true,
-                        Enabled = true
-                    };
-                    Animations.Add(animation);
-                }
-                window.Show(this);
-            }
-
-            {
-                var window = new Window
-                {
-                    Width = u * 15,
-                    Height = u * 10,
-                    Margin = new Thickness(u * 5, u * 5, 0, 0),
-                    BackgroundColor = Color.Blue
-                };
-                {
-                    var animation = new PropertyLerpAnimation
-                    {
-                        Target = window,
-                        PropertyName = "Width",
-                        From = 0,
-                        To = window.Width,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(1),
-                        Enabled = true
-                    };
-                    Animations.Add(animation);
-                }
-                {
-                    var animation = new PropertyLerpAnimation
-                    {
-                        Target = window,
-                        PropertyName = "Height",
-                        From = 0,
-                        To = window.Height,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(1),
-                        Enabled = true
-                    };
-                    Animations.Add(animation);
-                }
-
-                var stackPanel = new StackPanel
-                {
-                    Margin = new Thickness(8),
-                    Orientation = Orientation.Horizontal
-                };
-                window.Children.Add(stackPanel);
-
-                {
-                    var button = new Button
-                    {
-                        Text = "Open new dialog",
-                        FontStretch = new Vector2(1.0f, 2.0f),
-                        ForegroundColor = Color.White,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Margin = new Thickness(8),
-                        Padding = new Thickness(8)
-                    };
-                    stackPanel.Children.Add(button);
-                    button.Click += (s, e) =>
-                    {
-                        var overlay = new Overlay
-                        {
-                            Opacity = 0.5f,
-                            BackgroundColor = Color.Black
-                        };
-
-                        var overlayWindow = new Window
-                        {
-                            Width = u * 7,
-                            SizeToContent = SizeToContent.Height,
-                            Margin = new Thickness(u * 4, u * 6, 0, 0),
-                            BackgroundColor = Color.Green
-                        };
-                        // Owner を関連付けると Owner が閉じると自動的に閉じます。
-                        overlayWindow.Owner = overlay;
-
-                        var overlayWindowStackPanel = new StackPanel
-                        {
-                            Margin = new Thickness(8),
-                            Orientation = Orientation.Vertical
-                        };
-                        overlayWindow.Children.Add(overlayWindowStackPanel);
-
-                        {
-                            var overlayWindowButton = new Button
-                            {
-                                Text = "Open new dialog",
-                                TextHorizontalAlignment = HorizontalAlignment.Left,
-                                Margin = new Thickness(8),
-                                Padding = new Thickness(8),
-                                ForegroundColor = Color.White,
-                                Height = u,
-                                HorizontalAlignment = HorizontalAlignment.Left
-                            };
-                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Click += (bs, be) =>
-                            {
-                                var subOverlay = new Overlay
-                                {
-                                    Opacity = 0.5f,
-                                    BackgroundColor = Color.Black
-                                };
-
-                                var subOverlayWindow = new Window
-                                {
-                                    SizeToContent = SizeToContent.WidthAndHeight,
-                                    Margin = new Thickness(u * 1, u * 4, 0, 0),
-                                    BackgroundColor = Color.Brown
-                                };
-                                // Owner を関連付けると Owner が閉じると自動的に閉じます。
-                                subOverlayWindow.Owner = subOverlay;
-
-                                {
-                                    var subOverlayWindowButton = new Button
-                                    {
-                                        Text = "Close",
-                                        TextHorizontalAlignment = HorizontalAlignment.Left,
-                                        ForegroundColor = Color.White,
-                                        Width = u * 2,
-                                        Height = u,
-                                        Margin = new Thickness(u)
-                                    };
-                                    subOverlayWindowButton.Click += (subBs, subBe) => subOverlay.Close();
-                                    subOverlayWindow.Children.Add(subOverlayWindowButton);
-                                }
-
-                                subOverlay.Show(this);
-                                subOverlayWindow.Show(this);
-                            };
-                        }
-                        {
-                            var overlayWindowButton = new Button
-                            {
-                                Text = "Close",
-                                TextHorizontalAlignment = HorizontalAlignment.Left,
-                                Margin = new Thickness(8),
-                                Padding = new Thickness(8),
-                                ForegroundColor = Color.White,
-                                Height = u,
-                                HorizontalAlignment = HorizontalAlignment.Left
-                            };
-                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Click += (bs, be) => overlay.Close();
-                        }
-                        {
-                            var overlayWindowButton = new Button
-                            {
-                                Text = "Switch Screen",
-                                TextHorizontalAlignment = HorizontalAlignment.Left,
-                                Margin = new Thickness(8),
-                                Padding = new Thickness(8),
-                                ForegroundColor = Color.White,
-                                Height = u,
-                                HorizontalAlignment = HorizontalAlignment.Left
-                            };
-                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Click += (bs, be) =>
-                            {
-                                var exitOverlay = new Overlay
-                                {
-                                    Opacity = 0,
-                                    BackgroundColor = Color.Black
-                                };
-                                {
-                                    var animation = new PropertyLerpAnimation
-                                    {
-                                        Target = exitOverlay,
-                                        PropertyName = "Opacity",
-                                        From = 0,
-                                        To = 1,
-                                        BeginTime = TimeSpan.Zero,
-                                        Duration = TimeSpan.FromSeconds(0.5d),
-                                        Enabled = true
-                                    };
-                                    animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
-                                    {
-                                        var uiService = Game.Services.GetRequiredService<IUIService>();
-                                        uiService.Show("MainMenuDemoScreen");
-                                    };
-                                    Animations.Add(animation);
-                                }
-                                exitOverlay.Show(this);
-                            };
-                        }
-                        {
-                            var overlayWindowButton = new Button
-                            {
-                                Text = "Exit",
-                                TextHorizontalAlignment = HorizontalAlignment.Left,
-                                Margin = new Thickness(8),
-                                Padding = new Thickness(8),
-                                ForegroundColor = Color.White,
-                                Height = u,
-                                HorizontalAlignment = HorizontalAlignment.Left
-                            };
-                            overlayWindowStackPanel.Children.Add(overlayWindowButton);
-                            overlayWindowButton.Click += (bs, be) =>
-                            {
-                                var exitOverlay = new Overlay
-                                {
-                                    Opacity = 0,
-                                    BackgroundColor = Color.Black
-                                };
-                                {
-                                    var animation = new PropertyLerpAnimation
-                                    {
-                                        Target = exitOverlay,
-                                        PropertyName = "Opacity",
-                                        From = 0,
-                                        To = 1,
-                                        BeginTime = TimeSpan.Zero,
-                                        Duration = TimeSpan.FromSeconds(0.5d),
-                                        Enabled = true
-                                    };
-                                    animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => Game.Exit();
-                                    Animations.Add(animation);
-                                }
-                                exitOverlay.Show(this);
-                            };
-                        }
-
-                        overlay.Show(this);
-                        overlayWindow.Show(this);
-                    };
-                }
-                {
-                    var button = new CubeControl
-                    {
-                        CubePrimitive = CreateCubePrimitive(),
-                        Clipped = false,
-                        ForegroundColor = Color.White,
-                        Width = u * 7
-                    };
-                    stackPanel.Children.Add(button);
-
-                    var rotateCubeTimelineAnimation = new RotateCubeAnimation
-                    {
-                        CubeButton = button,
-                        From = 0,
-                        To = MathHelper.TwoPi,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(4),
-                        Repeat = Repeat.Forever
-                    };
-                    Animations.Add(rotateCubeTimelineAnimation);
-
-                    button.MouseEnter += (s, e) =>
-                    {
-                        button.Scale = 1.5f;
-                        rotateCubeTimelineAnimation.Enabled = true;
-                    };
-                    button.MouseLeave += (s, e) =>
-                    {
-                        button.Scale = 1;
-                        rotateCubeTimelineAnimation.Enabled = false;
-                    };
-                }
-
-                window.Show(this);
-            }
-
-            screenOverlay.Show(this);
+                startEffectOverlay.Close();
+                thirdWindow.Activate();
+            };
+            Animations.Add(startEffectOverlay_opacityAnimation);
 
             base.LoadContent();
-        }
-
-        /// <summary>
-        /// 立方体の GeometricPrimitive を生成します。
-        /// </summary>
-        /// <returns>生成された立方体の GeometricPrimitive。</returns>
-        Graphics.GeometricPrimitive CreateCubePrimitive()
-        {
-            //var cubeVertexSourceFactory = new Graphics.CubeVertexSourceFactory();
-            var cubeVertexSourceFactory = new Graphics.ColoredCubeVertexSourceFactory();
-            cubeVertexSourceFactory.TopSurfaceColor = Color.Green;
-            cubeVertexSourceFactory.BottomSurfaceColor = Color.GreenYellow;
-            cubeVertexSourceFactory.NorthSurfaceColor = Color.Blue;
-            cubeVertexSourceFactory.SouthSurfaceColor = Color.BlueViolet;
-            cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
-            cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
-
-            var source = cubeVertexSourceFactory.CreateVertexSource();
-            return Graphics.GeometricPrimitive.Create(GraphicsDevice, source);
         }
     }
 }

@@ -68,7 +68,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Button()
+        /// <pparam name="screen">Screen。</pparam>
+        public Button(Screen screen)
+            : base(screen)
         {
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;
@@ -191,21 +193,16 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 pressedByMouse = false;
 
                 // Button の上でマウス ボタンが離されたのならば、Click イベントを発生させます。
-                if (Enabled && !Pressed) RaiseClick();
+                if (Enabled && !Pressed) OnClick();
             }
         }
 
         /// <summary>
         /// Click イベントが発生する時に呼び出されます。
-        /// </summary>
-        protected virtual void OnClick() { }
-
-        /// <summary>
         /// Click イベントを発生させます。
         /// </summary>
-        void RaiseClick()
+        protected virtual void OnClick()
         {
-            OnClick();
             if (Click != null) Click(this, EventArgs.Empty);
         }
     }

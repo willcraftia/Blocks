@@ -12,7 +12,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public Overlay()
+        /// <param name="screen">Screen。</param>
+        public Overlay(Screen screen)
+            : base(screen)
         {
             // デフォルト背景色は透明にします。
             BackgroundColor = Color.White * 0.0f;
@@ -23,13 +25,12 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// Overlay を表示します。
         /// </summary>
-        /// <param name="screen"></param>
-        public override void Show(Screen screen)
+        public override void Show()
         {
-            Margin = screen.Desktop.Margin;
-            Width = screen.Desktop.Width;
-            Height = screen.Desktop.Height;
-            base.Show(screen);
+            Margin = Screen.Desktop.Margin;
+            Width = Screen.Desktop.Width;
+            Height = Screen.Desktop.Height;
+            base.Show();
         }
     }
 }

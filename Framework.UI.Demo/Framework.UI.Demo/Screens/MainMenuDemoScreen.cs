@@ -12,6 +12,107 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 {
     public sealed class MainMenuDemoScreen : Screen
     {
+        #region MenuWindow
+
+        class MenuWindow : Window
+        {
+            public MenuWindow(Screen screen)
+                : base(screen)
+            {
+                Width = unit * 10;
+                Height = unit * 4;
+                BackgroundColor = Color.White;
+                Margin = new Thickness((screen.Desktop.Width - Width) * 0.5f, (screen.Desktop.Height - Height) * 0.5f, 0, 0);
+
+                var stackPanel = new StackPanel(screen)
+                {
+                    Margin = new Thickness(8),
+                    Orientation = Orientation.Vertical
+                };
+                Children.Add(stackPanel);
+
+                var newGameButton = new Button(screen)
+                {
+                    Text = "NEW GAME (DUMMY)",
+                    Height = unit,
+                    Padding = new Thickness(8)
+                };
+                stackPanel.Children.Add(newGameButton);
+
+                var switchScreenButton = new Button(screen)
+                {
+                    Text = "SWITCH SCREEN",
+                    Height = unit,
+                    Padding = new Thickness(8)
+                };
+                stackPanel.Children.Add(switchScreenButton);
+                switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
+
+                var exitButton = new Button(screen)
+                {
+                    Text = "EXIT",
+                    Height = unit,
+                    Padding = new Thickness(8)
+                };
+                exitButton.Click += new EventHandler(OnExitButtonClick);
+                stackPanel.Children.Add(exitButton);
+            }
+
+            void OnSwitchScreenButtonClick(object sender, EventArgs e)
+            {
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Show();
+
+                var opacityAnimation = new PropertyLerpAnimation
+                {
+                    Target = overlay,
+                    PropertyName = "Opacity",
+                    From = 0,
+                    To = 1,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                opacityAnimation.Completed += (s, evt) =>
+                {
+                    var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
+                    uiService.Show("WindowDemoScreen");
+                };
+                Screen.Animations.Add(opacityAnimation);
+            }
+
+            void OnExitButtonClick(object sender, EventArgs e)
+            {
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Show();
+
+                var opacityAnimation = new PropertyLerpAnimation
+                {
+                    Target = overlay,
+                    PropertyName = "Opacity",
+                    From = 0,
+                    To = 1,
+                    BeginTime = TimeSpan.Zero,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
+                Screen.Animations.Add(opacityAnimation);
+            }
+        }
+
+        #endregion
+
+        const int unit = 32;
+
         public MainMenuDemoScreen(Game game)
             : base(game)
         {
@@ -20,133 +121,38 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         protected override void LoadContent()
         {
-            // Unit size.
-            int u = 32;
-
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
             Desktop.BackgroundColor = Color.CornflowerBlue;
             Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
-            var screenOverlay = new Overlay
+            var menuWindow = new MenuWindow(this);
+            menuWindow.Show();
+
+            var startEffectOverlay = new Overlay(this)
             {
                 Opacity = 1,
                 BackgroundColor = Color.Black
             };
-            {
-                var animation = new PropertyLerpAnimation
-                {
-                    Target = screenOverlay,
-                    PropertyName = "Opacity",
-                    From = 1,
-                    To = 0,
-                    BeginTime = TimeSpan.Zero,
-                    Duration = TimeSpan.FromSeconds(0.5d),
-                    Enabled = true
-                };
-                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => screenOverlay.Close();
-                Animations.Add(animation);
-            }
+            startEffectOverlay.Show();
 
-            var window = new Window
+            var startEffectOverlay_opacityAnimation = new PropertyLerpAnimation
             {
-                Width = u * 10,
-                Height = u * 4,
-                BackgroundColor = Color.White
+                Target = startEffectOverlay,
+                PropertyName = "Opacity",
+                From = 1,
+                To = 0,
+                BeginTime = TimeSpan.Zero,
+                Duration = TimeSpan.FromSeconds(0.5d),
+                Enabled = true
             };
-            window.Margin = new Thickness((Desktop.Width - window.Width) * 0.5f, (Desktop.Height - window.Height) * 0.5f, 0, 0);
-
+            startEffectOverlay_opacityAnimation.Completed += (s, e) =>
             {
-                var stackPanel = new StackPanel
-                {
-                    Margin = new Thickness(8),
-                    Orientation = Orientation.Vertical
-                };
-                window.Children.Add(stackPanel);
-                {
-                    {
-                        var button = new Button
-                        {
-                            Text = "NEW GAME (DUMMY)",
-                            Height = u,
-                            Padding = new Thickness(8)
-                        };
-                        stackPanel.Children.Add(button);
-                    }
-                    {
-                        var button = new Button
-                        {
-                            Text = "SWITCH SCREEN",
-                            Height = u,
-                            Padding = new Thickness(8)
-                        };
-                        stackPanel.Children.Add(button);
-                        button.Click += (bs, be) =>
-                        {
-                            var exitOverlay = new Overlay
-                            {
-                                Opacity = 0,
-                                BackgroundColor = Color.Black
-                            };
-                            {
-                                var animation = new PropertyLerpAnimation
-                                {
-                                    Target = exitOverlay,
-                                    PropertyName = "Opacity",
-                                    From = 0,
-                                    To = 1,
-                                    BeginTime = TimeSpan.Zero,
-                                    Duration = TimeSpan.FromSeconds(0.5d),
-                                    Enabled = true
-                                };
-                                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
-                                {
-                                    var uiService = Game.Services.GetRequiredService<IUIService>();
-                                    uiService.Show("WindowDemoScreen");
-                                };
-                                Animations.Add(animation);
-                            }
-                            exitOverlay.Show(this);
-                        };
-                    }
-                    {
-                        var button = new Button
-                        {
-                            Text = "EXIT",
-                            Height = u,
-                            Padding = new Thickness(8)
-                        };
-                        stackPanel.Children.Add(button);
-                        button.Click += (bs, be) =>
-                        {
-                            var exitOverlay = new Overlay
-                            {
-                                Opacity = 0,
-                                BackgroundColor = Color.Black
-                            };
-                            {
-                                var animation = new PropertyLerpAnimation
-                                {
-                                    Target = exitOverlay,
-                                    PropertyName = "Opacity",
-                                    From = 0,
-                                    To = 1,
-                                    BeginTime = TimeSpan.Zero,
-                                    Duration = TimeSpan.FromSeconds(0.5d),
-                                    Enabled = true
-                                };
-                                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => Game.Exit();
-                                Animations.Add(animation);
-                            }
-                            exitOverlay.Show(this);
-                        };
-                    }
-                }
-            }
-            window.Show(this);
-
-            screenOverlay.Show(this);
+                startEffectOverlay.Close();
+                menuWindow.Activate();
+            };
+            Animations.Add(startEffectOverlay_opacityAnimation);
 
             base.LoadContent();
         }

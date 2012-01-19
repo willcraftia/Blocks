@@ -40,7 +40,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 if (screenLoadCompleted)
                 {
-                    var exitOverlay = new Overlay
+                    var exitOverlay = new Overlay(this)
                     {
                         Opacity = 0,
                         BackgroundColor = Color.Black
@@ -64,7 +64,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         };
                         Animations.Add(animation);
                     }
-                    exitOverlay.Show(this);
+                    exitOverlay.Show();
                 }
             }
 
@@ -79,7 +79,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;
 
-            var screenOverlay = new Overlay
+            var screenOverlay = new Overlay(this)
             {
                 Opacity = 1,
                 BackgroundColor = Color.Black
@@ -99,7 +99,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Animations.Add(animation);
             }
 
-            var label = new Label
+            var label = new Label(this)
             {
                 Text = "NOW LOADING...",
                 FontStretch = new Vector2(2),
@@ -119,7 +119,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 }
             };
 
-            screenOverlay.Show(this);
+            screenOverlay.Show();
 
             base.LoadContent();
         }

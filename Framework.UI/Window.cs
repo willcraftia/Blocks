@@ -28,11 +28,6 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler Activated;
 
         /// <summary>
-        /// Window が非アクティブ化された時に発生します。
-        /// </summary>
-        public event EventHandler Deactivated;
-
-        /// <summary>
         /// この Window を所有する Window。
         /// </summary>
         Window owner;
@@ -63,8 +58,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public Window()
-            : base(true)
+        /// <param name="screen">Screen。</param>
+        public Window(Screen screen)
+            : base(screen)
         {
             FocusNavigationMode = FocusNavigationMode.Cycle;
             SizeToContent = SizeToContent.Manual;
@@ -73,10 +69,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// Window を表示します。
         /// </summary>
-        public virtual void Show(Screen screen)
+        public virtual void Show()
         {
             // Desktop へ登録します。
-            screen.Desktop.Children.Add(this);
+            Screen.Desktop.Children.Add(this);
             // アクティブにします。
             Activate();
         }
@@ -87,11 +83,11 @@ namespace Willcraftia.Xna.Framework.UI
         public void Close()
         {
             // Closing イベントを発生させます。
-            RaiseClosing();
+            OnClosing();
             // Desktop から登録を解除します。
             Screen.Desktop.Children.Remove(this);
             // Closed イベントを発生させます。
-            RaiseClosed();
+            OnClosed();
         }
 
         /// <summary>
@@ -102,7 +98,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (Screen == null) throw new InvalidOperationException("Window dose not belongs to any screens.");
 
             Screen.Desktop.ActivateWindow(this);
-            RaiseActivated();
+            OnActivated();
 
             // フォーカスを得ます。
             FocusFirstFocusableDesendent();
@@ -110,13 +106,12 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// Window がアクティブ化された時に呼び出されます。
+        /// Activated イベントを発生させます。
         /// </summary>
-        protected virtual void OnActivated() { }
-
-        /// <summary>
-        /// Window が非アクティブ化された時に呼び出されます。
-        /// </summary>
-        protected virtual void OnDeactivated() { }
+        protected virtual void OnActivated()
+        {
+            if (Activated != null) Activated(this, EventArgs.Empty);
+        }
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -209,6 +204,24 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Window を閉じる直前に呼び出されます。
+        /// Closing イベントを発生させます。
+        /// </summary>
+        protected virtual void OnClosing()
+        {
+            if (Closing != null) Closing(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Window を閉じた直後に呼び出されます。
+        /// Closed イベントを発生させます。
+        /// </summary>
+        protected virtual void OnClosed()
+        {
+            if (Closed != null) Closed(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// この Window を所有する Window が閉じられる前に呼び出され、この Window を閉じます。
         /// </summary>
         /// <param name="sender"></param>
@@ -216,40 +229,6 @@ namespace Willcraftia.Xna.Framework.UI
         void OnOwnerClosing(object sender, EventArgs e)
         {
             Close();
-        }
-
-        /// <summary>
-        /// Activated イベントを発生させます。
-        /// </summary>
-        void RaiseActivated()
-        {
-            OnActivated();
-            if (Activated != null) Activated(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Deactivated イベントを発生させます。
-        /// </summary>
-        void RaiseDeactivated()
-        {
-            OnDeactivated();
-            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Closing イベントを発生させます。
-        /// </summary>
-        void RaiseClosing()
-        {
-            if (Closing != null) Closing(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Closed イベントを発生させます。
-        /// </summary>
-        void RaiseClosed()
-        {
-            if (Closed != null) Closed(this, EventArgs.Empty);
         }
     }
 }

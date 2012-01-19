@@ -85,7 +85,7 @@ namespace Willcraftia.Xna.Framework.UI
             Content = new ContentManager(game.Services);
 
             Animations = new AnimationCollection(this);
-            Desktop = new Desktop { Screen = this };
+            Desktop = new Desktop(this);
 
             // フォーカスは Desktop に設定しておきます。
             focusedControl = Desktop;
@@ -236,12 +236,12 @@ namespace Willcraftia.Xna.Framework.UI
             if (!control.Enabled || !control.Visible || !control.Focusable) return;
 
             // フォーカスを失った事を通知します。
-            if (focusedControl != null) focusedControl.RaiseLostFocus();
+            if (focusedControl != null) focusedControl.OnLostFocus();
 
             focusedControl = control;
 
             // フォーカスを得た事を通知します。
-            if (focusedControl != null) focusedControl.RaiseGotFocus();
+            if (focusedControl != null) focusedControl.OnGotFocus();
         }
 
         /// <summary>
