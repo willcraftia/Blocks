@@ -123,50 +123,27 @@ namespace Willcraftia.Xna.Framework.UI
             switch (SizeToContent)
             {
                 case SizeToContent.Width:
-                    {
-                        return MeasureWidthToContent(availableSize);
-                    }
+                    return MeasureWidthToContent(availableSize);
                 case SizeToContent.Height:
-                    {
-                        return MeasureHeightToContent(availableSize);
-                    }
+                    return MeasureHeightToContent(availableSize);
                 case SizeToContent.WidthAndHeight:
-                    {
-                        return MeasureWidthAndHeightToContent(availableSize);
-                    }
+                    return MeasureWidthAndHeightToContent(availableSize);
                 case SizeToContent.Manual:
                 default:
-                    {
-                        return base.MeasureOverride(availableSize);
-                    }
+                    return base.MeasureOverride(availableSize);
             }
         }
 
-        Size MeasureWidthToContent(Size availableSize)
+        /// <summary>
+        /// SizeToContent に Width が設定された場合の測定を行います。
+        /// </summary>
+        /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
+        /// <returns>自身が希望するサイズ。</returns>
+        protected virtual Size MeasureWidthToContent(Size availableSize)
         {
-            var size = availableSize;
-
-            if (float.IsNaN(Height))
-            {
-                // 高さが未設定ならば可能な限り最大の幅を希望します。
-                if (MinHeight < MaxHeight)
-                {
-                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
-                }
-                // 余白で調整します。
-                var margin = Margin;
-                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
-            }
-            else
-            {
-                // 高さが設定されているならばそのまま希望します。
-                size.Height = Height;
-            }
+            var size = new Size();
+            size.Width = availableSize.Width;
+            size.Height = CalculateBaseHeight(availableSize.Height);
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, size.Height);
@@ -182,31 +159,16 @@ namespace Willcraftia.Xna.Framework.UI
             return finalSize;
         }
 
-        Size MeasureHeightToContent(Size availableSize)
+        /// <summary>
+        /// SizeToContent に Height が設定された場合の測定を行います。
+        /// </summary>
+        /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
+        /// <returns>自身が希望するサイズ。</returns>
+        protected virtual Size MeasureHeightToContent(Size availableSize)
         {
-            var size = availableSize;
-
-            if (float.IsNaN(Width))
-            {
-                // 幅が未設定ならば可能な限り最大の幅を希望します。
-                if (MinWidth < MaxWidth)
-                {
-                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
-                }
-                // 余白で調整します。
-                var margin = Margin;
-                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
-            }
-            else
-            {
-                // 幅が設定されているならばそのまま希望します。
-                size.Width = Width;
-            }
+            var size = new Size();
+            size.Width = CalculateBaseWidth(availableSize.Width);
+            size.Height = availableSize.Height;
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(size.Width, 0);
@@ -222,7 +184,12 @@ namespace Willcraftia.Xna.Framework.UI
             return finalSize;
         }
 
-        Size MeasureWidthAndHeightToContent(Size availableSize)
+        /// <summary>
+        /// SizeToContent に WidthAndHeight が設定された場合の測定を行います。
+        /// </summary>
+        /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
+        /// <returns>自身が希望するサイズ。</returns>
+        protected virtual Size MeasureWidthAndHeightToContent(Size availableSize)
         {
             var size = availableSize;
 

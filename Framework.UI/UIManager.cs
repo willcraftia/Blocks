@@ -306,17 +306,8 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (currentScreen == null) return;
 
-            // Animation を更新します。
-            foreach (var animation in currentScreen.Animations)
-            {
-                if (animation.Enabled) animation.Update(gameTime);
-            }
-
-            // Screen のレイアウトを更新します。
-            currentScreen.UpdateLayout();
-
-            // Control を更新します。
-            currentScreen.Desktop.Update(gameTime);
+            // Screen を更新します。
+            currentScreen.Update(gameTime);
 
             // 次の Screen が設定されているならば切り替えます。
             if (nextScreen != null)

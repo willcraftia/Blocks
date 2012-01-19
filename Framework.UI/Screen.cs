@@ -157,6 +157,25 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 更新します。
+        /// </summary>
+        /// <param name="gameTime"></param>
+        public virtual void Update(GameTime gameTime)
+        {
+            // Animation を更新します。
+            foreach (var animation in Animations)
+            {
+                if (animation.Enabled) animation.Update(gameTime);
+            }
+
+            // Screen のレイアウトを更新します。
+            UpdateLayout();
+
+            // Control を更新します。
+            Desktop.Update(gameTime);
+        }
+
+        /// <summary>
         /// レイアウトを更新します。
         /// </summary>
         public void UpdateLayout()

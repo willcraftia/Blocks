@@ -41,49 +41,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected virtual Size MeasureHorizontalDirection(Size availableSize)
         {
             var size = new Size();
-            var margin = Margin;
-
-            if (float.IsNaN(Width))
-            {
-                // 幅が未設定ならば可能な限り最大の幅を希望します。
-                if (MinWidth < MaxWidth)
-                {
-                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
-                }
-                // 余白で調整します。
-                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
-            }
-            else
-            {
-                // 幅が設定されているならばそのまま希望します。
-                size.Width = Width;
-            }
-
-            if (float.IsNaN(Height))
-            {
-                // 高さが未設定ならば可能な限り最大の幅を希望します。
-                if (MinHeight < MaxHeight)
-                {
-                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
-                }
-                // 余白で調整します。
-                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
-            }
-            else
-            {
-                // 高さが設定されているならばそのまま希望します。
-                size.Height = Height;
-            }
+            size.Width = CalculateBaseWidth(availableSize.Width);
+            size.Height = CalculateBaseHeight(availableSize.Height);
 
             float measuredWidth = 0;
             foreach (var child in Children)
@@ -100,49 +59,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected virtual Size MeasureVerticalDirection(Size availableSize)
         {
             var size = new Size();
-            var margin = Margin;
-
-            if (float.IsNaN(Width))
-            {
-                // 幅が未設定ならば可能な限り最大の幅を希望します。
-                if (MinWidth < MaxWidth)
-                {
-                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
-                }
-                // 余白で調整します。
-                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
-            }
-            else
-            {
-                // 幅が設定されているならばそのまま希望します。
-                size.Width = Width;
-            }
-
-            if (float.IsNaN(Height))
-            {
-                // 高さが未設定ならば可能な限り最大の幅を希望します。
-                if (MinHeight < MaxHeight)
-                {
-                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
-                }
-                // 余白で調整します。
-                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
-            }
-            else
-            {
-                // 高さが設定されているならばそのまま希望します。
-                size.Height = Height;
-            }
+            size.Width = CalculateBaseWidth(availableSize.Width);
+            size.Height = CalculateBaseHeight(availableSize.Height);
 
             float measuredHeight = 0;
             foreach (var child in Children)

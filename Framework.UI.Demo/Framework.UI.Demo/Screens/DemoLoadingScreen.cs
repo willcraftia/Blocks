@@ -15,6 +15,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
     /// </summary>
     public sealed class DemoLoadingScreen : LoadingScreen
     {
+        bool screenLoadCompleted;
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -23,6 +25,50 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             : base(game)
         {
             Content.RootDirectory = "Content";
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            // Screen ローディングの完了で新たな Control を追加しますが、
+            // Control はスレッドセーフではない問題があります。
+            // このため、非同期処理では screenLoadCompleted フラグを立て、
+            // 同期処理となる Update で Control の追加を行います。
+            // Control をスレッドセーフしない理由は、それによる負荷とデッドロックの問題を考慮した結果です。
+            // また、非同期な Control の追加や削除の頻度は極めて少なく、
+            // Screen ローディングでのみ必要とするであろうと考えています。
+            lock (this)
+            {
+                if (screenLoadCompleted)
+                {
+                    var exitOverlay = new Overlay
+                    {
+                        Opacity = 0,
+                        BackgroundColor = Color.Black
+                    };
+                    {
+                        var animation = new PropertyLerpAnimation
+                        {
+                            Target = exitOverlay,
+                            PropertyName = "Opacity",
+                            From = 0,
+                            To = 1,
+                            BeginTime = TimeSpan.Zero,
+                            Duration = TimeSpan.FromSeconds(0.5d),
+                            Enabled = true
+                        };
+                        animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
+                        {
+                            // NextScreen を表示させます。
+                            var uiService = Game.Services.GetRequiredService<IUIService>();
+                            uiService.PrepareNextScreen(LoadedScreen);
+                        };
+                        Animations.Add(animation);
+                    }
+                    exitOverlay.Show(this);
+                }
+            }
+
+            base.Update(gameTime);
         }
 
         protected override void LoadContent()
@@ -64,33 +110,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             label.Margin = new Thickness((Desktop.Width - label.Width) * 0.5f, (Desktop.Height - label.Height) * 0.5f, 0, 0);
             Desktop.Children.Add(label);
 
+            // フラグだけを立てます。
             ScreenLoadCompleted += (s, e) =>
             {
-                var exitOverlay = new Overlay
+                lock (this)
                 {
-                    Opacity = 0,
-                    BackgroundColor = Color.Black
-                };
-                {
-                    var animation = new PropertyLerpAnimation
-                    {
-                        Target = exitOverlay,
-                        PropertyName = "Opacity",
-                        From = 0,
-                        To = 1,
-                        BeginTime = TimeSpan.Zero,
-                        Duration = TimeSpan.FromSeconds(0.5d),
-                        Enabled = true
-                    };
-                    animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
-                    {
-                        // NextScreen を表示させます。
-                        var uiService = Game.Services.GetRequiredService<IUIService>();
-                        uiService.PrepareNextScreen(LoadedScreen);
-                    };
-                    Animations.Add(animation);
+                    screenLoadCompleted = true;
                 }
-                exitOverlay.Show(this);
             };
 
             screenOverlay.Show(this);

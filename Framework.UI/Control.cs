@@ -397,6 +397,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 子 Control のコレクションを取得します。
         /// </summary>
+        /// <remarks>
+        /// Children プロパティへの操作は同期化されないため、
+        /// 非同期に操作を行う場合は、その操作側で同期化を行なってください。
+        /// </remarks>
         public ParentingControlCollection Children { get; private set; }
 
         /// <summary>
@@ -713,53 +717,13 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 測定します。
         /// </summary>
-        /// <param name="availableSize">親 Control が指定する利用可能なサイズ。</param>
-        /// <returns>測定により自身が希望するサイズ。</returns>
+        /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
+        /// <returns>自身が希望するサイズ。</returns>
         protected virtual Size MeasureOverride(Size availableSize)
         {
             var size = new Size();
-
-            if (float.IsNaN(Width))
-            {
-                // 幅が未設定ならば可能な限り最大の幅を希望します。
-                if (MinWidth < MaxWidth)
-                {
-                    size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Width = MathHelper.Max(availableSize.Width, MinWidth);
-                }
-                // 余白で調整します。
-                size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
-            }
-            else
-            {
-                // 幅が設定されているならばそのまま希望します。
-                size.Width = Width;
-            }
-
-            if (float.IsNaN(Height))
-            {
-                // 高さが未設定ならば可能な限り最大の幅を希望します。
-                if (MinHeight < MaxHeight)
-                {
-                    size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    size.Height = MathHelper.Max(availableSize.Height, MinHeight);
-                }
-                // 余白で調整します。
-                size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
-            }
-            else
-            {
-                // 高さが設定されているならばそのまま希望します。
-                size.Height = Height;
-            }
+            size.Width = CalculateBaseWidth(availableSize.Width);
+            size.Height = CalculateBaseHeight(availableSize.Height);
 
             // 自分が希望するサイズで子の希望サイズを定めます。
             foreach (var child in Children)
@@ -769,6 +733,64 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             return size;
+        }
+
+        /// <summary>
+        /// 子を測定する前の自身の幅を計算します。
+        /// </summary>
+        /// <param name="availableWidth">親が指定する利用可能な幅。</param>
+        /// <returns>幅。</returns>
+        protected virtual float CalculateBaseWidth(float availableWidth)
+        {
+            var w = Width;
+
+            // 幅が設定されているならばそのまま希望します。
+            // 幅が未設定ならば可能な限り最大の幅を希望します。
+            if (float.IsNaN(w))
+            {
+                if (MinWidth < MaxWidth)
+                {
+                    w = MathHelper.Clamp(availableWidth, MinWidth, MaxWidth);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    w = MathHelper.Max(availableWidth, MinWidth);
+                }
+                // 余白で調整します。
+                w = MathHelper.Max(MinWidth, w - margin.Left - margin.Right);
+            }
+
+            return w;
+        }
+
+        /// <summary>
+        /// 子を測定する前の自身の高さを計算します。
+        /// </summary>
+        /// <param name="availableHeight">親が指定する利用可能な高さ。</param>
+        /// <returns>高さ。</returns>
+        protected virtual float CalculateBaseHeight(float availableHeight)
+        {
+            var h = Height;
+
+            // 高さが設定されているならばそのまま希望します。
+            // 高さが未設定ならば可能な限り最大の幅を希望します。
+            if (float.IsNaN(Height))
+            {
+                if (MinHeight < MaxHeight)
+                {
+                    h = MathHelper.Clamp(availableHeight, MinHeight, MaxHeight);
+                }
+                else
+                {
+                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
+                    h = MathHelper.Max(availableHeight, MinHeight);
+                }
+                // 余白で調整します。
+                h = MathHelper.Max(MinHeight, h - margin.Top - margin.Bottom);
+            }
+
+            return h;
         }
 
         /// <summary>
