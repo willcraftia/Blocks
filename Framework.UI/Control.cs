@@ -895,6 +895,58 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected virtual bool BackwardFocus()
         {
+            // ルートならば処理失敗で終えます。
+            if (Parent == null) return false;
+
+            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
+            return Parent.BackwardFocus(this);
+        }
+
+        protected bool BackwardFocus(Control child)
+        {
+            // ナビゲーション不可ならば処理失敗で終えます。
+            if (FocusNavigationMode == FocusNavigationMode.None) return false;
+
+            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
+            for (int i = Children.IndexOf(child) - 1; 0 <= i; i--)
+            {
+                var sibling = Children[i];
+                if (sibling.Focusable)
+                {
+                    // Focusable な兄弟へフォーカスを移動します。
+                    sibling.Focus();
+                    return true;
+                }
+
+                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
+                if (sibling.FocusLastFocusableDesendent()) return true;
+            }
+
+            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
+            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusLastFocusableDesendent();
+
+            // 以下、Continue の場合となります。
+
+            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
+            if (Parent == null) return false;
+
+            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
+            return Parent.BackwardFocus(this);
+        }
+
+        public bool FocusLastFocusableDesendent()
+        {
+            for (int i = Children.Count - 1; 0 <= i; i--)
+            {
+                if (Children[i].FocusLastFocusableDesendent()) return true;
+            }
+
+            if (Focusable)
+            {
+                Focus();
+                return true;
+            }
+
             return false;
         }
 
