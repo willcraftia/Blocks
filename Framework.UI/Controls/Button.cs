@@ -34,6 +34,14 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         bool pressedByMouse;
 
         /// <summary>
+        /// Enter キーが押された状態かどうかを示す値。
+        /// </summary>
+        /// <value>
+        /// true (Enter キーが押された状態の場合)、false (それ以外の場合)。
+        /// </value>
+        bool pressedByEnterKey;
+
+        /// <summary>
         /// 表示文字列を取得または設定します。
         /// </summary>
         public string Text
@@ -62,7 +70,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <value>true (Button が押された状態にある場合)、false (それ以外の場合)。</value>
         public bool Pressed
         {
-            get { return MouseDirectlyOver && pressedByMouse; }
+            get { return MouseDirectlyOver && (pressedByMouse || pressedByEnterKey); }
         }
 
         /// <summary>
@@ -182,6 +190,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             if (!Enabled) return;
 
             if ((button & MouseButtons.Left) == MouseButtons.Left) pressedByMouse = true;
+
+            base.OnMouseDown(button);
         }
 
         protected override void OnMouseUp(MouseButtons button)
@@ -191,14 +201,35 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             if ((button & MouseButtons.Left) == MouseButtons.Left)
             {
                 pressedByMouse = false;
-
-                // Button の上でマウス ボタンが離されたのならば、Click イベントを発生させます。
                 if (Enabled && !Pressed) OnClick();
             }
+
+            base.OnMouseUp(button);
+        }
+
+        protected override bool OnKeyDown(Keys key)
+        {
+            // 機能が無効に設定されているならば、イベントを無視します。
+            if (!Enabled) return false;
+
+            if (key == Keys.Enter) pressedByEnterKey = true;
+
+            return base.OnKeyDown(key);
+        }
+
+        protected override void OnKeyUp(Keys key)
+        {
+            if (key == Keys.Enter)
+            {
+                pressedByEnterKey = false;
+                if (Enabled && !Pressed) OnClick();
+            }
+
+            base.OnKeyUp(key);
         }
 
         /// <summary>
-        /// Click イベントが発生する時に呼び出されます。
+        /// ボタンがクリックされた時に呼び出されます。
         /// Click イベントを発生させます。
         /// </summary>
         protected virtual void OnClick()
