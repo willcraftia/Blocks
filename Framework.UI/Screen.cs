@@ -235,7 +235,13 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (!control.Enabled || !control.Visible || !control.Focusable) return;
 
+            // フォーカスを失った事を通知します。
+            if (focusedControl != null) focusedControl.RaiseLostFocus();
+
             focusedControl = control;
+
+            // フォーカスを得た事を通知します。
+            if (focusedControl != null) focusedControl.RaiseGotFocus();
         }
 
         /// <summary>

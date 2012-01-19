@@ -36,6 +36,16 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler MouseLeave;
 
         /// <summary>
+        /// フォーカスを得た時に発生します。
+        /// </summary>
+        public event EventHandler GotFocus;
+
+        /// <summary>
+        /// フォーカスを失った時に発生します。
+        /// </summary>
+        public event EventHandler LostFocus;
+
+        /// <summary>
         /// 名前。
         /// </summary>
         string name;
@@ -1009,6 +1019,40 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="character"></param>
         protected virtual void OnCharacterEnter(char character) { }
+
+        /// <summary>
+        /// フォーカスを得た時に発生します。
+        /// </summary>
+        protected virtual void OnGotFocus() { }
+
+        /// <summary>
+        /// フォーカスを失った時に発生します。
+        /// </summary>
+        protected virtual void OnLostFocus() { }
+
+        /// <summary>
+        /// GotFocus イベントを発生させます。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドは Screen から呼び出されます。
+        /// </remarks>
+        internal void RaiseGotFocus()
+        {
+            OnGotFocus();
+            if (GotFocus != null) GotFocus(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// LostFocus イベントを発生させます。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドは Screen から呼び出されます。
+        /// </remarks>
+        internal void RaiseLostFocus()
+        {
+            OnLostFocus();
+            if (LostFocus != null) LostFocus(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// マウス オーバ状態の Control を新しい Control へ切り替えます。
