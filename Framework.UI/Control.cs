@@ -536,9 +536,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void DefocusDescent()
         {
-            if (!Focused) return;
-
-            Screen.Defocus(this);
+            Defocus();
 
             foreach (var child in Children) child.DefocusDescent();
         }

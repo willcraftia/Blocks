@@ -28,6 +28,11 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler Activated;
 
         /// <summary>
+        /// Window が非アクティブ化された時に発生します。
+        /// </summary>
+        public event EventHandler Deactivated;
+
+        /// <summary>
         /// この Window を所有する Window。
         /// </summary>
         Window owner;
@@ -67,14 +72,35 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 指定の Control を管理している Window (直接の親にある Window) を取得します。
+        /// Window を指定した場合には、それをそのまま返します。
+        /// なお、Desktop へ直接追加した Control を指定した場合は、
+        /// それら Control は Window で管理されないため null を返します。
+        /// </summary>
+        /// <remarks>
+        /// 基本クラスの Control に派生クラスの Window を関連付けてしまう事を避けるため、
+        /// Window 取得メソッドは Control ではなく Window で定義しています。
+        /// </remarks>
+        /// <param name="control">Control。</param>
+        /// <returns>
+        /// 指定の Control を管理している Window、あるいは、Window で管理されていない場合は null。
+        /// </returns>
+        public static Window GetWindow(Control control)
+        {
+            var window = control as Window;
+            if (window != null) return window;
+
+            if (control.Parent == null) return null;
+
+            return GetWindow(control.Parent);
+        }
+
+        /// <summary>
         /// Window を表示します。
         /// </summary>
         public virtual void Show()
         {
-            // Desktop へ登録します。
-            Screen.Desktop.Children.Add(this);
-            // アクティブにします。
-            Activate();
+            Screen.Desktop.ShowWindow(this);
         }
 
         /// <summary>
@@ -84,8 +110,9 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // Closing イベントを発生させます。
             OnClosing();
-            // Desktop から登録を解除します。
-            Screen.Desktop.Children.Remove(this);
+            
+            Screen.Desktop.CloseWindow(this);
+
             // Closed イベントを発生させます。
             OnClosed();
         }
@@ -95,10 +122,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void Activate()
         {
-            if (Screen == null) throw new InvalidOperationException("Window dose not belongs to any screens.");
-
             Screen.Desktop.ActivateWindow(this);
-            OnActivated();
 
             // フォーカスを得ます。
             FocusFirstFocusableDesendent();
@@ -108,9 +132,18 @@ namespace Willcraftia.Xna.Framework.UI
         /// Window がアクティブ化された時に呼び出されます。
         /// Activated イベントを発生させます。
         /// </summary>
-        protected virtual void OnActivated()
+        protected internal void OnActivated()
         {
             if (Activated != null) Activated(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Window が非アクティブ化された時に呼び出されます。
+        /// Deactivated イベントを発生させます。
+        /// </summary>
+        protected internal void OnDeactivated()
+        {
+            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 
         protected override Size MeasureOverride(Size availableSize)

@@ -60,23 +60,6 @@ namespace Willcraftia.Xna.Framework.UI
             return item.Name;
         }
 
-        /// <summary>
-        /// 指定の Control を最前面へ移動させます。
-        /// </summary>
-        /// <param name="item"></param>
-        public void MoveToTopMost(Control item)
-        {
-            if (item == null) throw new ArgumentNullException("item");
-            if (!Contains(item)) throw new ArgumentException("Collection dose not contain the specified control.", "item");
-
-            var index = IndexOf(item);
-            // 既に最前面ならばスキップします。
-            if (index == Count - 1) return;
-
-            base.RemoveAt(index);
-            Add(item);
-        }
-
         protected override void InsertItem(int index, Control item)
         {
             // 子として追加可能かどうかを検査します。

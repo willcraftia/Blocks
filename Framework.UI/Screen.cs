@@ -19,11 +19,6 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : IInputReceiver, IDisposable
     {
         /// <summary>
-        /// フォーカスを得ている Control。
-        /// </summary>
-        Control focusedControl;
-
-        /// <summary>
         /// 最後に Screen が得たマウス カーソルの位置。
         /// </summary>
         Point lastMousePosition;
@@ -75,6 +70,11 @@ namespace Willcraftia.Xna.Framework.UI
         public AnimationCollection Animations { get; private set; }
 
         /// <summary>
+        /// フォーカスを得ている Control。
+        /// </summary>
+        internal Control FocusedControl { get; private set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="game">Game。</param>
@@ -88,7 +88,7 @@ namespace Willcraftia.Xna.Framework.UI
             Desktop = new Desktop(this);
 
             // フォーカスは Desktop に設定しておきます。
-            focusedControl = Desktop;
+            FocusedControl = Desktop;
         }
 
         // I/F
@@ -120,19 +120,19 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void NotifyKeyDown(Keys key)
         {
-            focusedControl.ProcessKeyDown(key);
+            FocusedControl.ProcessKeyDown(key);
         }
 
         // I/F
         public void NotifyKeyUp(Keys key)
         {
-            focusedControl.ProcessKeyUp(key);
+            FocusedControl.ProcessKeyUp(key);
         }
 
         // I/F
         public void NotifyCharacterEnter(char character)
         {
-            focusedControl.ProcessCharacterEnter(character);
+            FocusedControl.ProcessCharacterEnter(character);
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (control == null) throw new ArgumentNullException("control");
             EnsureControlState(control);
 
-            return focusedControl == control;
+            return FocusedControl == control;
         }
 
         /// <summary>
@@ -236,12 +236,12 @@ namespace Willcraftia.Xna.Framework.UI
             if (!control.Enabled || !control.Visible || !control.Focusable) return;
 
             // フォーカスを失った事を通知します。
-            if (focusedControl != null) focusedControl.OnLostFocus();
+            if (FocusedControl != null) FocusedControl.OnLostFocus();
 
-            focusedControl = control;
+            FocusedControl = control;
 
             // フォーカスを得た事を通知します。
-            if (focusedControl != null) focusedControl.OnGotFocus();
+            if (FocusedControl != null) FocusedControl.OnGotFocus();
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (control == null) throw new ArgumentNullException("control");
             EnsureControlState(control);
 
-            if (HasFocus(control)) focusedControl = Desktop;
+            if (HasFocus(control)) FocusedControl = Desktop;
         }
 
         /// <summary>
