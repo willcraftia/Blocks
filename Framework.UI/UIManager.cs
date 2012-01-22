@@ -112,12 +112,16 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// IDrawContext の実装クラスです。
         /// </summary>
-        class DrawContext : IDrawContext, IDisposable
+        class DrawContext : IDrawContext
         {
             /// <summary>
             /// UIManager。
             /// </summary>
             UIManager uiManager;
+
+            List<float> opacityStack = new List<float>();
+
+            float currentOpacity;
 
             // I/F
             public SpriteBatch SpriteBatch
@@ -129,7 +133,10 @@ namespace Willcraftia.Xna.Framework.UI
             public Rectangle Bounds { get; internal set; }
 
             // I/F
-            public float Opacity { get; internal set; }
+            public float Opacity
+            {
+                get { return currentOpacity; }
+            }
 
             /// <summary>
             /// インスタンスを生成します。
@@ -147,9 +154,25 @@ namespace Willcraftia.Xna.Framework.UI
                 SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
             }
 
-            // I/F
-            public void Dispose()
+            public void PushOpacity(float opacity)
             {
+                opacityStack.Add(opacity);
+                CalculateCurrentOpacity();
+            }
+
+            public void PopOpacity()
+            {
+                opacityStack.RemoveAt(opacityStack.Count - 1);
+                CalculateCurrentOpacity();
+            }
+
+            void CalculateCurrentOpacity()
+            {
+                currentOpacity = 1;
+                foreach (var opacity in opacityStack)
+                {
+                    currentOpacity *= opacity;
+                }
             }
         }
 
@@ -199,6 +222,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// 描画に用いる SpriteBatch。
         /// </summary>
         SpriteBatch spriteBatch;
+
+        /// <summary>
+        /// DrawContext。
+        /// </summary>
+        DrawContext drawContext;
 
         /// <summary>
         /// IInputCapturer を取得または設定します。
@@ -268,6 +296,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 ScissorTestEnable = true
             };
+
+            drawContext = new DrawContext(this);
         }
 
         // I/F
@@ -324,13 +354,10 @@ namespace Willcraftia.Xna.Framework.UI
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
 
-            using (var drawContext = new DrawContext(this))
-            {
-                var desktop = currentScreen.Desktop;
-                drawContext.Bounds = desktop.ArrangedBounds.ToXnaRectangle();
-                drawContext.Opacity = desktop.Opacity;
-                DrawControl(gameTime, desktop, drawContext);
-            }
+            var desktop = currentScreen.Desktop;
+            drawContext.Bounds = desktop.ArrangedBounds.ToXnaRectangle();
+            drawContext.PushOpacity(desktop.Opacity);
+            DrawControl(gameTime, desktop);
 
             spriteBatch.End();
 
@@ -391,8 +418,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </remarks>
         /// <param name="gameTime"></param>
         /// <param name="control"></param>
-        /// <param name="drawContext"></param>
-        void DrawControl(GameTime gameTime, Control control, DrawContext drawContext)
+        void DrawControl(GameTime gameTime, Control control)
         {
             // IControlLaf を描画します。
             var laf = GetControlLaf(control);
@@ -403,48 +429,44 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (control.Children.Count != 0)
             {
-                var renderBounds = drawContext.Bounds;
-
                 // 子を再帰的に描画します。
                 foreach (var child in control.Children)
                 {
                     // 不可視ならば描画しません。
                     if (!child.Visible) continue;
+                    if (child.Opacity <= 0) continue;
 
-                    var childRenderBounds = child.ArrangedBounds;
-                    childRenderBounds.X += renderBounds.X;
-                    childRenderBounds.Y += renderBounds.Y;
-
-                    var childXnaBounds = childRenderBounds.ToXnaRectangle();
+                    //
+                    // TODO
+                    //
+                    // 暫定的な描画領域決定アルゴリズムです。
+                    // スクロール処理なども考慮して描画領域を算出する必要があります。
+                    var arrangedBounds = child.ArrangedBounds;
+                    var renderSize = arrangedBounds.Size;
+                    var renderTopLeft = child.PointToScreen(Point.Zero);
+                    var renderBounds = new Rect(renderTopLeft, renderSize).ToXnaRectangle();
 
                     // 描画する必要のないサイズならばスキップします。
-                    if (childXnaBounds.Width <= 0 || childXnaBounds.Height <= 0) continue;
+                    // 精度の問題から Rect ではなく Rectangle で判定する点に注意してください。
+                    if (renderBounds.Width <= 0 || renderBounds.Height <= 0) continue;
 
-                    using (var childDrawContext = new DrawContext(this))
+                    drawContext.Bounds = renderBounds;
+
+                    drawContext.PushOpacity(child.Opacity);
+
+                    if (child.Clipped)
                     {
-                        if (control.OpacityInherited)
+                        using (var scissor = new Scissor(this, renderBounds))
                         {
-                            childDrawContext.Opacity = drawContext.Opacity * child.Opacity;
-                        }
-                        else
-                        {
-                            childDrawContext.Opacity = child.Opacity;
-                        }
-                        childDrawContext.Bounds = childXnaBounds;
-
-                        if (child.Clipped)
-                        {
-                            // 描画領域をクリッピングします。
-                            using (var scissor = new Scissor(this, childXnaBounds))
-                            {
-                                DrawControl(gameTime, child, childDrawContext);
-                            }
-                        }
-                        else
-                        {
-                            DrawControl(gameTime, child, childDrawContext);
+                            DrawControl(gameTime, child);
                         }
                     }
+                    else
+                    {
+                        DrawControl(gameTime, child);
+                    }
+
+                    drawContext.PopOpacity();
                 }
             }
         }

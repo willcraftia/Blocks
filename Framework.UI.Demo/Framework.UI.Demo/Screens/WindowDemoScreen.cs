@@ -74,7 +74,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     To = 1,
                     Repeat = Repeat.Forever,
                     BeginTime = TimeSpan.Zero,
-                    Duration = TimeSpan.FromSeconds(1),
+                    Duration = TimeSpan.FromSeconds(2),
                     AutoReversed = true,
                     Enabled = true
                 };

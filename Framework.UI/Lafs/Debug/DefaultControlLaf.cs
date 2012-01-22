@@ -16,12 +16,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
         public override void Draw(Control control, IDrawContext drawContext)
         {
             var spriteBatch = drawContext.SpriteBatch;
-
-            var arrangedBounds = control.ArrangedBounds;
-            var renderSize = arrangedBounds.Size;
-            var renderTopLeft = control.PointToScreen(Point.Zero);
-            var renderBounds = new Rect(renderTopLeft, renderSize).ToXnaRectangle();
-            //var renderBounds = drawContext.Bounds;
+            var renderBounds = drawContext.Bounds;
 
             // 背景を BackgroundColor で塗り潰します。
             spriteBatch.Draw(Source.FillTexture, renderBounds, control.BackgroundColor * drawContext.Opacity);
