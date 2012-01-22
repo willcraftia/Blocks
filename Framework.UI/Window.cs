@@ -37,6 +37,19 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         Window owner;
 
+        /// <summary>
+        /// true (Window がアクティブの場合)、false (それ以外の場合)。
+        /// </summary>
+        bool active;
+
+        /// <summary>
+        /// 非アクティブ化される時にフォーカスを持っていた子孫 Control の弱参照。
+        /// </summary>
+        WeakReference focusedControlWeakReference = new WeakReference(null);
+
+        /// <summary>
+        /// サイズをコンテンツのサイズに合わせて自動調整する方法を取得または設定します。
+        /// </summary>
         public SizeToContent SizeToContent { get; set; }
 
         /// <summary>
@@ -61,6 +74,32 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Window がアクティブ可動化を示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (Window がアクティブの場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Active
+        {
+            get { return active; }
+            internal set
+            {
+                if (active == value) return;
+
+                active = value;
+
+                if (active)
+                {
+                    OnActivated();
+                }
+                else
+                {
+                    OnDeactivated();
+                }
+            }
+        }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="screen">Screen。</param>
@@ -77,10 +116,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// なお、Desktop へ直接追加した Control を指定した場合は、
         /// それら Control は Window で管理されないため null を返します。
         /// </summary>
-        /// <remarks>
-        /// 基本クラスの Control に派生クラスの Window を関連付けてしまう事を避けるため、
-        /// Window 取得メソッドは Control ではなく Window で定義しています。
-        /// </remarks>
         /// <param name="control">Control。</param>
         /// <returns>
         /// 指定の Control を管理している Window、あるいは、Window で管理されていない場合は null。
@@ -123,17 +158,26 @@ namespace Willcraftia.Xna.Framework.UI
         public void Activate()
         {
             Screen.Desktop.ActivateWindow(this);
-
-            // フォーカスを得ます。
-            FocusFirstFocusableDesendent();
         }
 
         /// <summary>
         /// Window がアクティブ化された時に呼び出されます。
         /// Activated イベントを発生させます。
         /// </summary>
-        protected internal void OnActivated()
+        protected void OnActivated()
         {
+            // 非アクティブ化の際に記録した Control にフォーカスを設定します。
+            var control = focusedControlWeakReference.Target as Control;
+            if (control != null)
+            {
+                focusedControlWeakReference.Target = null;
+                control.Focus();
+            }
+            else
+            {
+                FocusFirstFocusableDesendent();
+            }
+
             if (Activated != null) Activated(this, EventArgs.Empty);
         }
 
@@ -141,8 +185,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// Window が非アクティブ化された時に呼び出されます。
         /// Deactivated イベントを発生させます。
         /// </summary>
-        protected internal void OnDeactivated()
+        protected void OnDeactivated()
         {
+            // それまでフォーカスが設定されていた子孫を弱参照で記録しておきます。
+            if (this == GetWindow(Screen.FocusedControl))
+                focusedControlWeakReference.Target = Screen.FocusedControl;
+
             if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 

@@ -134,6 +134,11 @@ namespace Willcraftia.Xna.Framework.UI
         Vector2 fontStretch = Vector2.One;
 
         /// <summary>
+        /// true (フォーカスが設定されている場合)、false (それ以外の場合)。
+        /// </summary>
+        bool focused;
+
+        /// <summary>
         /// 名前を取得または設定します。
         /// </summary>
         public string Name
@@ -367,9 +372,6 @@ namespace Willcraftia.Xna.Framework.UI
                 if (parent != null && parent.mouseOverControl == this) parent.mouseOverControl = parent;
 
                 parent = value;
-
-                // 自分あるいは子孫のフォーカスを解除します。
-                if (parent == null) DefocusDescent();
             }
         }
 
@@ -400,8 +402,6 @@ namespace Willcraftia.Xna.Framework.UI
 
                 enabled = value;
 
-                // フォーカスを解除します。
-                Defocus();
                 // イベントを発生させます。
                 OnEnabledChanged();
             }
@@ -420,8 +420,6 @@ namespace Willcraftia.Xna.Framework.UI
 
                 visible = value;
 
-                // フォーカスを解除します。
-                Defocus();
                 // イベントを発生させます。
                 OnVisibleChanged();
             }
@@ -454,18 +452,33 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// Control がフォーカスを得られるかどうかを取得または設定します。
+        /// フォーカスを設定できるかを示す値を取得または設定します。
         /// </summary>
-        /// <value>true (Control がフォーカスを得られる場合)、false (それ以外の場合)。</value>
+        /// <value>true (フォーカスを設定できる場合)、false (それ以外の場合)。</value>
         public bool Focusable { get; set; }
 
         /// <summary>
-        /// Control がフォーカスを得ているかどうかを取得します。
+        /// フォーカスが設定されているかどうかを示す値を取得します。
         /// </summary>
-        /// <value>true (Control がフォーカスを得ている場合)、false (それ以外の場合)。</value>
+        /// <value>true (フォーカスが設定されている場合)、false (それ以外の場合)。</value>
         public bool Focused
         {
-            get { return Screen != null && Screen.HasFocus(this); }
+            get { return focused; }
+            internal set
+            {
+                if (focused == value) return;
+
+                focused = value;
+
+                if (focused)
+                {
+                    OnGotFocus();
+                }
+                else
+                {
+                    OnLostFocus();
+                }
+            }
         }
 
         /// <summary>
@@ -518,27 +531,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (Screen == null || !Enabled || !Visible || !Focusable) return;
 
-            Screen.Focus(this);
-        }
-
-        /// <summary>
-        /// フォーカスを解除します。
-        /// </summary>
-        public void Defocus()
-        {
-            if (!Focused) return;
-
-            Screen.Defocus(this);
-        }
-
-        /// <summary>
-        /// 自分あるいは子孫にあるフォーカスを探索して解除します。
-        /// </summary>
-        public void DefocusDescent()
-        {
-            Defocus();
-
-            foreach (var child in Children) child.DefocusDescent();
+            Screen.SetFocus(this);
         }
 
         /// <summary>
@@ -1015,19 +1008,19 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void OnCharacterEnter(char character) { }
 
         /// <summary>
-        /// フォーカスを得た時に発生します。
+        /// フォーカスが設定された時に発生します。
         /// GotFocus イベントを発生させます。
         /// </summary>
-        protected internal virtual void OnGotFocus()
+        protected virtual void OnGotFocus()
         {
             if (GotFocus != null) GotFocus(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// フォーカスを失った時に発生します。
+        /// フォーカスが解除された時に発生します。
         /// LostFocus イベントを発生させます。
         /// </summary>
-        protected internal virtual void OnLostFocus()
+        protected virtual void OnLostFocus()
         {
             if (LostFocus != null) LostFocus(this, EventArgs.Empty);
         }

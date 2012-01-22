@@ -24,6 +24,11 @@ namespace Willcraftia.Xna.Framework.UI
         Point lastMousePosition;
 
         /// <summary>
+        /// フォーカスを持つ Control の弱参照。
+        /// </summary>
+        WeakReference focusedControlWeakReference = new WeakReference(null);
+
+        /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -70,9 +75,13 @@ namespace Willcraftia.Xna.Framework.UI
         public AnimationCollection Animations { get; private set; }
 
         /// <summary>
-        /// フォーカスを得ている Control。
+        /// フォーカスを持つ Control を取得します。
         /// </summary>
-        internal Control FocusedControl { get; private set; }
+        internal Control FocusedControl
+        {
+            get { return focusedControlWeakReference.Target as Control; }
+            set { focusedControlWeakReference.Target = value; }
+        }
 
         /// <summary>
         /// コンストラクタ。
@@ -210,59 +219,22 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void UnloadContent() { }
 
         /// <summary>
-        /// 指定の Control がフォーカスを持つかどうかを判定します。
+        /// 指定の Control にフォーカスを設定します。
         /// </summary>
-        /// <param name="control">フォーカスを持つかどうかを判定したい Control。</param>
-        /// <returns>
-        /// true (指定の Control がフォーカスを持つ場合)、false (それ以外の場合)。
-        /// </returns>
-        internal bool HasFocus(Control control)
+        /// <param name="control">フォーカスを設定する Control。</param>
+        internal void SetFocus(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
-            EnsureControlState(control);
-
-            return FocusedControl == control;
-        }
-
-        /// <summary>
-        /// 指定の Control にフォーカスを与えます。
-        /// </summary>
-        /// <param name="control">フォーカスを与えたい Control。</param>
-        internal void Focus(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            EnsureControlState(control);
 
             if (!control.Enabled || !control.Visible || !control.Focusable) return;
 
-            // フォーカスを失った事を通知します。
-            if (FocusedControl != null) FocusedControl.OnLostFocus();
+            // Control をフォーカス解除状態にします。
+            if (FocusedControl != null) FocusedControl.Focused = false;
 
             FocusedControl = control;
 
-            // フォーカスを得た事を通知します。
-            if (FocusedControl != null) FocusedControl.OnGotFocus();
-        }
-
-        /// <summary>
-        /// 指定の Control のフォーカスを解除し、Desktop にフォーカスを移動させます。
-        /// </summary>
-        /// <param name="control">フォーカスを解除したい Control。</param>
-        internal void Defocus(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-            EnsureControlState(control);
-
-            if (HasFocus(control)) FocusedControl = Desktop;
-        }
-
-        /// <summary>
-        /// 指定の Control がこの Screen で操作できる状態であるかどうかを保証します。
-        /// </summary>
-        /// <param name="control"></param>
-        void EnsureControlState(Control control)
-        {
-            if (control.Screen != this) throw new InvalidOperationException("Control is in another screen.");
+            // Control をフォーカス設定状態にします。
+            if (FocusedControl != null) FocusedControl.Focused = true;
         }
 
         #region IDisposable
