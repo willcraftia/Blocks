@@ -361,14 +361,6 @@ namespace Willcraftia.Xna.Framework.UI
         public float Opacity { get; set; }
 
         /// <summary>
-        /// 透明度が子 Control に継承されるかどうかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// true (透明度が子 Control に継承される場合)、false (それ以外の場合)。
-        /// </value>
-        public bool OpacityInherited { get; set; }
-
-        /// <summary>
         /// 背景色を取得または設定します。
         /// </summary>
         public Color BackgroundColor { get; set; }
@@ -524,7 +516,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             Clipped = true;
             Opacity = 1;
-            OpacityInherited = true;
             ForegroundColor = Color.White;
             BackgroundColor = Color.Black;
             HorizontalAlignment = HorizontalAlignment.Center;
