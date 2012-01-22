@@ -19,9 +19,9 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : IInputReceiver, IDisposable
     {
         /// <summary>
-        /// 最後に Screen が得たマウス カーソルの位置。
+        /// マウス カーソル位置の再送に用いる MouseDevice。
         /// </summary>
-        Point lastMousePosition;
+        MouseDevice mouseDevice;
 
         /// <summary>
         /// フォーカスを持つ Control の弱参照。
@@ -98,50 +98,51 @@ namespace Willcraftia.Xna.Framework.UI
 
             // フォーカスは Desktop に設定しておきます。
             FocusedControl = Desktop;
+
+            // マウス カーソル位置再送のために MouseDevice を取得しておきます。
+            mouseDevice = Game.Services.GetRequiredService<IInputService>().MouseDevice;
         }
 
         // I/F
-        public void NotifyMouseMove(int x, int y)
+        public void NotifyMouseMove(MouseDevice mouseDevice)
         {
-            Desktop.ProcessMouseMove(x, y);
-
-            lastMousePosition.X = x;
-            lastMousePosition.Y = y;
+            Desktop.ProcessMouseMove(mouseDevice);
         }
 
         // I/F
-        public void NotifyMouseDown(MouseButtons button)
+        public void NotifyMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
         {
-            Desktop.ProcessMouseDown(button);
+            Desktop.ProcessMouseDown(mouseDevice, buttons);
         }
 
         // I/F
-        public void NotifyMouseUp(MouseButtons button)
+        public void NotifyMouseUp(MouseDevice mouseDevice, MouseButtons buttons)
         {
-            Desktop.ProcessMouseUp(button);
+            Desktop.ProcessMouseUp(mouseDevice, buttons);
         }
 
         // I/F
-        public void NotifyMouseWheel(int ticks)
+        public void NotifyMouseWheel(MouseDevice mouseDevice, int delta)
         {
+            // TODO
         }
 
         // I/F
-        public void NotifyKeyDown(Keys key)
+        public void NotifyKeyDown(KeyboardDevice keyboardDevice, Keys key)
         {
-            FocusedControl.ProcessKeyDown(key);
+            FocusedControl.ProcessKeyDown(keyboardDevice, key);
         }
 
         // I/F
-        public void NotifyKeyUp(Keys key)
+        public void NotifyKeyUp(KeyboardDevice keyboardDevice, Keys key)
         {
-            FocusedControl.ProcessKeyUp(key);
+            FocusedControl.ProcessKeyUp(keyboardDevice, key);
         }
 
         // I/F
-        public void NotifyCharacterEnter(char character)
+        public void NotifyCharacterEnter(KeyboardDevice keyboardDevice, char character)
         {
-            FocusedControl.ProcessCharacterEnter(character);
+            FocusedControl.ProcessCharacterEnter(keyboardDevice, character);
         }
 
         /// <summary>
@@ -196,9 +197,8 @@ namespace Willcraftia.Xna.Framework.UI
             var margin = Desktop.Margin;
             Desktop.Arrange(new Rect(margin.Left, margin.Top, Desktop.Width, Desktop.Height));
 
-            // マウス オーバ状態が変化する可能性があるので、
-            // 最後に Screen が得たマウス カーソルの位置を再送します。
-            Desktop.ProcessMouseMove(lastMousePosition.X, lastMousePosition.Y);
+            // マウス オーバ状態が変化する可能性があるので MouseMove イベントを再送します。
+            Desktop.ProcessMouseMove(mouseDevice);
         }
 
         /// <summary>

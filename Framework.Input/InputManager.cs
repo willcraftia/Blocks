@@ -15,10 +15,10 @@ namespace Willcraftia.Xna.Framework.Input
     public class InputManager : GameComponent, IInputService
     {
         // I/F
-        public MouseDevice Mouse { get; private set; }
+        public MouseDevice MouseDevice { get; private set; }
 
         // I/F
-        public KeyboardDevice Keyboard { get; private set; }
+        public KeyboardDevice KeyboardDevice { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -32,16 +32,16 @@ namespace Willcraftia.Xna.Framework.Input
 
         public override void Initialize()
         {
-            Mouse = new MouseDevice();
-            Keyboard = new KeyboardDevice();
+            MouseDevice = new MouseDevice();
+            KeyboardDevice = new KeyboardDevice();
 
             base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-            Mouse.Update();
-            Keyboard.Update();
+            MouseDevice.Update();
+            KeyboardDevice.Update();
 
             base.Update(gameTime);
         }

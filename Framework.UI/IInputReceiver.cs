@@ -13,46 +13,51 @@ namespace Willcraftia.Xna.Framework.UI
     public interface IInputReceiver
     {
         /// <summary>
-        /// マウス カーソルの移動を通知します。
+        /// MouseMove イベントを通知します。
         /// </summary>
-        /// <param name="x">マウス カーソルの x 座標。</param>
-        /// <param name="y">マウス カーソルの y 座標。</param>
-        void NotifyMouseMove(int x, int y);
+        /// <param name="mouseDevice">MouseDevice。</param>
+        void NotifyMouseMove(MouseDevice mouseDevice);
 
         /// <summary>
-        /// マウス ボタンの押下を通知します。
+        /// MouseDown イベントを通知します。
         /// </summary>
-        /// <param name="button">マウス ボタン。</param>
-        void NotifyMouseDown(MouseButtons button);
-        
+        /// <param name="mouseDevice">MouseDevice。</param>
+        /// <param name="buttons">押下されたボタン。</param>
+        void NotifyMouseDown(MouseDevice mouseDevice, MouseButtons buttons);
+
         /// <summary>
-        /// マウス ボタン押下の解放を通知します。
+        /// MouseUp イベントを通知します。
         /// </summary>
-        /// <param name="button">マウス ボタン。</param>
-        void NotifyMouseUp(MouseButtons button);
-        
+        /// <param name="mouseDevice">MouseDevice。</param>
+        /// <param name="buttons">押下が解放されたボタン。</param>
+        void NotifyMouseUp(MouseDevice mouseDevice, MouseButtons buttons);
+
         /// <summary>
-        /// マウス ホイールの回転を通知します。
+        /// MouseWheel イベントを通知します。
         /// </summary>
-        /// <param name="ticks">マウス ホイールの回転量。</param>
-        void NotifyMouseWheel(int ticks);
+        /// <param name="mouseDevice">MouseDevice。</param>
+        /// <param name="delta">マウス ホイールが変化した量。</param>
+        void NotifyMouseWheel(MouseDevice mouseDevice, int delta);
 
         /// <summary>
         /// キーの押下を通知します。
         /// </summary>
-        /// <param name="key">キー。</param>
-        void NotifyKeyDown(Keys key);
+        /// <param name="keyboardDevice">KeyboardDevice。</param>
+        /// <param name="key">押下されているキー。</param>
+        void NotifyKeyDown(KeyboardDevice keyboardDevice, Keys key);
 
         /// <summary>
         /// キー押下の解放を通知します。
         /// </summary>
-        /// <param name="key">キー。</param>
-        void NotifyKeyUp(Keys key);
+        /// <param name="keyboardDevice">KeyboardDevice。</param>
+        /// <param name="key">押下が解放されたキー。</param>
+        void NotifyKeyUp(KeyboardDevice keyboardDevice, Keys key);
 
         /// <summary>
         /// 文字入力を通知します。
         /// </summary>
-        /// <param name="character">文字。</param>
-        void NotifyCharacterEnter(char character);
+        /// <param name="keyboardDevice">KeyboardDevice。</param>
+        /// <param name="character">入力された文字。</param>
+        void NotifyCharacterEnter(KeyboardDevice keyboardDevice, char character);
     }
 }

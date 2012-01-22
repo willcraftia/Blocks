@@ -8,40 +8,28 @@ using Microsoft.Xna.Framework.Input;
 namespace Willcraftia.Xna.Framework.Input
 {
     /// <summary>
-    /// キー押下と解放の通知に使用する delegate。
-    /// </summary>
-    /// <param name="key">キー。</param>
-    public delegate void KeyDelegate(Keys key);
-
-    /// <summary>
-    /// 文字入力の通知に使用する delegate。
-    /// </summary>
-    /// <param name="character">文字。</param>
-    public delegate void CharacterDelegate(char character);
-
-    /// <summary>
     /// キーボード状態の変化からイベントを発生させるクラスです。
     /// </summary>
     /// <remarks>
     /// KeyboardDevice はイベント処理のためのクラスです。
     /// キーボード状態を参照したい場合は、XNA の Keyboard クラスから KeyboardState を取得して参照します。
     /// </remarks>
-    public class KeyboardDevice : IInputDevice
+    public class KeyboardDevice
     {
         /// <summary>
         /// キーが押下された時に発生します。
         /// </summary>
-        public event KeyDelegate KeyDown;
+        public event KeyEventHandler KeyDown;
 
         /// <summary>
         /// キーの押下が解放された時に発生します。
         /// </summary>
-        public event KeyDelegate KeyUp;
+        public event KeyEventHandler KeyUp;
 
         /// <summary>
         /// 文字が入力された時に発生します。
         /// </summary>
-        public event CharacterDelegate CharacterEnter;
+        public event CharacterInputEventHandler CharacterEnter;
 
         /// <summary>
         /// Keys で定義された列挙値の配列。
@@ -57,21 +45,11 @@ namespace Willcraftia.Xna.Framework.Input
         /// Update メソッドで得る KeyboardState。
         /// </summary>
         KeyboardState currentKeyboard = new KeyboardState();
-        
-        // I/F
-        public bool Enabled
-        {
-            get { return true; }
-        }
 
-        // I/F
-        public string Name
-        {
-            get { return "Main Keyboard"; }
-        }
-
-        // I/F
-        public void Update()
+        /// <summary>
+        /// デバイスの状態を更新します。
+        /// </summary>
+        internal void Update()
         {
             previouseKeyboard = currentKeyboard;
             currentKeyboard = Keyboard.GetState();
@@ -86,46 +64,48 @@ namespace Willcraftia.Xna.Framework.Input
 
                 if (currentState == KeyState.Down)
                 {
-                    RaiseKeyDown(key);
-                    RaiseCharacterEnter(key);
+                    OnKeyDown(key);
+                    OnCharacterEnter(key);
                 }
                 else
                 {
-                    RaiseKeyUp(key);
+                    OnKeyUp(key);
                 }
             }
         }
 
         /// <summary>
+        /// キーが押下された時に呼び出されます。
         /// KeyDown イベントを発生させます。
         /// </summary>
-        /// <param name="key">キー。</param>
-        void RaiseKeyDown(Keys key)
+        /// <param name="key">押下されているキー。</param>
+        protected void OnKeyDown(Keys key)
         {
-            if (KeyDown != null) KeyDown(key);
+            if (KeyDown != null) KeyDown(this, this, key);
         }
 
         /// <summary>
+        /// キー押下が解放された時に呼び出されます。
         /// KeyUp イベントを発生させます。
         /// </summary>
-        /// <param name="key">キー。</param>
-        void RaiseKeyUp(Keys key)
+        /// <param name="key">押下が解放されたキー。</param>
+        protected void OnKeyUp(Keys key)
         {
-            if (KeyUp != null) KeyUp(key);
+            if (KeyUp != null) KeyUp(this, this, key);
         }
 
         /// <summary>
         /// CharacterEnter イベントを発生させます。
         /// </summary>
-        /// <param name="key">キー。</param>
-        void RaiseCharacterEnter(Keys key)
+        /// <param name="key">押下されているキー。</param>
+        protected void OnCharacterEnter(Keys key)
         {
             var shiftPressed = (currentKeyboard.IsKeyDown(Keys.LeftShift) || currentKeyboard.IsKeyDown(Keys.RightShift));
 
             char character;
             if (KeyboardHelper.KeyToCharacter(key, shiftPressed, out character))
             {
-                if (CharacterEnter != null) CharacterEnter(character);
+                if (CharacterEnter != null) CharacterEnter(this, this, character);
             }
         }
     }

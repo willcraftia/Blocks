@@ -17,8 +17,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
         {
             var spriteBatch = drawContext.SpriteBatch;
 
+            var arrangedBounds = control.ArrangedBounds;
+            var renderSize = arrangedBounds.Size;
+            var renderTopLeft = control.PointToScreen(Point.Zero);
+            var renderBounds = new Rect(renderTopLeft, renderSize).ToXnaRectangle();
+            //var renderBounds = drawContext.Bounds;
+
             // 背景を BackgroundColor で塗り潰します。
-            spriteBatch.Draw(Source.FillTexture, drawContext.Bounds, control.BackgroundColor * drawContext.Opacity);
+            spriteBatch.Draw(Source.FillTexture, renderBounds, control.BackgroundColor * drawContext.Opacity);
 
             // 枠を White で描画します。
             // ただし、背景色が White の場合には区別が付くように Gray にします。
@@ -28,20 +34,20 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 
             Rectangle lineBounds;
 
-            lineBounds = drawContext.Bounds;
+            lineBounds = renderBounds;
             lineBounds.Height = 1;
             spriteBatch.Draw(Source.FillTexture, lineBounds, borderColor);
 
-            lineBounds = drawContext.Bounds;
+            lineBounds = renderBounds;
             lineBounds.Y += lineBounds.Height - 1;
             lineBounds.Height = 1;
             spriteBatch.Draw(Source.FillTexture, lineBounds, borderColor);
 
-            lineBounds = drawContext.Bounds;
+            lineBounds = renderBounds;
             lineBounds.Width = 1;
             spriteBatch.Draw(Source.FillTexture, lineBounds, borderColor);
 
-            lineBounds = drawContext.Bounds;
+            lineBounds = renderBounds;
             lineBounds.X += lineBounds.Width - 1;
             lineBounds.Width = 1;
             spriteBatch.Draw(Source.FillTexture, lineBounds, borderColor);
@@ -54,26 +60,26 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 Rectangle focusBounds;
                 int size = 8;
 
-                focusBounds = drawContext.Bounds;
+                focusBounds = renderBounds;
                 focusBounds.Width = size;
                 focusBounds.Height = size;
                 DrawRectangle(spriteBatch, focusBounds, focusColor, borderColor, 1);
 
-                focusBounds = drawContext.Bounds;
-                focusBounds.X += drawContext.Bounds.Width - size;
+                focusBounds = renderBounds;
+                focusBounds.X += renderBounds.Width - size;
                 focusBounds.Width = size;
                 focusBounds.Height = size;
                 DrawRectangle(spriteBatch, focusBounds, focusColor, borderColor, 1);
 
-                focusBounds = drawContext.Bounds;
-                focusBounds.Y += drawContext.Bounds.Height - size;
+                focusBounds = renderBounds;
+                focusBounds.Y += renderBounds.Height - size;
                 focusBounds.Width = size;
                 focusBounds.Height = size;
                 DrawRectangle(spriteBatch, focusBounds, focusColor, borderColor, 1);
 
-                focusBounds = drawContext.Bounds;
-                focusBounds.X += drawContext.Bounds.Width - size;
-                focusBounds.Y += drawContext.Bounds.Height - size;
+                focusBounds = renderBounds;
+                focusBounds.X += renderBounds.Width - size;
+                focusBounds.Y += renderBounds.Height - size;
                 focusBounds.Width = size;
                 focusBounds.Height = size;
                 DrawRectangle(spriteBatch, focusBounds, focusColor, borderColor, 1);
@@ -87,27 +93,27 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 Rectangle mouseOverBounds;
                 int size = 8;
 
-                mouseOverBounds = drawContext.Bounds;
+                mouseOverBounds = renderBounds;
                 mouseOverBounds.X += (mouseOverBounds.Width - size) / 2;
                 mouseOverBounds.Width = size;
                 mouseOverBounds.Height = size;
                 DrawRectangle(spriteBatch, mouseOverBounds, mouseOverColor, borderColor, 1);
 
-                mouseOverBounds = drawContext.Bounds;
+                mouseOverBounds = renderBounds;
                 mouseOverBounds.X += (mouseOverBounds.Width - size) / 2;
-                mouseOverBounds.Y += drawContext.Bounds.Height - size;
+                mouseOverBounds.Y += renderBounds.Height - size;
                 mouseOverBounds.Width = size;
                 mouseOverBounds.Height = size;
                 DrawRectangle(spriteBatch, mouseOverBounds, mouseOverColor, borderColor, 1);
 
-                mouseOverBounds = drawContext.Bounds;
+                mouseOverBounds = renderBounds;
                 mouseOverBounds.Y += (mouseOverBounds.Height - size) / 2;
                 mouseOverBounds.Width = size;
                 mouseOverBounds.Height = size;
                 DrawRectangle(spriteBatch, mouseOverBounds, mouseOverColor, borderColor, 1);
 
-                mouseOverBounds = drawContext.Bounds;
-                mouseOverBounds.X += drawContext.Bounds.Width - size;
+                mouseOverBounds = renderBounds;
+                mouseOverBounds.X += renderBounds.Width - size;
                 mouseOverBounds.Y += (mouseOverBounds.Height - size) / 2;
                 mouseOverBounds.Width = size;
                 mouseOverBounds.Height = size;

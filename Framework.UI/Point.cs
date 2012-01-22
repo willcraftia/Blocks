@@ -12,6 +12,14 @@ namespace Willcraftia.Xna.Framework.UI
     public struct Point : IEquatable<Point>
     {
         /// <summary>
+        /// [0, 0] の Point を取得します。
+        /// </summary>
+        public static Point Zero
+        {
+            get { return new Point(0, 0); }
+        }
+
+        /// <summary>
         /// X 座標。
         /// </summary>
         public float X;

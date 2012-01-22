@@ -20,7 +20,7 @@ namespace Willcraftia.Xna.Framework.UI
         #region Scissor
 
         /// <summary>
-        /// Control 描画のための GraphicsDevice の ScissorRectangle および SpriteBatch の Begin/End 状態を管理するクラスです。
+        /// Control 描画のための GraphicsDevice の ScissorRectangle および SpriteBatch の Begin/End 状態を管理する構造体です。
         /// </summary>
         /// <remarks>
         /// Control の描画は再帰的に行うため、スタック的に ScissorRectangle の状態を維持する必要があります。
@@ -32,7 +32,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// using 終了による Dispose 呼び出しにて SpriteBatch を End し、前回の ScissorRectangle を再設定して SpriteBatch を Begin します。
         /// これにより、GraphicsDevice の ScissorRectangle の状態と SpriteBatch の Begin/End の状態を論理的にスタック化できます。
         /// </remarks>
-        class Scissor : IDisposable
+        struct Scissor : IDisposable
         {
             /// <summary>
             /// UIManager。
@@ -50,6 +50,7 @@ namespace Willcraftia.Xna.Framework.UI
             /// <param name="uiManager">UIManager。</param>
             /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
             public Scissor(UIManager uiManager, Rectangle scissorRectangle)
+                : this()
             {
                 this.uiManager = uiManager;
                 BeginClipping(ref scissorRectangle);
@@ -59,7 +60,6 @@ namespace Willcraftia.Xna.Framework.UI
             public void Dispose()
             {
                 EndClipping();
-                GC.SuppressFinalize(this);
             }
 
             /// <summary>
@@ -150,7 +150,6 @@ namespace Willcraftia.Xna.Framework.UI
             // I/F
             public void Dispose()
             {
-                GC.SuppressFinalize(this);
             }
         }
 

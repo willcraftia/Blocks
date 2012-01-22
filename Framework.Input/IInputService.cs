@@ -14,11 +14,11 @@ namespace Willcraftia.Xna.Framework.Input
         /// <summary>
         /// MouseDevice を取得します。
         /// </summary>
-        MouseDevice Mouse { get; }
+        MouseDevice MouseDevice { get; }
 
         /// <summary>
         /// KeyboardDevice を取得します。
         /// </summary>
-        KeyboardDevice Keyboard { get; }
+        KeyboardDevice KeyboardDevice { get; }
     }
 }
