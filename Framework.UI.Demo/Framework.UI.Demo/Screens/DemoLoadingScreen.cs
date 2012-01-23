@@ -84,31 +84,26 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Opacity = 1,
                 BackgroundColor = Color.Black
             };
+            var screenOverlay_opacityAnimation = new PropertyLerpAnimation
             {
-                var animation = new PropertyLerpAnimation
-                {
-                    Target = screenOverlay,
-                    PropertyName = "Opacity",
-                    From = 1,
-                    To = 0,
-                    BeginTime = TimeSpan.Zero,
-                    Duration = TimeSpan.FromSeconds(0.5d),
-                    Enabled = true
-                };
-                animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) => screenOverlay.Close();
-                Animations.Add(animation);
-            }
+                Target = screenOverlay,
+                PropertyName = "Opacity",
+                From = 1,
+                To = 0,
+                BeginTime = TimeSpan.Zero,
+                Duration = TimeSpan.FromSeconds(0.5d),
+                Enabled = true
+            };
+            screenOverlay_opacityAnimation.Completed += (s, e) => screenOverlay.Close();
+            Animations.Add(screenOverlay_opacityAnimation);
 
-            var label = new Label(this)
+            var nowLoadingTextBlock = new TextBlock(this)
             {
                 Text = "NOW LOADING...",
                 FontStretch = new Vector2(2),
-                Width = 32 * 10,
-                Height = 32 * 2,
                 Padding = new Thickness(8)
             };
-            label.Margin = new Thickness((Desktop.Width - label.Width) * 0.5f, (Desktop.Height - label.Height) * 0.5f, 0, 0);
-            Desktop.Children.Add(label);
+            Desktop.Children.Add(nowLoadingTextBlock);
 
             // フラグだけを立てます。
             ScreenLoadCompleted += (s, e) =>

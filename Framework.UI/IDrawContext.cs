@@ -32,5 +32,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// Control の描画処理を反映させます。
         /// </summary>
         void Flush();
+
+        // todo: temporary
+        IControlLaf GetControlLaf(Control control);
+
+        // todo:
+        void DrawRectangle(Texture2D texture, Rect rect, Color color);
     }
 }

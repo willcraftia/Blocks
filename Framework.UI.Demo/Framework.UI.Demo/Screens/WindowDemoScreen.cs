@@ -21,6 +21,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 Width = unit * 10;
                 Height = unit * 10;
+                HorizontalAlignment = HorizontalAlignment.Left;
+                VerticalAlignment = VerticalAlignment.Top;
                 Margin = new Thickness(unit, unit, 0, 0);
                 BackgroundColor = Color.Red;
 
@@ -36,7 +38,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Enabled = true
                 };
                 screen.Animations.Add(firstWindow_widthAnimation);
-                
+
                 var firstWindow_HeightAnimation = new PropertyLerpAnimation
                 {
                     Target = this,
@@ -63,7 +65,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 Width = unit * 10;
                 Height = unit * 10;
-                Margin = new Thickness(unit * 3, unit * 3, 0, 0);
+                HorizontalAlignment = HorizontalAlignment.Right;
+                VerticalAlignment = VerticalAlignment.Bottom;
+                Margin = new Thickness(0, 0, unit, unit);
                 BackgroundColor = Color.Green;
 
                 var opacityAnimation = new PropertyLerpAnimation
@@ -93,7 +97,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 Width = unit * 15;
                 Height = unit * 10;
-                Margin = new Thickness(unit * 5, unit * 5, 0, 0);
                 BackgroundColor = Color.Blue;
 
                 var stackPanel = new StackPanel(screen)
@@ -105,12 +108,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var openNewDialogButton = new Button(screen)
                 {
-                    Text = "Open new dialog",
-                    FontStretch = new Vector2(1.0f, 2.0f),
-                    ForegroundColor = Color.White,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(8),
-                    Padding = new Thickness(8)
+                    Margin = new Thickness(8)
                 };
                 stackPanel.Children.Add(openNewDialogButton);
                 openNewDialogButton.Click += (s, e) =>
@@ -118,6 +117,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     var firstDialog = new FirstDialog(screen);
                     firstDialog.Show();
                 };
+                var openNewDialogTextBlock = new TextBlock(screen)
+                {
+                    Text = "Open new dialog",
+                    FontStretch = new Vector2(1.0f, 2.0f),
+                    Padding = new Thickness(8)
+                };
+                openNewDialogButton.Children.Add(openNewDialogTextBlock);
 
                 var cubeControl = new CubeControl(screen)
                 {
@@ -161,7 +167,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Enabled = true
                 };
                 screen.Animations.Add(thirdWindow_widthAnimation);
-                
+
                 var thirdWindow_heightAnimation = new PropertyLerpAnimation
                 {
                     Target = this,
@@ -213,7 +219,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 {
                     Width = unit * 7,
                     SizeToContent = SizeToContent.Height,
-                    Margin = new Thickness(unit * 4, unit * 6, 0, 0),
                     BackgroundColor = Color.Green
                 };
                 // Owner を関連付けると Owner が閉じると自動的に閉じます。
@@ -228,11 +233,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var openNewDialogButton = new Button(screen)
                 {
-                    Text = "Open new dialog",
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
-                    ForegroundColor = Color.White,
                     Height = unit,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
@@ -242,45 +244,60 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     secondDialog.Show();
                 };
                 stackPanel.Children.Add(openNewDialogButton);
+                var openNewDialogTextBlock = new TextBlock(screen)
+                {
+                    Text = "Open new dialog",
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                openNewDialogButton.Children.Add(openNewDialogTextBlock);
 
                 var closeButton = new Button(screen)
                 {
-                    Text = "Close",
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
-                    ForegroundColor = Color.White,
                     Height = unit,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
                 closeButton.Click += (s, e) => Close();
                 stackPanel.Children.Add(closeButton);
+                var closeTextBlock = new TextBlock(screen)
+                {
+                    Text = "Close",
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                closeButton.Children.Add(closeTextBlock);
 
                 var switchScreenButton = new Button(screen)
                 {
-                    Text = "Switch Screen",
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
-                    ForegroundColor = Color.White,
                     Height = unit,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
                 switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
                 stackPanel.Children.Add(switchScreenButton);
+                var switchScreenTextBlock = new TextBlock(screen)
+                {
+                    Text = "Switch Screen",
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                switchScreenButton.Children.Add(switchScreenTextBlock);
 
                 var exitButton = new Button(screen)
                 {
-                    Text = "Exit",
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
-                    ForegroundColor = Color.White,
                     Height = unit,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
                 exitButton.Click += new EventHandler(OnExitButtonClick);
                 stackPanel.Children.Add(exitButton);
+                var exitTextBlock = new TextBlock(screen)
+                {
+                    Text = "Exit",
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                exitButton.Children.Add(exitTextBlock);
             }
 
             void OnExitButtonClick(object sender, EventArgs e)
@@ -358,7 +375,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 window = new Window(screen)
                 {
                     SizeToContent = SizeToContent.WidthAndHeight,
-                    Margin = new Thickness(unit * 1, unit * 4, 0, 0),
                     BackgroundColor = Color.Brown
                 };
                 // Owner を関連付けると Owner が閉じると自動的に閉じます。
@@ -366,15 +382,18 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var closeButton = new Button(screen)
                 {
-                    Text = "Close",
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
-                    ForegroundColor = Color.White,
                     Width = unit * 2,
                     Height = unit,
                     Margin = new Thickness(unit)
                 };
                 closeButton.Click += (s, e) => Close();
                 window.Children.Add(closeButton);
+                var closeTextBlock = new TextBlock(screen)
+                {
+                    Text = "Close",
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                closeButton.Children.Add(closeTextBlock);
             }
 
             public override void Show()

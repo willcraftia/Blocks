@@ -25,6 +25,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         public override void Draw(GameTime gameTime, IDrawContext drawContext)
         {
+            // todo: 先に LaF を描画。
+            base.Draw(gameTime, drawContext);
+
             drawContext.Flush();
 
             var bounds = drawContext.Bounds;
@@ -52,8 +55,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             CubePrimitive.Draw(effect);
 
             graphicsDevice.Viewport = previousViewport;
-
-            base.Draw(gameTime, drawContext);
         }
     }
 }

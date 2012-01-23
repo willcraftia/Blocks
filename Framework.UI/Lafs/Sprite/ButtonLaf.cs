@@ -28,22 +28,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
                 spriteBatch.Draw(Source.FillTexture, bounds, foregroundColor * 0.5f);
             }
-
-            var font = button.Font ?? button.Screen.Font;
-
-            if (font != null && !string.IsNullOrEmpty(button.Text))
-            {
-                var offset = Vector2.Zero;
-                if (button.Pressed)
-                {
-                    offset.X += 2;
-                    offset.Y += 2;
-                }
-                TextHelper.DrawString(
-                    spriteBatch, bounds, font, button.Text, button.FontStretch,
-                    button.TextHorizontalAlignment, button.TextVerticalAlignment,
-                    foregroundColor, button.Padding, offset);
-            }
         }
     }
 }

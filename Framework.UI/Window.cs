@@ -219,7 +219,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             var size = new Size();
             size.Width = availableSize.Width;
-            size.Height = CalculateBaseHeight(availableSize.Height);
+            size.Height = CalculateHeight(availableSize.Height);
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, size.Height);
@@ -243,7 +243,7 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual Size MeasureHeightToContent(Size availableSize)
         {
             var size = new Size();
-            size.Width = CalculateBaseWidth(availableSize.Width);
+            size.Width = CalculateWidth(availableSize.Width);
             size.Height = availableSize.Height;
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。

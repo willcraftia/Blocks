@@ -131,9 +131,9 @@ namespace Willcraftia.Xna.Framework.UI
         Size measuredSize = Size.Empty;
 
         /// <summary>
-        /// 配置後の領域。
+        /// 描画サイズ。
         /// </summary>
-        Rect arrangedBounds = Rect.Empty;
+        Size renderSize = Size.Empty;
 
         /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
@@ -298,11 +298,16 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 親の座標系における配置後の領域を取得します。
+        /// 親の座標系における自身の描画座標を取得または設定します。
         /// </summary>
-        public Rect ArrangedBounds
+        public Point RenderOffset { get; set; }
+
+        /// <summary>
+        /// 配置後の描画サイズを取得します。
+        /// </summary>
+        public Size RenderSize
         {
-            get { return arrangedBounds; }
+            get { return renderSize; }
         }
 
         /// <summary>
@@ -310,7 +315,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public float ActualWidth
         {
-            get { return arrangedBounds.Width; }
+            get { return renderSize.Width; }
         }
 
         /// <summary>
@@ -318,7 +323,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public float ActualHeight
         {
-            get { return arrangedBounds.Height; }
+            get { return renderSize.Height; }
         }
 
         /// <summary>
@@ -448,6 +453,14 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// HitTest が有効かどうかを示す値を取得または設定します。
+        /// </summary>
+        /// <value>
+        /// true (HitTest が有効な場合)、false (それ以外の場合)。
+        /// </value>
+        public bool HitTestEnabled { get; set; }
+
+        /// <summary>
         /// マウス カーソルが自身あるいは子の上にあるかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -520,8 +533,8 @@ namespace Willcraftia.Xna.Framework.UI
             BackgroundColor = Color.Black;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
-
             Focusable = true;
+            HitTestEnabled = true;
         }
 
         /// <summary>
@@ -539,10 +552,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="finalBounds">親 Control が指定する配置に使用可能な領域。</param>
         public void Arrange(Rect finalBounds)
         {
-            var size = ArrangeOverride(finalBounds.Size);
-
-            // 配置結果の領域を設定します。
-            arrangedBounds = new Rect(finalBounds.TopLeft, size);
+            renderSize = ArrangeOverride(finalBounds.Size);
+            RenderOffset = finalBounds.TopLeft;
         }
 
         /// <summary>
@@ -569,7 +580,15 @@ namespace Willcraftia.Xna.Framework.UI
         /// </remarks>
         /// <param name="gameTime"></param>
         /// <param name="drawContext"></param>
-        public virtual void Draw(GameTime gameTime, IDrawContext drawContext) { }
+        public virtual void Draw(GameTime gameTime, IDrawContext drawContext)
+        {
+            // todo: temporary
+
+            // IControlLaf を描画します。
+            var laf = drawContext.GetControlLaf(this);
+            if (laf != null) laf.Draw(this, drawContext);
+
+        }
 
         /// <summary>
         /// 画面座標における Point を Control の座標系の Point へ変換します。
@@ -578,9 +597,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>Control の座標系に変換された Point。</returns>
         public Point PointFromScreen(Point point)
         {
-            var result = point;
-            result.X -= arrangedBounds.X;
-            result.Y -= arrangedBounds.Y;
+            var offset = RenderOffset;
+            var result = new Point(point.X - offset.X, point.Y - offset.Y);
             return (Parent != null) ? Parent.PointFromScreen(result) : result;
         }
 
@@ -591,10 +609,25 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>画面座標に変換された Point。</returns>
         public Point PointToScreen(Point point)
         {
-            var result = point;
-            result.X += arrangedBounds.X;
-            result.Y += arrangedBounds.Y;
+            var offset = RenderOffset;
+            var result = new Point(point.X + offset.X, point.Y + offset.Y);
             return (Parent != null) ? Parent.PointToScreen(result) : result;
+        }
+
+        /// <summary>
+        /// Hit Test を行います。
+        /// </summary>
+        /// <param name="point">画面座標における Point。</param>
+        /// <returns>
+        /// true (Hit した場合)、false (それ以外の場合)。
+        /// </returns>
+        public virtual bool HitTest(Point point)
+        {
+            if (!HitTestEnabled) return false;
+
+            var localPoint = PointFromScreen(point);
+            return (0 <= localPoint.X) && (localPoint.X < renderSize.Width)
+                && (0 <= localPoint.Y) && (localPoint.Y < renderSize.Height);
         }
 
         /// <summary>
@@ -614,11 +647,9 @@ namespace Willcraftia.Xna.Framework.UI
                 // 不可視ならばスキップします。
                 if (!child.Visible) continue;
 
-                // 自分の座標系でのカーソル座標を算出します。
-                var localPoint = PointFromScreen(new Point(mouseState.X, mouseState.Y));
-
-                // 領域の外ならばスキップします。
-                if (!child.ArrangedBounds.Contains(localPoint)) continue;
+                // Hit Test に失敗するならばスキップします。
+                if (!child.HitTestEnabled || !child.HitTest(new Point(mouseState.X, mouseState.Y)))
+                    continue;
 
                 // 子に通知します。
                 child.ProcessMouseMove(mouseDevice);
@@ -754,25 +785,36 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual Size MeasureOverride(Size availableSize)
         {
             var size = new Size();
-            size.Width = CalculateBaseWidth(availableSize.Width);
-            size.Height = CalculateBaseHeight(availableSize.Height);
 
-            // 自分が希望するサイズで子の希望サイズを定めます。
+            // 暫定的に自身の希望サイズを計算します。
+            size.Width = CalculateWidth(availableSize.Width);
+            size.Height = CalculateHeight(availableSize.Height);
+
+            // 子の希望サイズを定めます。
+            float maxChildWidth = 0;
+            float maxChildHeight = 0;
             foreach (var child in Children)
             {
-                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
+
+                var childMeasuredSize = child.MeasuredSize;
+                maxChildWidth = Math.Max(maxChildWidth, childMeasuredSize.Width);
+                maxChildHeight = Math.Max(maxChildHeight, childMeasuredSize.Height);
             }
+
+            // 幅や高さが未設定ならば子のうちの最大の値に合わせます。
+            if (float.IsNaN(Width)) size.Width = CalculateWidth(maxChildWidth);
+            if (float.IsNaN(Height)) size.Height = CalculateWidth(maxChildHeight);
 
             return size;
         }
 
         /// <summary>
-        /// 子を測定する前の自身の幅を計算します。
+        /// Width、MinWidth、MaxWidth の関係に従い、指定された利用可能な幅から自身が希望する幅を計算します。
         /// </summary>
-        /// <param name="availableWidth">親が指定する利用可能な幅。</param>
-        /// <returns>幅。</returns>
-        protected virtual float CalculateBaseWidth(float availableWidth)
+        /// <param name="availableWidth">利用可能な幅。</param>
+        /// <returns>自身が希望する幅。</returns>
+        protected virtual float CalculateWidth(float availableWidth)
         {
             var w = Width;
 
@@ -797,11 +839,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 子を測定する前の自身の高さを計算します。
+        /// Height、MinHeight、MaxHeight の関係に従い、指定された利用可能な幅から自身が希望する高さを計算します。
         /// </summary>
-        /// <param name="availableHeight">親が指定する利用可能な高さ。</param>
-        /// <returns>高さ。</returns>
-        protected virtual float CalculateBaseHeight(float availableHeight)
+        /// <param name="availableWidth">利用可能な幅。</param>
+        /// <returns>自身が希望する高さ。</returns>
+        protected virtual float CalculateHeight(float availableHeight)
         {
             var h = Height;
 
@@ -836,8 +878,47 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 var childMargin = child.Margin;
                 var childMeasuredSize = child.MeasuredSize;
-                var bounds = new Rect(childMargin.Left, childMargin.Top, childMeasuredSize.Width, childMeasuredSize.Height);
-                child.Arrange(bounds);
+                var childBounds = new Rect(childMargin.Left, childMargin.Top, childMeasuredSize.Width, childMeasuredSize.Height);
+
+                switch (child.HorizontalAlignment)
+                {
+                    case HorizontalAlignment.Left:
+                        {
+                            break;
+                        }
+                    case HorizontalAlignment.Right:
+                        {
+                            childBounds.X += finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right);
+                            break;
+                        }
+                    case HorizontalAlignment.Center:
+                    default:
+                        {
+                            childBounds.X += (finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right)) * 0.5f;
+                            break;
+                        }
+                }
+
+                switch (child.VerticalAlignment)
+                {
+                    case VerticalAlignment.Top:
+                        {
+                            break;
+                        }
+                    case VerticalAlignment.Bottom:
+                        {
+                            childBounds.Y += finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom);
+                            break;
+                        }
+                    case UI.VerticalAlignment.Center:
+                    default:
+                        {
+                            childBounds.Y += (finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom)) * 0.5f;
+                            break;
+                        }
+                }
+
+                child.Arrange(childBounds);
             }
 
             return finalSize;

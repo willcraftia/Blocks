@@ -43,8 +43,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected virtual Size MeasureHorizontalDirection(Size availableSize)
         {
             var size = new Size();
-            size.Width = CalculateBaseWidth(availableSize.Width);
-            size.Height = CalculateBaseHeight(availableSize.Height);
+            size.Width = CalculateWidth(availableSize.Width);
+            size.Height = CalculateHeight(availableSize.Height);
 
             float measuredWidth = 0;
             foreach (var child in Children)
@@ -61,8 +61,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected virtual Size MeasureVerticalDirection(Size availableSize)
         {
             var size = new Size();
-            size.Width = CalculateBaseWidth(availableSize.Width);
-            size.Height = CalculateBaseHeight(availableSize.Height);
+            size.Width = CalculateWidth(availableSize.Width);
+            size.Height = CalculateHeight(availableSize.Height);
 
             float measuredHeight = 0;
             foreach (var child in Children)
@@ -182,13 +182,13 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         }
                     case HorizontalAlignment.Right:
                         {
-                            childBounds.X += finalSize.Width - (childBounds.Width - childMargin.Left + childMargin.Right);
+                            childBounds.X += finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right);
                             break;
                         }
                     case HorizontalAlignment.Center:
                     default:
                         {
-                            childBounds.X += (finalSize.Width - (childBounds.Width - childMargin.Left + childMargin.Right)) * 0.5f;
+                            childBounds.X += (finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right)) * 0.5f;
                             break;
                         }
                 }

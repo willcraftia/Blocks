@@ -174,6 +174,17 @@ namespace Willcraftia.Xna.Framework.UI
                     currentOpacity *= opacity;
                 }
             }
+
+            // todo: temporary
+            public IControlLaf GetControlLaf(Control control)
+            {
+                return uiManager.ControlLafSource.GetControlLaf(control);
+            }
+
+
+            public void DrawRectangle(Texture2D texture, Rect rect, Color color)
+            {
+            }
         }
 
         #endregion
@@ -355,7 +366,7 @@ namespace Willcraftia.Xna.Framework.UI
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
 
             var desktop = currentScreen.Desktop;
-            drawContext.Bounds = desktop.ArrangedBounds.ToXnaRectangle();
+            drawContext.Bounds = new Rect(desktop.RenderOffset, desktop.RenderSize).ToXnaRectangle();
             drawContext.PushOpacity(desktop.Opacity);
             DrawControl(gameTime, desktop);
 
@@ -421,8 +432,8 @@ namespace Willcraftia.Xna.Framework.UI
         void DrawControl(GameTime gameTime, Control control)
         {
             // IControlLaf を描画します。
-            var laf = GetControlLaf(control);
-            if (laf != null) laf.Draw(control, drawContext);
+            //var laf = GetControlLaf(control);
+            //if (laf != null) laf.Draw(control, drawContext);
 
             // 独自の描画があるならば描画します。
             control.Draw(gameTime, drawContext);
@@ -441,10 +452,8 @@ namespace Willcraftia.Xna.Framework.UI
                     //
                     // 暫定的な描画領域決定アルゴリズムです。
                     // スクロール処理なども考慮して描画領域を算出する必要があります。
-                    var arrangedBounds = child.ArrangedBounds;
-                    var renderSize = arrangedBounds.Size;
                     var renderTopLeft = child.PointToScreen(Point.Zero);
-                    var renderBounds = new Rect(renderTopLeft, renderSize).ToXnaRectangle();
+                    var renderBounds = new Rect(renderTopLeft, child.RenderSize).ToXnaRectangle();
 
                     // 描画する必要のないサイズならばスキップします。
                     // 精度の問題から Rect ではなく Rectangle で判定する点に注意してください。

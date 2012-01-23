@@ -7,28 +7,12 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
-    /// <summary>
-    /// Label として振る舞う Control です。
-    /// </summary>
-    public class Label : Control
+    public class TextBlock : Control
     {
-        /// <summary>
-        /// 表示文字列。
-        /// </summary>
-        string text;
-
         /// <summary>
         /// 表示文字列を取得または設定します。
         /// </summary>
-        public string Text
-        {
-            get { return text; }
-            set
-            {
-                if (text == value) return;
-                text = value;
-            }
-        }
+        public string Text { get; set; }
 
         /// <summary>
         /// 表示文字列の水平方向についての配置方法を取得または設定します。
@@ -43,12 +27,17 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="screen">Screen。</param>
-        public Label(Screen screen)
+        /// <pparam name="screen">Screen。</pparam>
+        public TextBlock(Screen screen)
             : base(screen)
         {
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;
+            Enabled = true;
+            // デフォルトでは文字描画に専念するものとしてフォーカスを設定させません。
+            Focusable = false;
+            // デフォルトでは Hit Test を無効にします。
+            HitTestEnabled = false;
         }
 
         protected override Size MeasureOverride(Size availableSize)

@@ -21,8 +21,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 Width = unit * 10;
                 Height = unit * 4;
-                BackgroundColor = Color.White;
-                Margin = new Thickness((screen.Desktop.Width - Width) * 0.5f, (screen.Desktop.Height - Height) * 0.5f, 0, 0);
 
                 var stackPanel = new StackPanel(screen)
                 {
@@ -33,29 +31,44 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var newGameButton = new Button(screen)
                 {
-                    Text = "NEW GAME (DUMMY)",
                     Height = unit,
                     Padding = new Thickness(8)
                 };
                 stackPanel.Children.Add(newGameButton);
 
+                var newGameTextBlock = new TextBlock(screen)
+                {
+                    Text = "NEW GAME (DUMMY)"
+                };
+                newGameButton.Children.Add(newGameTextBlock);
+
                 var switchScreenButton = new Button(screen)
                 {
-                    Text = "SWITCH SCREEN",
                     Height = unit,
                     Padding = new Thickness(8)
                 };
                 stackPanel.Children.Add(switchScreenButton);
                 switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
 
+                var switchScreenTextBlock = new TextBlock(screen)
+                {
+                    Text = "SWITCH SCREEN"
+                };
+                switchScreenButton.Children.Add(switchScreenTextBlock);
+
                 var exitButton = new Button(screen)
                 {
-                    Text = "EXIT",
                     Height = unit,
                     Padding = new Thickness(8)
                 };
                 exitButton.Click += new EventHandler(OnExitButtonClick);
                 stackPanel.Children.Add(exitButton);
+
+                var exitTextBlock = new TextBlock(screen)
+                {
+                    Text = "EXIT"
+                };
+                exitButton.Children.Add(exitTextBlock);
             }
 
             void OnSwitchScreenButtonClick(object sender, EventArgs e)
