@@ -22,11 +22,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
         Dictionary<Type, DebugControlLafBase> controlLafs = new Dictionary<Type, DebugControlLafBase>();
 
         /// <summary>
-        /// 塗り潰しに利用するテクスチャを取得します。
-        /// </summary>
-        public Texture2D FillTexture { get; private set; }
-
-        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="game">Game。</param>
@@ -83,20 +78,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             }
 
             return controlLaf;
-        }
-
-        protected override void LoadContent()
-        {
-            FillTexture = Texture2DHelper.CreateFillTexture(Game.GraphicsDevice);
-
-            base.LoadContent();
-        }
-
-        protected override void UnloadContent()
-        {
-            if (FillTexture != null) FillTexture.Dispose();
-
-            base.UnloadContent();
         }
     }
 }

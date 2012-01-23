@@ -19,24 +19,65 @@ namespace Willcraftia.Xna.Framework.UI
         SpriteBatch SpriteBatch { get; }
 
         /// <summary>
-        /// 描画処理が指定する Control の描画領域を取得します。
+        /// 描画処理が指定する Control の描画領域を取得または設定します。
         /// </summary>
-        Rectangle Bounds { get; }
+        Rectangle Bounds { get; set; }
 
         /// <summary>
-        /// 描画処理が指定するControl の透明度を取得します。
+        /// 描画処理が指定する Control の透明度を取得します。
         /// </summary>
         float Opacity { get; }
+
+        /// <summary>
+        /// 透明度をスタックへプッシュします。
+        /// </summary>
+        /// <param name="opacity">スタックへプッシュする透明度。</param>
+        void PushOpacity(float opacity);
+
+        /// <summary>
+        /// 透明度をスタックからポップします。
+        /// </summary>
+        void PopOpacity();
+
+        /// <summary>
+        /// クリッピングを開始します。
+        /// </summary>
+        /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
+        /// <returns>クリッピングを制御するオブジェクト。</returns>
+        IDisposable SetScissor(Rectangle scissorRectangle);
+
+        /// <summary>
+        /// Viewport の変更を開始します。
+        /// </summary>
+        /// <param name="viewportBounds">GraphicsDevice の Viewport に設定する領域。</param>
+        /// <returns>Viewport の変更を管理するオブジェクト。</returns>
+        IDisposable SetViewport(Rectangle viewportBounds);
+
+        /// <summary>
+        /// 指定の Control のための IControlLaf を取得します。
+        /// </summary>
+        /// <param name="control">Control。</param>
+        /// <returns>
+        /// 指定の Control のための IControlLaf。存在しない場合は null を返します。
+        /// </returns>
+        IControlLaf GetControlLaf(Control control);
 
         /// <summary>
         /// Control の描画処理を反映させます。
         /// </summary>
         void Flush();
 
-        // todo: temporary
-        IControlLaf GetControlLaf(Control control);
+        // todo:
+        void DrawRectangle(Rect rect, Color color);
 
         // todo:
-        void DrawRectangle(Texture2D texture, Rect rect, Color color);
+        void DrawTexture(Rect rect, Texture2D texture, Color color);
+
+        // todo:
+        void DrawTexture(Rect rect, Texture2D texture, Color color, Rectangle sourceRectangle);
+
+        // todo:
+        void DrawString(Rect clientBounds, SpriteFont font, string text, Vector2 stretch,
+            HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding);
     }
 }

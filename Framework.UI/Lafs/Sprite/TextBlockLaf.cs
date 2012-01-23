@@ -4,14 +4,12 @@ using System;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
+namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
-    public class TextBlockLaf : DefaultControlLaf
+    public class TextBlockLaf : SpriteControlLafBase
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {
-            base.Draw(control, drawContext);
-
             var textBlock = control as Controls.TextBlock;
             if (textBlock == null) return;
 

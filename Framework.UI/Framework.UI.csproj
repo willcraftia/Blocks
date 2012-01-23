@@ -102,6 +102,7 @@
     <Compile Include="FocusNavigation.cs" />
     <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="Lafs\Debug\TextBlockLaf.cs" />
+    <Compile Include="Lafs\Sprite\TextBlockLaf.cs" />
     <Compile Include="SizeToContent.cs" />
     <Compile Include="DefaultScreenFactory.cs" />
     <Compile Include="Desktop.cs" />
@@ -144,7 +145,7 @@
     <Compile Include="Lafs\Sprite\OverlayLaf.cs" />
     <Compile Include="Lafs\Sprite\SpriteControlLafSource.cs" />
     <Compile Include="Lafs\Sprite\WindowLaf.cs" />
-    <Compile Include="Lafs\TextHelper.cs" />
+    <Compile Include="TextHelper.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>

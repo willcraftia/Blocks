@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs
+namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
     /// Control の文字列描画を助けるメソッドを定義したヘルパ クラスです。
@@ -16,7 +16,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// <summary>
         /// 文字列の表示位置を計算します。
         /// </summary>
-        /// <param name="bounds">文字列を表示するクライアント領域。</param>
+        /// <param name="clientBounds">文字列を表示するクライアント領域。</param>
         /// <param name="font">フォント。</param>
         /// <param name="text">文字列。</param>
         /// <param name="stretch">フォントの拡大縮小の度合い。</param>
@@ -24,7 +24,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// <param name="vAlign">文字列の垂直方向についての配置方法。</param>
         /// <returns>算出された表示位置。</returns>
         public static Vector2 CalculateTextPosition(
-            Rectangle bounds, SpriteFont font, string text, Vector2 stretch,
+            Rectangle clientBounds, SpriteFont font, string text, Vector2 stretch,
             HorizontalAlignment hAlign, VerticalAlignment vAlign)
         {
             if (font == null) throw new ArgumentNullException("font");
@@ -40,18 +40,18 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
             {
                 case HorizontalAlignment.Left:
                     {
-                        x = bounds.Left;
+                        x = clientBounds.Left;
                         break;
                     }
                 case HorizontalAlignment.Right:
                     {
-                        x = bounds.Right - textSize.X;
+                        x = clientBounds.Right - textSize.X;
                         break;
                     }
                 case HorizontalAlignment.Center:
                 default:
                     {
-                        x = (bounds.Width - textSize.X) / 2.0f + bounds.Left;
+                        x = (clientBounds.Width - textSize.X) / 2.0f + clientBounds.Left;
                         break;
                     }
             }
@@ -60,18 +60,18 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
             {
                 case VerticalAlignment.Top:
                     {
-                        y = bounds.Top;
+                        y = clientBounds.Top;
                         break;
                     }
                 case VerticalAlignment.Bottom:
                     {
-                        y = bounds.Bottom - font.LineSpacing;
+                        y = clientBounds.Bottom - font.LineSpacing;
                         break;
                     }
                 case VerticalAlignment.Center:
                 default:
                     {
-                        y = (bounds.Height - font.LineSpacing) / 2.0f + bounds.Top;
+                        y = (clientBounds.Height - font.LineSpacing) / 2.0f + clientBounds.Top;
                         break;
                     }
             }
@@ -83,7 +83,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// 文字列を描画します。
         /// </summary>
         /// <param name="spriteBatch">SpriteBatch。</param>
-        /// <param name="bounds">文字列を表示するクライアント領域。</param>
+        /// <param name="clientBounds">文字列を表示するクライアント領域。</param>
         /// <param name="font">フォント。</param>
         /// <param name="text">文字列。</param>
         /// <param name="stretch">フォントの拡大縮小の度合い。</param>
@@ -94,11 +94,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         /// <param name="offset">表示位置のオフセット。</param>
         public static void DrawString(
             SpriteBatch spriteBatch,
-            Rectangle bounds, SpriteFont font, string text, Vector2 stretch,
+            Rectangle clientBounds, SpriteFont font, string text, Vector2 stretch,
             HorizontalAlignment hAlign, VerticalAlignment vAlign,
             Color color, Thickness padding, Vector2 offset)
         {
-            var paddedBounds = bounds;
+            var paddedBounds = clientBounds;
             paddedBounds.X += (int) padding.Left;
             paddedBounds.Y += (int) padding.Top;
             paddedBounds.Width -= (int) (padding.Left + padding.Right);

@@ -18,15 +18,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var button = control as Controls.Button;
             if (button == null) return;
 
-            var spriteBatch = drawContext.SpriteBatch;
-
-            var foregroundColor = button.ForegroundColor * drawContext.Opacity;
-            var bounds = drawContext.Bounds;
-
             if (button.MouseDirectlyOver)
             {
                 // TODO: 色を汎用的に指定するにはどうしたらよいだろうか？
-                spriteBatch.Draw(Source.FillTexture, bounds, foregroundColor * 0.5f);
+                drawContext.DrawRectangle(new Rect(control.RenderSize), control.ForegroundColor * 0.5f);
             }
         }
     }

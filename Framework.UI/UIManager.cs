@@ -20,7 +20,8 @@ namespace Willcraftia.Xna.Framework.UI
         #region Scissor
 
         /// <summary>
-        /// Control 描画のための GraphicsDevice の ScissorRectangle および SpriteBatch の Begin/End 状態を管理する構造体です。
+        /// Control 描画のための GraphicsDevice の ScissorRectangle
+        /// および SpriteBatch の Begin/End 状態を管理する構造体です。
         /// </summary>
         /// <remarks>
         /// Control の描画は再帰的に行うため、スタック的に ScissorRectangle の状態を維持する必要があります。
@@ -29,10 +30,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// このため、using 区を用いてこのクラスのインスタンスを管理することを前提に、
         /// Scissor インスタンス生成で SpriteBatch の状態を End させ、
         /// GraphicsDevice に新たな ScissorRectangle を設定して SpriteBatch を Begin し、
-        /// using 終了による Dispose 呼び出しにて SpriteBatch を End し、前回の ScissorRectangle を再設定して SpriteBatch を Begin します。
-        /// これにより、GraphicsDevice の ScissorRectangle の状態と SpriteBatch の Begin/End の状態を論理的にスタック化できます。
+        /// using 終了による Dispose 呼び出しにて SpriteBatch を End し、
+        /// 前回の ScissorRectangle を再設定して SpriteBatch を Begin します。
+        /// これにより、GraphicsDevice の ScissorRectangle の状態と
+        /// SpriteBatch の Begin/End の状態をスタック化できます。
         /// </remarks>
-        struct Scissor : IDisposable
+        class ScissorManager : IDisposable
         {
             /// <summary>
             /// UIManager。
@@ -40,40 +43,38 @@ namespace Willcraftia.Xna.Framework.UI
             UIManager uiManager;
 
             /// <summary>
-            /// BeginClipping を開始する前に設定されていたシザー テスト領域。
+            /// クリッピングを開始前に設定されていたシザー テスト領域のスタック。
             /// </summary>
-            Rectangle previousScissorRectangle;
+            Stack<Rectangle> scissorRectangleStack = new Stack<Rectangle>();
 
             /// <summary>
             /// インスタンスを生成します。
             /// </summary>
             /// <param name="uiManager">UIManager。</param>
-            /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
-            public Scissor(UIManager uiManager, Rectangle scissorRectangle)
-                : this()
+            public ScissorManager(UIManager uiManager)
             {
                 this.uiManager = uiManager;
-                BeginClipping(ref scissorRectangle);
             }
 
             // I/F
             public void Dispose()
             {
-                EndClipping();
+                End();
             }
 
             /// <summary>
             /// クリッピングを開始します。
             /// </summary>
             /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
-            void BeginClipping(ref Rectangle scissorRectangle)
+            public void Begin(ref Rectangle scissorRectangle)
             {
                 var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = uiManager.GraphicsDevice;
 
                 spriteBatch.End();
 
-                previousScissorRectangle = graphicsDevice.ScissorRectangle;
+                var previousScissorRectangle = graphicsDevice.ScissorRectangle;
+                scissorRectangleStack.Push(previousScissorRectangle);
 
                 // Viewport の領域からはみ出ないように領域を調整します (はみ出ると例外が発生します)。
                 var viewportBounds = graphicsDevice.Viewport.Bounds;
@@ -84,7 +85,10 @@ namespace Willcraftia.Xna.Framework.UI
                 Rectangle.Intersect(ref viewIntersectBounds, ref previousScissorRectangle, out finalScissorRectangle);
 
                 graphicsDevice.ScissorRectangle = finalScissorRectangle;
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                    null, null,
+                    uiManager.scissorTestRasterizerState);
             }
 
             /// <summary>
@@ -93,15 +97,77 @@ namespace Willcraftia.Xna.Framework.UI
             /// <remarks>
             /// BeginClipping メソッドの呼び出し前に設定されていたシザー テスト領域を GraphicsDevice に再設定します。
             /// </remarks>
-            void EndClipping()
+            public void End()
             {
                 var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
                 spriteBatch.End();
 
-                graphicsDevice.ScissorRectangle = previousScissorRectangle;
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
+                graphicsDevice.ScissorRectangle = scissorRectangleStack.Pop();
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                    null, null,
+                    uiManager.scissorTestRasterizerState);
+            }
+        }
+
+        #endregion
+
+        #region ViewportManager
+
+        /// <summary>
+        /// Viewport の変更をスタック管理するクラスです。
+        /// </summary>
+        class ViewportManager : IDisposable
+        {
+            /// <summary>
+            /// UIManager。
+            /// </summary>
+            UIManager uiManager;
+
+            /// <summary>
+            /// Viewport 変更開始前に設定されていた Viewport のスタック。
+            /// </summary>
+            Stack<Viewport> viewportStack = new Stack<Viewport>();
+
+            /// <summary>
+            /// インスタンスを生成します。
+            /// </summary>
+            /// <param name="uiManager">UIManager。</param>
+            public ViewportManager(UIManager uiManager)
+            {
+                this.uiManager = uiManager;
+            }
+
+            // I/F
+            public void Dispose()
+            {
+                End();
+            }
+
+            /// <summary>
+            /// Viewport の変更を開始します。
+            /// </summary>
+            /// <param name="bounds"></param>
+            public void Begin(ref Rectangle viewportBounds)
+            {
+                var graphicsDevice = uiManager.GraphicsDevice;
+
+                var previousViewport = graphicsDevice.Viewport;
+                viewportStack.Push(previousViewport);
+
+                var newBounds = Rectangle.Intersect(previousViewport.Bounds, viewportBounds);
+                graphicsDevice.Viewport = new Viewport(newBounds);
+            }
+
+            /// <summary>
+            /// Viewport の変更を終了します。
+            /// </summary>
+            public void End()
+            {
+                var graphicsDevice = uiManager.GraphicsDevice;
+                graphicsDevice.Viewport = viewportStack.Pop();
             }
         }
 
@@ -119,8 +185,29 @@ namespace Willcraftia.Xna.Framework.UI
             /// </summary>
             UIManager uiManager;
 
+            /// <summary>
+            /// 描画処理が指定する Control の描画領域
+            /// </summary>
+            Rectangle bounds;
+
+            /// <summary>
+            /// クリッピングを制御する ScissorManager。
+            /// </summary>
+            ScissorManager scissorManager;
+
+            /// <summary>
+            /// Viewport 変更を管理する ViewportManager。
+            /// </summary>
+            ViewportManager viewportManager;
+
+            /// <summary>
+            /// 透明度スタック。
+            /// </summary>
             List<float> opacityStack = new List<float>();
 
+            /// <summary>
+            /// 透明度スタックにある全ての値の乗算結果。
+            /// </summary>
             float currentOpacity;
 
             // I/F
@@ -130,7 +217,11 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public Rectangle Bounds { get; internal set; }
+            public Rectangle Bounds
+            {
+                get { return bounds; }
+                set { bounds = value; }
+            }
 
             // I/F
             public float Opacity
@@ -145,27 +236,107 @@ namespace Willcraftia.Xna.Framework.UI
             public DrawContext(UIManager uiManager)
             {
                 this.uiManager = uiManager;
+
+                scissorManager = new ScissorManager(uiManager);
+                viewportManager = new ViewportManager(uiManager);
             }
 
             // I/F
-            public void Flush()
-            {
-                SpriteBatch.End();
-                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, uiManager.scissorTestRasterizerState);
-            }
-
             public void PushOpacity(float opacity)
             {
                 opacityStack.Add(opacity);
                 CalculateCurrentOpacity();
             }
 
+            // I/F
             public void PopOpacity()
             {
                 opacityStack.RemoveAt(opacityStack.Count - 1);
                 CalculateCurrentOpacity();
             }
 
+            // I/F
+            public IDisposable SetScissor(Rectangle scissorRectangle)
+            {
+                scissorManager.Begin(ref scissorRectangle);
+                return scissorManager;
+            }
+
+            // I/F
+            public IDisposable SetViewport(Rectangle viewportBounds)
+            {
+                viewportManager.Begin(ref viewportBounds);
+                return viewportManager;
+            }
+
+            // I/F
+            public IControlLaf GetControlLaf(Control control)
+            {
+                return uiManager.ControlLafSource.GetControlLaf(control);
+            }
+
+            // I/F
+            public void Flush()
+            {
+                SpriteBatch.End();
+                SpriteBatch.Begin(
+                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                    null, null,
+                    uiManager.scissorTestRasterizerState);
+            }
+
+            // I/F
+            public void DrawRectangle(Rect rect, Color color)
+            {
+                DrawTexture(rect, uiManager.fillTexture, color);
+            }
+
+            // I/F
+            public void DrawTexture(Rect rect, Texture2D texture, Color color)
+            {
+                // todo
+                var rectangle = new Rectangle();
+                rectangle.X = bounds.X + (int) rect.X;
+                rectangle.Y = bounds.Y + (int) rect.Y;
+                rectangle.Width = (int) rect.Width;
+                rectangle.Height = (int) rect.Height;
+
+                SpriteBatch.Draw(texture, rectangle, color * currentOpacity);
+            }
+
+            // I/F
+            public void DrawTexture(Rect rect, Texture2D texture, Color color, Rectangle sourceRectangle)
+            {
+                // todo
+                var rectangle = new Rectangle();
+                rectangle.X = bounds.X + (int) rect.X;
+                rectangle.Y = bounds.Y + (int) rect.Y;
+                rectangle.Width = (int) rect.Width;
+                rectangle.Height = (int) rect.Height;
+
+                SpriteBatch.Draw(texture, rectangle, sourceRectangle, color * currentOpacity);
+            }
+
+            // I/F
+            public void DrawString(Rect clientBounds, SpriteFont font, string text, Vector2 stretch,
+                HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding)
+            {
+                // todo
+                var rectangle = new Rectangle();
+                rectangle.X = bounds.X + (int) clientBounds.X;
+                rectangle.Y = bounds.Y + (int) clientBounds.Y;
+                rectangle.Width = (int) clientBounds.Width;
+                rectangle.Height = (int) clientBounds.Height;
+
+                TextHelper.DrawString(
+                    SpriteBatch, rectangle, font, text, stretch,
+                    hAlign, vAlign,
+                    color * currentOpacity, padding, Vector2.Zero);
+            }
+
+            /// <summary>
+            /// 透明度スタックにある値で現在の透明度を計算します。
+            /// </summary>
             void CalculateCurrentOpacity()
             {
                 currentOpacity = 1;
@@ -173,17 +344,6 @@ namespace Willcraftia.Xna.Framework.UI
                 {
                     currentOpacity *= opacity;
                 }
-            }
-
-            // todo: temporary
-            public IControlLaf GetControlLaf(Control control)
-            {
-                return uiManager.ControlLafSource.GetControlLaf(control);
-            }
-
-
-            public void DrawRectangle(Texture2D texture, Rect rect, Color color)
-            {
             }
         }
 
@@ -238,6 +398,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// DrawContext。
         /// </summary>
         DrawContext drawContext;
+
+        /// <summary>
+        /// 塗り潰しに利用するテクスチャ。
+        /// </summary>
+        Texture2D fillTexture;
 
         /// <summary>
         /// IInputCapturer を取得または設定します。
@@ -368,7 +533,7 @@ namespace Willcraftia.Xna.Framework.UI
             var desktop = currentScreen.Desktop;
             drawContext.Bounds = new Rect(desktop.RenderOffset, desktop.RenderSize).ToXnaRectangle();
             drawContext.PushOpacity(desktop.Opacity);
-            DrawControl(gameTime, desktop);
+            desktop.Draw(gameTime, drawContext);
 
             spriteBatch.End();
 
@@ -378,6 +543,7 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
             if (ControlLafSource != null && !ControlLafSource.Initialized) ControlLafSource.Initialize();
             if (ScreenFactory != null && !ScreenFactory.Initialized) ScreenFactory.Initialize();
 
@@ -387,6 +553,7 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void UnloadContent()
         {
             if (spriteBatch != null) spriteBatch.Dispose();
+            if (fillTexture != null) fillTexture.Dispose();
             if (ControlLafSource != null && ControlLafSource.Initialized) ControlLafSource.Dispose();
             if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
 
@@ -419,80 +586,6 @@ namespace Willcraftia.Xna.Framework.UI
                 // 必要ならば初期化します。
                 if (!currentScreen.Initialized) currentScreen.Initialize();
             }
-        }
-
-        /// <summary>
-        /// Control を再帰的に描画します。
-        /// </summary>
-        /// <remarks>
-        /// Control はその親 Control の描画領域でクリッピングされます。
-        /// </remarks>
-        /// <param name="gameTime"></param>
-        /// <param name="control"></param>
-        void DrawControl(GameTime gameTime, Control control)
-        {
-            // IControlLaf を描画します。
-            //var laf = GetControlLaf(control);
-            //if (laf != null) laf.Draw(control, drawContext);
-
-            // 独自の描画があるならば描画します。
-            control.Draw(gameTime, drawContext);
-
-            if (control.Children.Count != 0)
-            {
-                // 子を再帰的に描画します。
-                foreach (var child in control.Children)
-                {
-                    // 不可視ならば描画しません。
-                    if (!child.Visible) continue;
-                    if (child.Opacity <= 0) continue;
-
-                    //
-                    // TODO
-                    //
-                    // 暫定的な描画領域決定アルゴリズムです。
-                    // スクロール処理なども考慮して描画領域を算出する必要があります。
-                    var renderTopLeft = child.PointToScreen(Point.Zero);
-                    var renderBounds = new Rect(renderTopLeft, child.RenderSize).ToXnaRectangle();
-
-                    // 描画する必要のないサイズならばスキップします。
-                    // 精度の問題から Rect ではなく Rectangle で判定する点に注意してください。
-                    if (renderBounds.Width <= 0 || renderBounds.Height <= 0) continue;
-
-                    drawContext.Bounds = renderBounds;
-
-                    drawContext.PushOpacity(child.Opacity);
-
-                    if (child.Clipped)
-                    {
-                        using (var scissor = new Scissor(this, renderBounds))
-                        {
-                            DrawControl(gameTime, child);
-                        }
-                    }
-                    else
-                    {
-                        DrawControl(gameTime, child);
-                    }
-
-                    drawContext.PopOpacity();
-                }
-            }
-        }
-
-        /// <summary>
-        /// IControlLafSource から指定の Control のための IControlLaf を取得します。
-        /// </summary>
-        /// <param name="control">Control。</param>
-        /// <returns>
-        /// 指定の Control のための IControlLaf。
-        /// ControlLafSource プロパティが null、あるいは、IControlLafSource 内で見つからない場合は null を返します。
-        /// </returns>
-        IControlLaf GetControlLaf(Control control)
-        {
-            if (ControlLafSource == null) return null;
-
-            return ControlLafSource.GetControlLaf(control);
         }
     }
 }

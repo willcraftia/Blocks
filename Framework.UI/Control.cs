@@ -582,12 +582,47 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="drawContext"></param>
         public virtual void Draw(GameTime gameTime, IDrawContext drawContext)
         {
-            // todo: temporary
-
             // IControlLaf を描画します。
             var laf = drawContext.GetControlLaf(this);
             if (laf != null) laf.Draw(this, drawContext);
 
+            // 子を再帰的に描画します。
+            foreach (var child in Children)
+            {
+                // 不可視ならば描画しません。
+                if (!child.Visible) continue;
+                if (child.Opacity <= 0) continue;
+
+                //
+                // TODO
+                //
+                // 暫定的な描画領域決定アルゴリズムです。
+                // スクロール処理なども考慮して描画領域を算出する必要があります。
+                var renderTopLeft = child.PointToScreen(Point.Zero);
+                var renderBounds = new Rect(renderTopLeft, child.RenderSize).ToXnaRectangle();
+
+                // 描画する必要のないサイズならばスキップします。
+                // 精度の問題から Rect ではなく Rectangle で判定する点に注意してください。
+                if (renderBounds.Width <= 0 || renderBounds.Height <= 0) continue;
+
+                drawContext.Bounds = renderBounds;
+
+                drawContext.PushOpacity(child.Opacity);
+
+                if (child.Clipped)
+                {
+                    using (var setScissor = drawContext.SetScissor(renderBounds))
+                    {
+                        child.Draw(gameTime, drawContext);
+                    }
+                }
+                else
+                {
+                    child.Draw(gameTime, drawContext);
+                }
+
+                drawContext.PopOpacity();
+            }
         }
 
         /// <summary>

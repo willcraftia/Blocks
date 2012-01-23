@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
@@ -20,11 +19,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         /// Control の型をキーとし、その Control の LaF を値とするディクショナリ。
         /// </summary>
         Dictionary<Type, SpriteControlLafBase> controlLafs = new Dictionary<Type, SpriteControlLafBase>();
-
-        /// <summary>
-        /// 塗り潰しに利用するテクスチャを取得します。
-        /// </summary>
-        public Texture2D FillTexture { get; private set; }
 
         /// <summary>
         /// 専用の ContentManager を取得します。
@@ -43,6 +37,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             // デフォルトの ControlLafBase を設定しておきます。
             RegisterControlLaf(typeof(Desktop), new DesktopLaf());
             RegisterControlLaf(typeof(Window), new WindowLaf());
+            RegisterControlLaf(typeof(Controls.TextBlock), new TextBlockLaf());
             RegisterControlLaf(typeof(Controls.Button), new ButtonLaf());
             RegisterControlLaf(typeof(Controls.Overlay), new OverlayLaf());
         }
@@ -96,8 +91,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void LoadContent()
         {
-            FillTexture = Texture2DHelper.CreateFillTexture(Game.GraphicsDevice);
-
             foreach (var controlLaf in controlLafs.Values) controlLaf.Initialize();
 
             base.LoadContent();
@@ -105,8 +98,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void UnloadContent()
         {
-            if (FillTexture != null) FillTexture.Dispose();
-
             foreach (var controlLaf in controlLafs.Values) controlLaf.Dispose();
             controlLafs.Clear();
 
