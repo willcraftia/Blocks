@@ -38,7 +38,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             RegisterControlLaf(typeof(Desktop), new DesktopLaf());
             RegisterControlLaf(typeof(Window), new WindowLaf());
             RegisterControlLaf(typeof(Controls.TextBlock), new TextBlockLaf());
-            RegisterControlLaf(typeof(Controls.Button), new ButtonLaf());
             RegisterControlLaf(typeof(Controls.Overlay), new OverlayLaf());
         }
 

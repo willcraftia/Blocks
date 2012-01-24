@@ -124,6 +124,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 openNewDialogButton.Children.Add(openNewDialogTextBlock);
 
+                openNewDialogButton.MouseEnter += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.Yellow;
+                openNewDialogButton.MouseLeave += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.White;
+
                 var cubeControl = new CubeControl(screen)
                 {
                     Margin = new Thickness(8),
@@ -252,6 +255,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 openNewDialogButton.Children.Add(openNewDialogTextBlock);
 
+                openNewDialogButton.MouseEnter += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.Yellow;
+                openNewDialogButton.MouseLeave += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.White;
+
                 var closeButton = new Button(screen)
                 {
                     Margin = new Thickness(8),
@@ -267,6 +273,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     TextHorizontalAlignment = HorizontalAlignment.Left
                 };
                 closeButton.Children.Add(closeTextBlock);
+
+                closeButton.MouseEnter += (s, e) => closeTextBlock.ForegroundColor = Color.Yellow;
+                closeButton.MouseLeave += (s, e) => closeTextBlock.ForegroundColor = Color.White;
 
                 var switchScreenButton = new Button(screen)
                 {
@@ -284,6 +293,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 switchScreenButton.Children.Add(switchScreenTextBlock);
 
+                switchScreenButton.MouseEnter += (s, e) => switchScreenTextBlock.ForegroundColor = Color.Yellow;
+                switchScreenButton.MouseLeave += (s, e) => switchScreenTextBlock.ForegroundColor = Color.White;
+
                 var exitButton = new Button(screen)
                 {
                     Margin = new Thickness(8),
@@ -299,6 +311,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     TextHorizontalAlignment = HorizontalAlignment.Left
                 };
                 exitButton.Children.Add(exitTextBlock);
+
+                exitButton.MouseEnter += (s, e) => exitTextBlock.ForegroundColor = Color.Yellow;
+                exitButton.MouseLeave += (s, e) => exitTextBlock.ForegroundColor = Color.White;
             }
 
             void OnExitButtonClick(object sender, EventArgs e)
@@ -395,6 +410,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     TextHorizontalAlignment = HorizontalAlignment.Left
                 };
                 closeButton.Children.Add(closeTextBlock);
+
+                closeButton.MouseEnter += (s, e) => closeTextBlock.ForegroundColor = Color.Yellow;
+                closeButton.MouseLeave += (s, e) => closeTextBlock.ForegroundColor = Color.White;
             }
 
             public override void Show()
