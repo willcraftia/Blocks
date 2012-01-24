@@ -30,14 +30,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             drawContext.Flush();
 
-            var bounds = drawContext.Bounds;
+            var renderSize = RenderSize;
 
-            using (var setViewport = drawContext.SetViewport(drawContext.Bounds))
+            using (var setViewport = drawContext.SetViewport(new Rect(renderSize)))
             {
                 var effect = Screen.BasicEffect;
 
                 var cameraPosition = new Vector3(0, 0, 2.5f);
-                var aspect = ((float) bounds.Width / (float) bounds.Height);
+                var aspect = ((float) renderSize.Width / (float) renderSize.Height);
 
                 effect.World = Orientation * Matrix.CreateScale(Scale);
                 effect.View = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);

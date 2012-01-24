@@ -43,7 +43,7 @@ namespace Willcraftia.Xna.Framework.UI
             UIManager uiManager;
 
             /// <summary>
-            /// クリッピングを開始前に設定されていたシザー テスト領域のスタック。
+            /// クリップ開始前に設定されていた GraphicsDevice のシザー テスト領域のスタック。
             /// </summary>
             Stack<Rectangle> scissorRectangleStack = new Stack<Rectangle>();
 
@@ -63,20 +63,32 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             /// <summary>
-            /// クリッピングを開始します。
+            /// クリップを開始します。
             /// </summary>
-            /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
-            public void Begin(ref Rectangle scissorRectangle)
+            /// <param name="clipBounds">クリップ領域。</param>
+            public void Begin(ref Rect clipBounds)
             {
                 var spriteBatch = uiManager.spriteBatch;
-                var graphicsDevice = uiManager.GraphicsDevice;
+                var graphicsDevice = spriteBatch.GraphicsDevice;
 
+                // これまでの SpriteBatch を一旦終えます。
                 spriteBatch.End();
 
+                // これまでの ScissorRectangle をスタックへ退避させます。
                 var previousScissorRectangle = graphicsDevice.ScissorRectangle;
                 scissorRectangleStack.Push(previousScissorRectangle);
 
-                // Viewport の領域からはみ出ないように領域を調整します (はみ出ると例外が発生します)。
+                // 新たな ScissorRectangle を計算します。
+                var offset = uiManager.drawContext.Location;
+                var scissorRectangle = new Rectangle()
+                {
+                    X = (int) (offset.X + clipBounds.X),
+                    Y = (int) (offset.Y + clipBounds.Y),
+                    Width = (int) clipBounds.Width,
+                    Height = (int) clipBounds.Height
+                };
+
+                // Viewport からはみ出ないように調整します (はみ出ると例外が発生します)。
                 var viewportBounds = graphicsDevice.Viewport.Bounds;
                 Rectangle viewIntersectBounds;
                 Rectangle.Intersect(ref viewportBounds, ref scissorRectangle, out viewIntersectBounds);
@@ -84,7 +96,11 @@ namespace Willcraftia.Xna.Framework.UI
                 Rectangle finalScissorRectangle;
                 Rectangle.Intersect(ref viewIntersectBounds, ref previousScissorRectangle, out finalScissorRectangle);
 
-                graphicsDevice.ScissorRectangle = finalScissorRectangle;
+                // サイズを持つ場合にだけ設定するようにします。
+                if (0 < finalScissorRectangle.Width && 0 < finalScissorRectangle.Height)
+                    graphicsDevice.ScissorRectangle = finalScissorRectangle;
+
+                // 設定された ScissorRectangle で SpriteBatch を再開します。
                 spriteBatch.Begin(
                     SpriteSortMode.Deferred, BlendState.AlphaBlend,
                     null, null,
@@ -92,19 +108,23 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             /// <summary>
-            /// クリッピングを終了します。
+            /// クリップを終了します。
             /// </summary>
             /// <remarks>
-            /// BeginClipping メソッドの呼び出し前に設定されていたシザー テスト領域を GraphicsDevice に再設定します。
+            /// クリップ開始前に設定されていたシザー テスト領域を GraphicsDevice に再設定します。
             /// </remarks>
             public void End()
             {
                 var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
+                // Begin で始めた SpriteBatch を一旦終えます。
                 spriteBatch.End();
 
+                // Begin でスタックに退避させていた ScissorRectangle を戻します。
                 graphicsDevice.ScissorRectangle = scissorRectangleStack.Pop();
+
+                // 戻した ScissorRectangle で SpriteBatch を再開します。
                 spriteBatch.Begin(
                     SpriteSortMode.Deferred, BlendState.AlphaBlend,
                     null, null,
@@ -149,16 +169,31 @@ namespace Willcraftia.Xna.Framework.UI
             /// <summary>
             /// Viewport の変更を開始します。
             /// </summary>
-            /// <param name="bounds"></param>
-            public void Begin(ref Rectangle viewportBounds)
+            /// <param name="viewportBounds"></param>
+            public void Begin(ref Rect viewportBounds)
             {
                 var graphicsDevice = uiManager.GraphicsDevice;
 
+                // これまでの Viewport をスタックへ退避させます。
                 var previousViewport = graphicsDevice.Viewport;
                 viewportStack.Push(previousViewport);
 
-                var newBounds = Rectangle.Intersect(previousViewport.Bounds, viewportBounds);
-                graphicsDevice.Viewport = new Viewport(newBounds);
+                // 新たな Viewport を計算します。
+                var offset = uiManager.drawContext.Location;
+                var viewportRectangle = new Rectangle()
+                {
+                    X = (int) (offset.X + viewportBounds.X),
+                    Y = (int) (offset.Y + viewportBounds.Y),
+                    Width = (int) viewportBounds.Width,
+                    Height = (int) viewportBounds.Height
+                };
+
+                // 親の Viewport を考慮した領域を計算します。
+                var newBounds = Rectangle.Intersect(previousViewport.Bounds, viewportRectangle);
+
+                // サイズを持つ場合にだけ設定するようにします。
+                if (0 < viewportRectangle.Width && 0 < viewportRectangle.Height)
+                    graphicsDevice.Viewport = new Viewport(newBounds);
             }
 
             /// <summary>
@@ -167,6 +202,8 @@ namespace Willcraftia.Xna.Framework.UI
             public void End()
             {
                 var graphicsDevice = uiManager.GraphicsDevice;
+
+                // Begin でスタックに退避させていた Viewport を戻します。
                 graphicsDevice.Viewport = viewportStack.Pop();
             }
         }
@@ -186,9 +223,9 @@ namespace Willcraftia.Xna.Framework.UI
             UIManager uiManager;
 
             /// <summary>
-            /// 描画処理が指定する Control の描画領域
+            /// 使用する座標系の画面座標における位置。
             /// </summary>
-            Rectangle bounds;
+            Point location;
 
             /// <summary>
             /// クリッピングを制御する ScissorManager。
@@ -217,10 +254,10 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public Rectangle Bounds
+            public Point Location
             {
-                get { return bounds; }
-                set { bounds = value; }
+                get { return location; }
+                set { location = value; }
             }
 
             // I/F
@@ -256,14 +293,14 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public IDisposable SetScissor(Rectangle scissorRectangle)
+            public IDisposable SetScissor(Rect clipBounds)
             {
-                scissorManager.Begin(ref scissorRectangle);
+                scissorManager.Begin(ref clipBounds);
                 return scissorManager;
             }
 
             // I/F
-            public IDisposable SetViewport(Rectangle viewportBounds)
+            public IDisposable SetViewport(Rect viewportBounds)
             {
                 viewportManager.Begin(ref viewportBounds);
                 return viewportManager;
@@ -295,11 +332,13 @@ namespace Willcraftia.Xna.Framework.UI
             public void DrawTexture(Rect rect, Texture2D texture, Color color)
             {
                 // todo
-                var rectangle = new Rectangle();
-                rectangle.X = bounds.X + (int) rect.X;
-                rectangle.Y = bounds.Y + (int) rect.Y;
-                rectangle.Width = (int) rect.Width;
-                rectangle.Height = (int) rect.Height;
+                var rectangle = new Rectangle()
+                {
+                    X = (int) (location.X + rect.X),
+                    Y = (int) (location.Y + rect.Y),
+                    Width = (int) rect.Width,
+                    Height = (int) rect.Height
+                };
 
                 SpriteBatch.Draw(texture, rectangle, color * currentOpacity);
             }
@@ -308,11 +347,13 @@ namespace Willcraftia.Xna.Framework.UI
             public void DrawTexture(Rect rect, Texture2D texture, Color color, Rectangle sourceRectangle)
             {
                 // todo
-                var rectangle = new Rectangle();
-                rectangle.X = bounds.X + (int) rect.X;
-                rectangle.Y = bounds.Y + (int) rect.Y;
-                rectangle.Width = (int) rect.Width;
-                rectangle.Height = (int) rect.Height;
+                var rectangle = new Rectangle()
+                {
+                    X = (int) (location.X + rect.X),
+                    Y = (int) (location.Y + rect.Y),
+                    Width = (int) rect.Width,
+                    Height = (int) rect.Height
+                };
 
                 SpriteBatch.Draw(texture, rectangle, sourceRectangle, color * currentOpacity);
             }
@@ -322,11 +363,13 @@ namespace Willcraftia.Xna.Framework.UI
                 HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding)
             {
                 // todo
-                var rectangle = new Rectangle();
-                rectangle.X = bounds.X + (int) clientBounds.X;
-                rectangle.Y = bounds.Y + (int) clientBounds.Y;
-                rectangle.Width = (int) clientBounds.Width;
-                rectangle.Height = (int) clientBounds.Height;
+                var rectangle = new Rectangle()
+                {
+                    X = (int) (location.X + clientBounds.X),
+                    Y = (int) (location.Y + clientBounds.Y),
+                    Width = (int) clientBounds.Width,
+                    Height = (int) clientBounds.Height
+                };
 
                 TextHelper.DrawString(
                     SpriteBatch, rectangle, font, text, stretch,
@@ -531,7 +574,7 @@ namespace Willcraftia.Xna.Framework.UI
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
 
             var desktop = currentScreen.Desktop;
-            drawContext.Bounds = new Rect(desktop.RenderOffset, desktop.RenderSize).ToXnaRectangle();
+            drawContext.Location = desktop.RenderOffset;
             drawContext.PushOpacity(desktop.Opacity);
             desktop.Draw(gameTime, drawContext);
 

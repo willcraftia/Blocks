@@ -586,12 +586,9 @@ namespace Willcraftia.Xna.Framework.UI
             var laf = drawContext.GetControlLaf(this);
             if (laf != null) laf.Draw(this, drawContext);
 
-            var clipTopLeft = PointToScreen(Point.Zero);
-            var clipBounds = new Rect(clipTopLeft, RenderSize).ToXnaRectangle();
-
             if (ClipEnabled)
             {
-                using (var setScissor = drawContext.SetScissor(clipBounds))
+                using (var setScissor = drawContext.SetScissor(new Rect(RenderSize)))
                 {
                     DrawChildren(gameTime, drawContext);
                 }
@@ -600,6 +597,21 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 DrawChildren(gameTime, drawContext);
             }
+        }
+
+        protected virtual void DrawChild(GameTime gameTime, IDrawContext drawContext, Control child)
+        {
+            //
+            // TODO
+            //
+            // 暫定的な描画領域決定アルゴリズムです。
+            // スクロール処理なども考慮して描画領域を算出する必要があります。
+            drawContext.Location = child.PointToScreen(Point.Zero);
+            drawContext.PushOpacity(child.Opacity);
+
+            child.Draw(gameTime, drawContext);
+
+            drawContext.PopOpacity();
         }
 
         void DrawChildren(GameTime gameTime, IDrawContext drawContext)
@@ -616,19 +628,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if ((int) childRenderSize.Width <= 0 || (int) childRenderSize.Height <= 0)
                     continue;
 
-                //
-                // TODO
-                //
-                // 暫定的な描画領域決定アルゴリズムです。
-                // スクロール処理なども考慮して描画領域を算出する必要があります。
-                var renderTopLeft = child.PointToScreen(Point.Zero);
-                drawContext.Bounds = new Rect(renderTopLeft, child.RenderSize).ToXnaRectangle();
-
-                drawContext.PushOpacity(child.Opacity);
-
-                child.Draw(gameTime, drawContext);
-
-                drawContext.PopOpacity();
+                DrawChild(gameTime, drawContext, child);
             }
         }
 

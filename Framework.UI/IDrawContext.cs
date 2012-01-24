@@ -19,9 +19,9 @@ namespace Willcraftia.Xna.Framework.UI
         SpriteBatch SpriteBatch { get; }
 
         /// <summary>
-        /// 描画処理が指定する Control の描画領域を取得または設定します。
+        /// 使用する座標系の画面座標における位置を設定します。
         /// </summary>
-        Rectangle Bounds { get; set; }
+        Point Location { get; set; }
 
         /// <summary>
         /// 描画処理が指定する Control の透明度を取得します。
@@ -40,18 +40,18 @@ namespace Willcraftia.Xna.Framework.UI
         void PopOpacity();
 
         /// <summary>
-        /// クリッピングを開始します。
+        /// クリップを開始します。
         /// </summary>
-        /// <param name="scissorRectangle">GraphicsDevice に設定するシザー テスト領域。</param>
-        /// <returns>クリッピングを制御するオブジェクト。</returns>
-        IDisposable SetScissor(Rectangle scissorRectangle);
+        /// <param name="scissorRectangle">クリップ領域。</param>
+        /// <returns>クリップを制御するオブジェクト。</returns>
+        IDisposable SetScissor(Rect clipBounds);
 
         /// <summary>
         /// Viewport の変更を開始します。
         /// </summary>
-        /// <param name="viewportBounds">GraphicsDevice の Viewport に設定する領域。</param>
+        /// <param name="viewportBounds">Viewport 領域。</param>
         /// <returns>Viewport の変更を管理するオブジェクト。</returns>
-        IDisposable SetViewport(Rectangle viewportBounds);
+        IDisposable SetViewport(Rect viewportBounds);
 
         /// <summary>
         /// 指定の Control のための IControlLaf を取得します。
