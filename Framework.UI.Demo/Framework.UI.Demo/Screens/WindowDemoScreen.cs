@@ -128,7 +128,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var cubeControl = new CubeControl(screen)
                 {
                     CubePrimitive = CreateCubePrimitive(),
-                    //Clipped = false,
                     ForegroundColor = Color.White,
                     Width = unit * 7
                 };

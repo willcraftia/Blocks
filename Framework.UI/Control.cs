@@ -327,12 +327,12 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 親の描画領域でクリップするかどうかを示す値を取得または設定します。
+        /// 自身の描画領域で子 Control をクリップするかどうかを示す値を取得または設定します。
         /// </summary>
         /// <value>
-        /// true (親の描画領域でクリップする場合)、false (それ以外の場合)。
+        /// true (自身の描画領域で子 Control をクリップする場合)、false (それ以外の場合)。
         /// </value>
-        public bool Clipped { get; set; }
+        public bool ClipEnabled { get; set; }
 
         /// <summary>
         /// SpriteFont を取得または設定します。
@@ -527,12 +527,12 @@ namespace Willcraftia.Xna.Framework.UI
 
             Children = new ParentingControlCollection(this);
 
-            Clipped = true;
             Opacity = 1;
             ForegroundColor = Color.White;
             BackgroundColor = Color.Black;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
+            ClipEnabled = true;
             Focusable = true;
             HitTestEnabled = true;
         }
@@ -586,12 +586,35 @@ namespace Willcraftia.Xna.Framework.UI
             var laf = drawContext.GetControlLaf(this);
             if (laf != null) laf.Draw(this, drawContext);
 
+            var clipTopLeft = PointToScreen(Point.Zero);
+            var clipBounds = new Rect(clipTopLeft, RenderSize).ToXnaRectangle();
+
+            if (ClipEnabled)
+            {
+                using (var setScissor = drawContext.SetScissor(clipBounds))
+                {
+                    DrawChildren(gameTime, drawContext);
+                }
+            }
+            else
+            {
+                DrawChildren(gameTime, drawContext);
+            }
+        }
+
+        void DrawChildren(GameTime gameTime, IDrawContext drawContext)
+        {
             // 子を再帰的に描画します。
             foreach (var child in Children)
             {
                 // 不可視ならば描画しません。
                 if (!child.Visible) continue;
-                if (child.Opacity <= 0) continue;
+
+                // 描画する必要のないサイズならばスキップします。
+                // 最終的に扱う精度の問題から int で判定する点に注意してください。
+                var childRenderSize = child.RenderSize;
+                if ((int) childRenderSize.Width <= 0 || (int) childRenderSize.Height <= 0)
+                    continue;
 
                 //
                 // TODO
@@ -599,27 +622,11 @@ namespace Willcraftia.Xna.Framework.UI
                 // 暫定的な描画領域決定アルゴリズムです。
                 // スクロール処理なども考慮して描画領域を算出する必要があります。
                 var renderTopLeft = child.PointToScreen(Point.Zero);
-                var renderBounds = new Rect(renderTopLeft, child.RenderSize).ToXnaRectangle();
-
-                // 描画する必要のないサイズならばスキップします。
-                // 精度の問題から Rect ではなく Rectangle で判定する点に注意してください。
-                if (renderBounds.Width <= 0 || renderBounds.Height <= 0) continue;
-
-                drawContext.Bounds = renderBounds;
+                drawContext.Bounds = new Rect(renderTopLeft, child.RenderSize).ToXnaRectangle();
 
                 drawContext.PushOpacity(child.Opacity);
 
-                if (child.Clipped)
-                {
-                    using (var setScissor = drawContext.SetScissor(renderBounds))
-                    {
-                        child.Draw(gameTime, drawContext);
-                    }
-                }
-                else
-                {
-                    child.Draw(gameTime, drawContext);
-                }
+                child.Draw(gameTime, drawContext);
 
                 drawContext.PopOpacity();
             }
