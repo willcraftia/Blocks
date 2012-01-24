@@ -40,11 +40,18 @@ namespace Willcraftia.Xna.Framework.UI
         void PopOpacity();
 
         /// <summary>
-        /// クリップを開始します。
+        /// 既存のクリップ領域を継承してクリップを開始します。
         /// </summary>
         /// <param name="scissorRectangle">クリップ領域。</param>
         /// <returns>クリップを制御するオブジェクト。</returns>
-        IDisposable SetScissor(Rect clipBounds);
+        IDisposable SetClip(Rect clipBounds);
+
+        /// <summary>
+        /// 新たなクリップ領域でクリップを解します。
+        /// </summary>
+        /// <param name="scissorRectangle">クリップ領域。</param>
+        /// <returns>クリップを制御するオブジェクト。</returns>
+        IDisposable SetNewClip(Rect clipBounds);
 
         /// <summary>
         /// Viewport の変更を開始します。

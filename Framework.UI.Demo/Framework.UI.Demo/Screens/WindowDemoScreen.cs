@@ -108,8 +108,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var openNewDialogButton = new Button(screen)
                 {
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(8)
+                    Margin = new Thickness(8),
+                    Padding = new Thickness(8)
                 };
                 stackPanel.Children.Add(openNewDialogButton);
                 openNewDialogButton.Click += (s, e) =>
@@ -120,16 +120,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var openNewDialogTextBlock = new TextBlock(screen)
                 {
                     Text = "Open new dialog",
-                    FontStretch = new Vector2(1.0f, 2.0f),
-                    Padding = new Thickness(8)
+                    FontStretch = new Vector2(1.0f, 3.0f)
                 };
                 openNewDialogButton.Children.Add(openNewDialogTextBlock);
 
                 var cubeControl = new CubeControl(screen)
                 {
+                    Margin = new Thickness(8),
                     CubePrimitive = CreateCubePrimitive(),
                     ForegroundColor = Color.White,
-                    Width = unit * 7
+                    Width = unit * 7,
+                    Height = unit * 7
                 };
                 stackPanel.Children.Add(cubeControl);
 
@@ -177,6 +178,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(1),
                     Enabled = true
                 };
+                thirdWindow_heightAnimation.Completed += (s, e) => cubeControl.CubeVisible = true;
                 screen.Animations.Add(thirdWindow_heightAnimation);
             }
 
@@ -217,7 +219,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 window = new Window(screen)
                 {
                     Width = unit * 7,
-                    SizeToContent = SizeToContent.Height,
+                    SizeToContent = SizeToContent.WidthAndHeight,
                     BackgroundColor = Color.Green
                 };
                 // Owner を関連付けると Owner が閉じると自動的に閉じます。
@@ -226,7 +228,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var stackPanel = new StackPanel(screen)
                 {
                     Margin = new Thickness(8),
-                    Orientation = Orientation.Vertical
+                    Orientation = Orientation.Horizontal
                 };
                 window.Children.Add(stackPanel);
 

@@ -86,56 +86,6 @@ namespace Willcraftia.Xna.Framework.UI
         Control parent;
 
         /// <summary>
-        /// 外側の余白。
-        /// </summary>
-        Thickness margin;
-
-        /// <summary>
-        /// 内側の余白。
-        /// </summary>
-        Thickness padding;
-
-        /// <summary>
-        /// 幅の下限。
-        /// </summary>
-        float minWidth = 0;
-
-        /// <summary>
-        /// 高さの下限。
-        /// </summary>
-        float minHeight = 0;
-
-        /// <summary>
-        /// 幅の上限。
-        /// </summary>
-        float maxWidth = float.PositiveInfinity;
-
-        /// <summary>
-        /// 高さの上限。
-        /// </summary>
-        float maxHeight = float.PositiveInfinity;
-
-        /// <summary>
-        /// 幅。
-        /// </summary>
-        float width = float.NaN;
-
-        /// <summary>
-        /// 高さ。
-        /// </summary>
-        float height = float.NaN;
-
-        /// <summary>
-        /// 希望するサイズ。
-        /// </summary>
-        Size measuredSize = Size.Empty;
-
-        /// <summary>
-        /// 描画サイズ。
-        /// </summary>
-        Size renderSize = Size.Empty;
-
-        /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
         /// 自身がマウス オーバかつ子がマウス オーバの場合、子を設定します。
         /// 自身がマウス オーバかつ子が非マウス オーバの場合、自身を設定します。
@@ -152,16 +102,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (Control が可視の場合)、false (それ以外の場合)。
         /// </summary>
         bool visible = true;
-
-        /// <summary>
-        /// フォント。
-        /// </summary>
-        SpriteFont font;
-
-        /// <summary>
-        /// フォントの拡大縮小の度合い。
-        /// </summary>
-        Vector2 fontStretch = Vector2.One;
 
         /// <summary>
         /// true (フォーカスが設定されている場合)、false (それ以外の場合)。
@@ -188,114 +128,47 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 外側の余白を取得または設定します。
         /// </summary>
-        public Thickness Margin
-        {
-            get { return margin; }
-            set
-            {
-                if (margin == value) return;
-                margin = value;
-            }
-        }
+        public Thickness Margin { get; set; }
 
         /// <summary>
         /// 内側の余白を取得または設定します。
         /// </summary>
-        public Thickness Padding
-        {
-            get { return padding; }
-            set
-            {
-                if (padding == value) return;
-                padding = value;
-            }
-        }
+        public Thickness Padding { get; set; }
 
         /// <summary>
         /// 幅の下限を取得または設定します。
         /// </summary>
-        public float MinWidth
-        {
-            get { return minWidth; }
-            set
-            {
-                if (minWidth == value) return;
-                minWidth = value;
-            }
-        }
+        public float MinWidth { get; set; }
 
         /// <summary>
         /// 高さの下限を取得または設定します。
         /// </summary>
-        public float MinHeight
-        {
-            get { return minHeight; }
-            set
-            {
-                if (minHeight == value) return;
-                minHeight = value;
-            }
-        }
+        public float MinHeight { get; set; }
         
         /// <summary>
         /// 幅の上限を取得または設定します。
         /// </summary>
-        public float MaxWidth
-        {
-            get { return maxWidth; }
-            set
-            {
-                if (maxWidth == value) return;
-                maxWidth = value;
-            }
-        }
+        public float MaxWidth { get; set; }
         
         /// <summary>
         /// 高さの上限を取得または設定します。
         /// </summary>
-        public float MaxHeight
-        {
-            get { return maxHeight; }
-            set
-            {
-                if (maxHeight == value) return;
-                maxHeight = value;
-            }
-        }
+        public float MaxHeight { get; set; }
 
         /// <summary>
         /// 幅を取得または設定します。
         /// </summary>
-        public float Width
-        {
-            get { return width; }
-            set
-            {
-                if (width == value) return;
-                width = value;
-            }
-        }
+        public float Width { get; set; }
 
         /// <summary>
         /// 高さを取得または設定します。
         /// </summary>
-        public float Height
-        {
-            get { return height; }
-            set
-            {
-                if (height == value) return;
-                height = value;
-            }
-        }
+        public float Height { get; set; }
 
         /// <summary>
         /// 測定後のサイズを取得します。
         /// </summary>
-        public Size MeasuredSize
-        {
-            get { return measuredSize; }
-        }
+        public Size MeasuredSize { get; private set; }
 
         /// <summary>
         /// 親の座標系における自身の描画座標を取得または設定します。
@@ -305,17 +178,14 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 配置後の描画サイズを取得します。
         /// </summary>
-        public Size RenderSize
-        {
-            get { return renderSize; }
-        }
+        public Size RenderSize { get; private set; }
 
         /// <summary>
         /// 配置後の幅を取得します。
         /// </summary>
         public float ActualWidth
         {
-            get { return renderSize.Width; }
+            get { return RenderSize.Width; }
         }
 
         /// <summary>
@@ -323,7 +193,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public float ActualHeight
         {
-            get { return renderSize.Height; }
+            get { return RenderSize.Height; }
         }
 
         /// <summary>
@@ -337,28 +207,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// SpriteFont を取得または設定します。
         /// </summary>
-        public SpriteFont Font
-        {
-            get { return font; }
-            set
-            {
-                if (font == value) return;
-                font = value;
-            }
-        }
+        public SpriteFont Font { get; set; }
 
         /// <summary>
         /// フォントの拡大縮小の度合いを取得または設定します。
         /// </summary>
-        public Vector2 FontStretch
-        {
-            get { return fontStretch; }
-            set
-            {
-                if (fontStretch == value) return;
-                fontStretch = value;
-            }
-        }
+        public Vector2 FontStretch { get; set; }
 
         /// <summary>
         /// 透明度を取得または設定します。
@@ -527,11 +381,16 @@ namespace Willcraftia.Xna.Framework.UI
 
             Children = new ParentingControlCollection(this);
 
+            Width = float.NaN;
+            Height = float.NaN;
+            MaxWidth = float.PositiveInfinity;
+            MaxHeight = float.PositiveInfinity;
             Opacity = 1;
             ForegroundColor = Color.White;
             BackgroundColor = Color.Black;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
+            FontStretch = Vector2.One;
             ClipEnabled = true;
             Focusable = true;
             HitTestEnabled = true;
@@ -543,7 +402,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="availableSize">親 Control が指定する利用可能なサイズ。</param>
         public void Measure(Size availableSize)
         {
-            measuredSize = MeasureOverride(availableSize);
+            MeasuredSize = MeasureOverride(availableSize);
         }
 
         /// <summary>
@@ -552,7 +411,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="finalBounds">親 Control が指定する配置に使用可能な領域。</param>
         public void Arrange(Rect finalBounds)
         {
-            renderSize = ArrangeOverride(finalBounds.Size);
+            RenderSize = ArrangeOverride(finalBounds.Size);
             RenderOffset = finalBounds.TopLeft;
         }
 
@@ -588,7 +447,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (ClipEnabled)
             {
-                using (var setScissor = drawContext.SetScissor(new Rect(RenderSize)))
+                using (var setClip = drawContext.SetClip(new Rect(RenderSize)))
                 {
                     DrawChildren(gameTime, drawContext);
                 }
@@ -668,8 +527,8 @@ namespace Willcraftia.Xna.Framework.UI
             if (!HitTestEnabled) return false;
 
             var localPoint = PointFromScreen(point);
-            return (0 <= localPoint.X) && (localPoint.X < renderSize.Width)
-                && (0 <= localPoint.Y) && (localPoint.Y < renderSize.Height);
+            return (0 <= localPoint.X) && (localPoint.X < RenderSize.Width)
+                && (0 <= localPoint.Y) && (localPoint.Y < RenderSize.Height);
         }
 
         /// <summary>
@@ -826,87 +685,92 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>自身が希望するサイズ。</returns>
         protected virtual Size MeasureOverride(Size availableSize)
         {
-            var size = new Size();
-
             // 暫定的に自身の希望サイズを計算します。
-            size.Width = CalculateWidth(availableSize.Width);
-            size.Height = CalculateHeight(availableSize.Height);
+            var size = new Size();
+            size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
+            size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
+
+            // 子が利用可能なサイズを計算します。
+            var childAvailableSize = size;
+            childAvailableSize.Width -= Padding.Left + Padding.Right;
+            childAvailableSize.Height -= Padding.Top + Padding.Bottom;
 
             // 子の希望サイズを定めます。
-            float maxChildWidth = 0;
-            float maxChildHeight = 0;
+            float measuredWidth = 0;
+            float measuredHeight = 0;
             foreach (var child in Children)
             {
-                child.Measure(size);
+                child.Measure(childAvailableSize);
 
-                var childMeasuredSize = child.MeasuredSize;
-                maxChildWidth = Math.Max(maxChildWidth, childMeasuredSize.Width);
-                maxChildHeight = Math.Max(maxChildHeight, childMeasuredSize.Height);
+                measuredWidth = Math.Max(measuredWidth, child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right);
+                measuredHeight = Math.Max(measuredHeight, child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom);
             }
 
             // 幅や高さが未設定ならば子のうちの最大の値に合わせます。
-            if (float.IsNaN(Width)) size.Width = CalculateWidth(maxChildWidth);
-            if (float.IsNaN(Height)) size.Height = CalculateWidth(maxChildHeight);
+            if (float.IsNaN(Width)) size.Width = ClampWidth(measuredWidth + Padding.Left + Padding.Right);
+            if (float.IsNaN(Height)) size.Height = ClampHeight(measuredHeight + Padding.Top + Padding.Bottom);
 
             return size;
         }
 
         /// <summary>
-        /// Width、MinWidth、MaxWidth の関係に従い、指定された利用可能な幅から自身が希望する幅を計算します。
+        /// 指定された幅を [MinWidth, MaxWidth] でクランプします。
+        /// </summary>
+        /// <param name="width">幅。</param>
+        /// <returns>クランプされた幅。</returns>
+        protected float ClampWidth(float width)
+        {
+            if (MinWidth < MaxWidth)
+            {
+                return MathHelper.Clamp(width, MinWidth, MaxWidth);
+            }
+            else
+            {
+                // 上限と下限の関係に不整合があるならば下限と比較して大きい方を取ります。
+                return MathHelper.Max(width, MinWidth);
+            }
+        }
+
+        /// <summary>
+        /// 指定された高さを [MinHeight, MaxHeight] でクランプします。
+        /// </summary>
+        /// <param name="height">高さ。</param>
+        /// <returns>クランプされた高さ。</returns>
+        protected float ClampHeight(float height)
+        {
+            if (MinHeight < MaxHeight)
+            {
+                return MathHelper.Clamp(height, MinHeight, MaxHeight);
+            }
+            else
+            {
+                // 上限と下限の関係に不整合があるならば下限と比較して大きい方を取ります。
+                return MathHelper.Max(height, MinHeight);
+            }
+        }
+
+        /// <summary>
+        /// MinWidth、MaxWidth の関係に従い、指定された利用可能な幅から自身が希望する幅を計算します。
         /// </summary>
         /// <param name="availableWidth">利用可能な幅。</param>
         /// <returns>自身が希望する幅。</returns>
         protected virtual float CalculateWidth(float availableWidth)
         {
-            var w = Width;
-
-            // 幅が設定されているならばそのまま希望します。
-            // 幅が未設定ならば可能な限り最大の幅を希望します。
-            if (float.IsNaN(w))
-            {
-                if (MinWidth < MaxWidth)
-                {
-                    w = MathHelper.Clamp(availableWidth, MinWidth, MaxWidth);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    w = MathHelper.Max(availableWidth, MinWidth);
-                }
-                // 余白で調整します。
-                w = MathHelper.Max(MinWidth, w - margin.Left - margin.Right);
-            }
-
-            return w;
+            float desiredWidth = ClampWidth(availableWidth);
+            // 余白で調整します。
+            return MathHelper.Max(MinWidth, desiredWidth - Margin.Left - Margin.Right);
         }
 
         /// <summary>
-        /// Height、MinHeight、MaxHeight の関係に従い、指定された利用可能な幅から自身が希望する高さを計算します。
+        /// MinHeight、MaxHeight の関係に従い、指定された利用可能な高さから自身が希望する高さを計算します。
         /// </summary>
-        /// <param name="availableWidth">利用可能な幅。</param>
+        /// <param name="availableHeight">利用可能な高さ。</param>
         /// <returns>自身が希望する高さ。</returns>
         protected virtual float CalculateHeight(float availableHeight)
         {
-            var h = Height;
-
-            // 高さが設定されているならばそのまま希望します。
-            // 高さが未設定ならば可能な限り最大の幅を希望します。
-            if (float.IsNaN(Height))
-            {
-                if (MinHeight < MaxHeight)
-                {
-                    h = MathHelper.Clamp(availableHeight, MinHeight, MaxHeight);
-                }
-                else
-                {
-                    // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                    h = MathHelper.Max(availableHeight, MinHeight);
-                }
-                // 余白で調整します。
-                h = MathHelper.Max(MinHeight, h - margin.Top - margin.Bottom);
-            }
-
-            return h;
+            float desiredHeight = ClampHeight(availableHeight);
+            // 余白で調整します。
+            return MathHelper.Max(MinHeight, desiredHeight - Margin.Top - Margin.Bottom);
         }
 
         /// <summary>
@@ -918,46 +782,43 @@ namespace Willcraftia.Xna.Framework.UI
         {
             foreach (var child in Children)
             {
-                var childMargin = child.Margin;
-                var childMeasuredSize = child.MeasuredSize;
-                var childBounds = new Rect(childMargin.Left, childMargin.Top, childMeasuredSize.Width, childMeasuredSize.Height);
+                var childBounds = new Rect(child.MeasuredSize);
 
                 switch (child.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
-                        {
-                            break;
-                        }
+                        childBounds.X = Padding.Left + child.Margin.Left;
+                        break;
                     case HorizontalAlignment.Right:
-                        {
-                            childBounds.X += finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right);
-                            break;
-                        }
+                        childBounds.X = finalSize.Width - child.MeasuredSize.Width - Padding.Right - child.Margin.Right;
+                        break;
                     case HorizontalAlignment.Center:
                     default:
-                        {
-                            childBounds.X += (finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right)) * 0.5f;
-                            break;
-                        }
+                        // Padding された座標系から Magin を含む子領域の相対位置を計算します。
+                        var paddedWidth = (finalSize.Width - Padding.Left - Padding.Right);
+                        childBounds.X = (paddedWidth - child.MeasuredSize.Width - child.Margin.Left - child.Margin.Right) * 0.5f;
+                        // Magin を含む子領域からの実際の子領域の位置をもとめます。
+                        childBounds.X += child.Margin.Left;
+                        // Padding された座標系を指定領域の座標系へ変換します。
+                        childBounds.X += Padding.Left;
+                        break;
                 }
 
                 switch (child.VerticalAlignment)
                 {
                     case VerticalAlignment.Top:
-                        {
-                            break;
-                        }
+                        childBounds.Y = Padding.Top + child.Margin.Top;
+                        break;
                     case VerticalAlignment.Bottom:
-                        {
-                            childBounds.Y += finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom);
-                            break;
-                        }
+                        childBounds.Y = finalSize.Height - child.MeasuredSize.Height - Padding.Bottom - child.Margin.Bottom;
+                        break;
                     case UI.VerticalAlignment.Center:
                     default:
-                        {
-                            childBounds.Y += (finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom)) * 0.5f;
-                            break;
-                        }
+                        var paddedHeight = (finalSize.Height - Padding.Top - Padding.Bottom);
+                        childBounds.Y = (paddedHeight - child.MeasuredSize.Height - child.Margin.Top - child.Margin.Bottom) * 0.5f;
+                        childBounds.Y += child.Margin.Top;
+                        childBounds.Y += Padding.Top;
+                        break;
                 }
 
                 child.Arrange(childBounds);
@@ -978,15 +839,11 @@ namespace Willcraftia.Xna.Framework.UI
                 case FocusNavigation.Forward:
                 case FocusNavigation.Down:
                 case FocusNavigation.Right:
-                    {
-                        return ForwardFocus();
-                    }
+                    return ForwardFocus();
                 case FocusNavigation.Backward:
                 case FocusNavigation.Up:
                 case FocusNavigation.Left:
-                    {
-                        return BackwardFocus();
-                    }
+                    return BackwardFocus();
             }
             return false;
         }

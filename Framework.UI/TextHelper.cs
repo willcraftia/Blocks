@@ -30,50 +30,38 @@ namespace Willcraftia.Xna.Framework.UI
             if (font == null) throw new ArgumentNullException("font");
             if (text == null) throw new ArgumentNullException("text");
 
-            Vector2 textSize = font.MeasureString(text);
-            textSize.X *= stretch.X;
-            textSize.Y *= stretch.Y;
+            Vector2 textSize = font.MeasureString(text) * stretch;
+            int lineSpacing = (int) ((float) font.LineSpacing * stretch.Y);
+
             float x;
             float y;
 
             switch (hAlign)
             {
                 case HorizontalAlignment.Left:
-                    {
-                        x = clientBounds.Left;
-                        break;
-                    }
+                    x = clientBounds.Left;
+                    break;
                 case HorizontalAlignment.Right:
-                    {
-                        x = clientBounds.Right - textSize.X;
-                        break;
-                    }
+                    x = clientBounds.Right - textSize.X;
+                    break;
                 case HorizontalAlignment.Center:
                 default:
-                    {
-                        x = (clientBounds.Width - textSize.X) / 2.0f + clientBounds.Left;
-                        break;
-                    }
+                    x = (clientBounds.Width - textSize.X) / 2 + clientBounds.Left;
+                    break;
             }
 
             switch (vAlign)
             {
                 case VerticalAlignment.Top:
-                    {
-                        y = clientBounds.Top;
-                        break;
-                    }
+                    y = clientBounds.Top;
+                    break;
                 case VerticalAlignment.Bottom:
-                    {
-                        y = clientBounds.Bottom - font.LineSpacing;
-                        break;
-                    }
+                    y = clientBounds.Bottom - lineSpacing;
+                    break;
                 case VerticalAlignment.Center:
                 default:
-                    {
-                        y = (clientBounds.Height - font.LineSpacing) / 2.0f + clientBounds.Top;
-                        break;
-                    }
+                    y = (clientBounds.Height - lineSpacing) / 2 + clientBounds.Top;
+                    break;
             }
 
             return new Vector2(x, y);

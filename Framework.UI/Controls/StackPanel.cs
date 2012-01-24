@@ -42,38 +42,58 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected virtual Size MeasureHorizontalDirection(Size availableSize)
         {
+            // 暫定的に自身の希望サイズを計算します。
             var size = new Size();
-            size.Width = CalculateWidth(availableSize.Width);
-            size.Height = CalculateHeight(availableSize.Height);
+            size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
+            size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
+
+            // 子が利用可能なサイズを計算します。
+            var childAvailableSize = size;
+            childAvailableSize.Width -= Padding.Left + Padding.Right;
+            childAvailableSize.Height -= Padding.Top + Padding.Bottom;
 
             float measuredWidth = 0;
+            float measuredHeight = 0;
             foreach (var child in Children)
             {
-                child.Measure(size);
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
-                measuredWidth += childMeasuredSize.Width + childMargin.Left + childMargin.Right;
+                child.Measure(childAvailableSize);
+
+                measuredWidth += child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right;
+                measuredHeight = Math.Max(measuredHeight, child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom);
             }
 
-            return new Size(measuredWidth, size.Height);
+            size.Width = measuredWidth + Padding.Left + Padding.Right;
+            if (float.IsNaN(Height)) size.Height = ClampHeight(measuredHeight + Padding.Top + Padding.Bottom);
+
+            return size;
         }
 
         protected virtual Size MeasureVerticalDirection(Size availableSize)
         {
+            // 暫定的に自身の希望サイズを計算します。
             var size = new Size();
-            size.Width = CalculateWidth(availableSize.Width);
-            size.Height = CalculateHeight(availableSize.Height);
+            size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
+            size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
 
+            // 子が利用可能なサイズを計算します。
+            var childAvailableSize = size;
+            childAvailableSize.Width -= Padding.Left + Padding.Right;
+            childAvailableSize.Height -= Padding.Top + Padding.Bottom;
+
+            float measuredWidth = 0;
             float measuredHeight = 0;
             foreach (var child in Children)
             {
-                child.Measure(size);
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
-                measuredHeight += childMeasuredSize.Height + childMargin.Top + childMargin.Bottom;
+                child.Measure(childAvailableSize);
+
+                measuredWidth = Math.Max(measuredWidth, child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right);
+                measuredHeight += child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom;
             }
 
-            return new Size(size.Width, measuredHeight);
+            if (float.IsNaN(Width)) size.Width = ClampWidth(measuredWidth + Padding.Left + Padding.Right);
+            size.Height = measuredHeight + Padding.Top + Padding.Bottom;
+
+            return size;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -95,51 +115,35 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <returns></returns>
         protected virtual Size ArrangeHorizontalDirection(Size finalSize)
         {
-            float offsetX = 0;
+            float offsetX = Padding.Left;
             foreach (var child in Children)
             {
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
+                offsetX += child.Margin.Left;
 
-                offsetX += childMargin.Left;
-
-                var childBounds = new Rect();
+                var childBounds = new Rect(child.MeasuredSize);
                 childBounds.X = offsetX;
-                childBounds.Y = childMargin.Top;
-                childBounds.Width = childMeasuredSize.Width;
-
-                if (float.IsNaN(child.Height))
-                {
-                    childBounds.Height = MathHelper.Min(finalSize.Height, child.MaxHeight) - (childMargin.Top + childMargin.Bottom);
-                }
-                else
-                {
-                    childBounds.Height = childMeasuredSize.Height;
-                }
 
                 switch (child.VerticalAlignment)
                 {
                     case VerticalAlignment.Top:
-                        {
-                            break;
-                        }
+                        childBounds.Y = Padding.Top + child.Margin.Top;
+                        break;
                     case VerticalAlignment.Bottom:
-                        {
-                            childBounds.Y += finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom);
-                            break;
-                        }
-                    case UI.VerticalAlignment.Center:
+                        childBounds.Y = finalSize.Height - child.MeasuredSize.Height - Padding.Bottom - child.Margin.Bottom;
+                        break;
+                    case VerticalAlignment.Center:
                     default:
-                        {
-                            childBounds.Y += (finalSize.Height - (childBounds.Height + childMargin.Top + childMargin.Bottom)) * 0.5f;
-                            break;
-                        }
+                        var paddedHeight = (finalSize.Height - Padding.Top - Padding.Bottom);
+                        childBounds.Y = (paddedHeight - child.MeasuredSize.Height - child.Margin.Top - child.Margin.Bottom) * 0.5f;
+                        childBounds.Y += child.Margin.Top;
+                        childBounds.Y += Padding.Top;
+                        break;
                 }
 
                 child.Arrange(childBounds);
 
                 // 子が確定した幅の分だけ次の子の座標をずらします。
-                offsetX += child.ActualWidth + childMargin.Right;
+                offsetX += child.ActualWidth + child.Margin.Right;
             }
 
             return finalSize;
@@ -152,51 +156,35 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <returns></returns>
         protected virtual Size ArrangeVerticalDirection(Size finalSize)
         {
-            float offsetY = 0;
+            float offsetY = Padding.Top;
             foreach (var child in Children)
             {
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
+                offsetY += child.Margin.Top;
 
-                offsetY += childMargin.Top;
-
-                var childBounds = new Rect();
-                childBounds.X = childMargin.Left;
+                var childBounds = new Rect(child.MeasuredSize);
                 childBounds.Y = offsetY;
-                childBounds.Height = childMeasuredSize.Height;
-
-                if (float.IsNaN(child.Width))
-                {
-                    childBounds.Width = MathHelper.Min(finalSize.Width, child.MaxWidth) - (childMargin.Left + childMargin.Right);
-                }
-                else
-                {
-                    childBounds.Width = childMeasuredSize.Width;
-                }
 
                 switch (child.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
-                        {
-                            break;
-                        }
+                        childBounds.X = Padding.Left + child.Margin.Left;
+                        break;
                     case HorizontalAlignment.Right:
-                        {
-                            childBounds.X += finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right);
-                            break;
-                        }
+                        childBounds.X = finalSize.Width - child.MeasuredSize.Width - Padding.Right - child.Margin.Right;
+                        break;
                     case HorizontalAlignment.Center:
                     default:
-                        {
-                            childBounds.X += (finalSize.Width - (childBounds.Width + childMargin.Left + childMargin.Right)) * 0.5f;
-                            break;
-                        }
+                        var paddedWidth = (finalSize.Width - Padding.Left - Padding.Right);
+                        childBounds.X = (paddedWidth - child.MeasuredSize.Width - child.Margin.Left - child.Margin.Right) * 0.5f;
+                        childBounds.X += child.Margin.Left;
+                        childBounds.X += Padding.Left;
+                        break;
                 }
 
                 child.Arrange(childBounds);
 
                 // 子が確定した幅の分だけ次の子の座標をずらします。
-                offsetY += child.ActualHeight + childMargin.Bottom;
+                offsetY += child.ActualHeight + child.Margin.Bottom;
             }
 
             return finalSize;

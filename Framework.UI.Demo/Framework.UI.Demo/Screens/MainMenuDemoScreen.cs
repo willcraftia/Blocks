@@ -21,6 +21,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 Width = unit * 10;
                 Height = unit * 4;
+                BackgroundColor = Color.Blue;
 
                 var stackPanel = new StackPanel(screen)
                 {
@@ -31,7 +32,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var newGameButton = new Button(screen)
                 {
-                    Height = unit,
                     Padding = new Thickness(8)
                 };
                 stackPanel.Children.Add(newGameButton);
@@ -44,7 +44,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var switchScreenButton = new Button(screen)
                 {
-                    Height = unit,
                     Padding = new Thickness(8)
                 };
                 stackPanel.Children.Add(switchScreenButton);
@@ -58,7 +57,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var exitButton = new Button(screen)
                 {
-                    Height = unit,
                     Padding = new Thickness(8)
                 };
                 exitButton.Click += new EventHandler(OnExitButtonClick);

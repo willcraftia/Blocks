@@ -219,7 +219,7 @@ namespace Willcraftia.Xna.Framework.UI
         {
             var size = new Size();
             size.Width = availableSize.Width;
-            size.Height = CalculateHeight(availableSize.Height);
+            size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, size.Height);
@@ -227,9 +227,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
-                finalSize.Width += childMeasuredSize.Width + childMargin.Left + childMargin.Right;
+
+                finalSize.Width += child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right;
             }
 
             return finalSize;
@@ -243,7 +242,7 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual Size MeasureHeightToContent(Size availableSize)
         {
             var size = new Size();
-            size.Width = CalculateWidth(availableSize.Width);
+            size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
             size.Height = availableSize.Height;
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
@@ -252,9 +251,8 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
-                finalSize.Height += childMeasuredSize.Height + childMargin.Top + childMargin.Bottom;
+
+                finalSize.Height += child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom;
             }
 
             return finalSize;
@@ -275,10 +273,9 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
-                var childMeasuredSize = child.MeasuredSize;
-                var childMargin = child.Margin;
-                finalSize.Width += childMeasuredSize.Width + childMargin.Left + childMargin.Right;
-                finalSize.Height += childMeasuredSize.Height + childMargin.Top + childMargin.Bottom;
+
+                finalSize.Width += child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right;
+                finalSize.Height += child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom;
             }
 
             return finalSize;

@@ -66,7 +66,11 @@ namespace Willcraftia.Xna.Framework.UI
             /// クリップを開始します。
             /// </summary>
             /// <param name="clipBounds">クリップ領域。</param>
-            public void Begin(ref Rect clipBounds)
+            /// <param name="inherite">
+            /// true (既存のクリップ領域のサブセットとして用いる場合)、
+            /// false (指定のクリップ領域をそのまま用いる場合)。
+            /// </param>
+            public void Begin(ref Rect clipBounds, bool inherite)
             {
                 var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = spriteBatch.GraphicsDevice;
@@ -92,9 +96,18 @@ namespace Willcraftia.Xna.Framework.UI
                 var viewportBounds = graphicsDevice.Viewport.Bounds;
                 Rectangle viewIntersectBounds;
                 Rectangle.Intersect(ref viewportBounds, ref scissorRectangle, out viewIntersectBounds);
-                // 親の ScissorRectangle を考慮した領域を計算します。
+
                 Rectangle finalScissorRectangle;
-                Rectangle.Intersect(ref viewIntersectBounds, ref previousScissorRectangle, out finalScissorRectangle);
+                if (inherite)
+                {
+                    // 親の ScissorRectangle を考慮した領域を計算します。
+                    Rectangle.Intersect(ref viewIntersectBounds, ref previousScissorRectangle, out finalScissorRectangle);
+                }
+                else
+                {
+                    // 親の ScissorRectangle を考慮しません。
+                    finalScissorRectangle = viewIntersectBounds;
+                }
 
                 // サイズを持つ場合にだけ設定するようにします。
                 if (0 < finalScissorRectangle.Width && 0 < finalScissorRectangle.Height)
@@ -293,9 +306,16 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public IDisposable SetScissor(Rect clipBounds)
+            public IDisposable SetClip(Rect clipBounds)
             {
-                scissorManager.Begin(ref clipBounds);
+                scissorManager.Begin(ref clipBounds, true);
+                return scissorManager;
+            }
+
+            // I/F
+            public IDisposable SetNewClip(Rect clipBounds)
+            {
+                scissorManager.Begin(ref clipBounds, false);
                 return scissorManager;
             }
 

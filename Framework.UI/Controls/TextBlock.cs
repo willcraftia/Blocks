@@ -44,36 +44,18 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             var size = new Size();
 
-            Vector2 fontSize = new Vector2();
-            if (!string.IsNullOrEmpty(Text))
-            {
-                var font = Font ?? Screen.Font;
-                fontSize = font.MeasureString(Text) * FontStretch;
-            }
+            var textSize = MeasureText();
 
             if (float.IsNaN(Width))
             {
                 if (string.IsNullOrEmpty(Text))
                 {
-                    // 幅が未設定ならば可能な限り最大の幅を希望します。
-                    if (MinWidth < MaxWidth)
-                    {
-                        size.Width = MathHelper.Clamp(availableSize.Width, MinWidth, MaxWidth);
-                    }
-                    else
-                    {
-                        // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                        size.Width = MathHelper.Max(availableSize.Width, MinWidth);
-                    }
-                    // 余白で調整します。
-                    var margin = Margin;
-                    size.Width = MathHelper.Max(MinWidth, size.Width - margin.Left - margin.Right);
+                    size.Width = CalculateWidth(availableSize.Width);
                 }
                 else
                 {
-                    // Text が設定されているならば、そのフォントの幅と Padding で希望します。
-                    var padding = Padding;
-                    size.Width = fontSize.X + padding.Left + padding.Right;
+                    // Text が設定されているならば文字列の幅で希望します。
+                    size.Width = textSize.X;
                 }
             }
             else
@@ -86,25 +68,12 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             {
                 if (string.IsNullOrEmpty(Text))
                 {
-                    // 高さが未設定ならば可能な限り最大の幅を希望します。
-                    if (MinHeight < MaxHeight)
-                    {
-                        size.Height = MathHelper.Clamp(availableSize.Height, MinHeight, MaxHeight);
-                    }
-                    else
-                    {
-                        // 上限と下限の関係に不整合があるならば最大の下限を希望します。
-                        size.Height = MathHelper.Max(availableSize.Height, MinHeight);
-                    }
-                    // 余白で調整します。
-                    var margin = Margin;
-                    size.Height = MathHelper.Max(MinHeight, size.Height - margin.Top - margin.Bottom);
+                    size.Height = CalculateHeight(availableSize.Height);
                 }
                 else
                 {
-                    // Text が設定されているならば、そのフォントの高さと Padding で希望します。
-                    var padding = Padding;
-                    size.Height = fontSize.Y + padding.Top + padding.Bottom;
+                    // Text が設定されているならば文字列の高さで希望します。
+                    size.Height = textSize.Y;
                 }
             }
             else
@@ -113,14 +82,23 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 size.Height = Height;
             }
 
-            // 自分が希望するサイズで子の希望サイズを定めます。
-            foreach (var child in Children)
-            {
-                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
-                child.Measure(size);
-            }
-
+            // 子は持たないことを前提として測定を終えます。
             return size;
+        }
+
+        /// <summary>
+        /// Text プロパティの文字列のサイズを測定します。
+        /// </summary>
+        /// <returns>Text プロパティの文字列のサイズ。</returns>
+        Vector2 MeasureText()
+        {
+            var fontSize = new Vector2();
+            if (!string.IsNullOrEmpty(Text))
+            {
+                var font = Font ?? Screen.Font;
+                fontSize = font.MeasureString(Text) * FontStretch;
+            }
+            return fontSize;
         }
     }
 }
