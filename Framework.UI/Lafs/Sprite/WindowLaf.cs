@@ -75,7 +75,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             var renderSize = control.RenderSize;
             var texture = spriteSheet.Texture;
-            var color = control.BackgroundColor;
+            var color = Color.White;
 
             // 全てのスプライト イメージが同サイズであることを強制します。
             // SpriteSheet には異なるサイズで指定できますが、このクラスでは異なるサイズを取り扱うことができません。

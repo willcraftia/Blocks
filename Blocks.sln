@@ -25,7 +25,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Serialization.Demo",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Graphics.Demo", "Blocks.Graphics.Demo\Blocks.Graphics.Demo\Blocks.Graphics.Demo.csproj", "{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Blocks.Graphics.DemoContent", "Blocks.Graphics.Demo\Blocks.Graphics.DemoContent\Blocks.Graphics.DemoContent.contentproj", "{D3D4C4F1-A878-41D0-B156-D8F5279697EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Graphics.DemoContent", "Blocks.Graphics.Demo\Blocks.Graphics.DemoContent\Blocks.Graphics.DemoContent.contentproj", "{D3D4C4F1-A878-41D0-B156-D8F5279697EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockViewer", "BlockViewer\BlockViewer\BlockViewer.csproj", "{59DBFEB8-4CA2-4192-B579-77B977F5B5E0}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "BlockViewerContent", "BlockViewer\BlockViewerContent\BlockViewerContent.contentproj", "{26B915B8-C0D1-491B-BC5C-126B44B9ACB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +83,12 @@ Global
 		{AE2B5749-E6C1-4BC0-A70C-1D1F23267685}.Release|x86.Build.0 = Release|x86
 		{D3D4C4F1-A878-41D0-B156-D8F5279697EF}.Debug|x86.ActiveCfg = Debug|x86
 		{D3D4C4F1-A878-41D0-B156-D8F5279697EF}.Release|x86.ActiveCfg = Release|x86
+		{59DBFEB8-4CA2-4192-B579-77B977F5B5E0}.Debug|x86.ActiveCfg = Debug|x86
+		{59DBFEB8-4CA2-4192-B579-77B977F5B5E0}.Debug|x86.Build.0 = Debug|x86
+		{59DBFEB8-4CA2-4192-B579-77B977F5B5E0}.Release|x86.ActiveCfg = Release|x86
+		{59DBFEB8-4CA2-4192-B579-77B977F5B5E0}.Release|x86.Build.0 = Release|x86
+		{26B915B8-C0D1-491B-BC5C-126B44B9ACB9}.Debug|x86.ActiveCfg = Debug|x86
+		{26B915B8-C0D1-491B-BC5C-126B44B9ACB9}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
