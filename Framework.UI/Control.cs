@@ -371,6 +371,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// KeyNavigationMode を取得または設定します。
+        /// </summary>
+        public FocusNavigationMode FocusNavigationMode { get; set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="screen">Screen。</param>
@@ -458,39 +463,6 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
-        protected virtual void DrawChild(GameTime gameTime, IDrawContext drawContext, Control child)
-        {
-            //
-            // TODO
-            //
-            // 暫定的な描画領域決定アルゴリズムです。
-            // スクロール処理なども考慮して描画領域を算出する必要があります。
-            drawContext.Location = child.PointToScreen(Point.Zero);
-            drawContext.PushOpacity(child.Opacity);
-
-            child.Draw(gameTime, drawContext);
-
-            drawContext.PopOpacity();
-        }
-
-        void DrawChildren(GameTime gameTime, IDrawContext drawContext)
-        {
-            // 子を再帰的に描画します。
-            foreach (var child in Children)
-            {
-                // 不可視ならば描画しません。
-                if (!child.Visible) continue;
-
-                // 描画する必要のないサイズならばスキップします。
-                // 最終的に扱う精度の問題から int で判定する点に注意してください。
-                var childRenderSize = child.RenderSize;
-                if ((int) childRenderSize.Width <= 0 || (int) childRenderSize.Height <= 0)
-                    continue;
-
-                DrawChild(gameTime, drawContext, child);
-            }
-        }
-
         /// <summary>
         /// 画面座標における Point を Control の座標系の Point へ変換します。
         /// </summary>
@@ -532,150 +504,47 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// マウス カーソル移動を処理します。
+        /// この Control 内でフォーカス設定可能な先頭の Control となる子孫あるいは自身にフォーカスを設定します。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        internal void ProcessMouseMove(MouseDevice mouseDevice)
-        {
-            var mouseState = mouseDevice.MouseState;
-
-            OnMouseMove(mouseDevice);
-
-            for (int i = Children.Count - 1; 0 <= i; i--)
-            {
-                var child = Children[i];
-
-                // 不可視ならばスキップします。
-                if (!child.Visible) continue;
-
-                // Hit Test に失敗するならばスキップします。
-                if (!child.HitTestEnabled || !child.HitTest(new Point(mouseState.X, mouseState.Y)))
-                    continue;
-
-                // 子に通知します。
-                child.ProcessMouseMove(mouseDevice);
-
-                // 子をマウス オーバ状態にします。
-                SwitchMouseOverControl(mouseDevice, child);
-                return;
-            }
-
-            // マウス オーバ状態にできる子がないならば、自分をマウス オーバ状態にします。
-            SwitchMouseOverControl(mouseDevice, this);
-        }
-
-        /// <summary>
-        /// マウス カーソルが Control の領域外に移動したことを処理します。
-        /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        internal void ProcessMouseLeave(MouseDevice mouseDevice)
-        {
-            // マウス オーバ状態の Control がなければ処理しません。
-            if (mouseOverControl == null) return;
-
-            if (mouseOverControl != this)
-            {
-                // マウス オーバ状態の子へ処理を転送します。
-                mouseOverControl.ProcessMouseLeave(mouseDevice);
-            }
-            else
-            {
-                // 自分がマウス オーバ状態なのでイベント ハンドラを呼びます。
-                OnMouseLeave(mouseDevice);
-            }
-
-            // マウス オーバ状態を解除します。
-            mouseOverControl = null;
-        }
-
-        /// <summary>
-        /// マウス ボタン押下を処理します。
-        /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        /// <param name="buttons">押下されたボタン。</param>
-        /// <returns></returns>
-        internal bool ProcessMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
-        {
-            // 非マウス オーバ状態で呼ばれたならば処理しません。
-            if (mouseOverControl == null) return false;
-
-            // 子がマウス オーバ状態ならば子へ通知します。
-            if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown(mouseDevice, buttons);
-
-            // フォーカスを得ます。
-            Focus();
-
-            // 自分へ通知します。
-            OnMouseDown(mouseDevice, buttons);
-            return true;
-        }
-
-        /// <summary>
-        /// マウス ボタン押下の解放を処理します。
-        /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        /// <param name="buttons">押下が解放されたボタン。</param>
-        internal void ProcessMouseUp(MouseDevice mouseDevice, MouseButtons buttons)
-        {
-            // 非マウス オーバ状態で呼ばれたならば処理しません。
-            if (mouseOverControl == null) return;
-
-            // 子がマウス オーバ状態ならば子へ通知します。
-            if (mouseOverControl != this)
-            {
-                mouseOverControl.ProcessMouseUp(mouseDevice, buttons);
-                return;
-            }
-
-            // 自分へ通知します。
-            OnMouseUp(mouseDevice, buttons);
-        }
-
-        /// <summary>
-        /// キー押下を処理します。
-        /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="key">押下されているキー。</param>
         /// <returns>
-        /// true (キー押下を処理した場合)、false (それ以外の場合)。
+        /// true (子孫あるいは自身にフォーカスを設定した場合)、false (それ以外の場合)。
         /// </returns>
-        internal bool ProcessKeyDown(KeyboardDevice keyboardDevice, Keys key)
+        public bool FocusFirstFocusableDesendent()
         {
-            if (OnKeyDown(keyboardDevice, key)) return true;
-
-            switch (key)
+            foreach (var child in Children)
             {
-                case Keys.Up:
-                    return MoveFocus(FocusNavigation.Up);
-                case Keys.Down:
-                    return MoveFocus(FocusNavigation.Down);
-                case Keys.Left:
-                    return MoveFocus(FocusNavigation.Left);
-                case Keys.Right:
-                    return MoveFocus(FocusNavigation.Right);
+                if (child.FocusFirstFocusableDesendent()) return true;
+            }
+
+            if (Focusable)
+            {
+                Focus();
+                return true;
             }
 
             return false;
         }
 
         /// <summary>
-        /// キー押下の解放を処理します。
+        /// この Control 内でフォーカス設定可能な末尾の Control となる子孫あるいは自身にフォーカスを設定します。
         /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="key">押下が解放されたキー。</param>
-        internal void ProcessKeyUp(KeyboardDevice keyboardDevice, Keys key)
+        /// <returns>
+        /// true (子孫あるいは自身にフォーカスを設定した場合)、false (それ以外の場合)。
+        /// </returns>
+        public bool FocusLastFocusableDesendent()
         {
-            OnKeyUp(keyboardDevice, key);
-        }
+            for (int i = Children.Count - 1; 0 <= i; i--)
+            {
+                if (Children[i].FocusLastFocusableDesendent()) return true;
+            }
 
-        /// <summary>
-        /// 文字の入力を処理します。
-        /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="character">入力された文字。</param>
-        internal void ProcessCharacterEnter(KeyboardDevice keyboardDevice, char character)
-        {
-            OnCharacterEnter(keyboardDevice, character);
+            if (Focusable)
+            {
+                Focus();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -828,10 +697,12 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// KeyNavigationMode を取得または設定します。
+        /// 指定された移動方向に基づいてフォーカスを移動させます。
         /// </summary>
-        public FocusNavigationMode FocusNavigationMode { get; set; }
-
+        /// <param name="navigation">フォーカスの移動方向。</param>
+        /// <returns>
+        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
+        /// </returns>
         protected virtual bool MoveFocus(FocusNavigation navigation)
         {
             switch (navigation)
@@ -848,6 +719,12 @@ namespace Willcraftia.Xna.Framework.UI
             return false;
         }
 
+        /// <summary>
+        /// 次の Control へフォーカスを移動させます。
+        /// </summary>
+        /// <returns>
+        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
+        /// </returns>
         protected virtual bool ForwardFocus()
         {
             // ルートならば処理失敗で終えます。
@@ -857,54 +734,12 @@ namespace Willcraftia.Xna.Framework.UI
             return Parent.ForwardFocus(this);
         }
 
-        protected bool ForwardFocus(Control child)
-        {
-            // ナビゲーション不可ならば処理失敗で終えます。
-            if (FocusNavigationMode == FocusNavigationMode.None) return false;
-
-            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
-            for (int i = Children.IndexOf(child) + 1; i < Children.Count; i++)
-            {
-                var sibling = Children[i];
-                if (sibling.Focusable)
-                {
-                    // Focusable な兄弟へフォーカスを移動します。
-                    sibling.Focus();
-                    return true;
-                }
-
-                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
-                if (sibling.FocusFirstFocusableDesendent()) return true;
-            }
-
-            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
-            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusFirstFocusableDesendent();
-
-            // 以下、Continue の場合となります。
-
-            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
-            if (Parent == null) return false;
-
-            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
-            return Parent.ForwardFocus(this);
-        }
-
-        public bool FocusFirstFocusableDesendent()
-        {
-            foreach (var child in Children)
-            {
-                if (child.FocusFirstFocusableDesendent()) return true;
-            }
-
-            if (Focusable)
-            {
-                Focus();
-                return true;
-            }
-
-            return false;
-        }
-
+        /// <summary>
+        /// 前の Control へフォーカスを移動させます。
+        /// </summary>
+        /// <returns>
+        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
+        /// </returns>
         protected virtual bool BackwardFocus()
         {
             // ルートならば処理失敗で終えます。
@@ -912,54 +747,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
             return Parent.BackwardFocus(this);
-        }
-
-        protected bool BackwardFocus(Control child)
-        {
-            // ナビゲーション不可ならば処理失敗で終えます。
-            if (FocusNavigationMode == FocusNavigationMode.None) return false;
-
-            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
-            for (int i = Children.IndexOf(child) - 1; 0 <= i; i--)
-            {
-                var sibling = Children[i];
-                if (sibling.Focusable)
-                {
-                    // Focusable な兄弟へフォーカスを移動します。
-                    sibling.Focus();
-                    return true;
-                }
-
-                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
-                if (sibling.FocusLastFocusableDesendent()) return true;
-            }
-
-            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
-            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusLastFocusableDesendent();
-
-            // 以下、Continue の場合となります。
-
-            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
-            if (Parent == null) return false;
-
-            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
-            return Parent.BackwardFocus(this);
-        }
-
-        public bool FocusLastFocusableDesendent()
-        {
-            for (int i = Children.Count - 1; 0 <= i; i--)
-            {
-                if (Children[i].FocusLastFocusableDesendent()) return true;
-            }
-
-            if (Focusable)
-            {
-                Focus();
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -1089,6 +876,174 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 子 Control を描画します。
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="drawContext"></param>
+        /// <param name="child">子 Control。</param>
+        protected virtual void DrawChild(GameTime gameTime, IDrawContext drawContext, Control child)
+        {
+            //
+            // TODO
+            //
+            // 暫定的な描画領域決定アルゴリズムです。
+            // スクロール処理なども考慮して描画領域を算出する必要があります。
+            drawContext.Location = child.PointToScreen(Point.Zero);
+            drawContext.PushOpacity(child.Opacity);
+
+            child.Draw(gameTime, drawContext);
+
+            drawContext.PopOpacity();
+        }
+
+        /// <summary>
+        /// マウス カーソル移動を処理します。
+        /// </summary>
+        /// <param name="mouseDevice">MouseDevice。</param>
+        internal void ProcessMouseMove(MouseDevice mouseDevice)
+        {
+            var mouseState = mouseDevice.MouseState;
+
+            OnMouseMove(mouseDevice);
+
+            for (int i = Children.Count - 1; 0 <= i; i--)
+            {
+                var child = Children[i];
+
+                // 不可視ならばスキップします。
+                if (!child.Visible) continue;
+
+                // Hit Test に失敗するならばスキップします。
+                if (!child.HitTestEnabled || !child.HitTest(new Point(mouseState.X, mouseState.Y)))
+                    continue;
+
+                // 子に通知します。
+                child.ProcessMouseMove(mouseDevice);
+
+                // 子をマウス オーバ状態にします。
+                SwitchMouseOverControl(mouseDevice, child);
+                return;
+            }
+
+            // マウス オーバ状態にできる子がないならば、自分をマウス オーバ状態にします。
+            SwitchMouseOverControl(mouseDevice, this);
+        }
+
+        /// <summary>
+        /// マウス カーソルが Control の領域外に移動したことを処理します。
+        /// </summary>
+        /// <param name="mouseDevice">MouseDevice。</param>
+        internal void ProcessMouseLeave(MouseDevice mouseDevice)
+        {
+            // マウス オーバ状態の Control がなければ処理しません。
+            if (mouseOverControl == null) return;
+
+            if (mouseOverControl != this)
+            {
+                // マウス オーバ状態の子へ処理を転送します。
+                mouseOverControl.ProcessMouseLeave(mouseDevice);
+            }
+            else
+            {
+                // 自分がマウス オーバ状態なのでイベント ハンドラを呼びます。
+                OnMouseLeave(mouseDevice);
+            }
+
+            // マウス オーバ状態を解除します。
+            mouseOverControl = null;
+        }
+
+        /// <summary>
+        /// マウス ボタン押下を処理します。
+        /// </summary>
+        /// <param name="mouseDevice">MouseDevice。</param>
+        /// <param name="buttons">押下されたボタン。</param>
+        /// <returns></returns>
+        internal bool ProcessMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
+        {
+            // 非マウス オーバ状態で呼ばれたならば処理しません。
+            if (mouseOverControl == null) return false;
+
+            // 子がマウス オーバ状態ならば子へ通知します。
+            if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown(mouseDevice, buttons);
+
+            // フォーカスを得ます。
+            Focus();
+
+            // 自分へ通知します。
+            OnMouseDown(mouseDevice, buttons);
+            return true;
+        }
+
+        /// <summary>
+        /// マウス ボタン押下の解放を処理します。
+        /// </summary>
+        /// <param name="mouseDevice">MouseDevice。</param>
+        /// <param name="buttons">押下が解放されたボタン。</param>
+        internal void ProcessMouseUp(MouseDevice mouseDevice, MouseButtons buttons)
+        {
+            // 非マウス オーバ状態で呼ばれたならば処理しません。
+            if (mouseOverControl == null) return;
+
+            // 子がマウス オーバ状態ならば子へ通知します。
+            if (mouseOverControl != this)
+            {
+                mouseOverControl.ProcessMouseUp(mouseDevice, buttons);
+                return;
+            }
+
+            // 自分へ通知します。
+            OnMouseUp(mouseDevice, buttons);
+        }
+
+        /// <summary>
+        /// キー押下を処理します。
+        /// </summary>
+        /// <param name="keyboardDevice">KeyboardDevice。</param>
+        /// <param name="key">押下されているキー。</param>
+        /// <returns>
+        /// true (キー押下を処理した場合)、false (それ以外の場合)。
+        /// </returns>
+        internal bool ProcessKeyDown(KeyboardDevice keyboardDevice, Keys key)
+        {
+            if (OnKeyDown(keyboardDevice, key)) return true;
+
+            switch (key)
+            {
+                case Keys.Up:
+                    return MoveFocus(FocusNavigation.Up);
+                case Keys.Down:
+                    return MoveFocus(FocusNavigation.Down);
+                case Keys.Left:
+                    return MoveFocus(FocusNavigation.Left);
+                case Keys.Right:
+                    return MoveFocus(FocusNavigation.Right);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// キー押下の解放を処理します。
+        /// </summary>
+        /// <param name="keyboardDevice">KeyboardDevice。</param>
+        /// <param name="key">押下が解放されたキー。</param>
+        internal void ProcessKeyUp(KeyboardDevice keyboardDevice, Keys key)
+        {
+            OnKeyUp(keyboardDevice, key);
+        }
+
+        /// <summary>
+        /// 文字の入力を処理します。
+        /// </summary>
+        /// <param name="keyboardDevice">KeyboardDevice。</param>
+        /// <param name="character">入力された文字。</param>
+        internal void ProcessCharacterEnter(KeyboardDevice keyboardDevice, char character)
+        {
+            OnCharacterEnter(keyboardDevice, character);
+        }
+
+        /// <summary>
         /// マウス オーバ状態の Control を新しい Control へ切り替えます。
         /// </summary>
         /// <param name="mouseDevice">MouseDevice。</param>
@@ -1103,6 +1058,107 @@ namespace Willcraftia.Xna.Framework.UI
             // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
             mouseOverControl = newControl;
             mouseOverControl.OnMouseEnter(mouseDevice);
+        }
+
+        /// <summary>
+        /// 指定の Control について次の Control へフォーカスを移動させます。
+        /// </summary>
+        /// <param name="child">子 Control。</param>
+        /// <returns>
+        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
+        /// </returns>
+        bool ForwardFocus(Control child)
+        {
+            // ナビゲーション不可ならば処理失敗で終えます。
+            if (FocusNavigationMode == FocusNavigationMode.None) return false;
+
+            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
+            for (int i = Children.IndexOf(child) + 1; i < Children.Count; i++)
+            {
+                var sibling = Children[i];
+                if (sibling.Focusable)
+                {
+                    // Focusable な兄弟へフォーカスを移動します。
+                    sibling.Focus();
+                    return true;
+                }
+
+                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
+                if (sibling.FocusFirstFocusableDesendent()) return true;
+            }
+
+            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
+            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusFirstFocusableDesendent();
+
+            // 以下、Continue の場合となります。
+
+            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
+            if (Parent == null) return false;
+
+            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
+            return Parent.ForwardFocus(this);
+        }
+
+        /// <summary>
+        /// 指定の Control について前の Control へフォーカスを移動させます。
+        /// </summary>
+        /// <param name="child">子 Control。</param>
+        /// <returns>
+        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
+        /// </returns>
+        bool BackwardFocus(Control child)
+        {
+            // ナビゲーション不可ならば処理失敗で終えます。
+            if (FocusNavigationMode == FocusNavigationMode.None) return false;
+
+            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
+            for (int i = Children.IndexOf(child) - 1; 0 <= i; i--)
+            {
+                var sibling = Children[i];
+                if (sibling.Focusable)
+                {
+                    // Focusable な兄弟へフォーカスを移動します。
+                    sibling.Focus();
+                    return true;
+                }
+
+                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
+                if (sibling.FocusLastFocusableDesendent()) return true;
+            }
+
+            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
+            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusLastFocusableDesendent();
+
+            // 以下、Continue の場合となります。
+
+            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
+            if (Parent == null) return false;
+
+            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
+            return Parent.BackwardFocus(this);
+        }
+
+        /// <summary>
+        /// 子 Control を描画します。
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="drawContext"></param>
+        void DrawChildren(GameTime gameTime, IDrawContext drawContext)
+        {
+            // 子を再帰的に描画します。
+            foreach (var child in Children)
+            {
+                // 不可視ならば描画しません。
+                if (!child.Visible) continue;
+
+                // 描画する必要のないサイズならばスキップします。
+                // 最終的に扱う精度の問題から int で判定する点に注意してください。
+                var childRenderSize = child.RenderSize;
+                if ((int) childRenderSize.Width <= 0 || (int) childRenderSize.Height <= 0)
+                    continue;
+
+                DrawChild(gameTime, drawContext, child);
+            }
         }
     }
 }

@@ -423,11 +423,6 @@ namespace Willcraftia.Xna.Framework.UI
         IInputCapturer inputCapturer;
 
         /// <summary>
-        /// Screen の生成に使用する IScreenFactory。
-        /// </summary>
-        IScreenFactory screenFactory;
-
-        /// <summary>
         /// 表示対象の Screen。
         /// </summary>
         Screen currentScreen;
@@ -441,11 +436,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// nextScreen の更新で lock するオブジェクト。
         /// </summary>
         object nextScreenLock = new object();
-
-        /// <summary>
-        /// 描画に用いる IControlLafSource。
-        /// </summary>
-        IControlLafSource controlLafSource;
 
         /// <summary>
         /// シザー テストのための RasterizerState。
@@ -493,16 +483,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <value>
         /// Look & Feel を使用しない場合には null を設定します。
         /// </value>
-        public IControlLafSource ControlLafSource
-        {
-            get { return controlLafSource; }
-            set
-            {
-                if (controlLafSource == value) return;
-
-                controlLafSource = value;
-            }
-        }
+        public IControlLafSource ControlLafSource { get; set; }
 
         /// <summary>
         /// Screen の生成に使用する IScreenFactory を取得または設定します。
@@ -510,16 +491,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <remarks>
         /// Show メソッドによる Screen の名前からの Screen の決定と生成は IScreenFactory に移譲されます。
         /// </remarks>
-        public IScreenFactory ScreenFactory
-        {
-            get { return screenFactory; }
-            set
-            {
-                if (screenFactory == value) return;
-
-                screenFactory = value;
-            }
-        }
+        public IScreenFactory ScreenFactory { get; set; }
 
         /// <summary>
         /// インスタンスを生成します。

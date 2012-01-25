@@ -161,6 +161,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             LoadContent();
 
+            // Screen のレイアウトを更新します。
             UpdateLayout();
 
             Initialized = true;

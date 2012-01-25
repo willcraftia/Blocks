@@ -7,7 +7,7 @@ using System;
 namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
-    /// フォーカスの移動方法を列挙します。
+    /// フォーカスの移動方法を表します。
     /// </summary>
     public enum FocusNavigationMode
     {
