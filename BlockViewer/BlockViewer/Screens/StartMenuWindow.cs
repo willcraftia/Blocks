@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -37,7 +38,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var startTextBlock = new TextBlock(screen)
             {
-                Text = "スタート"
+                Text = Strings.StartButtonText
             };
             startButton.Children.Add(startTextBlock);
 
@@ -53,7 +54,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var exitTextBlock = new TextBlock(screen)
             {
-                Text = "やめる"
+                Text = Strings.ExitButtonText
             };
             exitButton.Children.Add(exitTextBlock);
 

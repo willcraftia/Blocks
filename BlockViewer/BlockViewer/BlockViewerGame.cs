@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -14,6 +14,8 @@ using Microsoft.Xna.Framework.Media;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Lafs.Sprite;
+
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -50,6 +52,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             graphics.PreferMultiSampling = true;
 
             Content.RootDirectory = "Content";
+
+            Strings.Culture = CultureInfo.CurrentCulture;
+            //Strings.Culture = new CultureInfo("en");
         }
 
         protected override void Initialize()
