@@ -22,9 +22,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         UIManager uiManager;
 
-        DebugLookAndFeelSource debugControlLafSource;
+        DebugLookAndFeelSource debugLookAndFeelSource;
 
-        SpriteLookAndFeelSource spriteControlLafSource;
+        SpriteLookAndFeelSource spriteLookAndFeelSource;
 
         public UIDemoGame()
         {
@@ -63,6 +63,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             uiManager = new UIManager(this);
             {
                 var screenFactory = new DefaultScreenFactory(this);
+
+                debugLookAndFeelSource = new DebugLookAndFeelSource(this);
+                spriteLookAndFeelSource = new SpriteLookAndFeelSource(this);
+                spriteLookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
+
+                screenFactory.LookAndFeelSource = debugLookAndFeelSource;
+
                 screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
 
                 var loadingWindowDemoScreen = new ScreenDefinition("WindowDemoScreen", typeof(Screens.DemoLoadingScreen));
@@ -74,14 +81,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 uiManager.ScreenFactory = screenFactory;
             }
             Components.Add(uiManager);
-
-            debugControlLafSource = new DebugLookAndFeelSource(this);
-
-            spriteControlLafSource = new SpriteLookAndFeelSource(this);
-            spriteControlLafSource.Content.RootDirectory = "Content/UI/Sprite";
-
-            uiManager.LookAndFeelSource = debugControlLafSource;
-            //uiManager.ControlLafSource = spriteControlLafSource;
 
             IsMouseVisible = true;
 
@@ -95,8 +94,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void UnloadContent()
         {
-            debugControlLafSource.Dispose();
-            spriteControlLafSource.Dispose();
+            debugLookAndFeelSource.Dispose();
+            spriteLookAndFeelSource.Dispose();
         }
 
         protected override void Update(GameTime gameTime)

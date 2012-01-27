@@ -329,7 +329,7 @@ namespace Willcraftia.Xna.Framework.UI
             // I/F
             public ILookAndFeel GetLookAndFeel(Control control)
             {
-                return uiManager.LookAndFeelSource.GetLookAndFeel(control);
+                return control.Screen.LookAndFeelSource.GetLookAndFeel(control);
             }
 
             // I/F
@@ -478,14 +478,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// ILookAndFeelSource を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// Look & Feel を使用しない場合には null を設定します。
-        /// </value>
-        public ILookAndFeelSource LookAndFeelSource { get; set; }
-
-        /// <summary>
         /// Screen の生成に使用する IScreenFactory を取得または設定します。
         /// </summary>
         /// <remarks>
@@ -579,7 +571,6 @@ namespace Willcraftia.Xna.Framework.UI
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
-            if (LookAndFeelSource != null && !LookAndFeelSource.Initialized) LookAndFeelSource.Initialize();
             if (ScreenFactory != null && !ScreenFactory.Initialized) ScreenFactory.Initialize();
 
             base.LoadContent();
@@ -589,7 +580,6 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (spriteBatch != null) spriteBatch.Dispose();
             if (fillTexture != null) fillTexture.Dispose();
-            if (LookAndFeelSource != null && LookAndFeelSource.Initialized) LookAndFeelSource.Dispose();
             if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
 
             base.UnloadContent();

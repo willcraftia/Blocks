@@ -40,6 +40,11 @@ namespace Willcraftia.Xna.Framework.UI
         public SpriteFont Font { get; protected set; }
 
         /// <summary>
+        /// デフォルトの ILookAndFeelSource を取得または設定します。
+        /// </summary>
+        public ILookAndFeelSource LookAndFeelSource { get; set; }
+
+        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="game">Game。</param>
@@ -83,12 +88,18 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// コンテンツをロードします。
         /// </summary>
-        protected virtual void LoadContent() { }
+        protected virtual void LoadContent()
+        {
+            if (LookAndFeelSource != null && !LookAndFeelSource.Initialized) LookAndFeelSource.Initialize();
+        }
 
         /// <summary>
         /// コンテンツをアンロードします。
         /// </summary>
-        protected virtual void UnloadContent() { }
+        protected virtual void UnloadContent()
+        {
+            if (LookAndFeelSource != null && LookAndFeelSource.Initialized) LookAndFeelSource.Dispose();
+        }
 
         /// <summary>
         /// Screen をインスタンス化します。
@@ -107,10 +118,13 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="screen">Screen インスタンス。</param>
         protected virtual void PopulateProperties(ScreenDefinition definition, Screen screen)
         {
-            // Screen にデフォルトの SpriteFont を設定します。
+            // デフォルトの SpriteFont を設定します。
             // Screen の Font プロパティは、ScreenDefinition のプロパティ定義や、
             // Screen の Initialize メソッド内で、独自の SpriteFont へオーバライドされる可能性があります。
             screen.Font = Font;
+
+            // デフォルトの ILookAndFeelSource を設定します。
+            screen.LookAndFeelSource = LookAndFeelSource;
 
             foreach (var property in definition.Properties)
             {

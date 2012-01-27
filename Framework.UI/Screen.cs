@@ -65,6 +65,11 @@ namespace Willcraftia.Xna.Framework.UI
         public SpriteFont Font { get; set; }
 
         /// <summary>
+        /// ILookAndFeelSource を取得または設定します。
+        /// </summary>
+        public ILookAndFeelSource LookAndFeelSource { get; set; }
+
+        /// <summary>
         /// Desktop を取得します。
         /// </summary>
         public Desktop Desktop { get; private set; }
