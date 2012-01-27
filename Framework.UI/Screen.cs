@@ -153,15 +153,6 @@ namespace Willcraftia.Xna.Framework.UI
                     focusChanged = FocusedControl.MoveFocus(FocusNavigation.Right);
                     break;
             }
-
-            if (focusChanged) return;
-
-            switch (key)
-            {
-                case Keys.Escape:
-                    Desktop.ProcessDesktopCommand(DesktopCommand.CloseActiveWindow);
-                    break;
-            }
         }
 
         // I/F

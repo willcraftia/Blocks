@@ -209,31 +209,21 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         #region FirstDialog
 
-        class FirstDialog : Overlay
+        class FirstDialog : Window
         {
-            Window window;
-
             public FirstDialog(Screen screen)
                 : base(screen)
             {
-                Opacity = 0.5f;
-                BackgroundColor = Color.Black;
-
-                window = new Window(screen)
-                {
-                    Width = unit * 7,
-                    SizeToContent = SizeToContent.WidthAndHeight,
-                    BackgroundColor = Color.Green
-                };
-                // Owner を関連付けると Owner が閉じると自動的に閉じます。
-                window.Owner = this;
+                Width = unit * 7;
+                SizeToContent = SizeToContent.WidthAndHeight;
+                BackgroundColor = Color.Green;
 
                 var stackPanel = new StackPanel(screen)
                 {
                     Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
                 };
-                window.Children.Add(stackPanel);
+                Children.Add(stackPanel);
 
                 var openNewDialogButton = new Button(screen)
                 {
@@ -368,9 +358,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             public override void Show()
             {
-                base.Show();
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0.7f,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Owner = this;
+                overlay.Show();
 
-                window.Show();
+                base.Show();
             }
         }
 
@@ -378,23 +374,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         #region SecondDialog
 
-        class SecondDialog : Overlay
+        class SecondDialog : Window
         {
-            Window window;
-
             public SecondDialog(Screen screen)
                 : base(screen)
             {
-                Opacity = 0.5f;
-                BackgroundColor = Color.Black;
-
-                window = new Window(screen)
-                {
-                    SizeToContent = SizeToContent.WidthAndHeight,
-                    BackgroundColor = Color.Brown
-                };
-                // Owner を関連付けると Owner が閉じると自動的に閉じます。
-                window.Owner = this;
+                SizeToContent = SizeToContent.WidthAndHeight;
+                BackgroundColor = Color.Brown;
 
                 var closeButton = new Button(screen)
                 {
@@ -403,7 +389,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Margin = new Thickness(unit)
                 };
                 closeButton.Click += (s, e) => Close();
-                window.Children.Add(closeButton);
+                Children.Add(closeButton);
                 var closeTextBlock = new TextBlock(screen)
                 {
                     Text = "Close",
@@ -417,9 +403,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             public override void Show()
             {
-                base.Show();
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0.7f,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Owner = this;
+                overlay.Show();
 
-                window.Show();
+                base.Show();
             }
         }
 

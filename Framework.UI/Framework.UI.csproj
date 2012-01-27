@@ -99,7 +99,6 @@
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Controls\TextBlock.cs" />
-    <Compile Include="DesktopCommand.cs" />
     <Compile Include="FocusNavigation.cs" />
     <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />
@@ -145,7 +144,6 @@
     <Compile Include="Lafs\Sprite\SpriteLookAndFeelSource.cs" />
     <Compile Include="Lafs\Sprite\WindowLookAndFeel.cs" />
     <Compile Include="TextHelper.cs" />
-    <Compile Include="Visual.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -802,7 +802,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="mouseDevice">MouseDevice。</param>
         protected virtual void OnMouseMove(MouseDevice mouseDevice)
         {
-            // イベント送信者を Control にします。
             if (MouseMove != null) MouseMove(this, mouseDevice);
         }
 
@@ -834,6 +833,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="buttons">押下されたボタン。</param>
         protected virtual void OnMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
         {
+            // フォーカスを得ます。
+            Focus();
+
             if (MouseDown != null) MouseDown(this, mouseDevice, buttons);
         }
 
@@ -994,9 +996,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 子がマウス オーバ状態ならば子へ通知します。
             if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown(mouseDevice, buttons);
-
-            // フォーカスを得ます。
-            Focus();
 
             // 自分へ通知します。
             OnMouseDown(mouseDevice, buttons);
