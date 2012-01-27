@@ -115,6 +115,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Screens\LanguageSettingDialog.cs" />
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\ViewerStartScreen.cs" />
   </ItemGroup>

@@ -130,7 +130,33 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void NotifyKeyDown(KeyboardDevice keyboardDevice, Keys key)
         {
-            FocusedControl.ProcessKeyDown(keyboardDevice, key);
+            if (FocusedControl.ProcessKeyDown(keyboardDevice, key)) return;
+
+            bool focusChanged = false;
+            switch (key)
+            {
+                case Keys.Up:
+                    focusChanged = FocusedControl.MoveFocus(FocusNavigation.Up);
+                    break;
+                case Keys.Down:
+                    focusChanged = FocusedControl.MoveFocus(FocusNavigation.Down);
+                    break;
+                case Keys.Left:
+                    focusChanged = FocusedControl.MoveFocus(FocusNavigation.Left);
+                    break;
+                case Keys.Right:
+                    focusChanged = FocusedControl.MoveFocus(FocusNavigation.Right);
+                    break;
+            }
+
+            if (focusChanged) return;
+
+            switch (key)
+            {
+                case Keys.Escape:
+                    Desktop.ProcessDesktopCommand(DesktopCommand.CloseActiveWindow);
+                    break;
+            }
         }
 
         // I/F

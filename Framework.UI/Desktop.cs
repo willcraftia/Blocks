@@ -90,6 +90,19 @@ namespace Willcraftia.Xna.Framework.UI
             window.Active = true;
         }
 
+        internal void ProcessDesktopCommand(DesktopCommand command)
+        {
+            switch (command)
+            {
+                case DesktopCommand.CloseActiveWindow:
+                    {
+                        var activeWindow = GetActiveWindow();
+                        if (activeWindow != null) activeWindow.Close();
+                    }
+                    break;
+            }
+        }
+
         /// <summary>
         /// 最前面の Window を取得します。
         /// Window が存在しない場合には null を返します。

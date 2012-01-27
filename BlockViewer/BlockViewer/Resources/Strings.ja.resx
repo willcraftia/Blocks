@@ -117,8 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DefaultButtonText" xml:space="preserve">
+    <value>デフォルト</value>
+  </data>
+  <data name="EnButtonText1" xml:space="preserve">
+    <value>English</value>
+  </data>
   <data name="ExitButtonText" xml:space="preserve">
     <value>やめる</value>
+  </data>
+  <data name="JaButtonText" xml:space="preserve">
+    <value>にほんご</value>
+  </data>
+  <data name="LanguageSettingButtonText" xml:space="preserve">
+    <value>げんご を せんたく</value>
   </data>
   <data name="StartButtonText" xml:space="preserve">
     <value>はじめる</value>

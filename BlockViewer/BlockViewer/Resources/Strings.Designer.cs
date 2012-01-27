@@ -61,11 +61,47 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Default に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DefaultButtonText {
+            get {
+                return ResourceManager.GetString("DefaultButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   English に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string EnButtonText {
+            get {
+                return ResourceManager.GetString("EnButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Exit に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ExitButtonText {
             get {
                 return ResourceManager.GetString("ExitButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   にほんご に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string JaButtonText {
+            get {
+                return ResourceManager.GetString("JaButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select Language に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LanguageSettingButtonText {
+            get {
+                return ResourceManager.GetString("LanguageSettingButtonText", resourceCulture);
             }
         }
         

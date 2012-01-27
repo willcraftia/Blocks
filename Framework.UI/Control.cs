@@ -703,7 +703,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>
         /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
         /// </returns>
-        protected virtual bool MoveFocus(FocusNavigation navigation)
+        public virtual bool MoveFocus(FocusNavigation navigation)
         {
             switch (navigation)
             {
@@ -717,6 +717,34 @@ namespace Willcraftia.Xna.Framework.UI
                     return BackwardFocus();
             }
             return false;
+        }
+
+        /// <summary>
+        /// この Control が descendant の先祖かどうかを判定します。
+        /// </summary>
+        /// <param name="descendant">Control。</param>
+        /// <returns>
+        /// true (この Control が descendant の先祖である場合)、false (それ以外の場合)。
+        /// </returns>
+        public bool IsAncestorOf(Control descendant)
+        {
+            for (var parent = descendant.Parent; parent != null; parent = parent.Parent)
+            {
+                if (parent == this) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// この Control が ancestor の子孫かどうかを判定します。
+        /// </summary>
+        /// <param name="ancestor"></param>
+        /// <returns>
+        /// true (この Control が ancestor の子孫である場合)、false (それ以外の場合)。
+        /// </returns>
+        public bool IsDescendantOf(Control ancestor)
+        {
+            return ancestor.IsAncestorOf(this);
         }
 
         /// <summary>
