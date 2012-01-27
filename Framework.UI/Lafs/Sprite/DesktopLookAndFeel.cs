@@ -7,9 +7,9 @@ using System;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// Desktop 用の LaF です。
+    /// Desktop の Look & Feel です。
     /// </summary>
-    public sealed class DesktopLaf : SpriteControlLafBase
+    public sealed class DesktopLookAndFeel : LookAndFeelBase
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {

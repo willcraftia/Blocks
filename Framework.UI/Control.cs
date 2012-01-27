@@ -446,9 +446,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="drawContext"></param>
         public virtual void Draw(GameTime gameTime, IDrawContext drawContext)
         {
-            // IControlLaf を描画します。
-            var laf = drawContext.GetControlLaf(this);
-            if (laf != null) laf.Draw(this, drawContext);
+            // Look & Feel を描画します。
+            var lookAndFeel = drawContext.GetLookAndFeel(this);
+            if (lookAndFeel != null) lookAndFeel.Draw(this, drawContext);
 
             if (ClipEnabled)
             {

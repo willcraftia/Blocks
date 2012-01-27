@@ -7,9 +7,9 @@ using System;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// Overlay 用の LaF です。
+    /// Overlay の Look & Feel です。
     /// </summary>
-    public class OverlayLaf : SpriteControlLafBase
+    public class OverlayLookAndFeel : LookAndFeelBase
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {

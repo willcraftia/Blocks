@@ -1,47 +1,33 @@
 ﻿#region Using
 
 using System;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs
+namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// IControlLafSource 実装の基礎実装を提供するクラスです。
+    /// スプライト イメージで描画する Look & Feel の基礎クラスです。
     /// </summary>
-    public abstract class ControlLafSourceBase : IControlLafSource
+    public abstract class LookAndFeelBase : ILookAndFeel, IDisposable
     {
+        /// <summary>
+        /// SpriteLookAndFeelSource を取得します。
+        /// </summary>
+        protected internal SpriteLookAndFeelSource Source { get; internal set; }
+        
         // I/F
-        public bool Initialized { get; private set; }
+        public abstract void Draw(Control control, IDrawContext drawContext);
 
         /// <summary>
-        /// Game を取得します。
+        /// 初期化します。
         /// </summary>
-        public Game Game { get; private set; }
-
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
-        /// <param name="game">Game。</param>
-        protected ControlLafSourceBase(Game game)
-        {
-            if (game == null) throw new ArgumentNullException("game");
-            Game = game;
-        }
-
-        // I/F
-        public void Initialize()
+        public virtual void Initialize()
         {
             LoadContent();
-
-            Initialized = true;
         }
-
-        // I/F
-        public abstract IControlLaf GetControlLaf(Control control);
 
         /// <summary>
         /// Initialize メソッドから呼び出されます。
@@ -63,7 +49,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         
         bool disposed;
 
-        ~ControlLafSourceBase()
+        ~LookAndFeelBase()
         {
             Dispose(false);
         }

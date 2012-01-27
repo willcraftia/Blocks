@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     /// <summary>
-    /// デフォルトのデバッグ用 LaF です。
+    /// デバッグ用のデフォルトの Look & Feel です。
     /// </summary>
-    public class DefaultControlLaf : DebugControlLafBase
+    public class DefaultLookAndFeel : LookAndFeelBase
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {

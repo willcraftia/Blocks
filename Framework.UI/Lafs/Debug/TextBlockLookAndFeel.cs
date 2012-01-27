@@ -6,7 +6,7 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
-    public class TextBlockLaf : DefaultControlLaf
+    public class TextBlockLookAndFeel : DefaultLookAndFeel
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {

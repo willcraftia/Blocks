@@ -10,7 +10,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Control の Look & Feel を描画するクラスのインタフェースです。
     /// </summary>
-    public interface IControlLaf
+    public interface ILookAndFeel
     {
         /// <summary>
         /// Control の Look & Feel を描画します。

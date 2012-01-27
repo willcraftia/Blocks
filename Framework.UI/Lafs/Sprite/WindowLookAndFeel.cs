@@ -10,9 +10,9 @@ using Willcraftia.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// Window 描画用の LaF です。
+    /// Window の Look & Feel です。
     /// </summary>
-    public class WindowLaf : SpriteControlLafBase
+    public class WindowLookAndFeel : LookAndFeelBase
     {
         /// <summary>
         /// Window 描画用の SpriteSheet を取得または設定します。
@@ -32,7 +32,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public WindowLaf()
+        public WindowLookAndFeel()
         {
             SpriteWidth = 16;
             SpriteHeight = 16;

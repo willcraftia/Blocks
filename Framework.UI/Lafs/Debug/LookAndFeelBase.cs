@@ -9,15 +9,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     /// <summary>
-    /// デバッグ用 LaF の基礎クラスです。
+    /// デバッグ用 ILookAndFeel の基礎クラスです。
     /// </summary>
-    public abstract class DebugControlLafBase : IControlLaf
+    public abstract class LookAndFeelBase : ILookAndFeel
     {
-        /// <summary>
-        /// DebugControlLafSource を取得します。
-        /// </summary>
-        protected internal DebugControlLafSource Source { get; internal set; }
-
         // I/F
         public abstract void Draw(Control control, IDrawContext drawContext);
     }

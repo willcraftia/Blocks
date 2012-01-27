@@ -6,7 +6,7 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
-    public class TextBlockLaf : SpriteControlLafBase
+    public class TextBlockLookAndFeel : LookAndFeelBase
     {
         public override void Draw(Control control, IDrawContext drawContext)
         {

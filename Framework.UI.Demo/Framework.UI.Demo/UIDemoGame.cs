@@ -22,9 +22,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         UIManager uiManager;
 
-        DebugControlLafSource debugControlLafSource;
+        DebugLookAndFeelSource debugControlLafSource;
 
-        SpriteControlLafSource spriteControlLafSource;
+        SpriteLookAndFeelSource spriteControlLafSource;
 
         public UIDemoGame()
         {
@@ -75,12 +75,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             }
             Components.Add(uiManager);
 
-            debugControlLafSource = new DebugControlLafSource(this);
+            debugControlLafSource = new DebugLookAndFeelSource(this);
 
-            spriteControlLafSource = new SpriteControlLafSource(this);
+            spriteControlLafSource = new SpriteLookAndFeelSource(this);
             spriteControlLafSource.Content.RootDirectory = "Content/UI/Sprite";
 
-            uiManager.ControlLafSource = debugControlLafSource;
+            uiManager.LookAndFeelSource = debugControlLafSource;
             //uiManager.ControlLafSource = spriteControlLafSource;
 
             IsMouseVisible = true;

@@ -66,7 +66,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             // UIManager を初期化して登録します。
             uiManager = new UIManager(this);
             uiManager.ScreenFactory = CreateScreenFactory();
-            uiManager.ControlLafSource = CreateControlLafSource();
+            uiManager.LookAndFeelSource = CreateControlLafSource();
             Components.Add(uiManager);
 
             // マウス カーソルを可視にします。
@@ -121,9 +121,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// IControlLafSource を生成します。
         /// </summary>
         /// <returns>生成された IControlLafSource。</returns>
-        IControlLafSource CreateControlLafSource()
+        ILookAndFeelSource CreateControlLafSource()
         {
-            var controlLafSource = new SpriteControlLafSource(this);
+            var controlLafSource = new SpriteLookAndFeelSource(this);
             controlLafSource.Content.RootDirectory = "Content/UI/Sprite";
             return controlLafSource;
         }
