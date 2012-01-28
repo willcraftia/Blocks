@@ -26,52 +26,47 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler VisibleChanged;
 
         /// <summary>
-        /// この Control でマウスが移動した時に発生します。
+        /// マウス カーソルが移動した時に発生します。
         /// </summary>
-        public event MouseEventHandler MouseMove;
+        public event EventHandler MouseMove;
 
         /// <summary>
-        /// この Control でマウスが押下された時に発生します。
+        /// この Control 上でマウス ボタンが押された時に発生します。
         /// </summary>
-        public event MouseButtonEventHandler MouseDown;
+        public event EventHandler MouseDown;
 
         /// <summary>
-        /// この Control でマウス押下が解放された時に発生します。
+        /// この Control 上でマウス ボタンが離された時に発生します。
         /// </summary>
-        public event MouseButtonEventHandler MouseUp;
+        public event EventHandler MouseUp;
 
         /// <summary>
-        /// マウス カーソルが Control に入った時に発生します。
+        /// この Control 上にマウス カーソルが入った時に発生します。
         /// </summary>
-        public event MouseEventHandler MouseEnter;
+        public event EventHandler MouseEnter;
 
         /// <summary>
-        /// マウス カーソルが Control から出た時に発生します。
+        /// この Control 上からマウス カーソルが出た時に発生します。
         /// </summary>
-        public event MouseEventHandler MouseLeave;
+        public event EventHandler MouseLeave;
 
         /// <summary>
-        /// この Control でキーが押下された時に発生します。
+        /// この Control でキーが押された時に発生します。
         /// </summary>
-        public event KeyEventHandler KeyDown;
+        public event EventHandler KeyDown;
 
         /// <summary>
-        /// この Control でキー押下が解放された時に発生します。
+        /// この Control でキーが離された時に発生します。
         /// </summary>
-        public event KeyEventHandler KeyUp;
+        public event EventHandler KeyUp;
 
         /// <summary>
-        /// この Control で文字が入力された時に発生します。
-        /// </summary>
-        public event CharacterInputEventHandler CharacterEnter;
-
-        /// <summary>
-        /// フォーカスを得た時に発生します。
+        /// フォーカスが設定された時に発生します。
         /// </summary>
         public event EventHandler GotFocus;
 
         /// <summary>
-        /// フォーカスを失った時に発生します。
+        /// フォーカスが解除された時に発生します。
         /// </summary>
         public event EventHandler LostFocus;
 
@@ -268,7 +263,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// Children プロパティへの操作は同期化されないため、
         /// 非同期に操作を行う場合は、その操作側で同期化を行なってください。
         /// </remarks>
-        public ParentingControlCollection Children { get; private set; }
+        public ControlCollection Children { get; private set; }
 
         /// <summary>
         /// Control が有効かどうかを取得または設定します。
@@ -379,12 +374,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// コンストラクタ。
         /// </summary>
         /// <param name="screen">Screen。</param>
-        public Control(Screen screen)
+        protected Control(Screen screen)
         {
             if (screen == null) throw new ArgumentNullException("screen");
             Screen = screen;
 
-            Children = new ParentingControlCollection(this);
+            Children = new ControlCollection(this);
 
             Width = float.NaN;
             Height = float.NaN;
@@ -447,7 +442,7 @@ namespace Willcraftia.Xna.Framework.UI
         public virtual void Draw(GameTime gameTime, IDrawContext drawContext)
         {
             // Look & Feel を描画します。
-            var lookAndFeel = drawContext.GetLookAndFeel(this);
+            var lookAndFeel = Screen.LookAndFeelSource.GetLookAndFeel(this);
             if (lookAndFeel != null) lookAndFeel.Draw(this, drawContext);
 
             if (ClipEnabled)
@@ -796,95 +791,73 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// マウス カーソルが移動した時に呼び出されます。
+        /// Control 上でマウス カーソルが移動した時に呼び出されます。
         /// MouseMove イベントを発生させます。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        protected virtual void OnMouseMove(MouseDevice mouseDevice)
+        protected virtual void OnMouseMove()
         {
-            if (MouseMove != null) MouseMove(this, mouseDevice);
+            if (MouseMove != null) MouseMove(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// マウス カーソルが入った時に呼び出されます。
+        /// Control 上にマウス カーソルが入った時に呼び出されます。
         /// MouseEnter イベントを発生させます。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        protected virtual void OnMouseEnter(MouseDevice mouseDevice)
+        protected virtual void OnMouseEnter()
         {
-            if (MouseEnter != null) MouseEnter(this, mouseDevice);
+            if (MouseEnter != null) MouseEnter(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// マウス カーソルが出た時に呼び出されます。
+        /// Control 上からマウス カーソルが出た時に呼び出されます。
         /// MouseLeave イベントを発生させます。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        protected virtual void OnMouseLeave(MouseDevice mouseDevice)
+        protected virtual void OnMouseLeave()
         {
-            if (MouseLeave != null) MouseLeave(this, mouseDevice);
+            if (MouseLeave != null) MouseLeave(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// マウス ボタンが押下された時に呼び出されます。
+        /// Control 上でマウス ボタンが押された時に呼び出されます。
         /// MouseDown イベントを発生させます。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        /// <param name="buttons">押下されたボタン。</param>
-        protected virtual void OnMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
+        protected virtual void OnMouseDown()
         {
             // フォーカスを得ます。
             Focus();
 
-            if (MouseDown != null) MouseDown(this, mouseDevice, buttons);
+            if (MouseDown != null) MouseDown(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// マウス ボタン押下が解放された時に呼び出されます。
+        /// Control 上でマウス ボタンが離された時に呼び出されます。
         /// MouseUp イベントを発生させます。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        /// <param name="buttons">押下が解放されたボタン。</param>
-        protected virtual void OnMouseUp(MouseDevice mouseDevice, MouseButtons buttons)
+        protected virtual void OnMouseUp()
         {
-            if (MouseUp != null) MouseUp(this, mouseDevice, buttons);
+            if (MouseUp != null) MouseUp(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// キーが押下された時に呼び出されます。
+        /// キーが押された時に呼び出されます。
         /// KeyDown イベントを発生させます。
         /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="key">押下されているキー。</param>
         /// <returns>
         /// true (キー押下を処理した場合)、false (それ以外の場合)。
         /// </returns>
-        protected virtual bool OnKeyDown(KeyboardDevice keyboardDevice, Keys key)
+        protected virtual bool OnKeyDown()
         {
-            if (KeyDown != null) KeyDown(this, keyboardDevice, key);
+            if (KeyDown != null) KeyDown(this, EventArgs.Empty);
             return false;
         }
 
         /// <summary>
-        /// キー押下が解放された時に呼び出されます。
+        /// キーが離された時に呼び出されます。
         /// KeyDown イベントを発生させます。
         /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="key">押下が解放されたキー。</param>
-        protected virtual void OnKeyUp(KeyboardDevice keyboardDevice, Keys key)
+        protected virtual void OnKeyUp()
         {
-            if (KeyUp != null) KeyUp(this, keyboardDevice, key);
-        }
-
-        /// <summary>
-        /// 文字が入力された時に呼び出されます。
-        /// CharacterEnter イベントを発生させます。
-        /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="character">入力された文字。</param>
-        protected virtual void OnCharacterEnter(KeyboardDevice keyboardDevice, char character)
-        {
-            if (CharacterEnter != null) CharacterEnter(this, keyboardDevice, character);
+            if (KeyUp != null) KeyUp(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -927,14 +900,13 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// マウス カーソル移動を処理します。
+        /// マウス カーソルの移動を処理します。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        internal void ProcessMouseMove(MouseDevice mouseDevice)
+        internal void ProcessMouseMove()
         {
-            var mouseState = mouseDevice.MouseState;
+            OnMouseMove();
 
-            OnMouseMove(mouseDevice);
+            var mouseState = Screen.MouseDevice.MouseState;
 
             for (int i = Children.Count - 1; 0 <= i; i--)
             {
@@ -948,143 +920,111 @@ namespace Willcraftia.Xna.Framework.UI
                     continue;
 
                 // 子に通知します。
-                child.ProcessMouseMove(mouseDevice);
+                child.ProcessMouseMove();
 
-                // 子をマウス オーバ状態にします。
-                SwitchMouseOverControl(mouseDevice, child);
+                // 子を mouseOverControl にします。
+                SwitchMouseOverControl(child);
                 return;
             }
 
-            // マウス オーバ状態にできる子がないならば、自分をマウス オーバ状態にします。
-            SwitchMouseOverControl(mouseDevice, this);
+            // mouseOverControl にできる子がないならば、自分を mouseOverControl にします。
+            SwitchMouseOverControl(this);
         }
 
         /// <summary>
-        /// マウス カーソルが Control の領域外に移動したことを処理します。
+        /// マウス カーソルが領域外に移動した時に呼び出されます。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        internal void ProcessMouseLeave(MouseDevice mouseDevice)
+        internal void ProcessMouseLeave()
         {
-            // マウス オーバ状態の Control がなければ処理しません。
+            // 元々カーソルが Control 上にないならば、mouseOverControl は null です。
             if (mouseOverControl == null) return;
 
             if (mouseOverControl != this)
             {
-                // マウス オーバ状態の子へ処理を転送します。
-                mouseOverControl.ProcessMouseLeave(mouseDevice);
+                // mouseOverControl が子であるならば、子に通知します。
+                mouseOverControl.ProcessMouseLeave();
             }
             else
             {
-                // 自分がマウス オーバ状態なのでイベント ハンドラを呼びます。
-                OnMouseLeave(mouseDevice);
+                // mouseOverControl が自分であるならば、自分に通知します。
+                OnMouseLeave();
             }
 
-            // マウス オーバ状態を解除します。
+            // mouseOverControl を解除します。
             mouseOverControl = null;
         }
 
         /// <summary>
-        /// マウス ボタン押下を処理します。
+        /// マウス ボタンが押されたことを処理します。
         /// </summary>
         /// <param name="mouseDevice">MouseDevice。</param>
         /// <param name="buttons">押下されたボタン。</param>
         /// <returns></returns>
-        internal bool ProcessMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
+        internal bool ProcessMouseDown()
         {
-            // 非マウス オーバ状態で呼ばれたならば処理しません。
+            // カーソルが Control 上にないならば、ボタンが押されたことに関知しません。
             if (mouseOverControl == null) return false;
 
-            // 子がマウス オーバ状態ならば子へ通知します。
-            if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown(mouseDevice, buttons);
+            // mouseOverControl が子であるならば、子に通知します。
+            if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown();
 
-            // 自分へ通知します。
-            OnMouseDown(mouseDevice, buttons);
+            // mouseOverControl が自分であるならば、自分に通知します。
+            OnMouseDown();
             return true;
         }
 
         /// <summary>
-        /// マウス ボタン押下の解放を処理します。
+        /// マウス ボタンが離されたことを処理します。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        /// <param name="buttons">押下が解放されたボタン。</param>
-        internal void ProcessMouseUp(MouseDevice mouseDevice, MouseButtons buttons)
+        internal void ProcessMouseUp()
         {
-            // 非マウス オーバ状態で呼ばれたならば処理しません。
+            // カーソルが Control 上にないならば、ボタンが離されたことに関知しません。
             if (mouseOverControl == null) return;
 
-            // 子がマウス オーバ状態ならば子へ通知します。
+            // mouseOverControl が子であるならば、子に通知します。
             if (mouseOverControl != this)
             {
-                mouseOverControl.ProcessMouseUp(mouseDevice, buttons);
+                mouseOverControl.ProcessMouseUp();
                 return;
             }
 
-            // 自分へ通知します。
-            OnMouseUp(mouseDevice, buttons);
+            // mouseOverControl が自分であるならば、自分に通知します。
+            OnMouseUp();
         }
 
         /// <summary>
-        /// キー押下を処理します。
+        /// キーが押されたことを処理します。
         /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="key">押下されているキー。</param>
         /// <returns>
         /// true (キー押下を処理した場合)、false (それ以外の場合)。
         /// </returns>
-        internal bool ProcessKeyDown(KeyboardDevice keyboardDevice, Keys key)
+        internal bool ProcessKeyDown()
         {
-            if (OnKeyDown(keyboardDevice, key)) return true;
-
-            switch (key)
-            {
-                case Keys.Up:
-                    return MoveFocus(FocusNavigation.Up);
-                case Keys.Down:
-                    return MoveFocus(FocusNavigation.Down);
-                case Keys.Left:
-                    return MoveFocus(FocusNavigation.Left);
-                case Keys.Right:
-                    return MoveFocus(FocusNavigation.Right);
-            }
-
-            return false;
+            return OnKeyDown();
         }
 
         /// <summary>
-        /// キー押下の解放を処理します。
+        /// キーが離されたことを処理します。
         /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="key">押下が解放されたキー。</param>
-        internal void ProcessKeyUp(KeyboardDevice keyboardDevice, Keys key)
+        internal void ProcessKeyUp()
         {
-            OnKeyUp(keyboardDevice, key);
+            OnKeyUp();
         }
 
         /// <summary>
-        /// 文字の入力を処理します。
+        /// mouseOverControl を newControl に設定します。
         /// </summary>
-        /// <param name="keyboardDevice">KeyboardDevice。</param>
-        /// <param name="character">入力された文字。</param>
-        internal void ProcessCharacterEnter(KeyboardDevice keyboardDevice, char character)
-        {
-            OnCharacterEnter(keyboardDevice, character);
-        }
-
-        /// <summary>
-        /// マウス オーバ状態の Control を新しい Control へ切り替えます。
-        /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
         /// <param name="newControl">Control。</param>
-        void SwitchMouseOverControl(MouseDevice mouseDevice, Control newControl)
+        void SwitchMouseOverControl(Control newControl)
         {
             if (mouseOverControl == newControl) return;
 
-            // これまでマウス オーバ状態にあった Control に変更を通知します。
-            if (mouseOverControl != null) mouseOverControl.ProcessMouseLeave(mouseDevice);
+            // これまでの mouseOverControl へ変更を通知します。
+            if (mouseOverControl != null) mouseOverControl.ProcessMouseLeave();
 
-            // 新たにマウス オーバ状態となった Control を設定し、変更を通知します。
+            // 新たな mouseOverControl を設定して変更を通知します。
             mouseOverControl = newControl;
-            mouseOverControl.OnMouseEnter(mouseDevice);
+            mouseOverControl.OnMouseEnter();
         }
 
         /// <summary>

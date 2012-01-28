@@ -32,11 +32,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         GraphicsDeviceManager graphics;
 
         /// <summary>
-        /// 入力イベントを管理する InputManager。
-        /// </summary>
-        InputManager inputManager;
-
-        /// <summary>
         /// UI を管理する UIManager。
         /// </summary>
         UIManager uiManager;
@@ -59,10 +54,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         protected override void Initialize()
         {
-            // InputManager を初期化して登録します。
-            inputManager = new InputManager(this);
-            Components.Add(inputManager);
-
             // UIManager を初期化して登録します。
             uiManager = new UIManager(this);
             uiManager.ScreenFactory = CreateScreenFactory();

@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "Framework\Fram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.UI", "Framework.UI\Framework.UI.csproj", "{D174EA5D-837C-466D-9333-D661CEFEA146}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Input", "Framework.Input\Framework.Input.csproj", "{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.UI.Demo", "Framework.UI.Demo\Framework.UI.Demo\Framework.UI.Demo.csproj", "{028223E3-B7C3-4752-B13E-9D5173B2047F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.UI.DemoContent", "Framework.UI.Demo\Framework.UI.DemoContent\Framework.UI.DemoContent.contentproj", "{CD57FAA1-0B4B-404C-AC7C-B8F0F70D9968}"
@@ -29,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Graphics.DemoContent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockViewer", "BlockViewer\BlockViewer\BlockViewer.csproj", "{59DBFEB8-4CA2-4192-B579-77B977F5B5E0}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "BlockViewerContent", "BlockViewer\BlockViewerContent\BlockViewerContent.contentproj", "{26B915B8-C0D1-491B-BC5C-126B44B9ACB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockViewerContent", "BlockViewer\BlockViewerContent\BlockViewerContent.contentproj", "{26B915B8-C0D1-491B-BC5C-126B44B9ACB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +49,6 @@ Global
 		{D174EA5D-837C-466D-9333-D661CEFEA146}.Debug|x86.Build.0 = Debug|x86
 		{D174EA5D-837C-466D-9333-D661CEFEA146}.Release|x86.ActiveCfg = Release|x86
 		{D174EA5D-837C-466D-9333-D661CEFEA146}.Release|x86.Build.0 = Release|x86
-		{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}.Debug|x86.ActiveCfg = Debug|x86
-		{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}.Debug|x86.Build.0 = Debug|x86
-		{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}.Release|x86.ActiveCfg = Release|x86
-		{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}.Release|x86.Build.0 = Release|x86
 		{028223E3-B7C3-4752-B13E-9D5173B2047F}.Debug|x86.ActiveCfg = Debug|x86
 		{028223E3-B7C3-4752-B13E-9D5173B2047F}.Debug|x86.Build.0 = Debug|x86
 		{028223E3-B7C3-4752-B13E-9D5173B2047F}.Release|x86.ActiveCfg = Release|x86

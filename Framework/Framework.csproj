@@ -116,6 +116,10 @@
     <Compile Include="Graphics\VertexPositionNormalColor.cs" />
     <Compile Include="Graphics\VertexSource.cs" />
     <Compile Include="Graphics\WritableVertexBuffer.cs" />
+    <Compile Include="Input\KeyboardDevice.cs" />
+    <Compile Include="Input\KeyboardHelper.cs" />
+    <Compile Include="Input\MouseButtons.cs" />
+    <Compile Include="Input\MouseDevice.cs" />
     <Compile Include="MatrixExtension.cs" />
     <Compile Include="Pov.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

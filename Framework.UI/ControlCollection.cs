@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// コレクションのインデックスは、画面における Control の前後関係を表します。
     /// インデックス 0 は、その親 Control 内での最背面を表します。
     /// </remarks>
-    public class ParentingControlCollection : KeyedCollection<string, Control>
+    public class ControlCollection : KeyedCollection<string, Control>
     {
         /// <summary>
         /// このコレクションを所有する Control。
@@ -26,7 +26,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// parent で指定した Control の子を管理するためのインスタンスを生成します。
         /// </summary>
         /// <param name="parent">このコレクションを所有する Control。</param>
-        public ParentingControlCollection(Control parent)
+        public ControlCollection(Control parent)
         {
             if (parent == null) throw new ArgumentNullException("parent");
             this.parent = parent;
@@ -63,7 +63,7 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void InsertItem(int index, Control item)
         {
             // 子として追加可能かどうかを検査します。
-            validateControl(item);
+            Validate(item);
             
             base.InsertItem(index, item);
             
@@ -82,7 +82,7 @@ namespace Willcraftia.Xna.Framework.UI
         protected override void SetItem(int index, Control item)
         {
             // 子として追加可能かどうかを検査します。
-            validateControl(item);
+            Validate(item);
 
             // 除去される Control の親をリセットします。
             base[index].Parent = null;
@@ -105,28 +105,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// 追加不能な状態の場合には例外が発生します。
         /// </summary>
         /// <param name="control">このコレクションに追加しようとしている Control。</param>
-        void validateControl(Control control)
+        void Validate(Control control)
         {
-            // 他の子であってはならない
-            if (control.Parent != null) throw new InvalidOperationException("Control is already the child of another control.");
             // 自身を子孫にはできない
-            if (IsAncestor(control)) throw new InvalidOperationException("Control can not be the descendant of one's own.");
-        }
-
-        /// <summary>
-        /// 指定の Control が、このコレクションの所有者、あるいは、祖先であるかどうかを判定します。
-        /// </summary>
-        /// <param name="control">判定対象の Control。</param>
-        /// <returns>true (指定の Control がこのコレクションを所有者、あるいは、祖先である場合)、false (それ以外の場合)。</returns>
-        bool IsAncestor(Control control)
-        {
-            var ancestor = parent;
-            while (ancestor != null)
-            {
-                if (ancestor == control) return true;
-                ancestor = ancestor.Parent;
-            }
-            return false;
+            if (control.IsAncestorOf(parent)) throw new InvalidOperationException("Control can not be the descendant of one's own.");
         }
     }
 }

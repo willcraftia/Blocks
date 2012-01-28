@@ -27,7 +27,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             Content.RootDirectory = "Content";
         }
 
-        public override void Update(GameTime gameTime)
+        protected override void Update(GameTime gameTime)
         {
             // Screen ローディングの完了で新たな Control を追加しますが、
             // Control はスレッドセーフではない問題があります。
@@ -60,7 +60,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         {
                             // NextScreen を表示させます。
                             var uiService = Game.Services.GetRequiredService<IUIService>();
-                            uiService.PrepareNextScreen(LoadedScreen);
+                            uiService.Show(LoadedScreen);
                         };
                         Animations.Add(animation);
                     }

@@ -128,14 +128,11 @@
     <Compile Include="Thickness.cs" />
     <Compile Include="VerticalAlignment.cs" />
     <Compile Include="Controls\Button.cs" />
-    <Compile Include="DefaultInputCapturer.cs" />
-    <Compile Include="IInputCapturer.cs" />
-    <Compile Include="IInputReceiver.cs" />
     <Compile Include="UIManager.cs" />
     <Compile Include="IUIService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Control.cs" />
-    <Compile Include="ParentingControlCollection.cs" />
+    <Compile Include="ControlCollection.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Lafs\Debug\LookAndFeelBase.cs" />
     <Compile Include="Lafs\Debug\DebugLookAndFeelSource.cs" />
@@ -147,10 +144,6 @@
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Framework.Input\Framework.Input.csproj">
-      <Project>{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}</Project>
-      <Name>Framework.Input</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Framework\Framework.csproj">
       <Project>{FA23868B-0454-4B81-B5AA-F270F987ECC7}</Project>
       <Name>Framework</Name>

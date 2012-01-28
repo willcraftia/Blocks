@@ -91,11 +91,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             window.Show();
         }
 
-        protected override bool OnKeyDown(KeyboardDevice keyboardDevice, Keys key)
+        protected override bool OnKeyDown()
         {
-            if (key == Keys.Escape) Close();
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape)) Close();
 
-            return base.OnKeyDown(keyboardDevice, key);
+            return base.OnKeyDown();
         }
     }
 }

@@ -18,8 +18,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
     {
         GraphicsDeviceManager graphics;
 
-        InputManager inputManager;
-
         UIManager uiManager;
 
         DebugLookAndFeelSource debugLookAndFeelSource;
@@ -57,9 +55,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void Initialize()
         {
-            inputManager = new InputManager(this);
-            Components.Add(inputManager);
-
             uiManager = new UIManager(this);
             {
                 var screenFactory = new DefaultScreenFactory(this);

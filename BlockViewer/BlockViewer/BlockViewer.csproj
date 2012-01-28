@@ -128,10 +128,6 @@
       <Project>{AF33ACD1-05BE-478C-80E3-3566B0569700}</Project>
       <Name>Blocks</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Framework.Input\Framework.Input.csproj">
-      <Project>{DB2BD867-9AF8-4D9E-9C41-72DED706B58C}</Project>
-      <Name>Framework.Input</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Framework.UI\Framework.UI.csproj">
       <Project>{D174EA5D-837C-466D-9333-D661CEFEA146}</Project>
       <Name>Framework.UI</Name>

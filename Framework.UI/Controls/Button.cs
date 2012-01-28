@@ -55,64 +55,61 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Enabled = true;
         }
 
-        protected override void OnMouseEnter(MouseDevice mouseDevice)
+        protected override void OnMouseEnter()
         {
-            // マウス状態を直接参照してボタン押下状態を復帰させます。
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed) pressedByMouse = true;
+            pressedByMouse = (Screen.MouseDevice.MouseState.LeftButton == ButtonState.Pressed);
 
-            base.OnMouseEnter(mouseDevice);
+            base.OnMouseEnter();
         }
 
-        protected override void OnMouseLeave(MouseDevice mouseDevice)
+        protected override void OnMouseLeave()
         {
-            // マウス押下状態を解除します。
             pressedByMouse = false;
 
-            base.OnMouseLeave(mouseDevice);
+            base.OnMouseLeave();
         }
 
-        protected override void OnMouseDown(MouseDevice mouseDevice, MouseButtons buttons)
+        protected override void OnMouseDown()
         {
             // 機能が無効に設定されているならば、イベントを無視します。
             if (!Enabled) return;
 
-            if ((buttons & MouseButtons.Left) == MouseButtons.Left) pressedByMouse = true;
+            pressedByMouse = Screen.MouseDevice.IsButtonPressed(MouseButtons.Left);
 
-            base.OnMouseDown(mouseDevice, buttons);
+            base.OnMouseDown();
         }
 
-        protected override void OnMouseUp(MouseDevice mouseDevice, MouseButtons buttons)
+        protected override void OnMouseUp()
         {
             // Button が押された状態で機能が無効に設定される場合を考慮し、機能が有効かどうかに関わらず処理を進めます。
-
-            if ((buttons & MouseButtons.Left) == MouseButtons.Left)
+            if (Screen.MouseDevice.IsButtonReleased(MouseButtons.Left))
             {
                 pressedByMouse = false;
                 if (Enabled && !Pressed) OnClick();
             }
 
-            base.OnMouseUp(mouseDevice, buttons);
+            base.OnMouseUp();
         }
 
-        protected override bool OnKeyDown(KeyboardDevice keyboardDevice, Keys key)
+        protected override bool OnKeyDown()
         {
             // 機能が無効に設定されているならば、イベントを無視します。
             if (!Enabled) return false;
 
-            if (key == Keys.Enter) pressedByEnterKey = true;
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Enter)) pressedByEnterKey = true;
 
-            return base.OnKeyDown(keyboardDevice, key);
+            return base.OnKeyDown();
         }
 
-        protected override void OnKeyUp(KeyboardDevice keyboardDevice, Keys key)
+        protected override void OnKeyUp()
         {
-            if (key == Keys.Enter)
+            if (Screen.KeyboardDevice.IsKeyReleased(Keys.Enter))
             {
                 pressedByEnterKey = false;
                 if (Enabled && !Pressed) OnClick();
             }
 
-            base.OnKeyUp(keyboardDevice, key);
+            base.OnKeyUp();
         }
 
         /// <summary>

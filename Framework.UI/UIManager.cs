@@ -413,19 +413,19 @@ namespace Willcraftia.Xna.Framework.UI
         #endregion
 
         /// <summary>
-        /// IInputService。
+        /// MouseDevice。
         /// </summary>
-        IInputService inputService;
+        MouseDevice mouseDevice = new MouseDevice();
 
         /// <summary>
-        /// IInputCapturer。
+        /// KeyboardDevice。
         /// </summary>
-        IInputCapturer inputCapturer;
+        KeyboardDevice keyboardDevice = new KeyboardDevice();
 
         /// <summary>
         /// 表示対象の Screen。
         /// </summary>
-        Screen currentScreen;
+        Screen screen;
 
         /// <summary>
         /// 次に表示する Screen。
@@ -456,26 +456,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// 塗り潰しに利用するテクスチャ。
         /// </summary>
         Texture2D fillTexture;
-
-        /// <summary>
-        /// IInputCapturer を取得または設定します。
-        /// </summary>
-        public IInputCapturer InputCapturer
-        {
-            get { return inputCapturer; }
-            set
-            {
-                if (inputCapturer == value) return;
-
-                // InputCapturer から Screen をアンバインドします。
-                if (inputCapturer != null) inputCapturer.InputReceiver = null;
-
-                inputCapturer = value;
-
-                // InputCapturer に Screen をバインドします。
-                if (inputCapturer != null && currentScreen != null) inputCapturer.InputReceiver = currentScreen;
-            }
-        }
 
         /// <summary>
         /// Screen の生成に使用する IScreenFactory を取得または設定します。
@@ -512,52 +492,94 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public void Show(string screenName)
         {
-            SetCurrentScreen(ScreenFactory.CreateScreen(screenName));
+            Show(ScreenFactory.CreateScreen(screenName));
         }
 
         // I/F
-        public void PrepareNextScreen(Screen nextScreen)
+        public void Show(Screen screen)
         {
-            if (nextScreen == null) throw new ArgumentNullException("nextScreen");
+            if (screen == null) throw new ArgumentNullException("screen");
 
             lock (nextScreenLock)
             {
-                this.nextScreen = nextScreen;
+                this.nextScreen = screen;
             }
-        }
-
-        public override void Initialize()
-        {
-            inputService = Game.Services.GetRequiredService<IInputService>();
-            InputCapturer = new DefaultInputCapturer(inputService);
-
-            base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (currentScreen == null) return;
-
-            // Screen を更新します。
-            currentScreen.Update(gameTime);
-
             // 次の Screen が設定されているならば切り替えます。
             if (nextScreen != null)
             {
-                SetCurrentScreen(nextScreen);
+                if (screen != null)
+                {
+                    // MouseDevice をアンバインドします。
+                    screen.MouseDevice = null;
+                    // KeyboardDevice をアンバインドします。
+                    screen.KeyboardDevice = null;
+
+                    // 破棄します。
+                    // MEMO: 恐らく他のタイミングでは明示的に Dispose を呼ぶのが難しい。
+                    screen.Dispose();
+                }
+
+                screen = nextScreen;
+
+                if (screen != null)
+                {
+                    // MouseDevice をバインドします。
+                    screen.MouseDevice = mouseDevice;
+                    // KeyboardDevice をバインドします。
+                    screen.KeyboardDevice = keyboardDevice;
+
+                    // 必要ならば初期化します。
+                    if (!screen.Initialized) screen.Initialize();
+                }
+
                 nextScreen = null;
             }
+
+            // ユーザ入力を処理します。
+            ProcessInput();
+
+            // Screen を更新します。
+            screen.Update(gameTime);
 
             base.Update(gameTime);
         }
 
+        /// <summary>
+        /// ユーザ入力を処理します。
+        /// </summary>
+        void ProcessInput()
+        {
+            // MouseDevice を更新します。
+            mouseDevice.Update();
+            // KeyboardDevice を更新します。
+            keyboardDevice.Update();
+
+            // マウス カーソルが移動したことを Screen で処理します。
+            if (mouseDevice.MouseMoved) screen.ProcessMouseMove();
+            // マウス ボタンが押されたことを Screen で処理します。
+            if (mouseDevice.ButtonPressed) screen.ProcessMouseDown();
+            // マウス ボタンが離されたことを Screen で処理します。
+            if (mouseDevice.ButtonReleased) screen.ProcessMouseUp();
+            // マウス ホイールが回転したことを Screen で処理します。
+            if (mouseDevice.WheelScrolled) screen.ProcessMouseWheel();
+
+            // キーが押されたことを Screen で処理します。
+            if (keyboardDevice.KeyPressed) screen.ProcessKeyDown();
+            // キーが離されたことを Screen で処理します。
+            if (keyboardDevice.KeyReleased) screen.ProcessKeyUp();
+        }
+
         public override void Draw(GameTime gameTime)
         {
-            if (currentScreen == null) return;
+            if (screen == null) return;
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
 
-            var desktop = currentScreen.Desktop;
+            var desktop = screen.Desktop;
             drawContext.Location = desktop.RenderOffset;
             drawContext.PushOpacity(desktop.Opacity);
             desktop.Draw(gameTime, drawContext);
@@ -583,34 +605,6 @@ namespace Willcraftia.Xna.Framework.UI
             if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
 
             base.UnloadContent();
-        }
-
-        /// <summary>
-        /// Screen を表示対象へ設定します。
-        /// </summary>
-        /// <param name="screen">表示する Screen。</param>
-        void SetCurrentScreen(Screen screen)
-        {
-            if (currentScreen != null)
-            {
-                // InputReceiver から Screen をアンバインドします。
-                inputCapturer.InputReceiver = null;
-
-                // 破棄します。
-                // MEMO: 恐らく他のタイミングでは明示的に Dispose を呼ぶのが難しい。
-                currentScreen.Dispose();
-            }
-
-            currentScreen = screen;
-
-            if (currentScreen != null)
-            {
-                // InputReceiver に Screen をバインドします。
-                if (inputCapturer != null) inputCapturer.InputReceiver = currentScreen;
-
-                // 必要ならば初期化します。
-                if (!currentScreen.Initialized) currentScreen.Initialize();
-            }
         }
     }
 }

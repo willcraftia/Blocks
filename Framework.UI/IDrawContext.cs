@@ -61,15 +61,6 @@ namespace Willcraftia.Xna.Framework.UI
         IDisposable SetViewport(Rect viewportBounds);
 
         /// <summary>
-        /// Control に対応する ILookAndFeel を取得します。
-        /// </summary>
-        /// <param name="control">Control。</param>
-        /// <returns>
-        /// ILookAndFeel。対応する ILookAndFeel が存在しない場合は null。
-        /// </returns>
-        ILookAndFeel GetLookAndFeel(Control control);
-
-        /// <summary>
         /// Control の描画処理を反映させます。
         /// </summary>
         void Flush();
