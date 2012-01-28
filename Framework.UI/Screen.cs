@@ -85,6 +85,11 @@ namespace Willcraftia.Xna.Framework.UI
         public AnimationCollection Animations { get; private set; }
 
         /// <summary>
+        /// キーと FocusNavigation のマップを取得します。
+        /// </summary>
+        protected Dictionary<Keys, FocusNavigation> KeyFocusNavigationMap { get; private set; }
+
+        /// <summary>
         /// フォーカスを持つ Control を取得します。
         /// </summary>
         internal Control FocusedControl
@@ -104,6 +109,13 @@ namespace Willcraftia.Xna.Framework.UI
             Content = new ContentManager(game.Services);
 
             Animations = new AnimationCollection(this);
+            
+            KeyFocusNavigationMap = new Dictionary<Keys, FocusNavigation>();
+            KeyFocusNavigationMap[Keys.Up] = FocusNavigation.Up;
+            KeyFocusNavigationMap[Keys.Down] = FocusNavigation.Down;
+            KeyFocusNavigationMap[Keys.Left] = FocusNavigation.Left;
+            KeyFocusNavigationMap[Keys.Right] = FocusNavigation.Right;
+
             Desktop = new Desktop(this);
 
             // フォーカスは Desktop に設定しておきます。
@@ -201,21 +213,13 @@ namespace Willcraftia.Xna.Framework.UI
             if (FocusedControl.ProcessKeyDown()) return;
 
             bool focusChanged = false;
-            if (KeyboardDevice.IsKeyPressed(Keys.Up))
+            foreach (var entry in KeyFocusNavigationMap)
             {
-                focusChanged = FocusedControl.MoveFocus(FocusNavigation.Up);
-            }
-            else if (KeyboardDevice.IsKeyPressed(Keys.Down))
-            {
-                focusChanged = FocusedControl.MoveFocus(FocusNavigation.Down);
-            }
-            else if (KeyboardDevice.IsKeyPressed(Keys.Left))
-            {
-                focusChanged = FocusedControl.MoveFocus(FocusNavigation.Left);
-            }
-            else if (KeyboardDevice.IsKeyPressed(Keys.Right))
-            {
-                focusChanged = FocusedControl.MoveFocus(FocusNavigation.Right);
+                if (KeyboardDevice.IsKeyPressed(entry.Key))
+                {
+                    focusChanged = FocusedControl.MoveFocus(entry.Value);
+                    if (focusChanged) break;
+                }
             }
         }
 

@@ -960,17 +960,20 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="mouseDevice">MouseDevice。</param>
         /// <param name="buttons">押下されたボタン。</param>
         /// <returns></returns>
-        internal bool ProcessMouseDown()
+        internal void ProcessMouseDown()
         {
             // カーソルが Control 上にないならば、ボタンが押されたことに関知しません。
-            if (mouseOverControl == null) return false;
+            if (mouseOverControl == null) return;
 
             // mouseOverControl が子であるならば、子に通知します。
-            if (mouseOverControl != this) return mouseOverControl.ProcessMouseDown();
+            if (mouseOverControl != this)
+            {
+                mouseOverControl.ProcessMouseDown();
+                return;
+            }
 
             // mouseOverControl が自分であるならば、自分に通知します。
             OnMouseDown();
-            return true;
         }
 
         /// <summary>
