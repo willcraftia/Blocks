@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Controls
+namespace Willcraftia.Xna.Framework.UI
 {
     public class ContentControl : Control
     {

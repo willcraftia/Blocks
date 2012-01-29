@@ -104,7 +104,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
                 };
-                Children.Add(stackPanel);
+                Content = stackPanel;
 
                 var openNewDialogButton = new Button(screen)
                 {
@@ -221,7 +221,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Margin = new Thickness(8),
                     Orientation = Orientation.Horizontal
                 };
-                Children.Add(stackPanel);
+                Content = stackPanel;
 
                 var openNewDialogButton = new Button(screen)
                 {
@@ -383,7 +383,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         TextHorizontalAlignment = HorizontalAlignment.Left
                     }
                 };
-                Children.Add(closeButton);
+                Content = closeButton;
                 closeButton.Click += (s, e) => Close();
                 closeButton.MouseEnter += (s, e) => closeButton.Content.ForegroundColor = Color.Yellow;
                 closeButton.MouseLeave += (s, e) => closeButton.Content.ForegroundColor = Color.White;

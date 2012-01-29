@@ -28,7 +28,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Margin = new Thickness(8),
                     Orientation = Orientation.Vertical
                 };
-                Children.Add(stackPanel);
+                Content = stackPanel;
 
                 var newGameButton = new Button(screen)
                 {

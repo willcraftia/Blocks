@@ -10,43 +10,8 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Window を表す Control です。
     /// </summary>
-    public class Window : Control
+    public class Window : ContentControl
     {
-        class InternalControlCollection : ControlCollection
-        {
-            Window window;
-
-            internal InternalControlCollection(Window window)
-                : base(window)
-            {
-                this.window = window;
-            }
-
-            protected override void InsertItem(int index, Control item)
-            {
-                base.InsertItem(index, item);
-
-                window.AddChildInternal(item);
-            }
-
-            protected override void RemoveItem(int index)
-            {
-                var removedItem = this[index];
-                base.RemoveItem(index);
-
-                window.RemoveChildInternal(removedItem);
-            }
-
-            protected override void SetItem(int index, Control item)
-            {
-                var removedItem = this[index];
-                base.SetItem(index, item);
-
-                window.AddChildInternal(item);
-                window.RemoveChildInternal(removedItem);
-            }
-        }
-
         /// <summary>
         /// Window が閉じる前に発生します。
         /// </summary>
@@ -81,13 +46,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// 非アクティブ化される時にフォーカスを持っていた子孫 Control の弱参照。
         /// </summary>
         WeakReference focusedControlWeakReference = new WeakReference(null);
-
-        public ControlCollection Children { get; private set; }
-
-        public override int ChildrenCount
-        {
-            get { return Children.Count; }
-        }
 
         /// <summary>
         /// サイズをコンテンツのサイズに合わせて自動調整する方法を取得または設定します。
@@ -148,24 +106,7 @@ namespace Willcraftia.Xna.Framework.UI
         public Window(Screen screen)
             : base(screen)
         {
-            Children = new InternalControlCollection(this);
             SizeToContent = SizeToContent.Manual;
-        }
-
-        protected override Control GetChild(int index)
-        {
-            if (index < 0 || Children.Count <= index) throw new ArgumentOutOfRangeException("index");
-            return Children[index];
-        }
-
-        internal void AddChildInternal(Control child)
-        {
-            AddChild(child);
-        }
-
-        internal void RemoveChildInternal(Control child)
-        {
-            RemoveChild(child);
         }
 
         /// <summary>

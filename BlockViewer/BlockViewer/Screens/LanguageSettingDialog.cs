@@ -12,25 +12,19 @@ using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class LanguageSettingDialog : Overlay
+    public sealed class LanguageSettingDialog : Window
     {
-        Window window;
-
         public LanguageSettingDialog(Screen screen)
             : base(screen)
         {
-            window = new Window(screen)
-            {
-                SizeToContent = SizeToContent.WidthAndHeight
-            };
-            window.Owner = this;
+            SizeToContent = SizeToContent.WidthAndHeight;
 
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
                 Padding = new Thickness(8)
             };
-            window.Children.Add(stackPanel);
+            Content = stackPanel;
 
             var setDefaultButton = new Button(screen)
             {
@@ -67,7 +61,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             base.Show();
 
-            window.Show();
+            var overlay = new Overlay(Screen)
+            {
+                Opacity = 0.7f,
+                BackgroundColor = Color.Black
+            };
+            overlay.Owner = this;
+            overlay.Show();
         }
 
         protected override bool OnKeyDown()

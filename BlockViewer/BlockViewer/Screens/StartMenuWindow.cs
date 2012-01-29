@@ -28,7 +28,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Orientation = Orientation.Vertical,
                 Padding = new Thickness(8)
             };
-            Children.Add(stackPanel);
+            Content = stackPanel;
 
             var startButton = new Button(screen)
             {
