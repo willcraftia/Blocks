@@ -10,7 +10,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
     /// <summary>
     /// 単一行に子 Control を整列させる Control です。
     /// </summary>
-    public class StackPanel : Control
+    public class StackPanel : Panel
     {
         /// <summary>
         /// 整列させる方向を取得または設定します。
@@ -24,7 +24,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public StackPanel(Screen screen)
             : base(screen)
         {
-            FocusNavigationMode = FocusNavigationMode.Continue;
             Orientation = Orientation.Horizontal;
         }
 
@@ -54,8 +53,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
             float measuredWidth = 0;
             float measuredHeight = 0;
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 child.Measure(childAvailableSize);
 
                 measuredWidth += child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right;
@@ -82,8 +82,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
             float measuredWidth = 0;
             float measuredHeight = 0;
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 child.Measure(childAvailableSize);
 
                 measuredWidth = Math.Max(measuredWidth, child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right);
@@ -116,8 +117,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected virtual Size ArrangeHorizontalDirection(Size finalSize)
         {
             float offsetX = Padding.Left;
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 offsetX += child.Margin.Left;
 
                 var childBounds = new Rect(child.MeasuredSize);
@@ -157,8 +159,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected virtual Size ArrangeVerticalDirection(Size finalSize)
         {
             float offsetY = Padding.Top;
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 offsetY += child.Margin.Top;
 
                 var childBounds = new Rect(child.MeasuredSize);

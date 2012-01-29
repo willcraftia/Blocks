@@ -12,6 +12,41 @@ namespace Willcraftia.Xna.Framework.UI
     /// </summary>
     public class Window : Control
     {
+        class InternalControlCollection : ControlCollection
+        {
+            Window window;
+
+            internal InternalControlCollection(Window window)
+                : base(window)
+            {
+                this.window = window;
+            }
+
+            protected override void InsertItem(int index, Control item)
+            {
+                base.InsertItem(index, item);
+
+                window.AddChildInternal(item);
+            }
+
+            protected override void RemoveItem(int index)
+            {
+                var removedItem = this[index];
+                base.RemoveItem(index);
+
+                window.RemoveChildInternal(removedItem);
+            }
+
+            protected override void SetItem(int index, Control item)
+            {
+                var removedItem = this[index];
+                base.SetItem(index, item);
+
+                window.AddChildInternal(item);
+                window.RemoveChildInternal(removedItem);
+            }
+        }
+
         /// <summary>
         /// Window が閉じる前に発生します。
         /// </summary>
@@ -46,6 +81,13 @@ namespace Willcraftia.Xna.Framework.UI
         /// 非アクティブ化される時にフォーカスを持っていた子孫 Control の弱参照。
         /// </summary>
         WeakReference focusedControlWeakReference = new WeakReference(null);
+
+        public ControlCollection Children { get; private set; }
+
+        public override int ChildrenCount
+        {
+            get { return Children.Count; }
+        }
 
         /// <summary>
         /// サイズをコンテンツのサイズに合わせて自動調整する方法を取得または設定します。
@@ -106,8 +148,24 @@ namespace Willcraftia.Xna.Framework.UI
         public Window(Screen screen)
             : base(screen)
         {
-            FocusNavigationMode = FocusNavigationMode.Cycle;
+            Children = new InternalControlCollection(this);
             SizeToContent = SizeToContent.Manual;
+        }
+
+        protected override Control GetChild(int index)
+        {
+            if (index < 0 || Children.Count <= index) throw new ArgumentOutOfRangeException("index");
+            return Children[index];
+        }
+
+        internal void AddChildInternal(Control child)
+        {
+            AddChild(child);
+        }
+
+        internal void RemoveChildInternal(Control child)
+        {
+            RemoveChild(child);
         }
 
         /// <summary>
@@ -166,18 +224,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected void OnActivated()
         {
-            // 非アクティブ化の際に記録した Control にフォーカスを設定します。
-            var control = focusedControlWeakReference.Target as Control;
-            if (control != null)
-            {
-                focusedControlWeakReference.Target = null;
-                control.Focus();
-            }
-            else
-            {
-                FocusFirstFocusableDesendent();
-            }
-
             if (Activated != null) Activated(this, EventArgs.Empty);
         }
 
@@ -187,10 +233,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected void OnDeactivated()
         {
-            // それまでフォーカスが設定されていた子孫を弱参照で記録しておきます。
-            if (this == GetWindow(Screen.FocusedControl))
-                focusedControlWeakReference.Target = Screen.FocusedControl;
-
             if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 
@@ -223,8 +265,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, size.Height);
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
 
@@ -247,8 +290,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(size.Width, 0);
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
 
@@ -269,8 +313,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, 0);
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
                 child.Measure(size);
 

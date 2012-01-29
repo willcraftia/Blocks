@@ -34,54 +34,33 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var setDefaultButton = new Button(screen)
             {
-                Padding = new Thickness(8)
-            };
-            {
-                stackPanel.Children.Add(setDefaultButton);
-
-                var textBlock = new TextBlock(screen)
+                Padding = new Thickness(8),
+                Content = new TextBlock(screen)
                 {
                     Text = Strings.DefaultButtonText
-                };
-                setDefaultButton.Children.Add(textBlock);
-
-                setDefaultButton.GotFocus += (s, e) => textBlock.ForegroundColor = Color.Yellow;
-                setDefaultButton.LostFocus += (s, e) => textBlock.ForegroundColor = Color.White;
-            }
+                }
+            };
+            stackPanel.Children.Add(setDefaultButton);
 
             var setJaButton = new Button(screen)
             {
-                Padding = new Thickness(8)
-            };
-            {
-                stackPanel.Children.Add(setJaButton);
-
-                var textBlock = new TextBlock(screen)
+                Padding = new Thickness(8),
+                Content = new TextBlock(screen)
                 {
                     Text = Strings.JaButtonText
-                };
-                setJaButton.Children.Add(textBlock);
-
-                setJaButton.GotFocus += (s, e) => textBlock.ForegroundColor = Color.Yellow;
-                setJaButton.LostFocus += (s, e) => textBlock.ForegroundColor = Color.White;
-            }
+                }
+            };
+            stackPanel.Children.Add(setJaButton);
 
             var setEnButton = new Button(screen)
             {
-                Padding = new Thickness(8)
-            };
-            {
-                stackPanel.Children.Add(setEnButton);
-
-                var textBlock = new TextBlock(screen)
+                Padding = new Thickness(8),
+                Content = new TextBlock(screen)
                 {
                     Text = Strings.EnButtonText
-                };
-                setEnButton.Children.Add(textBlock);
-
-                setEnButton.GotFocus += (s, e) => textBlock.ForegroundColor = Color.Yellow;
-                setEnButton.LostFocus += (s, e) => textBlock.ForegroundColor = Color.White;
-            }
+                }
+            };
+            stackPanel.Children.Add(setEnButton);
         }
 
         public override void Show()

@@ -33,58 +33,37 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var startButton = new Button(screen)
             {
                 Width = 200,
-                Padding = new Thickness(8)
-            };
-            {
-                stackPanel.Children.Add(startButton);
-
-                var textBlock = new TextBlock(screen)
+                Padding = new Thickness(8),
+                Content = new TextBlock(screen)
                 {
                     Text = Strings.StartButtonText
-                };
-                startButton.Children.Add(textBlock);
-
-                startButton.GotFocus += (s, e) => textBlock.ForegroundColor = Color.Yellow;
-                startButton.LostFocus += (s, e) => textBlock.ForegroundColor = Color.White;
-            }
+                }
+            };
+            stackPanel.Children.Add(startButton);
 
             var languageSettingButton = new Button(screen)
             {
                 Width = 200,
-                Padding = new Thickness(8)
-            };
-            {
-                stackPanel.Children.Add(languageSettingButton);
-
-                var textBlock = new TextBlock(screen)
+                Padding = new Thickness(8),
+                Content = new TextBlock(screen)
                 {
                     Text = Strings.LanguageSettingButtonText
-                };
-                languageSettingButton.Children.Add(textBlock);
-
-                languageSettingButton.Click += new EventHandler(OnLanguageSettingButtonClick);
-                languageSettingButton.GotFocus += (s, e) => textBlock.ForegroundColor = Color.Yellow;
-                languageSettingButton.LostFocus += (s, e) => textBlock.ForegroundColor = Color.White;
-            }
+                }
+            };
+            stackPanel.Children.Add(languageSettingButton);
+            languageSettingButton.Click += new EventHandler(OnLanguageSettingButtonClick);
 
             var exitButton = new Button(screen)
             {
                 Width = 200,
-                Padding = new Thickness(8)
-            };
-            {
-                stackPanel.Children.Add(exitButton);
-
-                var textBlock = new TextBlock(screen)
+                Padding = new Thickness(8),
+                Content = new TextBlock(screen)
                 {
                     Text = Strings.ExitButtonText
-                };
-                exitButton.Children.Add(textBlock);
-
-                exitButton.Click += new EventHandler(OnExitButtonClick);
-                exitButton.GotFocus += (s, e) => textBlock.ForegroundColor = Color.Yellow;
-                exitButton.LostFocus += (s, e) => textBlock.ForegroundColor = Color.White;
-            }
+                }
+            };
+            stackPanel.Children.Add(exitButton);
+            exitButton.Click += new EventHandler(OnExitButtonClick);
         }
 
         void OnLanguageSettingButtonClick(object sender, EventArgs e)

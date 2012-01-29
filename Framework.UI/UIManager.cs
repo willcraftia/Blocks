@@ -566,11 +566,6 @@ namespace Willcraftia.Xna.Framework.UI
             if (mouseDevice.ButtonReleased) screen.ProcessMouseUp();
             // マウス ホイールが回転したことを Screen で処理します。
             if (mouseDevice.WheelScrolled) screen.ProcessMouseWheel();
-
-            // キーが押されたことを Screen で処理します。
-            if (keyboardDevice.KeyPressed) screen.ProcessKeyDown();
-            // キーが離されたことを Screen で処理します。
-            if (keyboardDevice.KeyReleased) screen.ProcessKeyUp();
         }
 
         public override void Draw(GameTime gameTime)

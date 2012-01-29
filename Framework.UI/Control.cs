@@ -61,26 +61,6 @@ namespace Willcraftia.Xna.Framework.UI
         public event EventHandler KeyUp;
 
         /// <summary>
-        /// フォーカスが設定された時に発生します。
-        /// </summary>
-        public event EventHandler GotFocus;
-
-        /// <summary>
-        /// フォーカスが解除された時に発生します。
-        /// </summary>
-        public event EventHandler LostFocus;
-
-        /// <summary>
-        /// 名前。
-        /// </summary>
-        string name;
-
-        /// <summary>
-        /// 親 Control。
-        /// </summary>
-        Control parent;
-
-        /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
         /// 自身がマウス オーバかつ子がマウス オーバの場合、子を設定します。
         /// 自身がマウス オーバかつ子が非マウス オーバの場合、自身を設定します。
@@ -99,25 +79,18 @@ namespace Willcraftia.Xna.Framework.UI
         bool visible = true;
 
         /// <summary>
-        /// true (フォーカスが設定されている場合)、false (それ以外の場合)。
+        /// Screen を取得します。
         /// </summary>
-        bool focused;
+        public Screen Screen { get; private set; }
 
         /// <summary>
-        /// 名前を取得または設定します。
+        /// 親 Control を取得します。
         /// </summary>
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (name == value) return;
+        public Control Parent { get; private set; }
 
-                // コレクション内のキーを更新します。
-                if (Parent != null && Parent.Children.Contains(this)) Parent.Children.ChangeKey(this, value);
-                // 名前を設定します。
-                name = value;
-            }
+        public virtual int ChildrenCount
+        {
+            get { return 0; }
         }
 
         /// <summary>
@@ -235,37 +208,6 @@ namespace Willcraftia.Xna.Framework.UI
         public VerticalAlignment VerticalAlignment { get; set; }
 
         /// <summary>
-        /// 親 Control を取得します。
-        /// </summary>
-        public Control Parent
-        {
-            get { return parent; }
-            internal set
-            {
-                if (parent == value) return;
-
-                // 親の mouseOverControl から切り離します。
-                if (parent != null && parent.mouseOverControl == this) parent.mouseOverControl = parent;
-
-                parent = value;
-            }
-        }
-
-        /// <summary>
-        /// Screen を取得します。
-        /// </summary>
-        public Screen Screen { get; private set; }
-
-        /// <summary>
-        /// 子 Control のコレクションを取得します。
-        /// </summary>
-        /// <remarks>
-        /// Children プロパティへの操作は同期化されないため、
-        /// 非同期に操作を行う場合は、その操作側で同期化を行なってください。
-        /// </remarks>
-        public ControlCollection Children { get; private set; }
-
-        /// <summary>
         /// Control が有効かどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control が有効な場合)、false (それ以外の場合)。</value>
@@ -336,41 +278,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// フォーカスを設定できるかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>true (フォーカスを設定できる場合)、false (それ以外の場合)。</value>
-        public bool Focusable { get; set; }
-
-        /// <summary>
-        /// フォーカスが設定されているかどうかを示す値を取得します。
-        /// </summary>
-        /// <value>true (フォーカスが設定されている場合)、false (それ以外の場合)。</value>
-        public bool Focused
-        {
-            get { return focused; }
-            internal set
-            {
-                if (focused == value) return;
-
-                focused = value;
-
-                if (focused)
-                {
-                    OnGotFocus();
-                }
-                else
-                {
-                    OnLostFocus();
-                }
-            }
-        }
-
-        /// <summary>
-        /// KeyNavigationMode を取得または設定します。
-        /// </summary>
-        public FocusNavigationMode FocusNavigationMode { get; set; }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="screen">Screen。</param>
@@ -378,8 +285,6 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (screen == null) throw new ArgumentNullException("screen");
             Screen = screen;
-
-            Children = new ControlCollection(this);
 
             Width = float.NaN;
             Height = float.NaN;
@@ -392,8 +297,30 @@ namespace Willcraftia.Xna.Framework.UI
             VerticalAlignment = VerticalAlignment.Center;
             FontStretch = Vector2.One;
             ClipEnabled = true;
-            Focusable = true;
             HitTestEnabled = true;
+        }
+
+        protected void AddChild(Control child)
+        {
+            if (child.IsAncestorOf(this))
+                throw new InvalidOperationException("Control can not be the descendant of one's own.");
+
+            child.Parent = this;
+        }
+
+        protected void RemoveChild(Control child)
+        {
+            if (this != child.Parent)
+                throw new InvalidOperationException("This control is not a parent of the specified control.");
+
+            if (mouseOverControl == child) mouseOverControl = this;
+
+            child.Parent = null;
+        }
+
+        protected virtual Control GetChild(int index)
+        {
+            throw new ArgumentOutOfRangeException("index");
         }
 
         /// <summary>
@@ -413,16 +340,6 @@ namespace Willcraftia.Xna.Framework.UI
         {
             RenderSize = ArrangeOverride(finalBounds.Size);
             RenderOffset = finalBounds.TopLeft;
-        }
-
-        /// <summary>
-        /// フォーカスを得ます。
-        /// </summary>
-        public void Focus()
-        {
-            if (Screen == null || !Enabled || !Visible || !Focusable) return;
-
-            Screen.SetFocus(this);
         }
 
         /// <summary>
@@ -499,50 +416,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// この Control 内でフォーカス設定可能な先頭の Control となる子孫あるいは自身にフォーカスを設定します。
-        /// </summary>
-        /// <returns>
-        /// true (子孫あるいは自身にフォーカスを設定した場合)、false (それ以外の場合)。
-        /// </returns>
-        public bool FocusFirstFocusableDesendent()
-        {
-            foreach (var child in Children)
-            {
-                if (child.FocusFirstFocusableDesendent()) return true;
-            }
-
-            if (Focusable)
-            {
-                Focus();
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// この Control 内でフォーカス設定可能な末尾の Control となる子孫あるいは自身にフォーカスを設定します。
-        /// </summary>
-        /// <returns>
-        /// true (子孫あるいは自身にフォーカスを設定した場合)、false (それ以外の場合)。
-        /// </returns>
-        public bool FocusLastFocusableDesendent()
-        {
-            for (int i = Children.Count - 1; 0 <= i; i--)
-            {
-                if (Children[i].FocusLastFocusableDesendent()) return true;
-            }
-
-            if (Focusable)
-            {
-                Focus();
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// 測定します。
         /// </summary>
         /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
@@ -562,8 +435,9 @@ namespace Willcraftia.Xna.Framework.UI
             // 子の希望サイズを定めます。
             float measuredWidth = 0;
             float measuredHeight = 0;
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 child.Measure(childAvailableSize);
 
                 measuredWidth = Math.Max(measuredWidth, child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right);
@@ -644,8 +518,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>配置により自身が希望する最終的なサイズ。</returns>
         protected virtual Size ArrangeOverride(Size finalSize)
         {
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 var childBounds = new Rect(child.MeasuredSize);
 
                 switch (child.HorizontalAlignment)
@@ -692,29 +567,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 指定された移動方向に基づいてフォーカスを移動させます。
-        /// </summary>
-        /// <param name="navigation">フォーカスの移動方向。</param>
-        /// <returns>
-        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
-        /// </returns>
-        public virtual bool MoveFocus(FocusNavigation navigation)
-        {
-            switch (navigation)
-            {
-                case FocusNavigation.Forward:
-                case FocusNavigation.Down:
-                case FocusNavigation.Right:
-                    return ForwardFocus();
-                case FocusNavigation.Backward:
-                case FocusNavigation.Up:
-                case FocusNavigation.Left:
-                    return BackwardFocus();
-            }
-            return false;
-        }
-
-        /// <summary>
         /// この Control が descendant の先祖かどうかを判定します。
         /// </summary>
         /// <param name="descendant">Control。</param>
@@ -743,36 +595,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 次の Control へフォーカスを移動させます。
-        /// </summary>
-        /// <returns>
-        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
-        /// </returns>
-        protected virtual bool ForwardFocus()
-        {
-            // ルートならば処理失敗で終えます。
-            if (Parent == null) return false;
-
-            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
-            return Parent.ForwardFocus(this);
-        }
-
-        /// <summary>
-        /// 前の Control へフォーカスを移動させます。
-        /// </summary>
-        /// <returns>
-        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
-        /// </returns>
-        protected virtual bool BackwardFocus()
-        {
-            // ルートならば処理失敗で終えます。
-            if (Parent == null) return false;
-
-            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
-            return Parent.BackwardFocus(this);
-        }
-
-        /// <summary>
         /// Enabled プロパティが変更された時に呼び出されます。
         /// EnabledChanged イベントを発生させます。
         /// </summary>
@@ -788,6 +610,10 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void OnVisibleChanged()
         {
             if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
+        }
+
+        void RaiseMouseMove()
+        {
         }
 
         /// <summary>
@@ -823,9 +649,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnMouseDown()
         {
-            // フォーカスを得ます。
-            Focus();
-
             if (MouseDown != null) MouseDown(this, EventArgs.Empty);
         }
 
@@ -861,24 +684,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// フォーカスが設定された時に発生します。
-        /// GotFocus イベントを発生させます。
-        /// </summary>
-        protected virtual void OnGotFocus()
-        {
-            if (GotFocus != null) GotFocus(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// フォーカスが解除された時に発生します。
-        /// LostFocus イベントを発生させます。
-        /// </summary>
-        protected virtual void OnLostFocus()
-        {
-            if (LostFocus != null) LostFocus(this, EventArgs.Empty);
-        }
-
-        /// <summary>
         /// 子 Control を描画します。
         /// </summary>
         /// <param name="gameTime"></param>
@@ -904,13 +709,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         internal void ProcessMouseMove()
         {
-            OnMouseMove();
-
             var mouseState = Screen.MouseDevice.MouseState;
 
-            for (int i = Children.Count - 1; 0 <= i; i--)
+            for (int i = ChildrenCount - 1; 0 <= i; i--)
             {
-                var child = Children[i];
+                var child = GetChild(i);
 
                 // 不可視ならばスキップします。
                 if (!child.Visible) continue;
@@ -926,6 +729,9 @@ namespace Willcraftia.Xna.Framework.UI
                 SwitchMouseOverControl(child);
                 return;
             }
+
+            // 自分に通知します。
+            OnMouseMove();
 
             // mouseOverControl にできる子がないならば、自分を mouseOverControl にします。
             SwitchMouseOverControl(this);
@@ -1031,93 +837,15 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 指定の Control について次の Control へフォーカスを移動させます。
-        /// </summary>
-        /// <param name="child">子 Control。</param>
-        /// <returns>
-        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
-        /// </returns>
-        bool ForwardFocus(Control child)
-        {
-            // ナビゲーション不可ならば処理失敗で終えます。
-            if (FocusNavigationMode == FocusNavigationMode.None) return false;
-
-            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
-            for (int i = Children.IndexOf(child) + 1; i < Children.Count; i++)
-            {
-                var sibling = Children[i];
-                if (sibling.Focusable)
-                {
-                    // Focusable な兄弟へフォーカスを移動します。
-                    sibling.Focus();
-                    return true;
-                }
-
-                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
-                if (sibling.FocusFirstFocusableDesendent()) return true;
-            }
-
-            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
-            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusFirstFocusableDesendent();
-
-            // 以下、Continue の場合となります。
-
-            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
-            if (Parent == null) return false;
-
-            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
-            return Parent.ForwardFocus(this);
-        }
-
-        /// <summary>
-        /// 指定の Control について前の Control へフォーカスを移動させます。
-        /// </summary>
-        /// <param name="child">子 Control。</param>
-        /// <returns>
-        /// true (フォーカスを移動させた場合)、false (それ以外の場合)。
-        /// </returns>
-        bool BackwardFocus(Control child)
-        {
-            // ナビゲーション不可ならば処理失敗で終えます。
-            if (FocusNavigationMode == FocusNavigationMode.None) return false;
-
-            // 指定された子の兄弟で次のフォーカス移動先となるものを探索して移動させます。
-            for (int i = Children.IndexOf(child) - 1; 0 <= i; i--)
-            {
-                var sibling = Children[i];
-                if (sibling.Focusable)
-                {
-                    // Focusable な兄弟へフォーカスを移動します。
-                    sibling.Focus();
-                    return true;
-                }
-
-                // 兄弟が Focusable ではなくとも、その子孫に移動できないかどうかを調べます。
-                if (sibling.FocusLastFocusableDesendent()) return true;
-            }
-
-            // Cycle ならば先頭へフォーカスを移動させて処理を終えます。
-            if (FocusNavigationMode == FocusNavigationMode.Cycle) return FocusLastFocusableDesendent();
-
-            // 以下、Continue の場合となります。
-
-            // ルートでフォーカス可能な Control がないならば処理失敗で終えます。
-            if (Parent == null) return false;
-
-            // コンテナに自分の次の移動先を探索させてフォーカス移動を試みます。
-            return Parent.BackwardFocus(this);
-        }
-
-        /// <summary>
         /// 子 Control を描画します。
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="drawContext"></param>
         void DrawChildren(GameTime gameTime, IDrawContext drawContext)
         {
-            // 子を再帰的に描画します。
-            foreach (var child in Children)
+            for (int i = 0; i < ChildrenCount; i++)
             {
+                var child = GetChild(i);
                 // 不可視ならば描画しません。
                 if (!child.Visible) continue;
 

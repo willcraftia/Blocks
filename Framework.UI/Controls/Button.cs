@@ -13,7 +13,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
     /// <summary>
     /// Button として振る舞う Control です。
     /// </summary>
-    public class Button : Control
+    public class Button : ContentControl
     {
         /// <summary>
         /// Button がクリックされた時に発生します。

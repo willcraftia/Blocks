@@ -45,39 +45,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             lineBounds.Width = 1;
             drawContext.DrawRectangle(lineBounds, borderColor);
 
-            // フォーカスを持つ場合に枠の四隅に矩形を描画します。
-            if (control.Focused)
-            {
-                var focusColor = Color.Violet;
-
-                Rect focusBounds;
-                int size = 8;
-
-                focusBounds = renderBounds;
-                focusBounds.Width = size;
-                focusBounds.Height = size;
-                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
-
-                focusBounds = renderBounds;
-                focusBounds.X += renderBounds.Width - size;
-                focusBounds.Width = size;
-                focusBounds.Height = size;
-                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
-
-                focusBounds = renderBounds;
-                focusBounds.Y += renderBounds.Height - size;
-                focusBounds.Width = size;
-                focusBounds.Height = size;
-                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
-
-                focusBounds = renderBounds;
-                focusBounds.X += renderBounds.Width - size;
-                focusBounds.Y += renderBounds.Height - size;
-                focusBounds.Width = size;
-                focusBounds.Height = size;
-                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
-            }
-
             // マウス オーバの場合に枠の四辺に矩形を描画します。 
             var mouseOverColor = (control.MouseDirectlyOver) ? Color.DodgerBlue : Color.DarkGoldenrod;
             if (control.MouseOver)

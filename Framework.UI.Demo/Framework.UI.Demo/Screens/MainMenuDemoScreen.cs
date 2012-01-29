@@ -32,50 +32,41 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var newGameButton = new Button(screen)
                 {
-                    Padding = new Thickness(8)
+                    Padding = new Thickness(8),
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "NEW GAME (DUMMY)"
+                    }
                 };
                 stackPanel.Children.Add(newGameButton);
-
-                var newGameTextBlock = new TextBlock(screen)
-                {
-                    Text = "NEW GAME (DUMMY)"
-                };
-                newGameButton.Children.Add(newGameTextBlock);
-
-                newGameButton.MouseEnter += (s, e) => newGameTextBlock.ForegroundColor = Color.Yellow;
-                newGameButton.MouseLeave += (s, e) => newGameTextBlock.ForegroundColor = Color.White;
+                newGameButton.MouseEnter += (s, e) => newGameButton.Content.ForegroundColor = Color.Yellow;
+                newGameButton.MouseLeave += (s, e) => newGameButton.Content.ForegroundColor = Color.White;
 
                 var switchScreenButton = new Button(screen)
                 {
-                    Padding = new Thickness(8)
+                    Padding = new Thickness(8),
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "SWITCH SCREEN"
+                    }
                 };
                 stackPanel.Children.Add(switchScreenButton);
                 switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
-
-                var switchScreenTextBlock = new TextBlock(screen)
-                {
-                    Text = "SWITCH SCREEN"
-                };
-                switchScreenButton.Children.Add(switchScreenTextBlock);
-
-                switchScreenButton.MouseEnter += (s, e) => switchScreenTextBlock.ForegroundColor = Color.Yellow;
-                switchScreenButton.MouseLeave += (s, e) => switchScreenTextBlock.ForegroundColor = Color.White;
+                switchScreenButton.MouseEnter += (s, e) => switchScreenButton.Content.ForegroundColor = Color.Yellow;
+                switchScreenButton.MouseLeave += (s, e) => switchScreenButton.Content.ForegroundColor = Color.White;
 
                 var exitButton = new Button(screen)
                 {
-                    Padding = new Thickness(8)
+                    Padding = new Thickness(8),
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "EXIT"
+                    }
                 };
-                exitButton.Click += new EventHandler(OnExitButtonClick);
                 stackPanel.Children.Add(exitButton);
-
-                var exitTextBlock = new TextBlock(screen)
-                {
-                    Text = "EXIT"
-                };
-                exitButton.Children.Add(exitTextBlock);
-
-                exitButton.MouseEnter += (s, e) => exitTextBlock.ForegroundColor = Color.Yellow;
-                exitButton.MouseLeave += (s, e) => exitTextBlock.ForegroundColor = Color.White;
+                exitButton.Click += new EventHandler(OnExitButtonClick);
+                exitButton.MouseEnter += (s, e) => exitButton.Content.ForegroundColor = Color.Yellow;
+                exitButton.MouseLeave += (s, e) => exitButton.Content.ForegroundColor = Color.White;
             }
 
             void OnSwitchScreenButtonClick(object sender, EventArgs e)

@@ -11,11 +11,57 @@ namespace Willcraftia.Xna.Framework.UI
     /// </summary>
     public sealed class Desktop : Control
     {
+        class InternalControlCollection : ControlCollection
+        {
+            Desktop desktop;
+
+            internal InternalControlCollection(Desktop desktop)
+                : base(desktop)
+            {
+                this.desktop = desktop;
+            }
+
+            protected override void InsertItem(int index, Control item)
+            {
+                base.InsertItem(index, item);
+
+                desktop.AddChildInternal(item);
+            }
+
+            protected override void RemoveItem(int index)
+            {
+                var removedItem = this[index];
+                base.RemoveItem(index);
+
+                desktop.RemoveChildInternal(removedItem);
+            }
+
+            protected override void SetItem(int index, Control item)
+            {
+                var removedItem = this[index];
+                base.SetItem(index, item);
+
+                desktop.AddChildInternal(item);
+                desktop.RemoveChildInternal(removedItem);
+            }
+        }
+
+        public ControlCollection Children { get; private set; }
+
+        public override int ChildrenCount
+        {
+            get { return Children.Count; }
+        }
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="screen">Screen。</param>
-        internal Desktop(Screen screen) : base(screen)  { }
+        internal Desktop(Screen screen)
+            : base(screen)
+        {
+            Children = new ControlCollection(this);
+        }
 
         /// <summary>
         /// アクティブ Window を取得します。
@@ -31,6 +77,22 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             return null;
+        }
+
+        protected override Control GetChild(int index)
+        {
+            if (index < 0 || Children.Count <= index) throw new ArgumentOutOfRangeException("index");
+            return Children[index];
+        }
+
+        internal void AddChildInternal(Control child)
+        {
+            AddChild(child);
+        }
+
+        internal void RemoveChildInternal(Control child)
+        {
+            RemoveChild(child);
         }
 
         /// <summary>

@@ -109,7 +109,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var openNewDialogButton = new Button(screen)
                 {
                     Margin = new Thickness(8),
-                    Padding = new Thickness(8)
+                    Padding = new Thickness(8),
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Open new dialog",
+                        FontStretch = new Vector2(1.0f, 3.0f)
+                    }
                 };
                 stackPanel.Children.Add(openNewDialogButton);
                 openNewDialogButton.Click += (s, e) =>
@@ -117,15 +122,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     var firstDialog = new FirstDialog(screen);
                     firstDialog.Show();
                 };
-                var openNewDialogTextBlock = new TextBlock(screen)
-                {
-                    Text = "Open new dialog",
-                    FontStretch = new Vector2(1.0f, 3.0f)
-                };
-                openNewDialogButton.Children.Add(openNewDialogTextBlock);
-
-                openNewDialogButton.MouseEnter += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.Yellow;
-                openNewDialogButton.MouseLeave += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.White;
+                openNewDialogButton.MouseEnter += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.Yellow;
+                openNewDialogButton.MouseLeave += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.White;
 
                 var cubeControl = new CubeControl(screen)
                 {
@@ -230,7 +228,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
                     Height = unit,
-                    HorizontalAlignment = HorizontalAlignment.Left
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Open new dialog",
+                        TextHorizontalAlignment = HorizontalAlignment.Left
+                    }
                 };
                 openNewDialogButton.Click += (s, e) =>
                 {
@@ -238,72 +241,59 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     secondDialog.Show();
                 };
                 stackPanel.Children.Add(openNewDialogButton);
-                var openNewDialogTextBlock = new TextBlock(screen)
-                {
-                    Text = "Open new dialog",
-                    TextHorizontalAlignment = HorizontalAlignment.Left
-                };
-                openNewDialogButton.Children.Add(openNewDialogTextBlock);
-
-                openNewDialogButton.MouseEnter += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.Yellow;
-                openNewDialogButton.MouseLeave += (s, e) => openNewDialogTextBlock.ForegroundColor = Color.White;
+                openNewDialogButton.MouseEnter += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.Yellow;
+                openNewDialogButton.MouseLeave += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.White;
 
                 var closeButton = new Button(screen)
                 {
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
                     Height = unit,
-                    HorizontalAlignment = HorizontalAlignment.Left
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Close",
+                        TextHorizontalAlignment = HorizontalAlignment.Left
+                    }
                 };
-                closeButton.Click += (s, e) => Close();
                 stackPanel.Children.Add(closeButton);
-                var closeTextBlock = new TextBlock(screen)
-                {
-                    Text = "Close",
-                    TextHorizontalAlignment = HorizontalAlignment.Left
-                };
-                closeButton.Children.Add(closeTextBlock);
-
-                closeButton.MouseEnter += (s, e) => closeTextBlock.ForegroundColor = Color.Yellow;
-                closeButton.MouseLeave += (s, e) => closeTextBlock.ForegroundColor = Color.White;
+                closeButton.Click += (s, e) => Close();
+                closeButton.MouseEnter += (s, e) => closeButton.Content.ForegroundColor = Color.Yellow;
+                closeButton.MouseLeave += (s, e) => closeButton.Content.ForegroundColor = Color.White;
 
                 var switchScreenButton = new Button(screen)
                 {
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
                     Height = unit,
-                    HorizontalAlignment = HorizontalAlignment.Left
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Switch Screen",
+                        TextHorizontalAlignment = HorizontalAlignment.Left
+                    }
                 };
-                switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
                 stackPanel.Children.Add(switchScreenButton);
-                var switchScreenTextBlock = new TextBlock(screen)
-                {
-                    Text = "Switch Screen",
-                    TextHorizontalAlignment = HorizontalAlignment.Left
-                };
-                switchScreenButton.Children.Add(switchScreenTextBlock);
-
-                switchScreenButton.MouseEnter += (s, e) => switchScreenTextBlock.ForegroundColor = Color.Yellow;
-                switchScreenButton.MouseLeave += (s, e) => switchScreenTextBlock.ForegroundColor = Color.White;
+                switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
+                switchScreenButton.MouseEnter += (s, e) => switchScreenButton.Content.ForegroundColor = Color.Yellow;
+                switchScreenButton.MouseLeave += (s, e) => switchScreenButton.Content.ForegroundColor = Color.White;
 
                 var exitButton = new Button(screen)
                 {
                     Margin = new Thickness(8),
                     Padding = new Thickness(8),
                     Height = unit,
-                    HorizontalAlignment = HorizontalAlignment.Left
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Exit",
+                        TextHorizontalAlignment = HorizontalAlignment.Left
+                    }
                 };
-                exitButton.Click += new EventHandler(OnExitButtonClick);
                 stackPanel.Children.Add(exitButton);
-                var exitTextBlock = new TextBlock(screen)
-                {
-                    Text = "Exit",
-                    TextHorizontalAlignment = HorizontalAlignment.Left
-                };
-                exitButton.Children.Add(exitTextBlock);
-
-                exitButton.MouseEnter += (s, e) => exitTextBlock.ForegroundColor = Color.Yellow;
-                exitButton.MouseLeave += (s, e) => exitTextBlock.ForegroundColor = Color.White;
+                exitButton.Click += new EventHandler(OnExitButtonClick);
+                exitButton.MouseEnter += (s, e) => exitButton.Content.ForegroundColor = Color.Yellow;
+                exitButton.MouseLeave += (s, e) => exitButton.Content.ForegroundColor = Color.White;
             }
 
             void OnExitButtonClick(object sender, EventArgs e)
@@ -386,19 +376,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 {
                     Width = unit * 2,
                     Height = unit,
-                    Margin = new Thickness(unit)
+                    Margin = new Thickness(unit),
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Close",
+                        TextHorizontalAlignment = HorizontalAlignment.Left
+                    }
                 };
-                closeButton.Click += (s, e) => Close();
                 Children.Add(closeButton);
-                var closeTextBlock = new TextBlock(screen)
-                {
-                    Text = "Close",
-                    TextHorizontalAlignment = HorizontalAlignment.Left
-                };
-                closeButton.Children.Add(closeTextBlock);
-
-                closeButton.MouseEnter += (s, e) => closeTextBlock.ForegroundColor = Color.Yellow;
-                closeButton.MouseLeave += (s, e) => closeTextBlock.ForegroundColor = Color.White;
+                closeButton.Click += (s, e) => Close();
+                closeButton.MouseEnter += (s, e) => closeButton.Content.ForegroundColor = Color.Yellow;
+                closeButton.MouseLeave += (s, e) => closeButton.Content.ForegroundColor = Color.White;
             }
 
             public override void Show()

@@ -34,8 +34,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;
             Enabled = true;
-            // デフォルトでは文字描画に専念するものとしてフォーカスを設定させません。
-            Focusable = false;
             // デフォルトでは Hit Test を無効にします。
             HitTestEnabled = false;
         }

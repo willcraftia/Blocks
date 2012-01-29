@@ -19,11 +19,6 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : IDisposable
     {
         /// <summary>
-        /// フォーカスを持つ Control の弱参照。
-        /// </summary>
-        WeakReference focusedControlWeakReference = new WeakReference(null);
-
-        /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -85,20 +80,6 @@ namespace Willcraftia.Xna.Framework.UI
         public AnimationCollection Animations { get; private set; }
 
         /// <summary>
-        /// キーと FocusNavigation のマップを取得します。
-        /// </summary>
-        protected Dictionary<Keys, FocusNavigation> KeyFocusNavigationMap { get; private set; }
-
-        /// <summary>
-        /// フォーカスを持つ Control を取得します。
-        /// </summary>
-        internal Control FocusedControl
-        {
-            get { return focusedControlWeakReference.Target as Control; }
-            set { focusedControlWeakReference.Target = value; }
-        }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="game">Game。</param>
@@ -109,17 +90,7 @@ namespace Willcraftia.Xna.Framework.UI
             Content = new ContentManager(game.Services);
 
             Animations = new AnimationCollection(this);
-            
-            KeyFocusNavigationMap = new Dictionary<Keys, FocusNavigation>();
-            KeyFocusNavigationMap[Keys.Up] = FocusNavigation.Up;
-            KeyFocusNavigationMap[Keys.Down] = FocusNavigation.Down;
-            KeyFocusNavigationMap[Keys.Left] = FocusNavigation.Left;
-            KeyFocusNavigationMap[Keys.Right] = FocusNavigation.Right;
-
             Desktop = new Desktop(this);
-
-            // フォーカスは Desktop に設定しておきます。
-            FocusedControl = Desktop;
         }
 
         /// <summary>
@@ -206,32 +177,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// キーが押された時に呼び出されます。
-        /// </summary>
-        protected internal void ProcessKeyDown()
-        {
-            if (FocusedControl.ProcessKeyDown()) return;
-
-            bool focusChanged = false;
-            foreach (var entry in KeyFocusNavigationMap)
-            {
-                if (KeyboardDevice.IsKeyPressed(entry.Key))
-                {
-                    focusChanged = FocusedControl.MoveFocus(entry.Value);
-                    if (focusChanged) break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// キーが離された時に呼び出されます。
-        /// </summary>
-        protected internal void ProcessKeyUp()
-        {
-            FocusedControl.ProcessKeyUp();
-        }
-
-        /// <summary>
         /// Screen を初期化します。
         /// </summary>
         /// <remarks>
@@ -249,25 +194,6 @@ namespace Willcraftia.Xna.Framework.UI
             UpdateLayout();
 
             Initialized = true;
-        }
-
-        /// <summary>
-        /// 指定の Control にフォーカスを設定します。
-        /// </summary>
-        /// <param name="control">フォーカスを設定する Control。</param>
-        internal void SetFocus(Control control)
-        {
-            if (control == null) throw new ArgumentNullException("control");
-
-            if (!control.Enabled || !control.Visible || !control.Focusable) return;
-
-            // Control をフォーカス解除状態にします。
-            if (FocusedControl != null) FocusedControl.Focused = false;
-
-            FocusedControl = control;
-
-            // Control をフォーカス設定状態にします。
-            if (FocusedControl != null) FocusedControl.Focused = true;
         }
 
         #region IDisposable
