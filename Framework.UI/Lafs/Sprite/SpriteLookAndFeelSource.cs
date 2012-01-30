@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// スプライト イメージの Look & Feel を提供する ILookAndFeelSource です。
+    /// スプライト イメージの Look and Feel を提供する ILookAndFeelSource です。
     /// </summary>
     public class SpriteLookAndFeelSource : LookAndFeelSourceBase
     {

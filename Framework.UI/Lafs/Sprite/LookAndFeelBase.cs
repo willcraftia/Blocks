@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// スプライト イメージで描画する Look & Feel の基礎クラスです。
+    /// スプライト イメージで描画する Look and Feel の基礎クラスです。
     /// </summary>
     public abstract class LookAndFeelBase : ILookAndFeel, IDisposable
     {

@@ -42,14 +42,14 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 既存のクリップ領域を継承してクリップを開始します。
         /// </summary>
-        /// <param name="scissorRectangle">クリップ領域。</param>
+        /// <param name="clipBounds">クリップ領域。</param>
         /// <returns>クリップを制御するオブジェクト。</returns>
         IDisposable SetClip(Rect clipBounds);
 
         /// <summary>
         /// 新たなクリップ領域でクリップを解します。
         /// </summary>
-        /// <param name="scissorRectangle">クリップ領域。</param>
+        /// <param name="clipBounds">クリップ領域。</param>
         /// <returns>クリップを制御するオブジェクト。</returns>
         IDisposable SetNewClip(Rect clipBounds);
 

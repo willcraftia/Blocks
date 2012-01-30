@@ -8,12 +8,12 @@ using Microsoft.Xna.Framework;
 namespace Willcraftia.Xna.Framework.UI
 {
     /// <summary>
-    /// Control の Look & Feel を描画するクラスのインタフェースです。
+    /// Control の Look and Feel を描画するクラスのインタフェースです。
     /// </summary>
     public interface ILookAndFeel
     {
         /// <summary>
-        /// Control の Look & Feel を描画します。
+        /// Control の Look and Feel を描画します。
         /// </summary>
         /// <param name="control">Control。</param>
         /// <param name="drawContext">現在の IDrawContext。</param>

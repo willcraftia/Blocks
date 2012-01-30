@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
     /// <summary>
-    /// デバッグ用のデフォルトの Look & Feel です。
+    /// デバッグ用のデフォルトの Look and Feel です。
     /// </summary>
     public class DefaultLookAndFeel : LookAndFeelBase
     {

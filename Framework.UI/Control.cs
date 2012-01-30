@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,50 +16,172 @@ namespace Willcraftia.Xna.Framework.UI
     /// </summary>
     public class Control
     {
-        /// <summary>
-        /// Enabled プロパティが変更された時に発生します。
-        /// </summary>
-        public event EventHandler EnabledChanged;
-
-        /// <summary>
-        /// Visible プロパティが変更された時に発生します。
-        /// </summary>
-        public event EventHandler VisibleChanged;
+        protected delegate void ClassRoutedEventHandler(ref RoutedEventContext context);
 
         /// <summary>
         /// マウス カーソルが移動した時に発生します。
         /// </summary>
-        public event EventHandler MouseMove;
+        public static readonly string PreviewMouseMoveEvent = "PreviewMouseMove";
 
         /// <summary>
-        /// この Control 上でマウス ボタンが押された時に発生します。
+        /// マウス カーソルが移動した時に発生します。
         /// </summary>
-        public event EventHandler MouseDown;
+        public static readonly string MouseMoveEvent = "MouseMove";
 
         /// <summary>
-        /// この Control 上でマウス ボタンが離された時に発生します。
+        /// マウス カーソルが入った時に発生します。
         /// </summary>
-        public event EventHandler MouseUp;
+        public static readonly string PreviewMouseEnterEvent = "PreviewMouseEnter";
 
         /// <summary>
-        /// この Control 上にマウス カーソルが入った時に発生します。
+        /// マウス カーソルが入った時に発生します。
         /// </summary>
-        public event EventHandler MouseEnter;
+        public static readonly string MouseEnterEvent = "MouseEnter";
 
         /// <summary>
-        /// この Control 上からマウス カーソルが出た時に発生します。
+        /// マウス カーソルが出た時に発生します。
         /// </summary>
-        public event EventHandler MouseLeave;
+        public static readonly string PreviewMouseLeaveEvent = "PreviewMouseLeave";
 
         /// <summary>
-        /// この Control でキーが押された時に発生します。
+        /// マウス カーソルが出た時に発生します。
         /// </summary>
-        public event EventHandler KeyDown;
+        public static readonly string MouseLeaveEvent = "MouseLeave";
 
         /// <summary>
-        /// この Control でキーが離された時に発生します。
+        /// マウス ボタンが押された時に発生します。
         /// </summary>
-        public event EventHandler KeyUp;
+        public static readonly string PreviewMouseDownEvent = "PreviewMouseDown";
+
+        /// <summary>
+        /// マウス ボタンが押された時に発生します。
+        /// </summary>
+        public static readonly string MouseDownEvent = "MouseDown";
+
+        /// <summary>
+        /// マウス ボタンが離された時に発生します。
+        /// </summary>
+        public static readonly string PreviewMouseUpEvent = "PreviewMouseUp";
+
+        /// <summary>
+        /// マウス ボタンが離された時に発生します。
+        /// </summary>
+        public static readonly string MouseUpEvent = "MouseUp";
+
+        /// <summary>
+        /// Enabled プロパティが変更された時に発生します。
+        /// </summary>
+        public event EventHandler EnabledChanged = delegate { };
+
+        /// <summary>
+        /// Visible プロパティが変更された時に発生します。
+        /// </summary>
+        public event EventHandler VisibleChanged = delegate { };
+
+        /// <summary>
+        /// フォーカスが設定された時に発生します。
+        /// </summary>
+        public event RoutedEventHandler GotFocus = delegate { };
+
+        /// <summary>
+        /// フォーカスが解除された時に発生します。
+        /// </summary>
+        public event RoutedEventHandler LostFocus = delegate { };
+
+        /// <summary>
+        /// PreviewMouseMove イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewMouseMove
+        {
+            add { AddHandler(PreviewMouseMoveEvent, value); }
+            remove { RemoveHandler(PreviewMouseMoveEvent, value); }
+        }
+
+        /// <summary>
+        /// MouseMove イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler MouseMove
+        {
+            add { AddHandler(MouseMoveEvent, value); }
+            remove { RemoveHandler(MouseMoveEvent, value); }
+        }
+
+        /// <summary>
+        /// PreviewMouseEnter イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewMouseEnter
+        {
+            add { AddHandler(PreviewMouseEnterEvent, value); }
+            remove { RemoveHandler(PreviewMouseEnterEvent, value); }
+        }
+
+        /// <summary>
+        /// MouseEnter イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler MouseEnter
+        {
+            add { AddHandler(MouseEnterEvent, value); }
+            remove { RemoveHandler(MouseEnterEvent, value); }
+        }
+
+        /// <summary>
+        /// PreviewMouseLeave イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewMouseLeave
+        {
+            add { AddHandler(PreviewMouseLeaveEvent, value); }
+            remove { RemoveHandler(PreviewMouseLeaveEvent, value); }
+        }
+
+        /// <summary>
+        /// MouseLeave イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler MouseLeave
+        {
+            add { AddHandler(MouseLeaveEvent, value); }
+            remove { RemoveHandler(MouseLeaveEvent, value); }
+        }
+
+        /// <summary>
+        /// PreviewMouseDown イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewMouseDown
+        {
+            add { AddHandler(PreviewMouseDownEvent, value); }
+            remove { RemoveHandler(PreviewMouseDownEvent, value); }
+        }
+
+        /// <summary>
+        /// MouseDown イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler MouseDown
+        {
+            add { AddHandler(MouseDownEvent, value); }
+            remove { RemoveHandler(MouseDownEvent, value); }
+        }
+
+        /// <summary>
+        /// PreviewMouseUp イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewMouseUp
+        {
+            add { AddHandler(PreviewMouseUpEvent, value); }
+            remove { RemoveHandler(PreviewMouseUpEvent, value); }
+        }
+
+        /// <summary>
+        /// MouseUp イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler MouseUp
+        {
+            add { AddHandler(MouseUpEvent, value); }
+            remove { RemoveHandler(MouseUpEvent, value); }
+        }
+
+        /// <summary>
+        /// イベント名をキーに RoutedEventHandler を値とするマップ。
+        /// </summary>
+        Dictionary<string, List<Delegate>> handlerMap = new Dictionary<string, List<Delegate>>();
 
         /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
@@ -77,6 +200,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (Control が可視の場合)、false (それ以外の場合)。
         /// </summary>
         bool visible = true;
+
+        /// <summary>
+        /// true (フォーカスが設定されている場合)、false (それ以外の場合)。
+        /// </summary>
+        bool focused;
 
         /// <summary>
         /// Screen を取得します。
@@ -244,6 +372,12 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// フォーカスを設定できるかどうかを示す値を取得または設定します。
+        /// </summary>
+        /// <value>true (フォーカスを設定できる場合)、false (それ以外の場合)。</value>
+        public bool Focusable { get; set; }
+
+        /// <summary>
         /// HitTest が有効かどうかを示す値を取得または設定します。
         /// </summary>
         /// <value>
@@ -278,6 +412,30 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// フォーカスが設定されているかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>true (フォーカスが設定されている場合)、false (それ以外の場合)。</value>
+        public bool Focused
+        {
+            get { return focused; }
+            internal set
+            {
+                if (focused == value) return;
+
+                focused = value;
+
+                //if (focused)
+                //{
+                //    OnGotFocus(this);
+                //}
+                //else
+                //{
+                //    OnLostFocus(this);
+                //}
+            }
+        }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="screen">Screen。</param>
@@ -285,6 +443,17 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (screen == null) throw new ArgumentNullException("screen");
             Screen = screen;
+
+            PreviewMouseMove += ToRoutedEventHandler(OnPreviewMouseMove);
+            MouseMove += ToRoutedEventHandler(OnMouseMove);
+            PreviewMouseEnter += ToRoutedEventHandler(OnPreviewMouseEnter);
+            MouseEnter += ToRoutedEventHandler(OnMouseEnter);
+            PreviewMouseLeave += ToRoutedEventHandler(OnPreviewMouseLeave);
+            MouseLeave += ToRoutedEventHandler(OnMouseLeave);
+            PreviewMouseDown += ToRoutedEventHandler(OnPreviewMouseDown);
+            MouseDown += ToRoutedEventHandler(OnMouseDown);
+            PreviewMouseUp += ToRoutedEventHandler(OnPreviewMouseUp);
+            MouseUp += ToRoutedEventHandler(OnMouseUp);
 
             Width = float.NaN;
             Height = float.NaN;
@@ -321,6 +490,34 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual Control GetChild(int index)
         {
             throw new ArgumentOutOfRangeException("index");
+        }
+
+        /// <summary>
+        /// この Control が descendant の先祖かどうかを判定します。
+        /// </summary>
+        /// <param name="descendant">Control。</param>
+        /// <returns>
+        /// true (この Control が descendant の先祖である場合)、false (それ以外の場合)。
+        /// </returns>
+        public bool IsAncestorOf(Control descendant)
+        {
+            for (var parent = descendant.Parent; parent != null; parent = parent.Parent)
+            {
+                if (parent == this) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// この Control が ancestor の子孫かどうかを判定します。
+        /// </summary>
+        /// <param name="ancestor"></param>
+        /// <returns>
+        /// true (この Control が ancestor の子孫である場合)、false (それ以外の場合)。
+        /// </returns>
+        public bool IsDescendantOf(Control ancestor)
+        {
+            return ancestor.IsAncestorOf(this);
         }
 
         /// <summary>
@@ -413,6 +610,80 @@ namespace Willcraftia.Xna.Framework.UI
             var localPoint = PointFromScreen(point);
             return (0 <= localPoint.X) && (localPoint.X < RenderSize.Width)
                 && (0 <= localPoint.Y) && (localPoint.Y < RenderSize.Height);
+        }
+
+        protected void AddHandler(string eventName, Delegate handler)
+        {
+            List<Delegate> handlers;
+            if (!handlerMap.TryGetValue(eventName, out handlers))
+            {
+                handlers = new List<Delegate>();
+                handlerMap[eventName] = handlers;
+            }
+
+            handlers.Add(handler);
+        }
+
+        protected void RemoveHandler(string eventName, Delegate handler)
+        {
+            List<Delegate> handlers;
+            if (!handlerMap.TryGetValue(eventName, out handlers))
+                throw new InvalidOperationException(string.Format(
+                    "Handler '{0}' could not be found.", eventName));
+
+            handlers.Remove(handler);
+        }
+
+        protected void RaiseEvent(string tunnelEventName, string bubbleEventName)
+        {
+            var context = new RoutedEventContext(this);
+
+            if (tunnelEventName == PreviewMouseDownEvent)
+            {
+                Console.WriteLine(PreviewMouseDownEvent);
+            }
+
+            RaiseTunnelEvent(tunnelEventName, ref context);
+            if (!context.Handled) RaiseBubbleEvent(bubbleEventName, ref context);
+        }
+
+        protected void RaiseTunnelEvent(string eventName, ref RoutedEventContext context)
+        {
+            if (Parent != null)
+            {
+                Parent.RaiseTunnelEvent(eventName, ref context);
+                if (context.Handled) return;
+            }
+
+            InvokeHandlers(eventName, ref context);
+        }
+
+        protected void RaiseBubbleEvent(string eventName, ref RoutedEventContext context)
+        {
+            RaiseBubbleEvent(eventName, ref context, this);
+        }
+
+        void RaiseBubbleEvent(string eventName, ref RoutedEventContext context, Control target)
+        {
+            InvokeHandlers(eventName, ref context);
+
+            if (context.Handled) return;
+
+            if (target.Parent != null)
+                RaiseBubbleEvent(eventName, ref context, target.Parent);
+        }
+
+        void InvokeHandlers(string eventName, ref RoutedEventContext context)
+        {
+            List<Delegate> handlers;
+            if (handlerMap.TryGetValue(eventName, out handlers))
+            {
+                foreach (RoutedEventHandler handler in handlers)
+                {
+                    handler(this, ref context);
+                    if (context.Handled) return;
+                }
+            }
         }
 
         /// <summary>
@@ -567,34 +838,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// この Control が descendant の先祖かどうかを判定します。
-        /// </summary>
-        /// <param name="descendant">Control。</param>
-        /// <returns>
-        /// true (この Control が descendant の先祖である場合)、false (それ以外の場合)。
-        /// </returns>
-        public bool IsAncestorOf(Control descendant)
-        {
-            for (var parent = descendant.Parent; parent != null; parent = parent.Parent)
-            {
-                if (parent == this) return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// この Control が ancestor の子孫かどうかを判定します。
-        /// </summary>
-        /// <param name="ancestor"></param>
-        /// <returns>
-        /// true (この Control が ancestor の子孫である場合)、false (それ以外の場合)。
-        /// </returns>
-        public bool IsDescendantOf(Control ancestor)
-        {
-            return ancestor.IsAncestorOf(this);
-        }
-
-        /// <summary>
         /// Enabled プロパティが変更された時に呼び出されます。
         /// EnabledChanged イベントを発生させます。
         /// </summary>
@@ -612,75 +855,76 @@ namespace Willcraftia.Xna.Framework.UI
             if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
         }
 
-        void RaiseMouseMove()
-        {
-        }
+        /// <summary>
+        /// PreviewMouseMove イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewMouseMove(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// Control 上でマウス カーソルが移動した時に呼び出されます。
-        /// MouseMove イベントを発生させます。
+        /// MouseMove イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnMouseMove()
-        {
-            if (MouseMove != null) MouseMove(this, EventArgs.Empty);
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnMouseMove(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// Control 上にマウス カーソルが入った時に呼び出されます。
-        /// MouseEnter イベントを発生させます。
+        /// PreviewMouseEnter イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnMouseEnter()
-        {
-            if (MouseEnter != null) MouseEnter(this, EventArgs.Empty);
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewMouseEnter(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// Control 上からマウス カーソルが出た時に呼び出されます。
-        /// MouseLeave イベントを発生させます。
+        /// MouseEnter イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnMouseLeave()
-        {
-            if (MouseLeave != null) MouseLeave(this, EventArgs.Empty);
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnMouseEnter(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// Control 上でマウス ボタンが押された時に呼び出されます。
-        /// MouseDown イベントを発生させます。
+        /// PreviewMouseLeave イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnMouseDown()
-        {
-            if (MouseDown != null) MouseDown(this, EventArgs.Empty);
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewMouseLeave(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// Control 上でマウス ボタンが離された時に呼び出されます。
-        /// MouseUp イベントを発生させます。
+        /// MouseLeave イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnMouseUp()
-        {
-            if (MouseUp != null) MouseUp(this, EventArgs.Empty);
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnMouseLeave(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// キーが押された時に呼び出されます。
-        /// KeyDown イベントを発生させます。
+        /// PreviewMouseDown イベントの到達で呼び出されます。
         /// </summary>
-        /// <returns>
-        /// true (キー押下を処理した場合)、false (それ以外の場合)。
-        /// </returns>
-        protected virtual bool OnKeyDown()
-        {
-            if (KeyDown != null) KeyDown(this, EventArgs.Empty);
-            return false;
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewMouseDown(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// キーが離された時に呼び出されます。
-        /// KeyDown イベントを発生させます。
+        /// MouseDown イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnKeyUp()
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnMouseDown(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// PreviewMouseUp イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewMouseUp(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// MouseUp イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnMouseUp(ref RoutedEventContext context) { }
+
+        protected virtual void OnGotFocus(ref RoutedEventContext context) { }
+
+        protected virtual void OnLostFocus(ref RoutedEventContext context) { }
+
+        protected RoutedEventHandler ToRoutedEventHandler(ClassRoutedEventHandler method)
         {
-            if (KeyUp != null) KeyUp(this, EventArgs.Empty);
+            return delegate(Control s, ref RoutedEventContext c)
+            {
+                method(ref c);
+            };
         }
 
         /// <summary>
@@ -730,8 +974,8 @@ namespace Willcraftia.Xna.Framework.UI
                 return;
             }
 
-            // 自分に通知します。
-            OnMouseMove();
+            // イベントを発生させます。
+            RaiseEvent(PreviewMouseMoveEvent, MouseMoveEvent);
 
             // mouseOverControl にできる子がないならば、自分を mouseOverControl にします。
             SwitchMouseOverControl(this);
@@ -753,7 +997,7 @@ namespace Willcraftia.Xna.Framework.UI
             else
             {
                 // mouseOverControl が自分であるならば、自分に通知します。
-                OnMouseLeave();
+                RaiseEvent(PreviewMouseLeaveEvent, MouseLeaveEvent);
             }
 
             // mouseOverControl を解除します。
@@ -763,8 +1007,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// マウス ボタンが押されたことを処理します。
         /// </summary>
-        /// <param name="mouseDevice">MouseDevice。</param>
-        /// <param name="buttons">押下されたボタン。</param>
         /// <returns></returns>
         internal void ProcessMouseDown()
         {
@@ -779,7 +1021,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // mouseOverControl が自分であるならば、自分に通知します。
-            OnMouseDown();
+            RaiseEvent(PreviewMouseDownEvent, MouseDownEvent);
         }
 
         /// <summary>
@@ -798,26 +1040,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // mouseOverControl が自分であるならば、自分に通知します。
-            OnMouseUp();
-        }
-
-        /// <summary>
-        /// キーが押されたことを処理します。
-        /// </summary>
-        /// <returns>
-        /// true (キー押下を処理した場合)、false (それ以外の場合)。
-        /// </returns>
-        internal bool ProcessKeyDown()
-        {
-            return OnKeyDown();
-        }
-
-        /// <summary>
-        /// キーが離されたことを処理します。
-        /// </summary>
-        internal void ProcessKeyUp()
-        {
-            OnKeyUp();
+            RaiseEvent(PreviewMouseUpEvent, MouseUpEvent);
         }
 
         /// <summary>
@@ -833,7 +1056,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             // 新たな mouseOverControl を設定して変更を通知します。
             mouseOverControl = newControl;
-            mouseOverControl.OnMouseEnter();
+            mouseOverControl.RaiseEvent(PreviewMouseEnterEvent, MouseEnterEvent);
         }
 
         /// <summary>

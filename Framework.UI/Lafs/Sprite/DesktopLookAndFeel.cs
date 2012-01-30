@@ -7,7 +7,7 @@ using System;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// Desktop の Look & Feel です。
+    /// Desktop の Look and Feel です。
     /// </summary>
     public sealed class DesktopLookAndFeel : LookAndFeelBase
     {

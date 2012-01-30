@@ -10,7 +10,7 @@ using Willcraftia.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// Window の Look & Feel です。
+    /// Window の Look and Feel です。
     /// </summary>
     public class WindowLookAndFeel : LookAndFeelBase
     {

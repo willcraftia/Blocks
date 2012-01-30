@@ -70,11 +70,5 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             overlay.Show();
         }
 
-        protected override bool OnKeyDown()
-        {
-            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape)) Close();
-
-            return base.OnKeyDown();
-        }
     }
 }

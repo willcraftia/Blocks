@@ -9,23 +9,22 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Screen で管理する Control のルートとなる Control です。
     /// </summary>
-    public sealed class Desktop : Control
+    public sealed class Desktop : ContentControl
     {
-        class InternalControlCollection : ControlCollection
-        {
-            Desktop desktop;
+        #region InternalWindowCollection
 
-            internal InternalControlCollection(Desktop desktop)
+        class InternalWindowCollection : WindowCollection
+        {
+            internal InternalWindowCollection(Desktop desktop)
                 : base(desktop)
             {
-                this.desktop = desktop;
             }
 
-            protected override void InsertItem(int index, Control item)
+            protected override void InsertItem(int index, Window item)
             {
                 base.InsertItem(index, item);
 
-                desktop.AddChildInternal(item);
+                Desktop.AddChildInternal(item);
             }
 
             protected override void RemoveItem(int index)
@@ -33,24 +32,26 @@ namespace Willcraftia.Xna.Framework.UI
                 var removedItem = this[index];
                 base.RemoveItem(index);
 
-                desktop.RemoveChildInternal(removedItem);
+                Desktop.RemoveChildInternal(removedItem);
             }
 
-            protected override void SetItem(int index, Control item)
+            protected override void SetItem(int index, Window item)
             {
                 var removedItem = this[index];
                 base.SetItem(index, item);
 
-                desktop.AddChildInternal(item);
-                desktop.RemoveChildInternal(removedItem);
+                Desktop.AddChildInternal(item);
+                Desktop.RemoveChildInternal(removedItem);
             }
         }
 
-        public ControlCollection Children { get; private set; }
+        #endregion
+
+        public WindowCollection Windows { get; private set; }
 
         public override int ChildrenCount
         {
-            get { return Children.Count; }
+            get { return Windows.Count + base.ChildrenCount; }
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Willcraftia.Xna.Framework.UI
         internal Desktop(Screen screen)
             : base(screen)
         {
-            Children = new ControlCollection(this);
+            Windows = new InternalWindowCollection(this);
         }
 
         /// <summary>
@@ -70,10 +71,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>アクティブ Window。</returns>
         public Window GetActiveWindow()
         {
-            foreach (var control in Children)
+            foreach (var window in Windows)
             {
-                var window = control as Window;
-                if (window != null && window.Active) return window;
+                if (window.Active) return window;
             }
 
             return null;
@@ -81,8 +81,10 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected override Control GetChild(int index)
         {
-            if (index < 0 || Children.Count <= index) throw new ArgumentOutOfRangeException("index");
-            return Children[index];
+            if (index < 0 || ChildrenCount <= index) throw new ArgumentOutOfRangeException("index");
+
+            if (Content == null) return Windows[index];
+            return (index == 0)  ? Content : Windows[index - 1];
         }
 
         internal void AddChildInternal(Control child)
@@ -101,9 +103,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="window">表示する Window。</param>
         internal void ShowWindow(Window window)
         {
-            if (Children.Contains(window)) throw new InvalidOperationException("Window is already the child of desktop.");
+            if (Windows.Contains(window)) throw new InvalidOperationException("Window is already the child of desktop.");
 
-            Children.Add(window);
+            Windows.Add(window);
 
             // Active プロパティの変更順は、Window でのフォーカス状態の記憶と密に関係します。
             var previousActiveWindow = GetActiveWindow();
@@ -118,9 +120,9 @@ namespace Willcraftia.Xna.Framework.UI
         internal void CloseWindow(Window window)
         {
             if (window == null) throw new ArgumentNullException("window");
-            if (!Children.Contains(window)) throw new InvalidOperationException("Window is the child of another contol.");
+            if (!Windows.Contains(window)) throw new InvalidOperationException("Window is the child of another contol.");
 
-            Children.Remove(window);
+            Windows.Remove(window);
 
             if (window.Active)
             {
@@ -137,14 +139,14 @@ namespace Willcraftia.Xna.Framework.UI
         internal void ActivateWindow(Window window)
         {
             if (window == null) throw new ArgumentNullException("window");
-            if (!Children.Contains(window)) throw new InvalidOperationException("Window is the child of another contol.");
+            if (!Windows.Contains(window)) throw new InvalidOperationException("Window is the child of another contol.");
 
             // 既にアクティブな場合には処理を終えます。
             if (window.Active) return;
 
             // 最前面へ移動させます。
-            Children.Remove(window);
-            Children.Add(window);
+            Windows.Remove(window);
+            Windows.Add(window);
 
             // Active プロパティの変更順は、Window でのフォーカス状態の記憶と密に関係します。
             var previousActiveWindow = GetActiveWindow();
@@ -159,9 +161,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns></returns>
         Window GetTopMostWindow()
         {
-            for (int i = Children.Count - 1; 0 <= i; i--)
+            for (int i = Windows.Count - 1; 0 <= i; i--)
             {
-                var window = Children[i] as Window;
+                var window = Windows[i];
                 if (window != null) return window;
             }
 

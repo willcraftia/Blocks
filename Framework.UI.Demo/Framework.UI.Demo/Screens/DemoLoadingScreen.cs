@@ -103,7 +103,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 FontStretch = new Vector2(2),
                 Padding = new Thickness(8)
             };
-            Desktop.Children.Add(nowLoadingTextBlock);
+            Desktop.Content = nowLoadingTextBlock;
 
             // フラグだけを立てます。
             ScreenLoadCompleted += (s, e) =>

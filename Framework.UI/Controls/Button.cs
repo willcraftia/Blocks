@@ -55,65 +55,59 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Enabled = true;
         }
 
-        protected override void OnMouseEnter()
+        protected override void OnMouseEnter(ref RoutedEventContext context)
         {
             pressedByMouse = (Screen.MouseDevice.MouseState.LeftButton == ButtonState.Pressed);
+            context.Handled = true;
 
-            base.OnMouseEnter();
+            base.OnMouseEnter(ref context);
         }
 
-        protected override void OnMouseLeave()
+        protected override void OnMouseLeave(ref RoutedEventContext context)
         {
             pressedByMouse = false;
+            context.Handled = true;
 
-            base.OnMouseLeave();
+            base.OnMouseLeave(ref context);
         }
 
-        protected override void OnMouseDown()
+        /// <summary>
+        /// Content 内部から発生した PreviewMouseDown を捕捉し、
+        /// RoutedEventContext の Handled プロパティを true に設定します。
+        /// </summary>
+        /// <param name="context"></param>
+        protected override void OnPreviewMouseDown(ref RoutedEventContext context)
         {
             // 機能が無効に設定されているならば、イベントを無視します。
             if (!Enabled) return;
 
             pressedByMouse = Screen.MouseDevice.IsButtonPressed(MouseButtons.Left);
+            context.Handled = true;
 
-            base.OnMouseDown();
+            base.OnPreviewMouseDown(ref context);
         }
 
-        protected override void OnMouseUp()
+        /// <summary>
+        /// Content 内部から発生した PreviewMouseUp を捕捉し、Click イベントを発生させ、
+        /// RoutedEventContext の Handled プロパティを true に設定します。
+        /// </summary>
+        /// <param name="context"></param>
+        protected override void OnPreviewMouseUp(ref RoutedEventContext context)
         {
             // Button が押された状態で機能が無効に設定される場合を考慮し、機能が有効かどうかに関わらず処理を進めます。
             if (Screen.MouseDevice.IsButtonReleased(MouseButtons.Left))
             {
                 pressedByMouse = false;
                 if (Enabled && !Pressed) OnClick();
+
+                context.Handled = true;
             }
 
-            base.OnMouseUp();
-        }
-
-        protected override bool OnKeyDown()
-        {
-            // 機能が無効に設定されているならば、イベントを無視します。
-            if (!Enabled) return false;
-
-            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Enter)) pressedByEnterKey = true;
-
-            return base.OnKeyDown();
-        }
-
-        protected override void OnKeyUp()
-        {
-            if (Screen.KeyboardDevice.IsKeyReleased(Keys.Enter))
-            {
-                pressedByEnterKey = false;
-                if (Enabled && !Pressed) OnClick();
-            }
-
-            base.OnKeyUp();
+            base.OnPreviewMouseUp(ref context);
         }
 
         /// <summary>
-        /// ボタンがクリックされた時に呼び出されます。
+        /// クリックされた時に呼び出されます。
         /// Click イベントを発生させます。
         /// </summary>
         protected virtual void OnClick()

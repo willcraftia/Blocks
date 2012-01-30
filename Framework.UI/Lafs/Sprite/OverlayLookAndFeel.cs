@@ -7,7 +7,7 @@ using System;
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// Overlay の Look & Feel です。
+    /// Overlay の Look and Feel です。
     /// </summary>
     public class OverlayLookAndFeel : LookAndFeelBase
     {

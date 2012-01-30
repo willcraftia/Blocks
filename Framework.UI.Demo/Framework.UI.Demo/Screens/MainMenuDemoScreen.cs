@@ -39,8 +39,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(newGameButton);
-                newGameButton.MouseEnter += (s, e) => newGameButton.Content.ForegroundColor = Color.Yellow;
-                newGameButton.MouseLeave += (s, e) => newGameButton.Content.ForegroundColor = Color.White;
+                newGameButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                newGameButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
                 var switchScreenButton = new Button(screen)
                 {
@@ -52,8 +52,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(switchScreenButton);
                 switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
-                switchScreenButton.MouseEnter += (s, e) => switchScreenButton.Content.ForegroundColor = Color.Yellow;
-                switchScreenButton.MouseLeave += (s, e) => switchScreenButton.Content.ForegroundColor = Color.White;
+                switchScreenButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                switchScreenButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
                 var exitButton = new Button(screen)
                 {
@@ -65,8 +65,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(exitButton);
                 exitButton.Click += new EventHandler(OnExitButtonClick);
-                exitButton.MouseEnter += (s, e) => exitButton.Content.ForegroundColor = Color.Yellow;
-                exitButton.MouseLeave += (s, e) => exitButton.Content.ForegroundColor = Color.White;
+                exitButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                exitButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+            }
+
+            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.Yellow;
+                context.Handled = true;
+            }
+
+            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.White;
+                context.Handled = true;
             }
 
             void OnSwitchScreenButtonClick(object sender, EventArgs e)

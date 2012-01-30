@@ -122,8 +122,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     var firstDialog = new FirstDialog(screen);
                     firstDialog.Show();
                 };
-                openNewDialogButton.MouseEnter += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.Yellow;
-                openNewDialogButton.MouseLeave += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.White;
+                openNewDialogButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                openNewDialogButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
                 var cubeControl = new CubeControl(screen)
                 {
@@ -137,6 +137,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var rotateCubeTimelineAnimation = new RotateCubeAnimation
                 {
+                    Name = "RotateCube",
                     CubeButton = cubeControl,
                     From = 0,
                     To = MathHelper.TwoPi,
@@ -145,17 +146,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Repeat = Repeat.Forever
                 };
                 screen.Animations.Add(rotateCubeTimelineAnimation);
-
-                cubeControl.MouseEnter += (s, e) =>
-                {
-                    cubeControl.Scale = 1.5f;
-                    rotateCubeTimelineAnimation.Enabled = true;
-                };
-                cubeControl.MouseLeave += (s, e) =>
-                {
-                    cubeControl.Scale = 1;
-                    rotateCubeTimelineAnimation.Enabled = false;
-                };
+                cubeControl.MouseEnter += new RoutedEventHandler(OnCubeControlMouseEnter);
+                cubeControl.MouseLeave += new RoutedEventHandler(OnCubeControlMouseLeave);
 
                 var thirdWindow_widthAnimation = new PropertyLerpAnimation
                 {
@@ -181,6 +173,36 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 thirdWindow_heightAnimation.Completed += (s, e) => cubeControl.CubeVisible = true;
                 screen.Animations.Add(thirdWindow_heightAnimation);
+            }
+
+            void OnCubeControlMouseEnter(Control sender, ref RoutedEventContext context)
+            {
+                var cubeControl = sender as CubeControl;
+                cubeControl.Scale = 1.5f;
+
+                Screen.Animations["RotateCube"].Enabled = true;
+            }
+
+            void OnCubeControlMouseLeave(Control sender, ref RoutedEventContext context)
+            {
+                var cubeControl = sender as CubeControl;
+                cubeControl.Scale = 1;
+
+                Screen.Animations["RotateCube"].Enabled = false;
+            }
+
+            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.Yellow;
+                context.Handled = true;
+            }
+
+            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.White;
+                context.Handled = true;
             }
 
             /// <summary>
@@ -241,8 +263,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     secondDialog.Show();
                 };
                 stackPanel.Children.Add(openNewDialogButton);
-                openNewDialogButton.MouseEnter += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.Yellow;
-                openNewDialogButton.MouseLeave += (s, e) => openNewDialogButton.Content.ForegroundColor = Color.White;
+                openNewDialogButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                openNewDialogButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
                 var closeButton = new Button(screen)
                 {
@@ -258,8 +280,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(closeButton);
                 closeButton.Click += (s, e) => Close();
-                closeButton.MouseEnter += (s, e) => closeButton.Content.ForegroundColor = Color.Yellow;
-                closeButton.MouseLeave += (s, e) => closeButton.Content.ForegroundColor = Color.White;
+                closeButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                closeButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
                 var switchScreenButton = new Button(screen)
                 {
@@ -275,8 +297,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(switchScreenButton);
                 switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
-                switchScreenButton.MouseEnter += (s, e) => switchScreenButton.Content.ForegroundColor = Color.Yellow;
-                switchScreenButton.MouseLeave += (s, e) => switchScreenButton.Content.ForegroundColor = Color.White;
+                switchScreenButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                switchScreenButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
                 var exitButton = new Button(screen)
                 {
@@ -292,8 +314,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(exitButton);
                 exitButton.Click += new EventHandler(OnExitButtonClick);
-                exitButton.MouseEnter += (s, e) => exitButton.Content.ForegroundColor = Color.Yellow;
-                exitButton.MouseLeave += (s, e) => exitButton.Content.ForegroundColor = Color.White;
+                exitButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                exitButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+            }
+
+            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.Yellow;
+                context.Handled = true;
+            }
+
+            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.White;
+                context.Handled = true;
             }
 
             void OnExitButtonClick(object sender, EventArgs e)
@@ -385,8 +421,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 Content = closeButton;
                 closeButton.Click += (s, e) => Close();
-                closeButton.MouseEnter += (s, e) => closeButton.Content.ForegroundColor = Color.Yellow;
-                closeButton.MouseLeave += (s, e) => closeButton.Content.ForegroundColor = Color.White;
+                closeButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
+                closeButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+            }
+
+            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.Yellow;
+                context.Handled = true;
+            }
+
+            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
+            {
+                var button = sender as Button;
+                button.Content.ForegroundColor = Color.White;
+                context.Handled = true;
             }
 
             public override void Show()

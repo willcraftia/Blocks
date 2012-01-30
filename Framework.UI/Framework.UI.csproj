@@ -29,6 +29,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>false</XnaCompressContent>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -103,8 +105,11 @@
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="FocusNavigation.cs" />
     <Compile Include="FocusNavigationMode.cs" />
+    <Compile Include="FocusScope.cs" />
     <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />
     <Compile Include="Lafs\Sprite\TextBlockLookAndFeel.cs" />
+    <Compile Include="RoutedEventContext.cs" />
+    <Compile Include="RoutedEventHandler.cs" />
     <Compile Include="SizeToContent.cs" />
     <Compile Include="DefaultScreenFactory.cs" />
     <Compile Include="Desktop.cs" />
@@ -144,6 +149,7 @@
     <Compile Include="Lafs\Sprite\WindowLookAndFeel.cs" />
     <Compile Include="TextHelper.cs" />
     <Compile Include="Window.cs" />
+    <Compile Include="WindowCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
