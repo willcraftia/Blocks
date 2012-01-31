@@ -51,7 +51,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 }
             };
             stackPanel.Children.Add(languageSettingButton);
-            languageSettingButton.Click += new EventHandler(OnLanguageSettingButtonClick);
+            languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
 
             var exitButton = new Button(screen)
             {
@@ -63,10 +63,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 }
             };
             stackPanel.Children.Add(exitButton);
-            exitButton.Click += new EventHandler(OnExitButtonClick);
+            exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
         }
 
-        void OnLanguageSettingButtonClick(object sender, EventArgs e)
+        void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
         {
             var dialog = new LanguageSettingDialog(Screen);
             dialog.BackgroundColor = Color.Black;
@@ -74,7 +74,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             dialog.Show();
         }
 
-        void OnExitButtonClick(object sender, EventArgs e)
+        void OnExitButtonClick(Control sender, ref RoutedEventContext context)
         {
             var overlay = new Overlay(Screen)
             {

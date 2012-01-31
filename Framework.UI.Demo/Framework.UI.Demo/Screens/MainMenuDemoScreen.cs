@@ -51,7 +51,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(switchScreenButton);
-                switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
+                switchScreenButton.Click += new RoutedEventHandler(OnSwitchScreenButtonClick);
                 switchScreenButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 switchScreenButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
@@ -64,7 +64,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(exitButton);
-                exitButton.Click += new EventHandler(OnExitButtonClick);
+                exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
                 exitButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 exitButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
             }
@@ -83,7 +83,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 context.Handled = true;
             }
 
-            void OnSwitchScreenButtonClick(object sender, EventArgs e)
+            void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
             {
                 var overlay = new Overlay(Screen)
                 {
@@ -110,7 +110,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Screen.Animations.Add(opacityAnimation);
             }
 
-            void OnExitButtonClick(object sender, EventArgs e)
+            void OnExitButtonClick(Control sender, ref RoutedEventContext context)
             {
                 var overlay = new Overlay(Screen)
                 {

@@ -34,9 +34,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             TextHorizontalAlignment = HorizontalAlignment.Center;
             TextVerticalAlignment = VerticalAlignment.Center;
             Enabled = true;
-            // デフォルトでは Hit Test を無効にします。
-            //HitTestEnabled = false;
-            HitTestEnabled = true;
         }
 
         protected override Size MeasureOverride(Size availableSize)

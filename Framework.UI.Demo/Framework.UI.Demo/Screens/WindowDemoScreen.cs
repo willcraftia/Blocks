@@ -117,11 +117,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(openNewDialogButton);
-                openNewDialogButton.Click += (s, e) =>
-                {
-                    var firstDialog = new FirstDialog(screen);
-                    firstDialog.Show();
-                };
+                openNewDialogButton.Click += new RoutedEventHandler(OnOpenNewDialogButtonClick);
                 openNewDialogButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 openNewDialogButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
@@ -173,6 +169,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 thirdWindow_heightAnimation.Completed += (s, e) => cubeControl.CubeVisible = true;
                 screen.Animations.Add(thirdWindow_heightAnimation);
+            }
+
+            void OnOpenNewDialogButtonClick(Control sender, ref RoutedEventContext context)
+            {
+                var firstDialog = new FirstDialog(Screen);
+                firstDialog.Show();
             }
 
             void OnCubeControlMouseEnter(Control sender, ref RoutedEventContext context)
@@ -257,12 +259,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         TextHorizontalAlignment = HorizontalAlignment.Left
                     }
                 };
-                openNewDialogButton.Click += (s, e) =>
-                {
-                    var secondDialog = new SecondDialog(screen);
-                    secondDialog.Show();
-                };
                 stackPanel.Children.Add(openNewDialogButton);
+                openNewDialogButton.Click += new RoutedEventHandler(OnOpenNewDialogButtonClick);
                 openNewDialogButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 openNewDialogButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
@@ -279,7 +277,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(closeButton);
-                closeButton.Click += (s, e) => Close();
+                closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
                 closeButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 closeButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
@@ -296,7 +294,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(switchScreenButton);
-                switchScreenButton.Click += new EventHandler(OnSwitchScreenButtonClick);
+                switchScreenButton.Click += new RoutedEventHandler(OnSwitchScreenButtonClick);
                 switchScreenButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 switchScreenButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
 
@@ -313,9 +311,20 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(exitButton);
-                exitButton.Click += new EventHandler(OnExitButtonClick);
+                exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
                 exitButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 exitButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+            }
+
+            void OnCloseButtonClick(Control sender, ref RoutedEventContext context)
+            {
+                Close();
+            }
+
+            void OnOpenNewDialogButtonClick(Control sender, ref RoutedEventContext context)
+            {
+                var secondDialog = new SecondDialog(Screen);
+                secondDialog.Show();
             }
 
             void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
@@ -332,7 +341,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 context.Handled = true;
             }
 
-            void OnExitButtonClick(object sender, EventArgs e)
+            void OnExitButtonClick(Control sender, ref RoutedEventContext context)
             {
                 var overlay = new Overlay(Screen)
                 {
@@ -355,7 +364,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Screen.Animations.Add(opacityAnimation);
             }
 
-            void OnSwitchScreenButtonClick(object sender, EventArgs e)
+            void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
             {
                 var overlay = new Overlay(Screen)
                 {
@@ -386,7 +395,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 var overlay = new Overlay(Screen)
                 {
-                    Opacity = 0.7f,
+                    Opacity = 0.5f,
                     BackgroundColor = Color.Black
                 };
                 overlay.Owner = this;
@@ -420,9 +429,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 Content = closeButton;
-                closeButton.Click += (s, e) => Close();
+                closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
                 closeButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 closeButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+            }
+
+            void OnCloseButtonClick(Control sender, ref RoutedEventContext context)
+            {
+                Close();
             }
 
             void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)

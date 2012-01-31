@@ -16,9 +16,18 @@ namespace Willcraftia.Xna.Framework.UI.Controls
     public class Button : ContentControl
     {
         /// <summary>
-        /// Button がクリックされた時に発生します。
+        /// クリックされた時に発生します。
         /// </summary>
-        public event EventHandler Click;
+        public static readonly string ClickEvent = "Click";
+
+        /// <summary>
+        /// Click イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler Click
+        {
+            add { AddHandler(ClickEvent, value); }
+            remove { RemoveHandler(ClickEvent, value); }
+        }
 
         /// <summary>
         /// マウス ボタンが押された状態かどうかを示す値。
@@ -52,6 +61,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public Button(Screen screen)
             : base(screen)
         {
+            Click += CreateRoutedEventHandler(OnClick);
+
             Enabled = true;
         }
 
@@ -78,13 +89,14 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="context"></param>
         protected override void OnPreviewMouseDown(ref RoutedEventContext context)
         {
+            base.OnPreviewMouseDown(ref context);
+            if (context.Handled) return;
+
             // 機能が無効に設定されているならば、イベントを無視します。
             if (!Enabled) return;
 
             pressedByMouse = Screen.MouseDevice.IsButtonPressed(MouseButtons.Left);
             context.Handled = true;
-
-            base.OnPreviewMouseDown(ref context);
         }
 
         /// <summary>
@@ -94,25 +106,23 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="context"></param>
         protected override void OnPreviewMouseUp(ref RoutedEventContext context)
         {
+            base.OnPreviewMouseUp(ref context);
+            if (context.Handled) return;
+
             // Button が押された状態で機能が無効に設定される場合を考慮し、機能が有効かどうかに関わらず処理を進めます。
             if (Screen.MouseDevice.IsButtonReleased(MouseButtons.Left))
             {
                 pressedByMouse = false;
-                if (Enabled && !Pressed) OnClick();
+                if (Enabled && !Pressed) RaiseEvent(null, ClickEvent);
 
                 context.Handled = true;
             }
-
-            base.OnPreviewMouseUp(ref context);
         }
 
         /// <summary>
-        /// クリックされた時に呼び出されます。
-        /// Click イベントを発生させます。
+        /// Click イベントの到達で呼び出されます。
         /// </summary>
-        protected virtual void OnClick()
-        {
-            if (Click != null) Click(this, EventArgs.Empty);
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnClick(ref RoutedEventContext context) { }
     }
 }

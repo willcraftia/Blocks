@@ -16,6 +16,10 @@ namespace Willcraftia.Xna.Framework.UI
     /// </summary>
     public class Control
     {
+        /// <summary>
+        /// ルーティング イベントの到達で呼び出されるクラス ハンドラを表します。
+        /// </summary>
+        /// <param name="context"></param>
         protected delegate void ClassRoutedEventHandler(ref RoutedEventContext context);
 
         /// <summary>
@@ -181,7 +185,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// イベント名をキーに RoutedEventHandler を値とするマップ。
         /// </summary>
-        Dictionary<string, List<Delegate>> handlerMap = new Dictionary<string, List<Delegate>>();
+        Dictionary<string, List<RoutedEventHandler>> handlerMap = new Dictionary<string, List<RoutedEventHandler>>();
 
         /// <summary>
         /// 自身あるいは子についてのマウス オーバ状態の Control。
@@ -215,11 +219,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// 親 Control を取得します。
         /// </summary>
         public Control Parent { get; private set; }
-
-        public virtual int ChildrenCount
-        {
-            get { return 0; }
-        }
 
         /// <summary>
         /// 外側の余白を取得または設定します。
@@ -378,14 +377,6 @@ namespace Willcraftia.Xna.Framework.UI
         public bool Focusable { get; set; }
 
         /// <summary>
-        /// HitTest が有効かどうかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// true (HitTest が有効な場合)、false (それ以外の場合)。
-        /// </value>
-        public bool HitTestEnabled { get; set; }
-
-        /// <summary>
         /// マウス カーソルが自身あるいは子の上にあるかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -436,6 +427,14 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 子 Control の数を取得します。
+        /// </summary>
+        protected virtual int ChildrenCount
+        {
+            get { return 0; }
+        }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="screen">Screen。</param>
@@ -444,16 +443,16 @@ namespace Willcraftia.Xna.Framework.UI
             if (screen == null) throw new ArgumentNullException("screen");
             Screen = screen;
 
-            PreviewMouseMove += ToRoutedEventHandler(OnPreviewMouseMove);
-            MouseMove += ToRoutedEventHandler(OnMouseMove);
-            PreviewMouseEnter += ToRoutedEventHandler(OnPreviewMouseEnter);
-            MouseEnter += ToRoutedEventHandler(OnMouseEnter);
-            PreviewMouseLeave += ToRoutedEventHandler(OnPreviewMouseLeave);
-            MouseLeave += ToRoutedEventHandler(OnMouseLeave);
-            PreviewMouseDown += ToRoutedEventHandler(OnPreviewMouseDown);
-            MouseDown += ToRoutedEventHandler(OnMouseDown);
-            PreviewMouseUp += ToRoutedEventHandler(OnPreviewMouseUp);
-            MouseUp += ToRoutedEventHandler(OnMouseUp);
+            PreviewMouseMove += CreateRoutedEventHandler(OnPreviewMouseMove);
+            MouseMove += CreateRoutedEventHandler(OnMouseMove);
+            PreviewMouseEnter += CreateRoutedEventHandler(OnPreviewMouseEnter);
+            MouseEnter += CreateRoutedEventHandler(OnMouseEnter);
+            PreviewMouseLeave += CreateRoutedEventHandler(OnPreviewMouseLeave);
+            MouseLeave += CreateRoutedEventHandler(OnMouseLeave);
+            PreviewMouseDown += CreateRoutedEventHandler(OnPreviewMouseDown);
+            MouseDown += CreateRoutedEventHandler(OnMouseDown);
+            PreviewMouseUp += CreateRoutedEventHandler(OnPreviewMouseUp);
+            MouseUp += CreateRoutedEventHandler(OnMouseUp);
 
             Width = float.NaN;
             Height = float.NaN;
@@ -466,30 +465,6 @@ namespace Willcraftia.Xna.Framework.UI
             VerticalAlignment = VerticalAlignment.Center;
             FontStretch = Vector2.One;
             ClipEnabled = true;
-            HitTestEnabled = true;
-        }
-
-        protected void AddChild(Control child)
-        {
-            if (child.IsAncestorOf(this))
-                throw new InvalidOperationException("Control can not be the descendant of one's own.");
-
-            child.Parent = this;
-        }
-
-        protected void RemoveChild(Control child)
-        {
-            if (this != child.Parent)
-                throw new InvalidOperationException("This control is not a parent of the specified control.");
-
-            if (mouseOverControl == child) mouseOverControl = this;
-
-            child.Parent = null;
-        }
-
-        protected virtual Control GetChild(int index)
-        {
-            throw new ArgumentOutOfRangeException("index");
         }
 
         /// <summary>
@@ -605,28 +580,77 @@ namespace Willcraftia.Xna.Framework.UI
         /// </returns>
         public virtual bool HitTest(Point point)
         {
-            if (!HitTestEnabled) return false;
-
             var localPoint = PointFromScreen(point);
             return (0 <= localPoint.X) && (localPoint.X < RenderSize.Width)
                 && (0 <= localPoint.Y) && (localPoint.Y < RenderSize.Height);
         }
 
-        protected void AddHandler(string eventName, Delegate handler)
+        /// <summary>
+        /// 指定の Control をとして関連付けます。
+        /// </summary>
+        /// <param name="child">子として関連付ける Control。</param>
+        protected void AddChild(Control child)
         {
-            List<Delegate> handlers;
+            if (child.IsAncestorOf(this))
+                throw new InvalidOperationException("Control can not be the descendant of one's own.");
+
+            child.Parent = this;
+        }
+
+        /// <summary>
+        /// 子 Control との関連付けを削除します。
+        /// </summary>
+        /// <param name="child">関連付けを削除する子 Control。</param>
+        protected void RemoveChild(Control child)
+        {
+            if (this != child.Parent)
+                throw new InvalidOperationException("This control is not a parent of the specified control.");
+
+            if (mouseOverControl == child) mouseOverControl = this;
+
+            child.Parent = null;
+        }
+
+        /// <summary>
+        /// 子 Control を取得します。
+        /// </summary>
+        /// <remarks>
+        /// 既定の実装では常に ArgumentOutOfRangeException を発生させます。
+        /// Control に子を持たせるには、
+        /// GetChild メソッドと ChildrenCount プロパティを派生クラスで適切にオーバライドします。
+        /// </remarks>
+        /// <param name="index">子 Control のインデックス。</param>
+        /// <returns></returns>
+        protected virtual Control GetChild(int index)
+        {
+            throw new ArgumentOutOfRangeException("index");
+        }
+
+        /// <summary>
+        /// RoutedEventHandler を追加します。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="handler">イベントに追加する RoutedEventHandler。</param>
+        protected void AddHandler(string eventName, RoutedEventHandler handler)
+        {
+            List<RoutedEventHandler> handlers;
             if (!handlerMap.TryGetValue(eventName, out handlers))
             {
-                handlers = new List<Delegate>();
+                handlers = new List<RoutedEventHandler>();
                 handlerMap[eventName] = handlers;
             }
 
             handlers.Add(handler);
         }
 
-        protected void RemoveHandler(string eventName, Delegate handler)
+        /// <summary>
+        /// RoutedEventHandler を削除します。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="handler">イベントから削除する RoutedEventHandler。</param>
+        protected void RemoveHandler(string eventName, RoutedEventHandler handler)
         {
-            List<Delegate> handlers;
+            List<RoutedEventHandler> handlers;
             if (!handlerMap.TryGetValue(eventName, out handlers))
                 throw new InvalidOperationException(string.Format(
                     "Handler '{0}' could not be found.", eventName));
@@ -634,19 +658,29 @@ namespace Willcraftia.Xna.Framework.UI
             handlers.Remove(handler);
         }
 
+        /// <summary>
+        /// ルーティング イベントを発生させます。
+        /// </summary>
+        /// <param name="tunnelEventName">Tunnel イベント名。</param>
+        /// <param name="bubbleEventName">Bubble イベント名。</param>
         protected void RaiseEvent(string tunnelEventName, string bubbleEventName)
         {
             var context = new RoutedEventContext(this);
 
-            if (tunnelEventName == PreviewMouseDownEvent)
-            {
-                Console.WriteLine(PreviewMouseDownEvent);
-            }
+            // tunnelEventName が非 null ならば Tunnel イベントを発生させます。
+            if (tunnelEventName != null)
+                RaiseTunnelEvent(tunnelEventName, ref context);
 
-            RaiseTunnelEvent(tunnelEventName, ref context);
-            if (!context.Handled) RaiseBubbleEvent(bubbleEventName, ref context);
+            // bubbleEventName が非 null ならば Bubble イベントを発生させます。
+            if (!context.Handled && bubbleEventName != null)
+                RaiseBubbleEvent(bubbleEventName, ref context);
         }
 
+        /// <summary>
+        /// Tunnel イベントを発生させます。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="context">RoutedEventContext。</param>
         protected void RaiseTunnelEvent(string eventName, ref RoutedEventContext context)
         {
             if (Parent != null)
@@ -658,32 +692,19 @@ namespace Willcraftia.Xna.Framework.UI
             InvokeHandlers(eventName, ref context);
         }
 
+        /// <summary>
+        /// Bubble イベントを発生させます。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="context">RoutedEventContext。</param>
         protected void RaiseBubbleEvent(string eventName, ref RoutedEventContext context)
         {
-            RaiseBubbleEvent(eventName, ref context, this);
-        }
-
-        void RaiseBubbleEvent(string eventName, ref RoutedEventContext context, Control target)
-        {
+            //RaiseBubbleEvent(eventName, ref context, this);
             InvokeHandlers(eventName, ref context);
 
             if (context.Handled) return;
 
-            if (target.Parent != null)
-                RaiseBubbleEvent(eventName, ref context, target.Parent);
-        }
-
-        void InvokeHandlers(string eventName, ref RoutedEventContext context)
-        {
-            List<Delegate> handlers;
-            if (handlerMap.TryGetValue(eventName, out handlers))
-            {
-                foreach (RoutedEventHandler handler in handlers)
-                {
-                    handler(this, ref context);
-                    if (context.Handled) return;
-                }
-            }
+            if (Parent != null) Parent.RaiseBubbleEvent(eventName, ref context);
         }
 
         /// <summary>
@@ -919,7 +940,14 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected virtual void OnLostFocus(ref RoutedEventContext context) { }
 
-        protected RoutedEventHandler ToRoutedEventHandler(ClassRoutedEventHandler method)
+        /// <summary>
+        /// ClassRoutedEventHandler を呼び出す RoutedEventHandler を生成します。
+        /// </summary>
+        /// <param name="method">ClassRoutedEventHandler。</param>
+        /// <returns>
+        /// ClassRoutedEventHandler を呼び出す RoutedEventHandler。
+        /// </returns>
+        protected RoutedEventHandler CreateRoutedEventHandler(ClassRoutedEventHandler method)
         {
             return delegate(Control s, ref RoutedEventContext c)
             {
@@ -963,7 +991,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if (!child.Visible) continue;
 
                 // Hit Test に失敗するならばスキップします。
-                if (!child.HitTestEnabled || !child.HitTest(new Point(mouseState.X, mouseState.Y)))
+                if (!child.HitTest(new Point(mouseState.X, mouseState.Y)))
                     continue;
 
                 // 子に通知します。
@@ -1079,6 +1107,40 @@ namespace Willcraftia.Xna.Framework.UI
                     continue;
 
                 DrawChild(gameTime, drawContext, child);
+            }
+        }
+
+        /// <summary>
+        /// target で指定する Control を起点に Bubble イベントを発生させます。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="context">RoutedEventContext。</param>
+        /// <param name="target">イベント発生の起点とする Control。</param>
+        //void RaiseBubbleEvent(string eventName, ref RoutedEventContext context, Control target)
+        //{
+        //    InvokeHandlers(eventName, ref context);
+
+        //    if (context.Handled) return;
+
+        //    if (target.Parent != null)
+        //        RaiseBubbleEvent(eventName, ref context, target.Parent);
+        //}
+
+        /// <summary>
+        /// RoutedEventHandler を呼び出します。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="context">RoutedEventContext。</param>
+        void InvokeHandlers(string eventName, ref RoutedEventContext context)
+        {
+            List<RoutedEventHandler> handlers;
+            if (handlerMap.TryGetValue(eventName, out handlers))
+            {
+                foreach (RoutedEventHandler handler in handlers)
+                {
+                    handler(this, ref context);
+                    if (context.Handled) return;
+                }
             }
         }
     }

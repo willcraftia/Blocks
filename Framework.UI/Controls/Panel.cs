@@ -6,8 +6,13 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
+    /// <summary>
+    /// Control のコンテナとして振る舞う Control です。
+    /// </summary>
     public class Panel : Control
     {
+        #region InternalControlCollection
+
         class InternalControlCollection : ControlCollection
         {
             Panel panel;
@@ -43,13 +48,22 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             }
         }
 
+        #endregion
+
         public ControlCollection Children { get; private set; }
 
-        public override int ChildrenCount
+        /// <summary>
+        /// Children のサイズを返します。
+        /// </summary>
+        protected override int ChildrenCount
         {
             get { return Children.Count; }
         }
 
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="screen">Screen。</param>
         protected Panel(Screen screen)
             : base(screen)
         {
@@ -58,7 +72,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected override Control GetChild(int index)
         {
-            if (index < 0 || ChildrenCount <= index) throw new ArgumentOutOfRangeException("index");
+            if (index < 0 || ChildrenCount <= index)
+                throw new ArgumentOutOfRangeException("index");
             return Children[index];
         }
 

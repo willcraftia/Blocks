@@ -7,6 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace Willcraftia.Xna.Framework.UI
 {
+    /// <summary>
+    /// Window を管理するためのコレクションです。
+    /// </summary>
     public class WindowCollection : Collection<Window>
     {
         /// <summary>

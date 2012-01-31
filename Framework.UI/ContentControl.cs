@@ -25,7 +25,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
-        public override int ChildrenCount
+        protected override int ChildrenCount
         {
             get { return (content != null) ? 1 : 0; }
         }
