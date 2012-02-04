@@ -120,6 +120,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 openNewDialogButton.Click += new RoutedEventHandler(OnOpenNewDialogButtonClick);
                 openNewDialogButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 openNewDialogButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                openNewDialogButton.Focus();
 
                 var cubeControl = new CubeControl(screen)
                 {
@@ -263,6 +264,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 openNewDialogButton.Click += new RoutedEventHandler(OnOpenNewDialogButtonClick);
                 openNewDialogButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 openNewDialogButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                openNewDialogButton.Focus();
 
                 var closeButton = new Button(screen)
                 {
@@ -432,6 +434,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
                 closeButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 closeButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                closeButton.Focus();
             }
 
             void OnCloseButtonClick(Control sender, ref RoutedEventContext context)

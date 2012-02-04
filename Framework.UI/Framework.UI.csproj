@@ -103,7 +103,7 @@
     <Compile Include="ContentControl.cs" />
     <Compile Include="Controls\Panel.cs" />
     <Compile Include="Controls\TextBlock.cs" />
-    <Compile Include="FocusNavigation.cs" />
+    <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="FocusScope.cs" />
     <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />

@@ -19,6 +19,11 @@ namespace Willcraftia.Xna.Framework.UI
     public class Screen : IDisposable
     {
         /// <summary>
+        /// フォーカスが設定されている Control への弱参照。
+        /// </summary>
+        WeakReference focusedControl = new WeakReference(null);
+
+        /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -78,6 +83,28 @@ namespace Willcraftia.Xna.Framework.UI
         /// Animation コレクションを取得します。
         /// </summary>
         public AnimationCollection Animations { get; private set; }
+
+        /// <summary>
+        /// フォーカスが設定されている Control を取得します。
+        /// </summary>
+        public Control FocusedControl
+        {
+            get { return focusedControl.Target as Control; }
+            internal set
+            {
+                if (focusedControl.Target != null)
+                {
+                    (focusedControl.Target as Control).Focused = false;
+                }
+
+                focusedControl.Target = value;
+
+                if (focusedControl.Target != null)
+                {
+                    (focusedControl.Target as Control).Focused = true;
+                }
+            }
+        }
 
         /// <summary>
         /// コンストラクタ。
@@ -177,6 +204,52 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// キーが押された時に呼び出されます。
+        /// </summary>
+        protected internal void ProcessKeyDown()
+        {
+            // フォーカスが設定された Control が無いならば何も処理しません。
+            if (FocusedControl == null) return;
+
+            // フォーカス移動のキーを優先して処理します。
+            if (KeyboardDevice.IsKeyPressed(Keys.Up))
+            {
+                MoveFocus(FocusNavigationDirection.Up);
+                return;
+            }
+            else if (KeyboardDevice.IsKeyPressed(Keys.Down))
+            {
+                MoveFocus(FocusNavigationDirection.Down);
+                return;
+            }
+            else if (KeyboardDevice.IsKeyPressed(Keys.Left))
+            {
+                MoveFocus(FocusNavigationDirection.Left);
+                return;
+            }
+            else if (KeyboardDevice.IsKeyPressed(Keys.Right))
+            {
+                MoveFocus(FocusNavigationDirection.Right);
+                return;
+            }
+
+            // キーが押されたことを Control へ通知します。
+            FocusedControl.ProcessKeyDown();
+        }
+
+        /// <summary>
+        /// キーが離された時に呼び出されます。
+        /// </summary>
+        protected internal void ProcessKeyUp()
+        {
+            // フォーカスが設定された Control が無いならば何も処理しません。
+            if (FocusedControl == null) return;
+
+            // キーが離されたことを Control へ通知します。
+            FocusedControl.ProcessKeyUp();
+        }
+
+        /// <summary>
         /// Screen を初期化します。
         /// </summary>
         /// <remarks>
@@ -194,6 +267,151 @@ namespace Willcraftia.Xna.Framework.UI
             UpdateLayout();
 
             Initialized = true;
+        }
+
+        /// <summary>
+        /// 指定の Window を表示します。
+        /// </summary>
+        /// <param name="window">表示する Window。</param>
+        internal void ShowWindow(Window window)
+        {
+            if (Desktop.Windows.Contains(window))
+                throw new InvalidOperationException(
+                    "The specified window is already registered.");
+
+            var oldActiveWindow = GetTopMostWindow();
+            if (oldActiveWindow != null) oldActiveWindow.Active = false;
+
+            Desktop.Windows.Add(window);
+            window.Active = true;
+            if (window.LogicalFocusedControl != null) FocusedControl = window.LogicalFocusedControl;
+        }
+
+        /// <summary>
+        /// 指定の Window を閉じます。
+        /// </summary>
+        /// <param name="window">閉じる Window。</param>
+        internal void CloseWindow(Window window)
+        {
+            if (window == null) throw new ArgumentNullException("window");
+            if (!Desktop.Windows.Contains(window))
+                throw new InvalidOperationException(
+                    "The specified window could not be found in this screen.");
+
+            Desktop.Windows.Remove(window);
+
+            if (window.Active)
+            {
+                window.Active = false;
+                var newActiveWindow = GetTopMostWindow();
+                if (newActiveWindow != null)
+                {
+                    newActiveWindow.Active = true;
+                }
+                else
+                {
+                    FocusedControl = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Window をアクティブ化します。
+        /// </summary>
+        /// <param name="window">アクティブ化する Window。</param>
+        internal void ActivateWindow(Window window)
+        {
+            if (window == null) throw new ArgumentNullException("window");
+            if (!Desktop.Windows.Contains(window))
+                throw new InvalidOperationException(
+                    "The specified window could not be found in this screen.");
+
+            // 既にアクティブな場合には処理を終えます。
+            if (window.Active) return;
+
+            var oldActiveWindow = GetTopMostWindow();
+            if (oldActiveWindow != null) oldActiveWindow.Active = false;
+
+            // 最前面へ移動させます。
+            Desktop.Windows.Remove(window);
+            Desktop.Windows.Add(window);
+            window.Active = true;
+            if (window.LogicalFocusedControl != null) FocusedControl = window.LogicalFocusedControl;
+        }
+
+        /// <summary>
+        /// 指定の Control へフォーカスを設定します。
+        /// </summary>
+        /// <param name="control">フォーカスを設定する Control。</param>
+        /// <returns>
+        /// true (フォーカスが設定された場合)、
+        /// false (論理フォーカスの設定のみが行われた場合、
+        /// あるいは、フォーカス設定不能な Control の場合)。
+        /// </returns>
+        internal bool MoveFocusTo(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+
+            if (!control.Focusable || !control.Enabled || !control.Visible) return false;
+
+            var window = Window.GetWindow(control);
+            if (window == null) return false;
+
+            // 論理フォーカスを設定します。
+            window.LogicalFocusedControl = control;
+
+            // 非アクティブ Window の Control ならば論理フォーカスの設定のみで終えます。
+            if (!window.Active) return false;
+
+            // アクティブ Window の Control ならばフォーカスを設定します。
+            FocusedControl = control;
+            return true;
+        }
+
+        /// <summary>
+        /// 最前面の Window を取得します。
+        /// Window が存在しない場合には null を返します。
+        /// </summary>
+        /// <returns></returns>
+        Window GetTopMostWindow()
+        {
+            if (Desktop.Windows.Count == 0) return null;
+            return Desktop.Windows[Desktop.Windows.Count - 1];
+        }
+
+        /// <summary>
+        /// 指定の方向にある Control へフォーカスを移動します。
+        /// </summary>
+        /// <param name="direction">フォーカス移動方向。</param>
+        void MoveFocus(FocusNavigationDirection direction)
+        {
+            if (FocusedControl == null) return;
+
+            var candidate = GetFocusCandidate(direction);
+            if (candidate == null) return;
+
+            // フォーカスを設定します。
+            MoveFocusTo(candidate);
+        }
+
+        /// <summary>
+        /// 指定の方向にあるフォーカス設定可能な Control を取得します。
+        /// そのような Control が存在しない場合には null を返します。
+        /// </summary>
+        /// <param name="direction">フォーカス移動方向。</param>
+        /// <returns>
+        /// 指定の方向にあるフォーカス設定可能な Control。
+        /// そのような Control が存在しない場合には null。
+        /// </returns>
+        Control GetFocusCandidate(FocusNavigationDirection direction)
+        {
+            if (FocusedControl == null) return null;
+
+            var window = Window.GetWindow(FocusedControl);
+            if (window == null) return null;
+
+            float minDistance = float.PositiveInfinity;
+            return window.GetFocusCandidate(direction, ref minDistance);
         }
 
         #region IDisposable

@@ -41,6 +41,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 stackPanel.Children.Add(newGameButton);
                 newGameButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
                 newGameButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                newGameButton.Focus();
 
                 var switchScreenButton = new Button(screen)
                 {

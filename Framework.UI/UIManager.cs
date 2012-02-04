@@ -558,14 +558,19 @@ namespace Willcraftia.Xna.Framework.UI
             // KeyboardDevice を更新します。
             keyboardDevice.Update();
 
-            // マウス カーソルが移動したことを Screen で処理します。
+            // マウス カーソルが移動したことを Screen へ通知します。
             if (mouseDevice.MouseMoved) screen.ProcessMouseMove();
-            // マウス ボタンが押されたことを Screen で処理します。
+            // マウス ボタンが押されたことを Screen へ通知します。
             if (mouseDevice.ButtonPressed) screen.ProcessMouseDown();
-            // マウス ボタンが離されたことを Screen で処理します。
+            // マウス ボタンが離されたことを Screen へ通知します。
             if (mouseDevice.ButtonReleased) screen.ProcessMouseUp();
-            // マウス ホイールが回転したことを Screen で処理します。
+            // マウス ホイールが回転したことを Screen へ通知します。
             if (mouseDevice.WheelScrolled) screen.ProcessMouseWheel();
+
+            // キーが押されたことを Screen へ通知します。
+            if (keyboardDevice.KeyPressed) screen.ProcessKeyDown();
+            // キーが離されたことを Screen へ通知します。
+            if (keyboardDevice.KeyReleased) screen.ProcessKeyUp();
         }
 
         public override void Draw(GameTime gameTime)

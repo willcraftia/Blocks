@@ -43,9 +43,9 @@ namespace Willcraftia.Xna.Framework.UI
         bool active;
 
         /// <summary>
-        /// 非アクティブ化される時にフォーカスを持っていた子孫 Control の弱参照。
+        /// 論理フォーカスが設定されている Control への弱参照。
         /// </summary>
-        WeakReference focusedControlWeakReference = new WeakReference(null);
+        WeakReference focusedControl = new WeakReference(null);
 
         /// <summary>
         /// サイズをコンテンツのサイズに合わせて自動調整する方法を取得または設定します。
@@ -74,7 +74,7 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// Window がアクティブ可動化を示す値を取得します。
+        /// Window がアクティブどうかを示す値を取得します。
         /// </summary>
         /// <value>
         /// true (Window がアクティブの場合)、false (それ以外の場合)。
@@ -95,6 +95,25 @@ namespace Willcraftia.Xna.Framework.UI
                 else
                 {
                     OnDeactivated();
+                }
+            }
+        }
+
+        internal Control LogicalFocusedControl
+        {
+            get { return focusedControl.Target as Control; }
+            set
+            {
+                if (focusedControl.Target != null)
+                {
+                    (focusedControl.Target as Control).LogicalFocused = false;
+                }
+
+                focusedControl.Target = value;
+
+                if (focusedControl.Target != null)
+                {
+                    (focusedControl.Target as Control).LogicalFocused = true;
                 }
             }
         }
@@ -134,7 +153,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public virtual void Show()
         {
-            Screen.Desktop.ShowWindow(this);
+            Screen.ShowWindow(this);
         }
 
         /// <summary>
@@ -145,7 +164,7 @@ namespace Willcraftia.Xna.Framework.UI
             // Closing イベントを発生させます。
             OnClosing();
             
-            Screen.Desktop.CloseWindow(this);
+            Screen.CloseWindow(this);
 
             // Closed イベントを発生させます。
             OnClosed();
@@ -156,7 +175,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void Activate()
         {
-            Screen.Desktop.ActivateWindow(this);
+            Screen.ActivateWindow(this);
         }
 
         /// <summary>

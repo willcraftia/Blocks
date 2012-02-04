@@ -27,18 +27,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Orientation = Orientation.Horizontal;
         }
 
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            if (Orientation == Orientation.Horizontal)
-            {
-                return MeasureHorizontalDirection(availableSize);
-            }
-            else
-            {
-                return MeasureVerticalDirection(availableSize);
-            }
-        }
-
         protected virtual Size MeasureHorizontalDirection(Size availableSize)
         {
             // 暫定的に自身の希望サイズを計算します。
@@ -95,18 +83,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             size.Height = measuredHeight + Padding.Top + Padding.Bottom;
 
             return size;
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (Orientation == Orientation.Horizontal)
-            {
-                return ArrangeHorizontalDirection(finalSize);
-            }
-            else
-            {
-                return ArrangeVerticalDirection(finalSize);
-            }
         }
 
         /// <summary>
@@ -191,6 +167,30 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             }
 
             return finalSize;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (Orientation == Orientation.Horizontal)
+            {
+                return MeasureHorizontalDirection(availableSize);
+            }
+            else
+            {
+                return MeasureVerticalDirection(availableSize);
+            }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (Orientation == Orientation.Horizontal)
+            {
+                return ArrangeHorizontalDirection(finalSize);
+            }
+            else
+            {
+                return ArrangeVerticalDirection(finalSize);
+            }
         }
     }
 }

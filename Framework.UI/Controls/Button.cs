@@ -64,6 +64,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Click += CreateRoutedEventHandler(OnClick);
 
             Enabled = true;
+            Focusable = true;
         }
 
         protected override void OnMouseEnter(ref RoutedEventContext context)

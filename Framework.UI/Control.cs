@@ -73,6 +73,46 @@ namespace Willcraftia.Xna.Framework.UI
         public static readonly string MouseUpEvent = "MouseUp";
 
         /// <summary>
+        /// キーが押された時に発生します。
+        /// </summary>
+        public static readonly string PreviewKeyDownEvent = "PreviewKeyDown";
+
+        /// <summary>
+        /// キーが押された時に発生します。
+        /// </summary>
+        public static readonly string KeyDownEvent = "KeyDown";
+
+        /// <summary>
+        /// キーが離された時に発生します。
+        /// </summary>
+        public static readonly string PreviewKeyUpEvent = "PreviewKeyUp";
+
+        /// <summary>
+        /// キーが離された時に発生します。
+        /// </summary>
+        public static readonly string KeyUpEvent = "KeyUp";
+
+        /// <summary>
+        /// フォーカスが設定された時に発生します。
+        /// </summary>
+        public static readonly string GotFocusEvent = "GotFocus";
+
+        /// <summary>
+        /// フォーカスが解除された時に発生します。
+        /// </summary>
+        public static readonly string LostFocusEvent = "LostFocus";
+
+        /// <summary>
+        /// 論理フォーカスが設定された時に発生します。
+        /// </summary>
+        public static readonly string GotLogicalFocusEvent = "GotLogicalFocus";
+
+        /// <summary>
+        /// 論理フォーカスが解除された時に発生します。
+        /// </summary>
+        public static readonly string LostLogicalFocusEvent = "LostLogicalFocus";
+
+        /// <summary>
         /// Enabled プロパティが変更された時に発生します。
         /// </summary>
         public event EventHandler EnabledChanged = delegate { };
@@ -81,16 +121,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// Visible プロパティが変更された時に発生します。
         /// </summary>
         public event EventHandler VisibleChanged = delegate { };
-
-        /// <summary>
-        /// フォーカスが設定された時に発生します。
-        /// </summary>
-        public event RoutedEventHandler GotFocus = delegate { };
-
-        /// <summary>
-        /// フォーカスが解除された時に発生します。
-        /// </summary>
-        public event RoutedEventHandler LostFocus = delegate { };
 
         /// <summary>
         /// PreviewMouseMove イベントのハンドラを追加または削除します。
@@ -183,6 +213,78 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// PreviewKeyDown イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewKeyDown
+        {
+            add { AddHandler(PreviewKeyDownEvent, value); }
+            remove { RemoveHandler(PreviewKeyDownEvent, value); }
+        }
+
+        /// <summary>
+        /// KeyDown イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler KeyDown
+        {
+            add { AddHandler(KeyDownEvent, value); }
+            remove { RemoveHandler(KeyDownEvent, value); }
+        }
+
+        /// <summary>
+        /// PreviewKeyUp イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler PreviewKeyUp
+        {
+            add { AddHandler(PreviewKeyUpEvent, value); }
+            remove { RemoveHandler(PreviewKeyUpEvent, value); }
+        }
+
+        /// <summary>
+        /// KeyUp イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler KeyUp
+        {
+            add { AddHandler(KeyUpEvent, value); }
+            remove { RemoveHandler(KeyUpEvent, value); }
+        }
+
+        /// <summary>
+        /// GotFocus イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler GotFocus
+        {
+            add { AddHandler(GotFocusEvent, value); }
+            remove { RemoveHandler(GotFocusEvent, value); }
+        }
+
+        /// <summary>
+        /// LostFocus イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler LostFocus
+        {
+            add { AddHandler(LostFocusEvent, value); }
+            remove { RemoveHandler(LostFocusEvent, value); }
+        }
+
+        /// <summary>
+        /// GotLogicalFocus イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler GotLogicalFocus
+        {
+            add { AddHandler(GotLogicalFocusEvent, value); }
+            remove { RemoveHandler(GotLogicalFocusEvent, value); }
+        }
+
+        /// <summary>
+        /// LostLogicalFocus イベントのハンドラを追加または削除します。
+        /// </summary>
+        public event RoutedEventHandler LostLogicalFocus
+        {
+            add { AddHandler(LostLogicalFocusEvent, value); }
+            remove { RemoveHandler(LostLogicalFocusEvent, value); }
+        }
+
+        /// <summary>
         /// イベント名をキーに RoutedEventHandler を値とするマップ。
         /// </summary>
         Dictionary<string, List<RoutedEventHandler>> handlerMap = new Dictionary<string, List<RoutedEventHandler>>();
@@ -209,6 +311,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (フォーカスが設定されている場合)、false (それ以外の場合)。
         /// </summary>
         bool focused;
+
+        /// <summary>
+        /// true (論理フォーカスが設定されている場合)、false (それ以外の場合)。
+        /// </summary>
+        bool logicalFocused;
 
         /// <summary>
         /// Screen を取得します。
@@ -414,15 +521,19 @@ namespace Willcraftia.Xna.Framework.UI
                 if (focused == value) return;
 
                 focused = value;
+                RaiseEvent(null, focused ? GotFocusEvent : LostFocusEvent);
+            }
+        }
 
-                //if (focused)
-                //{
-                //    OnGotFocus(this);
-                //}
-                //else
-                //{
-                //    OnLostFocus(this);
-                //}
+        public bool LogicalFocused
+        {
+            get { return logicalFocused; }
+            internal set
+            {
+                if (logicalFocused == value) return;
+
+                logicalFocused = value;
+                RaiseEvent(null, logicalFocused ? GotLogicalFocusEvent : LostLogicalFocusEvent);
             }
         }
 
@@ -453,6 +564,10 @@ namespace Willcraftia.Xna.Framework.UI
             MouseDown += CreateRoutedEventHandler(OnMouseDown);
             PreviewMouseUp += CreateRoutedEventHandler(OnPreviewMouseUp);
             MouseUp += CreateRoutedEventHandler(OnMouseUp);
+            GotFocus += CreateRoutedEventHandler(OnGotFocus);
+            LostFocus += CreateRoutedEventHandler(OnLostFocus);
+            GotLogicalFocus += CreateRoutedEventHandler(OnGotLogicalFocus);
+            LostLogicalFocus += CreateRoutedEventHandler(OnLostLogicalFocus);
 
             Width = float.NaN;
             Height = float.NaN;
@@ -493,6 +608,15 @@ namespace Willcraftia.Xna.Framework.UI
         public bool IsDescendantOf(Control ancestor)
         {
             return ancestor.IsAncestorOf(this);
+        }
+
+        /// <summary>
+        /// フォーカスを設定します。
+        /// </summary>
+        /// <returns></returns>
+        public bool Focus()
+        {
+            return Screen.MoveFocusTo(this);
         }
 
         /// <summary>
@@ -624,87 +748,6 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual Control GetChild(int index)
         {
             throw new ArgumentOutOfRangeException("index");
-        }
-
-        /// <summary>
-        /// RoutedEventHandler を追加します。
-        /// </summary>
-        /// <param name="eventName">イベント名。</param>
-        /// <param name="handler">イベントに追加する RoutedEventHandler。</param>
-        protected void AddHandler(string eventName, RoutedEventHandler handler)
-        {
-            List<RoutedEventHandler> handlers;
-            if (!handlerMap.TryGetValue(eventName, out handlers))
-            {
-                handlers = new List<RoutedEventHandler>();
-                handlerMap[eventName] = handlers;
-            }
-
-            handlers.Add(handler);
-        }
-
-        /// <summary>
-        /// RoutedEventHandler を削除します。
-        /// </summary>
-        /// <param name="eventName">イベント名。</param>
-        /// <param name="handler">イベントから削除する RoutedEventHandler。</param>
-        protected void RemoveHandler(string eventName, RoutedEventHandler handler)
-        {
-            List<RoutedEventHandler> handlers;
-            if (!handlerMap.TryGetValue(eventName, out handlers))
-                throw new InvalidOperationException(string.Format(
-                    "Handler '{0}' could not be found.", eventName));
-
-            handlers.Remove(handler);
-        }
-
-        /// <summary>
-        /// ルーティング イベントを発生させます。
-        /// </summary>
-        /// <param name="tunnelEventName">Tunnel イベント名。</param>
-        /// <param name="bubbleEventName">Bubble イベント名。</param>
-        protected void RaiseEvent(string tunnelEventName, string bubbleEventName)
-        {
-            var context = new RoutedEventContext(this);
-
-            // tunnelEventName が非 null ならば Tunnel イベントを発生させます。
-            if (tunnelEventName != null)
-                RaiseTunnelEvent(tunnelEventName, ref context);
-
-            // bubbleEventName が非 null ならば Bubble イベントを発生させます。
-            if (!context.Handled && bubbleEventName != null)
-                RaiseBubbleEvent(bubbleEventName, ref context);
-        }
-
-        /// <summary>
-        /// Tunnel イベントを発生させます。
-        /// </summary>
-        /// <param name="eventName">イベント名。</param>
-        /// <param name="context">RoutedEventContext。</param>
-        protected void RaiseTunnelEvent(string eventName, ref RoutedEventContext context)
-        {
-            if (Parent != null)
-            {
-                Parent.RaiseTunnelEvent(eventName, ref context);
-                if (context.Handled) return;
-            }
-
-            InvokeHandlers(eventName, ref context);
-        }
-
-        /// <summary>
-        /// Bubble イベントを発生させます。
-        /// </summary>
-        /// <param name="eventName">イベント名。</param>
-        /// <param name="context">RoutedEventContext。</param>
-        protected void RaiseBubbleEvent(string eventName, ref RoutedEventContext context)
-        {
-            //RaiseBubbleEvent(eventName, ref context, this);
-            InvokeHandlers(eventName, ref context);
-
-            if (context.Handled) return;
-
-            if (Parent != null) Parent.RaiseBubbleEvent(eventName, ref context);
         }
 
         /// <summary>
@@ -936,24 +979,29 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="context">RoutedEventContext。</param>
         protected virtual void OnMouseUp(ref RoutedEventContext context) { }
 
+        /// <summary>
+        /// GotFocus イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
         protected virtual void OnGotFocus(ref RoutedEventContext context) { }
 
+        /// <summary>
+        /// LostFocus イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
         protected virtual void OnLostFocus(ref RoutedEventContext context) { }
 
         /// <summary>
-        /// ClassRoutedEventHandler を呼び出す RoutedEventHandler を生成します。
+        /// LogicalGotFocus イベントの到達で呼び出されます。
         /// </summary>
-        /// <param name="method">ClassRoutedEventHandler。</param>
-        /// <returns>
-        /// ClassRoutedEventHandler を呼び出す RoutedEventHandler。
-        /// </returns>
-        protected RoutedEventHandler CreateRoutedEventHandler(ClassRoutedEventHandler method)
-        {
-            return delegate(Control s, ref RoutedEventContext c)
-            {
-                method(ref c);
-            };
-        }
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnGotLogicalFocus(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// LogicalLostFocus イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnLostLogicalFocus(ref RoutedEventContext context) { }
 
         /// <summary>
         /// 子 Control を描画します。
@@ -974,6 +1022,102 @@ namespace Willcraftia.Xna.Framework.UI
             child.Draw(gameTime, drawContext);
 
             drawContext.PopOpacity();
+        }
+
+        /// <summary>
+        /// RoutedEventHandler を追加します。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="handler">イベントに追加する RoutedEventHandler。</param>
+        protected void AddHandler(string eventName, RoutedEventHandler handler)
+        {
+            List<RoutedEventHandler> handlers;
+            if (!handlerMap.TryGetValue(eventName, out handlers))
+            {
+                handlers = new List<RoutedEventHandler>();
+                handlerMap[eventName] = handlers;
+            }
+
+            handlers.Add(handler);
+        }
+
+        /// <summary>
+        /// RoutedEventHandler を削除します。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="handler">イベントから削除する RoutedEventHandler。</param>
+        protected void RemoveHandler(string eventName, RoutedEventHandler handler)
+        {
+            List<RoutedEventHandler> handlers;
+            if (!handlerMap.TryGetValue(eventName, out handlers))
+                throw new InvalidOperationException(string.Format(
+                    "Handler '{0}' could not be found.", eventName));
+
+            handlers.Remove(handler);
+        }
+
+        /// <summary>
+        /// ルーティング イベントを発生させます。
+        /// </summary>
+        /// <param name="tunnelEventName">Tunnel イベント名。</param>
+        /// <param name="bubbleEventName">Bubble イベント名。</param>
+        protected void RaiseEvent(string tunnelEventName, string bubbleEventName)
+        {
+            var context = new RoutedEventContext(this);
+
+            // tunnelEventName が非 null ならば Tunnel イベントを発生させます。
+            if (tunnelEventName != null)
+                RaiseTunnelEvent(tunnelEventName, ref context);
+
+            // bubbleEventName が非 null ならば Bubble イベントを発生させます。
+            if (!context.Handled && bubbleEventName != null)
+                RaiseBubbleEvent(bubbleEventName, ref context);
+        }
+
+        /// <summary>
+        /// Tunnel イベントを発生させます。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="context">RoutedEventContext。</param>
+        protected void RaiseTunnelEvent(string eventName, ref RoutedEventContext context)
+        {
+            if (Parent != null)
+            {
+                Parent.RaiseTunnelEvent(eventName, ref context);
+                if (context.Handled) return;
+            }
+
+            InvokeHandlers(eventName, ref context);
+        }
+
+        /// <summary>
+        /// Bubble イベントを発生させます。
+        /// </summary>
+        /// <param name="eventName">イベント名。</param>
+        /// <param name="context">RoutedEventContext。</param>
+        protected void RaiseBubbleEvent(string eventName, ref RoutedEventContext context)
+        {
+            //RaiseBubbleEvent(eventName, ref context, this);
+            InvokeHandlers(eventName, ref context);
+
+            if (context.Handled) return;
+
+            if (Parent != null) Parent.RaiseBubbleEvent(eventName, ref context);
+        }
+
+        /// <summary>
+        /// ClassRoutedEventHandler を呼び出す RoutedEventHandler を生成します。
+        /// </summary>
+        /// <param name="method">ClassRoutedEventHandler。</param>
+        /// <returns>
+        /// ClassRoutedEventHandler を呼び出す RoutedEventHandler。
+        /// </returns>
+        protected RoutedEventHandler CreateRoutedEventHandler(ClassRoutedEventHandler method)
+        {
+            return delegate(Control s, ref RoutedEventContext c)
+            {
+                method(ref c);
+            };
         }
 
         /// <summary>
@@ -1050,6 +1194,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             // mouseOverControl が自分であるならば、自分に通知します。
             RaiseEvent(PreviewMouseDownEvent, MouseDownEvent);
+
+            // フォーカスを設定します。
+            Focus();
         }
 
         /// <summary>
@@ -1069,6 +1216,134 @@ namespace Willcraftia.Xna.Framework.UI
 
             // mouseOverControl が自分であるならば、自分に通知します。
             RaiseEvent(PreviewMouseUpEvent, MouseUpEvent);
+        }
+
+        /// <summary>
+        /// キーが押されたことを処理します。
+        /// </summary>
+        internal void ProcessKeyDown()
+        {
+            RaiseEvent(PreviewKeyDownEvent, KeyDownEvent);
+        }
+
+        /// <summary>
+        /// キーが離されたことを処理します。
+        /// </summary>
+        internal void ProcessKeyUp()
+        {
+            RaiseEvent(PreviewKeyUpEvent, KeyUpEvent);
+        }
+
+        internal Control GetFocusCandidate(FocusNavigationDirection direction, ref float minDistance)
+        {
+            var focusedControl = Screen.FocusedControl;
+            var baseBounds = new Rect(focusedControl.PointToScreen(Point.Zero), focusedControl.RenderSize);
+
+            Control candidate = null;
+
+            for (int i = 0; i < ChildrenCount; i++)
+            {
+                var child = GetChild(i);
+
+                // 現在フォーカスが設定されている Control についての判定はスキップします。
+                if (child == Screen.FocusedControl) continue;
+
+                if (child.Focusable)
+                {
+                    var testBounds = new Rect(child.PointToScreen(Point.Zero), child.RenderSize);
+
+                    var distance = MeasureDirectionalDistance(direction, ref baseBounds, ref testBounds);
+
+                    // MEMO
+                    // 面倒なので少し雑に判定します。
+                    // 子の時点で対象外となるならば、その子孫の判定も諦めることにします。
+                    if (float.IsNaN(distance)) continue;
+
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        candidate = child;
+                    }
+
+                    // MEMO
+                    // フォーカス設定可能な Control に到達した場合には、
+                    // その子孫にフォーカス設定可能な Control があったとしても、
+                    // まずはこの子にフォーカスを設定するように仕向けます。
+                }
+                else
+                {
+                    // フォーカス設定不能であっても、その子孫について判定を進めます。
+                    var descendantCandidate = child.GetFocusCandidate(direction, ref minDistance);
+                    if (descendantCandidate != null)
+                    {
+                        candidate = descendantCandidate;
+                    }
+                }
+            }
+
+            return candidate;
+        }
+
+        float MeasureDirectionalDistance(FocusNavigationDirection direction, ref Rect baseBounds, ref Rect testBounds)
+        {
+            // MEMO
+            // 面倒なので少し雑に判定します。
+            // Control の重なり状態は考慮しません (重ならずに整列していることを前提にします)。
+
+            if (direction == FocusNavigationDirection.Up || direction == FocusNavigationDirection.Down)
+            {
+                if (direction == FocusNavigationDirection.Up)
+                {
+                    // baseBounds よりも下側、左側、右側にある Control は無視します。
+                    if (baseBounds.Top < testBounds.Top ||
+                        testBounds.Right < baseBounds.Left ||
+                        baseBounds.Right < testBounds.Left)
+                    {
+                        return float.NaN;
+                    }
+
+                    return baseBounds.Top - testBounds.Bottom;
+                }
+                else
+                {
+                    // baseBounds よりも上側、左側、右側にある Control は無視します。
+                    if (testBounds.Bottom < baseBounds.Bottom ||
+                        testBounds.Right < baseBounds.Left ||
+                        baseBounds.Right < testBounds.Left)
+                    {
+                        return float.NaN;
+                    }
+
+                    return testBounds.Top - baseBounds.Bottom;
+                }
+            }
+            else
+            {
+                if (direction == FocusNavigationDirection.Left)
+                {
+                    // baseBounds よりも右側、上側、下側にある Control は無視します。
+                    if (baseBounds.Left < testBounds.Left ||
+                        testBounds.Bottom < baseBounds.Top ||
+                        baseBounds.Bottom < testBounds.Top)
+                    {
+                        return float.NaN;
+                    }
+
+                    return baseBounds.Left - testBounds.Right;
+                }
+                else
+                {
+                    // baseBounds よりも左側、上側、下側にある Control は無視します。
+                    if (testBounds.Right < baseBounds.Right ||
+                        testBounds.Bottom < baseBounds.Top ||
+                        baseBounds.Bottom < testBounds.Top)
+                    {
+                        return float.NaN;
+                    }
+
+                    return testBounds.Left - baseBounds.Right;
+                }
+            }
         }
 
         /// <summary>
@@ -1109,22 +1384,6 @@ namespace Willcraftia.Xna.Framework.UI
                 DrawChild(gameTime, drawContext, child);
             }
         }
-
-        /// <summary>
-        /// target で指定する Control を起点に Bubble イベントを発生させます。
-        /// </summary>
-        /// <param name="eventName">イベント名。</param>
-        /// <param name="context">RoutedEventContext。</param>
-        /// <param name="target">イベント発生の起点とする Control。</param>
-        //void RaiseBubbleEvent(string eventName, ref RoutedEventContext context, Control target)
-        //{
-        //    InvokeHandlers(eventName, ref context);
-
-        //    if (context.Handled) return;
-
-        //    if (target.Parent != null)
-        //        RaiseBubbleEvent(eventName, ref context, target.Parent);
-        //}
 
         /// <summary>
         /// RoutedEventHandler を呼び出します。

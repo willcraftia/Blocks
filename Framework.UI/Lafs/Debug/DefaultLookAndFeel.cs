@@ -78,6 +78,38 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
                 mouseOverBounds.Height = size;
                 DrawRectangle(drawContext, mouseOverBounds, mouseOverColor, borderColor, 1);
             }
+
+            // フォーカスを持つ場合に枠の四隅に矩形を描画します。
+            var focusColor = (control.Focused) ? Color.Magenta : Color.Violet;
+            if (control.Focused || control.LogicalFocused)
+            {
+                Rect focusBounds;
+                int size = 8;
+
+                focusBounds = renderBounds;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
+
+                focusBounds = renderBounds;
+                focusBounds.X += renderBounds.Width - size;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
+
+                focusBounds = renderBounds;
+                focusBounds.Y += renderBounds.Height - size;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
+
+                focusBounds = renderBounds;
+                focusBounds.X += renderBounds.Width - size;
+                focusBounds.Y += renderBounds.Height - size;
+                focusBounds.Width = size;
+                focusBounds.Height = size;
+                DrawRectangle(drawContext, focusBounds, focusColor, borderColor, 1);
+            }
         }
 
         void DrawRectangle(IDrawContext drawContext, Rect bounds, Color color, Color borderColor, int borderThickness)

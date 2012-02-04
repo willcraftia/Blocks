@@ -52,6 +52,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         public ControlCollection Children { get; private set; }
 
+        public FocusNavigationMode FocusNavigationMode { get; set; }
+
         /// <summary>
         /// Children のサイズを返します。
         /// </summary>
@@ -68,6 +70,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             : base(screen)
         {
             Children = new InternalControlCollection(this);
+            FocusNavigationMode = FocusNavigationMode.Continue;
         }
 
         protected override Control GetChild(int index)
