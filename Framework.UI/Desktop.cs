@@ -78,6 +78,26 @@ namespace Willcraftia.Xna.Framework.UI
             Windows = new InternalWindowCollection(this);
         }
 
+        /// <summary>
+        /// 最前面の Window を取得します。
+        /// Window が存在しない場合には null を返します。
+        /// </summary>
+        /// <returns>最前面の Window。Window が存在しない場合には null。</returns>
+        public Window GetTopMostWindow()
+        {
+            if (Windows.Count == 0) return null;
+            return Windows[Windows.Count - 1];
+        }
+
+        /// <summary>
+        /// Content プロパティが null ではない場合、
+        /// index = 0 は Content プロパティに設定された Control を指し示します。
+        /// また、Windows プロパティにある Window は、index + 1 で指し示されます。
+        /// Content プロパティが null の場合、
+        /// index = 0 は Windows プロパティにある Window のインデックスそのものとなります。
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         protected override Control GetChild(int index)
         {
             if (index < 0 || ChildrenCount <= index)

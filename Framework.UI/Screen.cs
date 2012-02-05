@@ -211,28 +211,6 @@ namespace Willcraftia.Xna.Framework.UI
             // フォーカスが設定された Control が無いならば何も処理しません。
             if (FocusedControl == null) return;
 
-            // フォーカス移動のキーを優先して処理します。
-            if (KeyboardDevice.IsKeyPressed(Keys.Up))
-            {
-                MoveFocus(FocusNavigationDirection.Up);
-                return;
-            }
-            else if (KeyboardDevice.IsKeyPressed(Keys.Down))
-            {
-                MoveFocus(FocusNavigationDirection.Down);
-                return;
-            }
-            else if (KeyboardDevice.IsKeyPressed(Keys.Left))
-            {
-                MoveFocus(FocusNavigationDirection.Left);
-                return;
-            }
-            else if (KeyboardDevice.IsKeyPressed(Keys.Right))
-            {
-                MoveFocus(FocusNavigationDirection.Right);
-                return;
-            }
-
             // キーが押されたことを Control へ通知します。
             FocusedControl.ProcessKeyDown();
         }
@@ -279,7 +257,7 @@ namespace Willcraftia.Xna.Framework.UI
                 throw new InvalidOperationException(
                     "The specified window is already registered.");
 
-            var oldActiveWindow = GetTopMostWindow();
+            var oldActiveWindow = Desktop.GetTopMostWindow();
             if (oldActiveWindow != null) oldActiveWindow.Active = false;
 
             Desktop.Windows.Add(window);
@@ -303,7 +281,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (window.Active)
             {
                 window.Active = false;
-                var newActiveWindow = GetTopMostWindow();
+                var newActiveWindow = Desktop.GetTopMostWindow();
                 if (newActiveWindow != null)
                 {
                     newActiveWindow.Active = true;
@@ -329,7 +307,7 @@ namespace Willcraftia.Xna.Framework.UI
             // 既にアクティブな場合には処理を終えます。
             if (window.Active) return;
 
-            var oldActiveWindow = GetTopMostWindow();
+            var oldActiveWindow = Desktop.GetTopMostWindow();
             if (oldActiveWindow != null) oldActiveWindow.Active = false;
 
             // 最前面へ移動させます。
@@ -366,52 +344,6 @@ namespace Willcraftia.Xna.Framework.UI
             // アクティブ Window の Control ならばフォーカスを設定します。
             FocusedControl = control;
             return true;
-        }
-
-        /// <summary>
-        /// 最前面の Window を取得します。
-        /// Window が存在しない場合には null を返します。
-        /// </summary>
-        /// <returns></returns>
-        Window GetTopMostWindow()
-        {
-            if (Desktop.Windows.Count == 0) return null;
-            return Desktop.Windows[Desktop.Windows.Count - 1];
-        }
-
-        /// <summary>
-        /// 指定の方向にある Control へフォーカスを移動します。
-        /// </summary>
-        /// <param name="direction">フォーカス移動方向。</param>
-        void MoveFocus(FocusNavigationDirection direction)
-        {
-            if (FocusedControl == null) return;
-
-            var candidate = GetFocusCandidate(direction);
-            if (candidate == null) return;
-
-            // フォーカスを設定します。
-            MoveFocusTo(candidate);
-        }
-
-        /// <summary>
-        /// 指定の方向にあるフォーカス設定可能な Control を取得します。
-        /// そのような Control が存在しない場合には null を返します。
-        /// </summary>
-        /// <param name="direction">フォーカス移動方向。</param>
-        /// <returns>
-        /// 指定の方向にあるフォーカス設定可能な Control。
-        /// そのような Control が存在しない場合には null。
-        /// </returns>
-        Control GetFocusCandidate(FocusNavigationDirection direction)
-        {
-            if (FocusedControl == null) return null;
-
-            var window = Window.GetWindow(FocusedControl);
-            if (window == null) return null;
-
-            float minDistance = float.PositiveInfinity;
-            return window.GetFocusCandidate(direction, ref minDistance);
         }
 
         #region IDisposable

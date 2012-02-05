@@ -564,6 +564,12 @@ namespace Willcraftia.Xna.Framework.UI
             MouseDown += CreateRoutedEventHandler(OnMouseDown);
             PreviewMouseUp += CreateRoutedEventHandler(OnPreviewMouseUp);
             MouseUp += CreateRoutedEventHandler(OnMouseUp);
+
+            PreviewKeyDown += CreateRoutedEventHandler(OnPreviewKeyDown);
+            KeyDown += CreateRoutedEventHandler(OnKeyDown);
+            PreviewKeyUp += CreateRoutedEventHandler(OnPreviewKeyUp);
+            KeyUp += CreateRoutedEventHandler(OnKeyUp);
+            
             GotFocus += CreateRoutedEventHandler(OnGotFocus);
             LostFocus += CreateRoutedEventHandler(OnLostFocus);
             GotLogicalFocus += CreateRoutedEventHandler(OnGotLogicalFocus);
@@ -978,6 +984,30 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="context">RoutedEventContext。</param>
         protected virtual void OnMouseUp(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// PreviewKeyDown イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewKeyDown(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// KeyDown イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnKeyDown(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// PreviewKeyUp イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnPreviewKeyUp(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// KeyUp イベントの到達で呼び出されます。
+        /// </summary>
+        /// <param name="context">RoutedEventContext。</param>
+        protected virtual void OnKeyUp(ref RoutedEventContext context) { }
 
         /// <summary>
         /// GotFocus イベントの到達で呼び出されます。
