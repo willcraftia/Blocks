@@ -46,7 +46,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             drawContext.DrawRectangle(lineBounds, borderColor);
 
             // マウス オーバの場合に枠の四辺に矩形を描画します。 
-            var mouseOverColor = (control.MouseDirectlyOver) ? Color.DodgerBlue : Color.DarkGoldenrod;
+            var mouseOverColor = (control.MouseDirectlyOver) ? Color.Red : Color.Blue;
             if (control.MouseOver)
             {
                 Rect mouseOverBounds;
@@ -80,7 +80,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             }
 
             // フォーカスを持つ場合に枠の四隅に矩形を描画します。
-            var focusColor = (control.Focused) ? Color.Magenta : Color.Violet;
+            var focusColor = (control.Focused) ? Color.Red : Color.Blue;
             if (control.Focused || control.LogicalFocused)
             {
                 Rect focusBounds;

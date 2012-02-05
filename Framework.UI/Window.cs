@@ -66,11 +66,11 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (owner == value) return;
 
-                if (owner != null) owner.Closing -= new EventHandler(OnOwnerClosing);
+                if (owner != null) owner.Closed -= new EventHandler(OnOwnerClosed);
 
                 owner = value;
 
-                if (owner != null) owner.Closing += new EventHandler(OnOwnerClosing);
+                if (owner != null) owner.Closed += new EventHandler(OnOwnerClosed);
             }
         }
 
@@ -370,11 +370,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// この Window を所有する Window が閉じられる前に呼び出され、この Window を閉じます。
+        /// この Window を所有する Window が閉じられた時に呼び出され、この Window を閉じます。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnOwnerClosing(object sender, EventArgs e)
+        void OnOwnerClosed(object sender, EventArgs e)
         {
             Close();
         }

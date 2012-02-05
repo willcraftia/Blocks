@@ -43,7 +43,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <value>
         /// true (Enter キーが押された状態の場合)、false (それ以外の場合)。
         /// </value>
-        bool pressedByEnterKey;
+        bool pressedByKey;
 
         /// <summary>
         /// Button が押された状態にあるかどうかを取得します。
@@ -51,7 +51,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <value>true (Button が押された状態にある場合)、false (それ以外の場合)。</value>
         public bool Pressed
         {
-            get { return MouseDirectlyOver && (pressedByMouse || pressedByEnterKey); }
+            get { return MouseDirectlyOver && (pressedByMouse || pressedByKey); }
         }
 
         /// <summary>
@@ -117,6 +117,34 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 if (Enabled && !Pressed) RaiseEvent(null, ClickEvent);
 
                 context.Handled = true;
+            }
+        }
+
+        protected override void OnPreviewKeyDown(ref RoutedEventContext context)
+        {
+            base.OnPreviewKeyDown(ref context);
+            if (context.Handled) return;
+
+            // 機能が無効に設定されているならば、イベントを無視します。
+            if (!Enabled) return;
+
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Enter) ||
+                Screen.KeyboardDevice.IsKeyPressed(Keys.Space))
+            {
+                pressedByKey = true;
+            }
+        }
+
+        protected override void OnPreviewKeyUp(ref RoutedEventContext context)
+        {
+            base.OnPreviewKeyUp(ref context);
+            if (context.Handled) return;
+
+            if (Screen.KeyboardDevice.IsKeyReleased(Keys.Enter) ||
+                Screen.KeyboardDevice.IsKeyReleased(Keys.Space))
+            {
+                pressedByKey = false;
+                if (Enabled && !Pressed) RaiseEvent(null, ClickEvent);
             }
         }
 
