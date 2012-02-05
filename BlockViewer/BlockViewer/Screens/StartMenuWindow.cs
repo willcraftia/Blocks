@@ -33,7 +33,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var startButton = new Button(screen)
             {
                 Width = 200,
-                Padding = new Thickness(8),
+                Padding = new Thickness(4),
                 Content = new TextBlock(screen)
                 {
                     Text = Strings.StartButtonText
@@ -47,7 +47,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var languageSettingButton = new Button(screen)
             {
                 Width = 200,
-                Padding = new Thickness(8),
+                Padding = new Thickness(4),
                 Content = new TextBlock(screen)
                 {
                     Text = Strings.LanguageSettingButtonText
@@ -61,7 +61,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var exitButton = new Button(screen)
             {
                 Width = 200,
-                Padding = new Thickness(8),
+                Padding = new Thickness(4),
                 Content = new TextBlock(screen)
                 {
                     Text = Strings.ExitButtonText
