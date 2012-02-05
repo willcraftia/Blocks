@@ -12,6 +12,20 @@ namespace Willcraftia.Xna.Framework.UI
     public interface IUIService
     {
         /// <summary>
+        /// 指定された T 型が表す Screen を表示します。
+        /// T で指定する型の Type.AssemblyQualifiedName プロパティが Screen の名前として用いられます。
+        /// </summary>
+        /// <typeparam name="T">Screen の型。</typeparam>
+        void Show<T>() where T : Screen;
+
+        /// <summary>
+        /// 指定された型が表す Screen を表示します。
+        /// type で指定する型の Type.AssemblyQualifiedName プロパティが Screen の名前として用いられます。
+        /// </summary>
+        /// <param name="type">Screen の型。</param>
+        void Show(Type type);
+
+        /// <summary>
         /// 指定の名前で定義された Screen を表示します。
         /// </summary>
         /// <remarks>

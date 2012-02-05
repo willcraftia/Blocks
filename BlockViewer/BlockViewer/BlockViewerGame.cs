@@ -48,8 +48,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
             Content.RootDirectory = "Content";
 
+            // デフォルトは OS の CultureInfo に従います。
             Strings.Culture = CultureInfo.CurrentCulture;
-            //Strings.Culture = new CultureInfo("en");
         }
 
         protected override void Initialize()
@@ -68,7 +68,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         protected override void LoadContent()
         {
             // StartScreen の表示から開始します。
-            uiManager.Show("StartScreen");
+            uiManager.Show<Screens.ViewerStartScreen>();
         }
 
         protected override void UnloadContent()
@@ -105,7 +105,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// <param name="screenFactory">DefaultScreenFactory。</param>
         void InitializeScreenDefinitions(DefaultScreenFactory screenFactory)
         {
-            screenFactory.Definitions.Add(new ScreenDefinition("StartScreen", typeof(Screens.ViewerStartScreen)));
+            screenFactory.Definitions.Add<Screens.ViewerStartScreen>();
         }
 
         /// <summary>

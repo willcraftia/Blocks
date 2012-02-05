@@ -61,7 +61,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Default に類似しているローカライズされた文字列を検索します。
+        ///   DEFAULT に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DefaultButtonText {
             get {
@@ -70,7 +70,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   English に類似しているローカライズされた文字列を検索します。
+        ///   ENGLISH に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string EnButtonText {
             get {
@@ -79,7 +79,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Exit に類似しているローカライズされた文字列を検索します。
+        ///   EXIT に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ExitButtonText {
             get {
@@ -97,7 +97,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Select Language に類似しているローカライズされた文字列を検索します。
+        ///   SELECT LANGUAGE に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string LanguageSettingButtonText {
             get {
@@ -106,7 +106,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Start に類似しているローカライズされた文字列を検索します。
+        ///   START に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string StartButtonText {
             get {

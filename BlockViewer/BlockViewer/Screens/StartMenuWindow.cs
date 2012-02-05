@@ -40,6 +40,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 }
             };
             stackPanel.Children.Add(startButton);
+            startButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
+            startButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
+            startButton.Focus();
 
             var languageSettingButton = new Button(screen)
             {
@@ -52,6 +55,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(languageSettingButton);
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
+            languageSettingButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
+            languageSettingButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
 
             var exitButton = new Button(screen)
             {
@@ -64,13 +69,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(exitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
+            exitButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
+            exitButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
+        }
+
+        void OnButtonGotFocus(Control sender, ref RoutedEventContext context)
+        {
+            (sender as Button).Content.ForegroundColor = Color.Yellow;
+        }
+
+        void OnButtonLostFocus(Control sender, ref RoutedEventContext context)
+        {
+            (sender as Button).Content.ForegroundColor = Color.White;
         }
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
         {
             var dialog = new LanguageSettingDialog(Screen);
-            dialog.BackgroundColor = Color.Black;
-            dialog.Opacity = 0.5f;
             dialog.Show();
         }
 

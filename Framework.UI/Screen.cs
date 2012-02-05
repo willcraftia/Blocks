@@ -262,7 +262,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             Desktop.Windows.Add(window);
             window.Active = true;
-            if (window.LogicalFocusedControl != null) FocusedControl = window.LogicalFocusedControl;
+            FocusedControl = window.LogicalFocusedControl;
         }
 
         /// <summary>

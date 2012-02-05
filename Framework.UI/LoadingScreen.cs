@@ -39,7 +39,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// ロードする Screan の名前を取得または設定します。
         /// </summary>
-        public string LoadingScreenName { get; set; }
+        public string LoadedScreenName { get; set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -56,12 +56,12 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// LoadingScreenName が示す Screen をロードします。
+        /// LoadedScreenName プロパティが示す Screen をロードします。
         /// </summary>
         /// <returns>ロードされた Screen。</returns>
         protected virtual Screen LoadScreen()
         {
-            return ScreenFactory.CreateScreen(LoadingScreenName);
+            return ScreenFactory.CreateScreen(LoadedScreenName);
         }
 
         /// <summary>
