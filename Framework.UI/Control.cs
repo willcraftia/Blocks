@@ -1264,11 +1264,8 @@ namespace Willcraftia.Xna.Framework.UI
             RaiseEvent(PreviewKeyUpEvent, KeyUpEvent);
         }
 
-        internal Control GetFocusCandidate(FocusNavigationDirection direction, ref float minDistance)
+        internal Control GetFocusableControl(FocusNavigationDirection direction, ref Rect baseBounds, ref float minDistance)
         {
-            var focusedControl = Screen.FocusedControl;
-            var baseBounds = new Rect(focusedControl.PointToScreen(Point.Zero), focusedControl.RenderSize);
-
             Control candidate = null;
 
             for (int i = 0; i < ChildrenCount; i++)
@@ -1303,7 +1300,7 @@ namespace Willcraftia.Xna.Framework.UI
                 else
                 {
                     // フォーカス設定不能であっても、その子孫について判定を進めます。
-                    var descendantCandidate = child.GetFocusCandidate(direction, ref minDistance);
+                    var descendantCandidate = child.GetFocusableControl(direction, ref baseBounds, ref minDistance);
                     if (descendantCandidate != null)
                     {
                         candidate = descendantCandidate;

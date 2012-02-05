@@ -22,9 +22,8 @@ namespace Willcraftia.Xna.Framework.UI
         Cycle,
 
         /// <summary>
-        /// コンテナの端に到達した時にコンテナからフォーカスが失われ、
-        /// 次のコンテナにナビゲーションが移動します。
+        /// コンテナの先頭あるいは末尾に到達した時に、その要素でフォーカスの移動が停止します。
         /// </summary>
-        Continue
+        Wrapped
     }
 }

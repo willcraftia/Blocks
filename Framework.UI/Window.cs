@@ -100,6 +100,8 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        public FocusNavigationMode FocusNavigationMode { get; set; }
+
         /// <summary>
         /// 論理フォーカス。
         /// </summary>
@@ -130,6 +132,7 @@ namespace Willcraftia.Xna.Framework.UI
             : base(screen)
         {
             SizeToContent = SizeToContent.Manual;
+            FocusNavigationMode = FocusNavigationMode.Cycle;
         }
 
         /// <summary>
@@ -347,7 +350,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="direction">フォーカス移動方向。</param>
         void MoveFocus(FocusNavigationDirection direction)
         {
-            var candidate = GetFocusCandidate(direction);
+            var candidate = GetFocusableControl(direction);
             if (candidate == null) return;
 
             // フォーカスを設定します。
@@ -363,10 +366,44 @@ namespace Willcraftia.Xna.Framework.UI
         /// 指定の方向にあるフォーカス設定可能な Control。
         /// そのような Control が存在しない場合には null。
         /// </returns>
-        Control GetFocusCandidate(FocusNavigationDirection direction)
+        Control GetFocusableControl(FocusNavigationDirection direction)
         {
+            if (FocusNavigationMode == FocusNavigationMode.None) return null;
+
+            var focusedControl = Screen.FocusedControl;
+            var baseBounds = new Rect(focusedControl.PointToScreen(Point.Zero), focusedControl.RenderSize);
             float minDistance = float.PositiveInfinity;
-            return GetFocusCandidate(direction, ref minDistance);
+            
+            var candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
+            if (candidate != null) return candidate;
+
+            if (FocusNavigationMode == FocusNavigationMode.Wrapped) return null;
+
+            var windowBounds = new Rect(PointToScreen(Point.Zero), RenderSize);
+            switch (direction)
+            {
+                case FocusNavigationDirection.Up:
+                    baseBounds.Y = windowBounds.Bottom;
+                    baseBounds.Height = 0;
+                    break;
+                case FocusNavigationDirection.Down:
+                    baseBounds.Y = windowBounds.Top;
+                    baseBounds.Height = 0;
+                    break;
+                case FocusNavigationDirection.Left:
+                    baseBounds.X = windowBounds.Right;
+                    baseBounds.Width = 0;
+                    break;
+                case FocusNavigationDirection.Right:
+                    baseBounds.X = windowBounds.Left;
+                    baseBounds.Width = 0;
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
+
+            return candidate;
         }
 
         /// <summary>
