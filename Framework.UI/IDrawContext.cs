@@ -77,5 +77,9 @@ namespace Willcraftia.Xna.Framework.UI
         // todo:
         void DrawString(Rect clientBounds, SpriteFont font, string text, Vector2 stretch,
             HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding);
+
+        // todo:
+        void DrawString(Rect clientBounds, SpriteFont font, string text, Vector2 stretch,
+            HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding, Vector2 offset);
     }
 }

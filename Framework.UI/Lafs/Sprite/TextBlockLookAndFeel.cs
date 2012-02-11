@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -17,6 +18,29 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             if (font != null && !string.IsNullOrEmpty(textBlock.Text))
             {
+                var clientBounds = new Rect(control.RenderSize);
+                var outlineWidth = textBlock.TextOutlineWidth;
+
+                if (0 < outlineWidth)
+                {
+                    drawContext.DrawString(
+                        clientBounds, font, textBlock.Text, control.FontStretch,
+                        control.HorizontalAlignment, control.VerticalAlignment, control.BackgroundColor, control.Padding,
+                        new Vector2(-outlineWidth, -outlineWidth));
+                    drawContext.DrawString(
+                        clientBounds, font, textBlock.Text, control.FontStretch,
+                        control.HorizontalAlignment, control.VerticalAlignment, control.BackgroundColor, control.Padding,
+                        new Vector2(-outlineWidth, outlineWidth));
+                    drawContext.DrawString(
+                        clientBounds, font, textBlock.Text, control.FontStretch,
+                        control.HorizontalAlignment, control.VerticalAlignment, control.BackgroundColor, control.Padding,
+                        new Vector2(outlineWidth, -outlineWidth));
+                    drawContext.DrawString(
+                        clientBounds, font, textBlock.Text, control.FontStretch,
+                        control.HorizontalAlignment, control.VerticalAlignment, control.BackgroundColor, control.Padding,
+                        new Vector2(outlineWidth, outlineWidth));
+                }
+                
                 drawContext.DrawString(
                     new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
                     control.HorizontalAlignment, control.VerticalAlignment, control.ForegroundColor, control.Padding);

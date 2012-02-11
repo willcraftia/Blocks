@@ -25,6 +25,13 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public VerticalAlignment TextVerticalAlignment { get; set; }
 
         /// <summary>
+        /// 表示文字列の輪郭線の太さを取得または設定します。
+        /// 0 以下の値を設定した場合、輪郭線は描画されません。
+        /// デフォルトは 0 です。
+        /// </summary>
+        public float TextOutlineWidth { get; set; }
+
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <pparam name="screen">Screen。</pparam>
