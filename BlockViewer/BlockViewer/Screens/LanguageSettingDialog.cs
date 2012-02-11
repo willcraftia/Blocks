@@ -96,7 +96,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             if (culture != null) Strings.Culture  = culture;
 
             var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-            uiService.Show<ViewerStartScreen>();
+            uiService.Show("ViewerStartScreen");
         }
 
         void OnButtonGotFocus(Control sender, ref RoutedEventContext context)

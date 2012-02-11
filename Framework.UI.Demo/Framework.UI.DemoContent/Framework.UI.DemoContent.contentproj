@@ -47,7 +47,13 @@
       <Name>Framework.Content.Pipeline</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="UI\Sprite\WindowShadow.png">
+      <Name>WindowShadow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Fonts\Default.spritefont">
       <Name>Default</Name>

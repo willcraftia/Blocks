@@ -68,7 +68,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         protected override void LoadContent()
         {
             // StartScreen の表示から開始します。
-            uiManager.Show<Screens.ViewerStartScreen>();
+            uiManager.Show("ViewerStartScreen");
         }
 
         protected override void UnloadContent()
@@ -105,7 +105,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// <param name="screenFactory">DefaultScreenFactory。</param>
         void InitializeScreenDefinitions(DefaultScreenFactory screenFactory)
         {
-            screenFactory.Definitions.Add<Screens.ViewerStartScreen>();
+            screenFactory.Definitions.Add(new ScreenDefinition("ViewerStartScreen", typeof(Screens.ViewerStartScreen)));
         }
 
         /// <summary>
@@ -116,6 +116,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         {
             var lookAndFeelSource = new SpriteLookAndFeelSource(this);
             lookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
+            var windowLookAndFeel = new WindowLookAndFeel();
+            windowLookAndFeel.ShadowSpriteSheetName = "WindowShadow";
+            windowLookAndFeel.ShadowOpacity = 0.5f;
+            lookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
             return lookAndFeelSource;
         }
     }

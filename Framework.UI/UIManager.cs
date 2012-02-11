@@ -497,18 +497,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         // I/F
-        public void Show<T>() where T : Screen
-        {
-            Show(typeof(T));
-        }
-
-        // I/F
-        public void Show(Type type)
-        {
-            Show(type.AssemblyQualifiedName);
-        }
-
-        // I/F
         public void Show(string screenName)
         {
             Show(ScreenFactory.CreateScreen(screenName));

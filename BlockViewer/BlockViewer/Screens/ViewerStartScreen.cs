@@ -20,7 +20,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         protected override void LoadContent()
         {
             var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
-            Desktop.BackgroundColor = Color.Black;
+            //Desktop.BackgroundColor = Color.Black;
+            Desktop.BackgroundColor = Color.CornflowerBlue;
             Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
             Desktop.Width = viewportBounds.Width;
             Desktop.Height = viewportBounds.Height;

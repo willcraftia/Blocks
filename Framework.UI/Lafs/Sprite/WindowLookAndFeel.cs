@@ -15,19 +15,55 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
     public class WindowLookAndFeel : LookAndFeelBase
     {
         /// <summary>
-        /// Window 描画用の SpriteSheet を取得または設定します。
+        /// Window を描画するための SpriteSheet。
         /// </summary>
-        public SpriteSheet spriteSheet { get; set; }
+        SpriteSheet windowSpriteSheet;
+
+        /// <summary>
+        /// Window の影を描画するための SpriteSheet。
+        /// </summary>
+        SpriteSheet shadowSpriteSheet;
+
+        /// <summary>
+        /// Window を描画するための SpriteSheet のアセット名を取得または設定します。
+        /// null を指定した場合、アセット名はデフォルトで "Window" が仮定されます。
+        /// デフォルトは null です。
+        /// </summary>
+        public string WindowSpriteSheetName { get; set; }
+
+        /// <summary>
+        /// Window の影を描画するための SpriteSheet のアセット名を取得または設定します。
+        /// null を指定した場合、影の描画は行いません。
+        /// デフォルトは null です。
+        /// </summary>
+        public string ShadowSpriteSheetName { get; set; }
 
         /// <summary>
         /// SpriteSheet 内の各スプライト イメージの幅を取得または設定します。
+        /// デフォルトは 16 です。
         /// </summary>
         public int SpriteWidth { get; set; }
 
         /// <summary>
         /// SpriteSheet 内の各スプライト イメージの高さを取得または設定します。
+        /// デフォルトは 16 です。
         /// </summary>
         public int SpriteHeight { get; set; }
+
+        /// <summary>
+        /// Window の影の色を取得または設定します。
+        /// </summary>
+        public Color ShadowColor { get; set; }
+
+        /// <summary>
+        /// Window の影の透明度を取得または設定します。
+        /// </summary>
+        public float ShadowOpacity { get; set; }
+
+        /// <summary>
+        /// Window の影の描画位置を取得または設定します。
+        /// </summary>
+        public Point ShadowOffset { get; set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -36,6 +72,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         {
             SpriteWidth = 16;
             SpriteHeight = 16;
+            ShadowColor = Color.Black;
+            ShadowOpacity = 1;
+            ShadowOffset = new Point(8, 8);
         }
 
         protected override void LoadContent()
@@ -50,9 +89,143 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //
             //----------------------------------------------------------------
 
-            var spriteSheetTexture = Source.Content.Load<Texture2D>("Window");
-            spriteSheet = new SpriteSheet(spriteSheetTexture);
+            var windowSpriteSheetAssetName = WindowSpriteSheetName ?? "Window";
+            var windowSpriteSheetTexture = Source.Content.Load<Texture2D>(windowSpriteSheetAssetName);
+            windowSpriteSheet = new SpriteSheet(windowSpriteSheetTexture);
+            PrepareSpriteSheet(windowSpriteSheet);
 
+            if (!string.IsNullOrEmpty(ShadowSpriteSheetName))
+            {
+                var shadowSpriteSheetTexture = Source.Content.Load<Texture2D>(ShadowSpriteSheetName);
+                shadowSpriteSheet = new SpriteSheet(shadowSpriteSheetTexture);
+                PrepareSpriteSheet(shadowSpriteSheet);
+            }
+
+            base.LoadContent();
+        }
+
+        public override void Draw(Control control, IDrawContext drawContext)
+        {
+            if (shadowSpriteSheet != null)
+                DrawWindow(control, drawContext, shadowSpriteSheet, ShadowColor * ShadowOpacity, ShadowOffset);
+
+            DrawWindow(control, drawContext, windowSpriteSheet, Color.White, Point.Zero);
+        }
+
+        protected void DrawWindow(Control control, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Point offset)
+        {
+            var renderSize = control.RenderSize;
+            var texture = spriteSheet.Texture;
+
+            // 全てのスプライト イメージが同サイズであることを強制します。
+            // SpriteSheet には異なるサイズで指定できますが、このクラスでは異なるサイズを取り扱うことができません。
+            // 異なるサイズを扱おうとすると、どのスプライト イメージのサイズに基準を揃えるかの制御が複雑になります。
+            int w = SpriteWidth;
+            int h = SpriteHeight;
+
+            // 計算誤差の問題から先に int 化しておきます。
+            int offsetX = (int) offset.X;
+            int offsetY = (int) offset.Y;
+            int renderWidth = (int) renderSize.Width;
+            int renderHeight = (int) renderSize.Height;
+
+            var bounds = new Rect();
+            Rectangle sourceRectangle;
+
+            // Top Lines
+            sourceRectangle = spriteSheet.SourceRectangles["TopLeft"];
+            bounds.X = offsetX;
+            bounds.Y = offsetY;
+            bounds.Width = w;
+            bounds.Height = h;
+            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+
+            sourceRectangle = spriteSheet.SourceRectangles["Top"];
+            for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
+            {
+                int adjustedWidth = w;
+                if (renderWidth + offsetX - w < x + w)
+                {
+                    adjustedWidth -= (x + w) - (renderWidth + offsetX - w);
+                }
+                sourceRectangle.Width = adjustedWidth;
+                bounds.Width = adjustedWidth;
+                bounds.X = x;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+            }
+            bounds.Width = w;
+
+            sourceRectangle = spriteSheet.SourceRectangles["TopRight"];
+            bounds.X = renderWidth + offsetX - w;
+            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+
+            // Middle Lines
+            for (int y = h + offsetY; y < renderHeight + offsetY - h; y += h)
+            {
+                int adjustedHeight = h;
+                if (renderHeight + offsetY - h < y + h)
+                {
+                    adjustedHeight -= (y + h) - (renderHeight + offsetY - h);
+                }
+                bounds.Height = adjustedHeight;
+
+                sourceRectangle = spriteSheet.SourceRectangles["Left"];
+                sourceRectangle.Height = adjustedHeight;
+                bounds.X = offsetX;
+                bounds.Y = y;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+
+                sourceRectangle = spriteSheet.SourceRectangles["Fill"];
+                sourceRectangle.Height = adjustedHeight;
+                for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
+                {
+                    int adjustedWidth = w;
+                    if (renderWidth + offsetX - w < x + w)
+                    {
+                        adjustedWidth -= (x + w) - (renderWidth + offsetX - w);
+                    }
+                    sourceRectangle.Width = adjustedWidth;
+                    bounds.Width = adjustedWidth;
+                    bounds.X = x;
+                    drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+                }
+                bounds.Width = w;
+
+                sourceRectangle = spriteSheet.SourceRectangles["Right"];
+                sourceRectangle.Height = adjustedHeight;
+                bounds.X = renderWidth + offsetX - w;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+            }
+            bounds.Height = h;
+
+            // Bottom Lines
+            sourceRectangle = spriteSheet.SourceRectangles["BottomLeft"];
+            bounds.X = offsetX;
+            bounds.Y = renderHeight + offsetY - h;
+            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+
+            sourceRectangle = spriteSheet.SourceRectangles["Bottom"];
+            for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
+            {
+                int adjustedWidth = w;
+                if (renderWidth + offsetX - w < x + w)
+                {
+                    adjustedWidth -= (x + w) - (renderWidth + offsetX - w);
+                }
+                sourceRectangle.Width = adjustedWidth;
+                bounds.Width = adjustedWidth;
+                bounds.X = x;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+            }
+            bounds.Width = w;
+
+            sourceRectangle = spriteSheet.SourceRectangles["BottomRight"];
+            bounds.X = renderWidth + offsetX - w;
+            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+        }
+
+        protected void PrepareSpriteSheet(SpriteSheet spriteSheet)
+        {
             var w = SpriteWidth;
             var h = SpriteHeight;
             spriteSheet.SourceRectangles["TopLeft"] = new Rectangle(0, 0, w, h);
@@ -64,83 +237,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             spriteSheet.SourceRectangles["BottomLeft"] = new Rectangle(0, h * 2, w, h);
             spriteSheet.SourceRectangles["Bottom"] = new Rectangle(w, h * 2, w, h);
             spriteSheet.SourceRectangles["BottomRight"] = new Rectangle(w * 2, h * 2, w, h);
-
-            base.LoadContent();
-        }
-
-        public override void Draw(Control control, IDrawContext drawContext)
-        {
-            var window = control as Window;
-            if (window == null) return;
-
-            var renderSize = control.RenderSize;
-            var texture = spriteSheet.Texture;
-            var color = Color.White;
-
-            // 全てのスプライト イメージが同サイズであることを強制します。
-            // SpriteSheet には異なるサイズで指定できますが、このクラスでは異なるサイズを取り扱うことができません。
-            // 異なるサイズを扱おうとすると、どのスプライト イメージのサイズに基準を揃えるかの制御が複雑になります。
-            int w = SpriteWidth;
-            int h = SpriteHeight;
-
-            var bounds = new Rect();
-            Rectangle sourceRectangle;
-
-            // Top Lines
-            sourceRectangle = spriteSheet.SourceRectangles["TopLeft"];
-            bounds.X = 0;
-            bounds.Y = 0;
-            bounds.Width = w;
-            bounds.Height = h;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-
-            sourceRectangle = spriteSheet.SourceRectangles["Top"];
-            for (int x = w; x < renderSize.Width - w; x += w)
-            {
-                bounds.X = x;
-                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-            }
-            
-            sourceRectangle = spriteSheet.SourceRectangles["TopRight"];
-            bounds.X = renderSize.Width - w;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-
-            // Middle Lines
-            for (int y = h; y < renderSize.Height - h; y += h)
-            {
-                sourceRectangle = spriteSheet.SourceRectangles["Left"];
-                bounds.X = 0;
-                bounds.Y = y;
-                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-
-                sourceRectangle = spriteSheet.SourceRectangles["Fill"];
-                for (int x = w; x < renderSize.Width - w; x += w)
-                {
-                    bounds.X = x;
-                    drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-                }
-
-                sourceRectangle = spriteSheet.SourceRectangles["Right"];
-                bounds.X = renderSize.Width - w;
-                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-            }
-
-            // Bottom Lines
-            sourceRectangle = spriteSheet.SourceRectangles["BottomLeft"];
-            bounds.X = 0;
-            bounds.Y = renderSize.Height - h;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-
-            sourceRectangle = spriteSheet.SourceRectangles["Bottom"];
-            for (int x = w; x < renderSize.Width - w; x += w)
-            {
-                bounds.X = x;
-                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-            }
-            
-            sourceRectangle = spriteSheet.SourceRectangles["BottomRight"];
-            bounds.X = renderSize.Width - w;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
         }
     }
 }

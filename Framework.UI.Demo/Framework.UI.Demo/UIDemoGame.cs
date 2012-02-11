@@ -60,15 +60,21 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 var screenFactory = new DefaultScreenFactory(this);
 
                 debugLookAndFeelSource = new DebugLookAndFeelSource(this);
+                
                 spriteLookAndFeelSource = new SpriteLookAndFeelSource(this);
                 spriteLookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
+                var windowLookAndFeel = new WindowLookAndFeel();
+                windowLookAndFeel.ShadowSpriteSheetName = "WindowShadow";
+                windowLookAndFeel.ShadowOpacity = 0.5f;
+                spriteLookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
 
                 screenFactory.LookAndFeelSource = debugLookAndFeelSource;
+                //screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
 
                 screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
 
                 var loadingWindowDemoScreen = new ScreenDefinition("WindowDemoScreen", typeof(Screens.DemoLoadingScreen));
-                loadingWindowDemoScreen.Properties["LoadingScreenName"] = "WindowDemoScreenImpl";
+                loadingWindowDemoScreen.Properties["LoadedScreenName"] = "WindowDemoScreenImpl";
 
                 screenFactory.Definitions.Add(loadingWindowDemoScreen);
                 screenFactory.Definitions.Add(new ScreenDefinition("WindowDemoScreenImpl", typeof(Screens.WindowDemoScreen)));
