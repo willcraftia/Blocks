@@ -24,25 +24,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var storageButton = new Button(screen)
-            {
-                Padding = new Thickness(8),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.StorageButtonText
-                }
-            };
-
-            var exitButton = new Button(screen)
-            {
-                Padding = new Thickness(8),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.ExitButtonText
-                }
-            };
+            var exitButton = new CustomButton(screen);
+            exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
+
+            // デフォルト フォーカス。
+            exitButton.Focus();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)
@@ -71,7 +59,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         void OnExitAnimationCompleted(object sender, EventArgs e)
         {
             var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-            uiService.Show("StartScreen");
+            uiService.Show(ScreenNames.Start);
         }
     }
 }

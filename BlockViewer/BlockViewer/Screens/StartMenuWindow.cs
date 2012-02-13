@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
@@ -33,32 +34,53 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var cursor = (screen as StartScreen).CursorTexture;
 
-            var startButton = new CustomButton(screen)
-            {
-                Width = 200
-            };
+            var startButton = new CustomButton(screen);
             startButton.Cursor.Texture = cursor;
             startButton.TextBlock.Text = Strings.StartButtonText;
+            startButton.Click += new RoutedEventHandler(OnStartButtonClick);
             stackPanel.Children.Add(startButton);
-            startButton.Focus();
 
-            var languageSettingButton = new CustomButton(screen)
-            {
-                Width = 200
-            };
+            var languageSettingButton = new CustomButton(screen);
             languageSettingButton.Cursor.Texture = cursor;
             languageSettingButton.TextBlock.Text = Strings.LanguageSettingButtonText;
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
             stackPanel.Children.Add(languageSettingButton);
 
-            var exitButton = new CustomButton(screen)
-            {
-                Width = 200
-            };
+            var exitButton = new CustomButton(screen);
             exitButton.Cursor.Texture = cursor;
             exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
+
+            // デフォルト フォーカス。
+            startButton.Focus();
+        }
+
+        void OnStartButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            var overlay = new Overlay(Screen)
+            {
+                Opacity = 0,
+                BackgroundColor = Color.Black
+            };
+            overlay.Show();
+
+            var opacityAnimation = new PropertyLerpAnimation
+            {
+                Target = overlay,
+                PropertyName = "Opacity",
+                From = 0,
+                To = 1,
+                BeginTime = TimeSpan.Zero,
+                Duration = TimeSpan.FromSeconds(0.5d),
+                Enabled = true
+            };
+            opacityAnimation.Completed += (s, e) =>
+            {
+                var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
+                uiService.Show(ScreenNames.Main);
+            };
+            Screen.Animations.Add(opacityAnimation);
         }
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
@@ -86,7 +108,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };
-            opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
+            opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
             Screen.Animations.Add(opacityAnimation);
         }
     }

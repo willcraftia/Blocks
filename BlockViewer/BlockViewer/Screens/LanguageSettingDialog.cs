@@ -33,33 +33,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var cursor = (screen as StartScreen).CursorTexture;
 
-            setDefaultButton = new CustomButton(screen)
-            {
-                Width = 200
-            };
+            setDefaultButton = new CustomButton(screen);
             setDefaultButton.Cursor.Texture = cursor;
             setDefaultButton.TextBlock.Text = Strings.DefaultButtonText;
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setDefaultButton);
-            setDefaultButton.Focus();
 
-            setJaButton = new CustomButton(screen)
-            {
-                Width = 200
-            };
+            setJaButton = new CustomButton(screen);
             setJaButton.Cursor.Texture = cursor;
             setJaButton.TextBlock.Text = Strings.JaButtonText;
             setJaButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setJaButton);
 
-            setEnButton = new CustomButton(screen)
-            {
-                Width = 200
-            };
+            setEnButton = new CustomButton(screen);
             setEnButton.Cursor.Texture = cursor;
             setEnButton.TextBlock.Text = Strings.EnButtonText;
             setEnButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setEnButton);
+
+            // デフォルト フォーカス。
+            setDefaultButton.Focus();
         }
 
         void OnButtonClick(Control sender, ref RoutedEventContext context)

@@ -106,6 +106,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         void InitializeScreenDefinitions(DefaultScreenFactory screenFactory)
         {
             screenFactory.Definitions.Add(new ScreenDefinition(Screens.ScreenNames.Start, typeof(Screens.StartScreen)));
+            screenFactory.Definitions.Add(new ScreenDefinition(Screens.ScreenNames.Main, typeof(Screens.MainScreen)));
         }
 
         /// <summary>

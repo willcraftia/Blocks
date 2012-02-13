@@ -47,6 +47,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             content.Children.Add(TextBlock);
 
             Content = content;
+
+            HorizontalAlignment = HorizontalAlignment.Left;
         }
 
         protected override void OnGotFocus(ref RoutedEventContext context)

@@ -113,14 +113,5 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
                 return ResourceManager.GetString("StartButtonText", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Storage に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string StorageButtonText {
-            get {
-                return ResourceManager.GetString("StorageButtonText", resourceCulture);
-            }
-        }
     }
 }
