@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
@@ -30,57 +31,34 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var startButton = new Button(screen)
+            var cursor = (screen as StartScreen).CursorTexture;
+
+            var startButton = new CustomButton(screen)
             {
-                Width = 200,
-                Padding = new Thickness(4),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.StartButtonText
-                }
+                Width = 200
             };
+            startButton.Cursor.Texture = cursor;
+            startButton.TextBlock.Text = Strings.StartButtonText;
             stackPanel.Children.Add(startButton);
-            startButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
-            startButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
             startButton.Focus();
 
-            var languageSettingButton = new Button(screen)
+            var languageSettingButton = new CustomButton(screen)
             {
-                Width = 200,
-                Padding = new Thickness(4),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.LanguageSettingButtonText
-                }
+                Width = 200
             };
-            stackPanel.Children.Add(languageSettingButton);
+            languageSettingButton.Cursor.Texture = cursor;
+            languageSettingButton.TextBlock.Text = Strings.LanguageSettingButtonText;
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
-            languageSettingButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
-            languageSettingButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
+            stackPanel.Children.Add(languageSettingButton);
 
-            var exitButton = new Button(screen)
+            var exitButton = new CustomButton(screen)
             {
-                Width = 200,
-                Padding = new Thickness(4),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.ExitButtonText
-                }
+                Width = 200
             };
-            stackPanel.Children.Add(exitButton);
+            exitButton.Cursor.Texture = cursor;
+            exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
-            exitButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
-            exitButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
-        }
-
-        void OnButtonGotFocus(Control sender, ref RoutedEventContext context)
-        {
-            (sender as Button).Content.ForegroundColor = Color.Yellow;
-        }
-
-        void OnButtonLostFocus(Control sender, ref RoutedEventContext context)
-        {
-            (sender as Button).Content.ForegroundColor = Color.White;
+            stackPanel.Children.Add(exitButton);
         }
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)

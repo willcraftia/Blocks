@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
@@ -10,21 +11,19 @@ using Willcraftia.Xna.Framework.UI.Animations;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class ViewerStartScreen : Screen
+    public sealed class StartScreen : Screen
     {
-        public ViewerStartScreen(Game game)
+        public Texture2D CursorTexture { get; private set; }
+
+        public StartScreen(Game game)
             : base(game)
         {
+            Content.RootDirectory = "Content";
         }
 
         protected override void LoadContent()
         {
-            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
-            //Desktop.BackgroundColor = Color.Black;
-            Desktop.BackgroundColor = Color.CornflowerBlue;
-            Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
-            Desktop.Width = viewportBounds.Width;
-            Desktop.Height = viewportBounds.Height;
+            CursorTexture = Content.Load<Texture2D>("UI/Sprite/Cursor");
 
             var startMenuWindow = new StartMenuWindow(this);
             startMenuWindow.Show();

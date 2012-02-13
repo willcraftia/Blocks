@@ -580,8 +580,8 @@ namespace Willcraftia.Xna.Framework.UI
             MaxWidth = float.PositiveInfinity;
             MaxHeight = float.PositiveInfinity;
             Opacity = 1;
-            ForegroundColor = Color.White;
-            BackgroundColor = Color.Black;
+            ForegroundColor = Color.Black;
+            BackgroundColor = Color.White;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
             FontStretch = Vector2.One;

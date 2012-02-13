@@ -118,21 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DefaultButtonText" xml:space="preserve">
-    <value>DEFAULT</value>
+    <value>Default</value>
   </data>
   <data name="EnButtonText" xml:space="preserve">
-    <value>ENGLISH</value>
+    <value>English</value>
   </data>
   <data name="ExitButtonText" xml:space="preserve">
-    <value>EXIT</value>
+    <value>Exit</value>
   </data>
   <data name="JaButtonText" xml:space="preserve">
     <value>にほんご</value>
   </data>
   <data name="LanguageSettingButtonText" xml:space="preserve">
-    <value>SELECT LANGUAGE</value>
+    <value>Select Language</value>
   </data>
   <data name="StartButtonText" xml:space="preserve">
-    <value>START</value>
+    <value>Start</value>
+  </data>
+  <data name="StorageButtonText" xml:space="preserve">
+    <value>Storage</value>
   </data>
 </root>

@@ -118,6 +118,13 @@ namespace Willcraftia.Xna.Framework.UI
 
             Animations = new AnimationCollection(this);
             Desktop = new Desktop(this);
+
+            // Desktop のプロパティへデフォルト値を設定します。
+            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
+            Desktop.BackgroundColor = Color.CornflowerBlue;
+            Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
+            Desktop.Width = viewportBounds.Width;
+            Desktop.Height = viewportBounds.Height;
         }
 
         /// <summary>

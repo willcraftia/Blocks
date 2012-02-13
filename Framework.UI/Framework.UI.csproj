@@ -101,6 +101,7 @@
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="ContentControl.cs" />
+    <Compile Include="Controls\Image.cs" />
     <Compile Include="Controls\Panel.cs" />
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="FocusNavigationDirection.cs" />

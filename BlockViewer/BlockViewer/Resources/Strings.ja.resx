@@ -135,4 +135,7 @@
   <data name="StartButtonText" xml:space="preserve">
     <value>はじめる</value>
   </data>
+  <data name="StorageButtonText" xml:space="preserve">
+    <value>データ</value>
+  </data>
 </root>

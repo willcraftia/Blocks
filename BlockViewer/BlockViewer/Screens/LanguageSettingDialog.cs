@@ -15,17 +15,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class LanguageSettingDialog : Window
     {
-        Button setDefaultButton;
+        CustomButton setDefaultButton;
 
-        Button setJaButton;
-        
-        Button setEnButton;
+        CustomButton setJaButton;
+
+        CustomButton setEnButton;
 
         public LanguageSettingDialog(Screen screen)
             : base(screen)
         {
-            SizeToContent = SizeToContent.WidthAndHeight;
-
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
@@ -33,45 +31,35 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            setDefaultButton = new Button(screen)
+            var cursor = (screen as StartScreen).CursorTexture;
+
+            setDefaultButton = new CustomButton(screen)
             {
-                Padding = new Thickness(8),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.DefaultButtonText
-                }
+                Width = 200
             };
-            stackPanel.Children.Add(setDefaultButton);
+            setDefaultButton.Cursor.Texture = cursor;
+            setDefaultButton.TextBlock.Text = Strings.DefaultButtonText;
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
-            setDefaultButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
-            setDefaultButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
+            stackPanel.Children.Add(setDefaultButton);
             setDefaultButton.Focus();
 
-            setJaButton = new Button(screen)
+            setJaButton = new CustomButton(screen)
             {
-                Padding = new Thickness(8),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.JaButtonText
-                }
+                Width = 200
             };
-            stackPanel.Children.Add(setJaButton);
+            setJaButton.Cursor.Texture = cursor;
+            setJaButton.TextBlock.Text = Strings.JaButtonText;
             setJaButton.Click += new RoutedEventHandler(OnButtonClick);
-            setJaButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
-            setJaButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
+            stackPanel.Children.Add(setJaButton);
 
-            setEnButton = new Button(screen)
+            setEnButton = new CustomButton(screen)
             {
-                Padding = new Thickness(8),
-                Content = new TextBlock(screen)
-                {
-                    Text = Strings.EnButtonText
-                }
+                Width = 200
             };
-            stackPanel.Children.Add(setEnButton);
+            setEnButton.Cursor.Texture = cursor;
+            setEnButton.TextBlock.Text = Strings.EnButtonText;
             setEnButton.Click += new RoutedEventHandler(OnButtonClick);
-            setEnButton.GotFocus += new RoutedEventHandler(OnButtonGotFocus);
-            setEnButton.LostFocus += new RoutedEventHandler(OnButtonLostFocus);
+            stackPanel.Children.Add(setEnButton);
         }
 
         void OnButtonClick(Control sender, ref RoutedEventContext context)
@@ -96,17 +84,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             if (culture != null) Strings.Culture  = culture;
 
             var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-            uiService.Show("ViewerStartScreen");
-        }
-
-        void OnButtonGotFocus(Control sender, ref RoutedEventContext context)
-        {
-            (sender as Button).Content.ForegroundColor = Color.Yellow;
-        }
-
-        void OnButtonLostFocus(Control sender, ref RoutedEventContext context)
-        {
-            (sender as Button).Content.ForegroundColor = Color.White;
+            uiService.Show(ScreenNames.Start);
         }
 
         public override void Show()
