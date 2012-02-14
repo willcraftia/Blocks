@@ -30,7 +30,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         float cameraMoveScale = 0.01f;
 
-        float cameraDistance = 2;
+        float cameraDistance = 3;
         float cameraPositionYaw = MathHelper.PiOver4;
         float cameraPositionPitch = -MathHelper.PiOver4;
 
@@ -109,7 +109,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // Projection 行列を算出します。
             var aspect = ((float) RenderSize.Width / (float) RenderSize.Height);
-            var projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 0.1f, 10);
+            var projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.01f, 10);
 
             // GridBlockMesh 描画用 Effect に View と Projection を設定します。
             gridEffect.View = view;
