@@ -47,6 +47,8 @@ namespace Willcraftia.Xna.Framework.UI
             /// </summary>
             Stack<Rectangle> scissorRectangleStack = new Stack<Rectangle>();
 
+            bool spriteBatchActive;
+
             /// <summary>
             /// インスタンスを生成します。
             /// </summary>
@@ -65,32 +67,30 @@ namespace Willcraftia.Xna.Framework.UI
             /// <summary>
             /// クリップを開始します。
             /// </summary>
-            /// <param name="clipBounds">クリップ領域。</param>
+            /// <param name="scissorRectangle">ScissorRectangle。</param>
             /// <param name="inherite">
             /// true (既存のクリップ領域のサブセットとして用いる場合)、
             /// false (指定のクリップ領域をそのまま用いる場合)。
             /// </param>
-            public void Begin(ref Rect clipBounds, bool inherite)
+            /// <param name="spriteBatchActive">
+            /// true (SpriteBatch がアクティブな場合)、false (それ以外の場合)。
+            /// </param>
+            public void Begin(ref Rectangle scissorRectangle, bool inherite, bool spriteBatchActive)
             {
+                this.spriteBatchActive = spriteBatchActive;
+
                 var spriteBatch = uiManager.spriteBatch;
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
                 // これまでの SpriteBatch を一旦終えます。
-                spriteBatch.End();
+                if (spriteBatchActive)
+                {
+                    spriteBatch.End();
+                }
 
                 // これまでの ScissorRectangle をスタックへ退避させます。
                 var previousScissorRectangle = graphicsDevice.ScissorRectangle;
                 scissorRectangleStack.Push(previousScissorRectangle);
-
-                // 新たな ScissorRectangle を計算します。
-                var offset = uiManager.drawContext.Location;
-                var scissorRectangle = new Rectangle()
-                {
-                    X = (int) (offset.X + clipBounds.X),
-                    Y = (int) (offset.Y + clipBounds.Y),
-                    Width = (int) clipBounds.Width,
-                    Height = (int) clipBounds.Height
-                };
 
                 // Viewport からはみ出ないように調整します (はみ出ると例外が発生します)。
                 var viewportBounds = graphicsDevice.Viewport.Bounds;
@@ -114,10 +114,13 @@ namespace Willcraftia.Xna.Framework.UI
                     graphicsDevice.ScissorRectangle = finalScissorRectangle;
 
                 // 設定された ScissorRectangle で SpriteBatch を再開します。
-                spriteBatch.Begin(
-                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                    null, null,
-                    uiManager.scissorTestRasterizerState);
+                if (spriteBatchActive)
+                {
+                    spriteBatch.Begin(
+                        SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                        null, null,
+                        uiManager.scissorTestRasterizerState);
+                }
             }
 
             /// <summary>
@@ -132,16 +135,22 @@ namespace Willcraftia.Xna.Framework.UI
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
                 // Begin で始めた SpriteBatch を一旦終えます。
-                spriteBatch.End();
+                if (spriteBatchActive)
+                {
+                    spriteBatch.End();
+                }
 
                 // Begin でスタックに退避させていた ScissorRectangle を戻します。
                 graphicsDevice.ScissorRectangle = scissorRectangleStack.Pop();
 
-                // 戻した ScissorRectangle で SpriteBatch を再開します。
-                spriteBatch.Begin(
-                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                    null, null,
-                    uiManager.scissorTestRasterizerState);
+                if (spriteBatchActive)
+                {
+                    // 戻した ScissorRectangle で SpriteBatch を再開します。
+                    spriteBatch.Begin(
+                        SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                        null, null,
+                        uiManager.scissorTestRasterizerState);
+                }
             }
         }
 
@@ -223,6 +232,58 @@ namespace Willcraftia.Xna.Framework.UI
 
         #endregion
 
+        #region Draw3DManager
+
+        class Draw3DManager : IDisposable
+        {
+            /// <summary>
+            /// UIManager。
+            /// </summary>
+            UIManager uiManager;
+
+            public bool Active { get; set; }
+
+            /// <summary>
+            /// インスタンスを生成します。
+            /// </summary>
+            /// <param name="uiManager">UIManager。</param>
+            public Draw3DManager(UIManager uiManager)
+            {
+                this.uiManager = uiManager;
+            }
+
+            // I/F
+            public void Dispose()
+            {
+                End();
+            }
+
+            public void Begin()
+            {
+                var spriteBatch = uiManager.spriteBatch;
+
+                // これまでの SpriteBatch を一旦終えます。
+                spriteBatch.End();
+
+                Active = true;
+            }
+
+            public void End()
+            {
+                var spriteBatch = uiManager.spriteBatch;
+
+                // SpriteBatch を再開します。
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                    null, null,
+                    uiManager.scissorTestRasterizerState);
+
+                Active = false;
+            }
+        }
+
+        #endregion
+
         #region IDrawContext
 
         /// <summary>
@@ -260,6 +321,8 @@ namespace Willcraftia.Xna.Framework.UI
             /// </summary>
             float currentOpacity;
 
+            Draw3DManager draw3DManager;
+
             // I/F
             public SpriteBatch SpriteBatch
             {
@@ -289,6 +352,7 @@ namespace Willcraftia.Xna.Framework.UI
 
                 scissorManager = new ScissorManager(uiManager);
                 viewportManager = new ViewportManager(uiManager);
+                draw3DManager = new Draw3DManager(uiManager);
             }
 
             // I/F
@@ -306,24 +370,49 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public IDisposable SetClip(Rect clipBounds)
+            public IDisposable BeginClip(Rect clipBounds)
             {
-                scissorManager.Begin(ref clipBounds, true);
+                // 新たな ScissorRectangle を計算します。
+                var scissorRectangle = new Rectangle()
+                {
+                    X = (int) (location.X + clipBounds.X),
+                    Y = (int) (location.Y + clipBounds.Y),
+                    Width = (int) clipBounds.Width,
+                    Height = (int) clipBounds.Height
+                };
+
+                scissorManager.Begin(ref scissorRectangle, true, !draw3DManager.Active);
                 return scissorManager;
             }
 
             // I/F
-            public IDisposable SetNewClip(Rect clipBounds)
+            public IDisposable BeginNewClip(Rect clipBounds)
             {
-                scissorManager.Begin(ref clipBounds, false);
+                // 新たな ScissorRectangle を計算します。
+                var scissorRectangle = new Rectangle()
+                {
+                    X = (int) (location.X + clipBounds.X),
+                    Y = (int) (location.Y + clipBounds.Y),
+                    Width = (int) clipBounds.Width,
+                    Height = (int) clipBounds.Height
+                };
+
+                scissorManager.Begin(ref scissorRectangle, false, !draw3DManager.Active);
                 return scissorManager;
             }
 
             // I/F
-            public IDisposable SetViewport(Rect viewportBounds)
+            public IDisposable BeginViewport(Rect viewportBounds)
             {
                 viewportManager.Begin(ref viewportBounds);
                 return viewportManager;
+            }
+
+            // I/F
+            public IDisposable BeginDraw3D()
+            {
+                draw3DManager.Begin();
+                return draw3DManager;
             }
 
             // I/F

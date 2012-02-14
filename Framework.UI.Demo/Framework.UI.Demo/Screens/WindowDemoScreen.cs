@@ -113,7 +113,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Content = new TextBlock(screen)
                     {
                         Text = "Open new dialog",
-                        FontStretch = new Vector2(1.0f, 3.0f)
+                        FontStretch = new Vector2(1.0f, 3.0f),
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(openNewDialogButton);
@@ -257,7 +259,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Content = new TextBlock(screen)
                     {
                         Text = "Open new dialog",
-                        TextHorizontalAlignment = HorizontalAlignment.Left
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(openNewDialogButton);
@@ -275,7 +279,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Content = new TextBlock(screen)
                     {
                         Text = "Close",
-                        TextHorizontalAlignment = HorizontalAlignment.Left
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(closeButton);
@@ -292,7 +298,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Content = new TextBlock(screen)
                     {
                         Text = "Switch Screen",
-                        TextHorizontalAlignment = HorizontalAlignment.Left
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(switchScreenButton);
@@ -309,7 +317,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Content = new TextBlock(screen)
                     {
                         Text = "Exit",
-                        TextHorizontalAlignment = HorizontalAlignment.Left
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(exitButton);
@@ -427,7 +437,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Content = new TextBlock(screen)
                     {
                         Text = "Close",
-                        TextHorizontalAlignment = HorizontalAlignment.Left
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 Content = closeButton;

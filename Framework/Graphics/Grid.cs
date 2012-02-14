@@ -27,8 +27,6 @@ namespace Willcraftia.Xna.Framework.Graphics
         public Matrix Projection = Matrix.Identity;
 
         GraphicsDevice graphicsDevice;
-
-        BasicEffect basicEffect;
         
         VertexPositionColor[] vertices;
         
@@ -90,9 +88,6 @@ namespace Willcraftia.Xna.Framework.Graphics
         public Grid(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-
-            basicEffect = new BasicEffect(graphicsDevice);
-            basicEffect.VertexColorEnabled = true;
 
             quadrantCellCount = 400;
             cellSize = 16.0f * 0.1f;
@@ -165,18 +160,18 @@ namespace Willcraftia.Xna.Framework.Graphics
 
         public void Draw()
         {
-            if (vertexBufferDirty) InitializeVertices();
+            //if (vertexBufferDirty) InitializeVertices();
 
-            basicEffect.View = View;
-            basicEffect.Projection = Projection;
+            //basicEffect.View = View;
+            //basicEffect.Projection = Projection;
 
-            graphicsDevice.SetVertexBuffer(vertexBuffer);
+            //graphicsDevice.SetVertexBuffer(vertexBuffer);
 
-            foreach (var pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                graphicsDevice.DrawPrimitives(PrimitiveType.LineList, 0, lineCount);
-            }
+            //foreach (var pass in basicEffect.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    graphicsDevice.DrawPrimitives(PrimitiveType.LineList, 0, lineCount);
+            //}
         }
     }
 }

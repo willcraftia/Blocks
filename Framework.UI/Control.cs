@@ -666,7 +666,8 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (ClipEnabled)
             {
-                using (var setClip = drawContext.SetClip(new Rect(RenderSize)))
+                // TODO: Padding の考慮が必要かも？
+                using (var localClipping = drawContext.BeginClip(new Rect(RenderSize)))
                 {
                     DrawChildren(gameTime, drawContext);
                 }

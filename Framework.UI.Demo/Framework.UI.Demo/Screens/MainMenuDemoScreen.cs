@@ -35,7 +35,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Padding = new Thickness(8),
                     Content = new TextBlock(screen)
                     {
-                        Text = "NEW GAME (DUMMY)"
+                        Text = "NEW GAME (DUMMY)",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(newGameButton);
@@ -48,7 +50,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Padding = new Thickness(8),
                     Content = new TextBlock(screen)
                     {
-                        Text = "SWITCH SCREEN"
+                        Text = "SWITCH SCREEN",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(switchScreenButton);
@@ -61,7 +65,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Padding = new Thickness(8),
                     Content = new TextBlock(screen)
                     {
-                        Text = "EXIT"
+                        Text = "EXIT",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
                     }
                 };
                 stackPanel.Children.Add(exitButton);

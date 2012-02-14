@@ -39,9 +39,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             renderSize.Width += 64;
             renderSize.Height += 64;
 
-            using (var setViewport = drawContext.SetViewport(new Rect(-32, -32, renderSize.Width, renderSize.Height)))
+            using (var setViewport = drawContext.BeginViewport(new Rect(-32, -32, renderSize.Width, renderSize.Height)))
             {
-                using (var setClip = drawContext.SetNewClip(new Rect(-32, -32, renderSize.Width, renderSize.Height)))
+                using (var setClip = drawContext.BeginNewClip(new Rect(-32, -32, renderSize.Width, renderSize.Height)))
                 {
                     var effect = Screen.BasicEffect;
 

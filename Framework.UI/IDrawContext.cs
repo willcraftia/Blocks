@@ -44,21 +44,23 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="clipBounds">クリップ領域。</param>
         /// <returns>クリップを制御するオブジェクト。</returns>
-        IDisposable SetClip(Rect clipBounds);
+        IDisposable BeginClip(Rect clipBounds);
 
         /// <summary>
-        /// 新たなクリップ領域でクリップを解します。
+        /// 新たなクリップ領域でクリップを開始します。
         /// </summary>
         /// <param name="clipBounds">クリップ領域。</param>
         /// <returns>クリップを制御するオブジェクト。</returns>
-        IDisposable SetNewClip(Rect clipBounds);
+        IDisposable BeginNewClip(Rect clipBounds);
 
         /// <summary>
         /// Viewport の変更を開始します。
         /// </summary>
         /// <param name="viewportBounds">Viewport 領域。</param>
         /// <returns>Viewport の変更を管理するオブジェクト。</returns>
-        IDisposable SetViewport(Rect viewportBounds);
+        IDisposable BeginViewport(Rect viewportBounds);
+
+        IDisposable BeginDraw3D();
 
         /// <summary>
         /// Control の描画処理を反映させます。
