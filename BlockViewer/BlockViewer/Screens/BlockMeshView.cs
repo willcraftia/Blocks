@@ -21,14 +21,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         // MEMO
         //
         // BasicEffect.EnableDefaultLighting() が呼び出されると Normal0 が要求されるため、
-        // 念のため専用の BasicEffect を使用します。
+        // 念のため GridBlockMesh 専用の BasicEffect を使用します。
         //
 
-        BasicEffect gridPlaneMeshEffect;
+        BasicEffect gridEffect;
 
-        GridPlaneMesh gridPlaneXY;
-
-        Matrix gridPlaneXYTransform;
+        GridBlockMesh gridBlockMesh;
 
         int mouseOffsetX;
         int mouseOffsetY;
@@ -39,12 +37,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public BlockMeshView(Screen screen)
             : base(screen)
         {
-            gridPlaneMeshEffect = new BasicEffect(screen.GraphicsDevice);
-            gridPlaneMeshEffect.Alpha = 1;
-            gridPlaneMeshEffect.VertexColorEnabled = true;
+            gridEffect = new BasicEffect(screen.GraphicsDevice);
+            gridEffect.Alpha = 1;
+            gridEffect.VertexColorEnabled = true;
 
-            gridPlaneXY = new GridPlaneMesh(screen.GraphicsDevice, 16, 16, 0.1f, 0.1f, Color.Gray);
-            gridPlaneXYTransform = Matrix.Identity;
+            gridBlockMesh = new GridBlockMesh(screen.GraphicsDevice, 16, 0.1f, Color.White);
 
             cameraPosition = defaultCameraPosition;
         }
@@ -79,8 +76,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             base.Draw(gameTime, drawContext);
 
-            //drawContext.Flush();
-
             using (var draw3d = drawContext.BeginDraw3D())
             {
                 Screen.GraphicsDevice.BlendState = BlendState.Opaque;
@@ -96,10 +91,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         var view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
                         var projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 0.1f, 10);
 
-                        gridPlaneMeshEffect.View = view;
-                        gridPlaneMeshEffect.Projection = projection;
+                        gridEffect.View = view;
+                        gridEffect.Projection = projection;
 
-                        DrawGridPlaneXY();
+                        gridBlockMesh.SetVisibilities(cameraPosition);
+                        gridBlockMesh.Draw(gridEffect);
 
                         if (BlockMesh != null)
                         {
@@ -115,12 +111,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     }
                 }
             }
-        }
-
-        void DrawGridPlaneXY()
-        {
-            gridPlaneMeshEffect.World = Matrix.Identity;
-            gridPlaneXY.Draw(gridPlaneMeshEffect);
         }
     }
 }

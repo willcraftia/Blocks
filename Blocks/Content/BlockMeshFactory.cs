@@ -99,10 +99,10 @@ namespace Willcraftia.Xna.Blocks.Content
 
                 testPosition.Y = targetPosition.Y;
 
-                testPosition.Z = targetPosition.Z + 1;
+                testPosition.Z = targetPosition.Z - 1;
                 resolvedElement.SurfaceVisible[(int) CubeSurfaces.North] = !elements.Contains(testPosition);
 
-                testPosition.Z = targetPosition.Z - 1;
+                testPosition.Z = targetPosition.Z + 1;
                 resolvedElement.SurfaceVisible[(int) CubeSurfaces.South] = !elements.Contains(testPosition);
 
                 return resolvedElement;

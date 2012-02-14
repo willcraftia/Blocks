@@ -12,7 +12,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         West,
         Top,
         Bottom,
-        North,
-        South
+        South,
+        North
     }
 }

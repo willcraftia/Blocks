@@ -99,6 +99,7 @@
     <Compile Include="Content\StringBlockResource.cs" />
     <Compile Include="Graphics\BasicBlockEffect.cs" />
     <Compile Include="Content\BasicBlockEffectFactory.cs" />
+    <Compile Include="Graphics\GridBlockMesh.cs" />
     <Compile Include="Graphics\IBlockEffect.cs" />
     <Compile Include="Graphics\BlockMesh.cs" />
     <Compile Include="Content\BlockMeshFactory.cs" />
