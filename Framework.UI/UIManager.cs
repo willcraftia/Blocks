@@ -83,10 +83,7 @@ namespace Willcraftia.Xna.Framework.UI
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
                 // これまでの SpriteBatch を一旦終えます。
-                if (spriteBatchActive)
-                {
-                    spriteBatch.End();
-                }
+                if (spriteBatchActive) uiManager.EndSpriteBetch();
 
                 // これまでの ScissorRectangle をスタックへ退避させます。
                 var previousScissorRectangle = graphicsDevice.ScissorRectangle;
@@ -114,13 +111,7 @@ namespace Willcraftia.Xna.Framework.UI
                     graphicsDevice.ScissorRectangle = finalScissorRectangle;
 
                 // 設定された ScissorRectangle で SpriteBatch を再開します。
-                if (spriteBatchActive)
-                {
-                    spriteBatch.Begin(
-                        SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                        null, null,
-                        uiManager.scissorTestRasterizerState);
-                }
+                if (spriteBatchActive) uiManager.BeingSpriteBatch();
             }
 
             /// <summary>
@@ -135,22 +126,13 @@ namespace Willcraftia.Xna.Framework.UI
                 var graphicsDevice = spriteBatch.GraphicsDevice;
 
                 // Begin で始めた SpriteBatch を一旦終えます。
-                if (spriteBatchActive)
-                {
-                    spriteBatch.End();
-                }
+                if (spriteBatchActive) uiManager.EndSpriteBetch();
 
                 // Begin でスタックに退避させていた ScissorRectangle を戻します。
                 graphicsDevice.ScissorRectangle = scissorRectangleStack.Pop();
 
-                if (spriteBatchActive)
-                {
-                    // 戻した ScissorRectangle で SpriteBatch を再開します。
-                    spriteBatch.Begin(
-                        SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                        null, null,
-                        uiManager.scissorTestRasterizerState);
-                }
+                // 戻した ScissorRectangle で SpriteBatch を再開します。
+                if (spriteBatchActive) uiManager.BeingSpriteBatch();
             }
         }
 
@@ -260,23 +242,16 @@ namespace Willcraftia.Xna.Framework.UI
 
             public void Begin()
             {
-                var spriteBatch = uiManager.spriteBatch;
-
                 // これまでの SpriteBatch を一旦終えます。
-                spriteBatch.End();
+                uiManager.EndSpriteBetch();
 
                 Active = true;
             }
 
             public void End()
             {
-                var spriteBatch = uiManager.spriteBatch;
-
                 // SpriteBatch を再開します。
-                spriteBatch.Begin(
-                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                    null, null,
-                    uiManager.scissorTestRasterizerState);
+                uiManager.BeingSpriteBatch();
 
                 Active = false;
             }
@@ -424,11 +399,8 @@ namespace Willcraftia.Xna.Framework.UI
             // I/F
             public void Flush()
             {
-                SpriteBatch.End();
-                SpriteBatch.Begin(
-                    SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                    null, null,
-                    uiManager.scissorTestRasterizerState);
+                uiManager.EndSpriteBetch();
+                uiManager.BeingSpriteBatch();
             }
 
             // I/F
@@ -644,6 +616,50 @@ namespace Willcraftia.Xna.Framework.UI
             base.Update(gameTime);
         }
 
+        public override void Draw(GameTime gameTime)
+        {
+            if (screen == null) return;
+
+            BeingSpriteBatch();
+
+            var desktop = screen.Desktop;
+            drawContext.Location = desktop.RenderOffset;
+            drawContext.PushOpacity(desktop.Opacity);
+            desktop.Draw(gameTime, drawContext);
+
+            EndSpriteBetch();
+
+            base.Draw(gameTime);
+        }
+
+        internal void BeingSpriteBatch()
+        {
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
+        }
+
+        internal void EndSpriteBetch()
+        {
+            spriteBatch.End();
+        }
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
+            if (ScreenFactory != null && !ScreenFactory.Initialized) ScreenFactory.Initialize();
+
+            base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            if (spriteBatch != null) spriteBatch.Dispose();
+            if (fillTexture != null) fillTexture.Dispose();
+            if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
+
+            base.UnloadContent();
+        }
+
         /// <summary>
         /// ユーザ入力を処理します。
         /// </summary>
@@ -667,40 +683,6 @@ namespace Willcraftia.Xna.Framework.UI
             if (keyboardDevice.KeyPressed) screen.ProcessKeyDown();
             // キーが離されたことを Screen へ通知します。
             if (keyboardDevice.KeyReleased) screen.ProcessKeyUp();
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            if (screen == null) return;
-
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, scissorTestRasterizerState);
-
-            var desktop = screen.Desktop;
-            drawContext.Location = desktop.RenderOffset;
-            drawContext.PushOpacity(desktop.Opacity);
-            desktop.Draw(gameTime, drawContext);
-
-            spriteBatch.End();
-
-            base.Draw(gameTime);
-        }
-
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            fillTexture = Texture2DHelper.CreateFillTexture(GraphicsDevice);
-            if (ScreenFactory != null && !ScreenFactory.Initialized) ScreenFactory.Initialize();
-
-            base.LoadContent();
-        }
-
-        protected override void UnloadContent()
-        {
-            if (spriteBatch != null) spriteBatch.Dispose();
-            if (fillTexture != null) fillTexture.Dispose();
-            if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();
-
-            base.UnloadContent();
         }
     }
 }
