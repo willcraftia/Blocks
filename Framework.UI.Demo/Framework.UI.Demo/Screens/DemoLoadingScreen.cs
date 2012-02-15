@@ -45,30 +45,32 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         Opacity = 0,
                         BackgroundColor = Color.Black
                     };
+
+                    var animation = new PropertyLerpAnimation
                     {
-                        var animation = new PropertyLerpAnimation
-                        {
-                            Target = exitOverlay,
-                            PropertyName = "Opacity",
-                            From = 0,
-                            To = 1,
-                            BeginTime = TimeSpan.Zero,
-                            Duration = TimeSpan.FromSeconds(0.5d),
-                            Enabled = true
-                        };
-                        animation.Completed += (exitOverlayAnimationSender, exitOverlayAnimationEvent) =>
-                        {
-                            // NextScreen を表示させます。
-                            var uiService = Game.Services.GetRequiredService<IUIService>();
-                            uiService.Show(LoadedScreen);
-                        };
-                        Animations.Add(animation);
-                    }
+                        Target = exitOverlay,
+                        PropertyName = "Opacity",
+                        From = 0,
+                        To = 1,
+                        BeginTime = TimeSpan.Zero,
+                        Duration = TimeSpan.FromSeconds(0.5d),
+                        Enabled = true
+                    };
+                    animation.Completed += new EventHandler(OnExitAnimationCompleted);
+                    exitOverlay.Animations.Add(animation);
+
                     exitOverlay.Show();
                 }
             }
 
             base.Update(gameTime);
+        }
+
+        void OnExitAnimationCompleted(object sender, EventArgs e)
+        {
+            // NextScreen を表示させます。
+            var uiService = Game.Services.GetRequiredService<IUIService>();
+            uiService.Show(LoadedScreen);
         }
 
         protected override void LoadContent()
@@ -95,7 +97,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Enabled = true
             };
             screenOverlay_opacityAnimation.Completed += (s, e) => screenOverlay.Close();
-            Animations.Add(screenOverlay_opacityAnimation);
+            screenOverlay.Animations.Add(screenOverlay_opacityAnimation);
 
             var nowLoadingTextBlock = new TextBlock(this)
             {

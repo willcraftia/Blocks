@@ -50,7 +50,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 startEffectOverlay.Close();
                 startMenuWindow.Activate();
             };
-            Animations.Add(startEffectOverlay_opacityAnimation);
+            startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
 
             base.LoadContent();
         }

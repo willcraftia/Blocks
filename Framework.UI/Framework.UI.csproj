@@ -126,7 +126,6 @@
     <Compile Include="Lafs\Sprite\DesktopLookAndFeel.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Rect.cs" />
-    <Compile Include="AnimationCollection.cs" />
     <Compile Include="IScreenFactoryAware.cs" />
     <Compile Include="ScreenDefinition.cs" />
     <Compile Include="ScreenDefinitionCollection.cs" />

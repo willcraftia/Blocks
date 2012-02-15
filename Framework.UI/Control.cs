@@ -525,6 +525,10 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        /// <summary>
+        /// 論理フォーカスが設定されているかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>true (論理フォーカスが設定されている場合)、false (それ以外の場合)。</value>
         public bool LogicalFocused
         {
             get { return logicalFocused; }
@@ -536,6 +540,8 @@ namespace Willcraftia.Xna.Framework.UI
                 RaiseEvent(null, logicalFocused ? GotLogicalFocusEvent : LostLogicalFocusEvent);
             }
         }
+
+        public List<Animation> Animations { get; private set; }
 
         /// <summary>
         /// 子 Control の数を取得します。
@@ -586,6 +592,8 @@ namespace Willcraftia.Xna.Framework.UI
             VerticalAlignment = VerticalAlignment.Center;
             FontStretch = Vector2.One;
             ClipEnabled = true;
+
+            Animations = new List<Animation>();
         }
 
         /// <summary>
@@ -648,7 +656,20 @@ namespace Willcraftia.Xna.Framework.UI
         /// Control を更新します。
         /// </summary>
         /// <param name="gameTime"></param>
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void Update(GameTime gameTime)
+        {
+            // Animation を更新します。
+            foreach (var animation in Animations)
+            {
+                if (animation.Enabled) animation.Update(gameTime);
+            }
+
+            for (int i = 0; i < ChildrenCount; i++)
+            {
+                var child = GetChild(i);
+                child.Update(gameTime);
+            }
+        }
 
         /// <summary>
         /// Control を描画します。

@@ -15,39 +15,17 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// Enabled プロパティが変更された時に発生します。
         /// </summary>
-        public event EventHandler EnanbledChanged;
+        public event EventHandler EnanbledChanged = delegate { };
 
         /// <summary>
         /// アニメーションが完了した時に発生します。
         /// </summary>
-        public event EventHandler Completed;
-
-        /// <summary>
-        /// 名前。
-        /// </summary>
-        string name;
+        public event EventHandler Completed = delegate { };
 
         /// <summary>
         /// true (Update の実行が有効な場合)、false (それ以外の場合)。
         /// </summary>
         bool enabled = true;
-
-        /// <summary>
-        /// 名前を取得または設定します。
-        /// </summary>
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (name == value) return;
-
-                // コレクション内のキーを更新します。
-                if (Screen != null) Screen.Animations.ChangeKey(this, value);
-                // 名前を設定します。
-                name = value;
-            }
-        }
 
         /// <summary>
         /// Update の実行が有効かどうかを示す値を取得または設定します。

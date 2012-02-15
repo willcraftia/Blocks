@@ -53,7 +53,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Enabled = true
             };
             opacityAnimation.Completed += new EventHandler(OnExitAnimationCompleted);
-            Screen.Animations.Add(opacityAnimation);
+            Animations.Add(opacityAnimation);
         }
 
         void OnExitAnimationCompleted(object sender, EventArgs e)

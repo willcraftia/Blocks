@@ -80,7 +80,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
                 uiService.Show(ScreenNames.Main);
             };
-            Screen.Animations.Add(opacityAnimation);
+            Animations.Add(opacityAnimation);
         }
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
@@ -109,7 +109,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Enabled = true
             };
             opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
-            Screen.Animations.Add(opacityAnimation);
+            Animations.Add(opacityAnimation);
         }
     }
 }

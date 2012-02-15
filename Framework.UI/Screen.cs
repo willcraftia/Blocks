@@ -80,11 +80,6 @@ namespace Willcraftia.Xna.Framework.UI
         public Desktop Desktop { get; private set; }
 
         /// <summary>
-        /// Animation コレクションを取得します。
-        /// </summary>
-        public AnimationCollection Animations { get; private set; }
-
-        /// <summary>
         /// フォーカスが設定されている Control を取得します。
         /// </summary>
         public Control FocusedControl
@@ -116,7 +111,6 @@ namespace Willcraftia.Xna.Framework.UI
             GraphicsDevice = game.GraphicsDevice;
             Content = new ContentManager(game.Services);
 
-            Animations = new AnimationCollection(this);
             Desktop = new Desktop(this);
 
             // Desktop のプロパティへデフォルト値を設定します。
@@ -150,12 +144,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         protected internal virtual void Update(GameTime gameTime)
         {
-            // Animation を更新します。
-            foreach (var animation in Animations)
-            {
-                if (animation.Enabled) animation.Update(gameTime);
-            }
-
             // Screen のレイアウトを更新します。
             UpdateLayout();
             // Control の前後関係が変化している可能性があるため、カーソル位置について再処理します。

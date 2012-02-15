@@ -37,7 +37,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(2),
                     Enabled = true
                 };
-                screen.Animations.Add(firstWindow_widthAnimation);
+                Animations.Add(firstWindow_widthAnimation);
 
                 var firstWindow_HeightAnimation = new PropertyLerpAnimation
                 {
@@ -50,7 +50,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(2),
                     Enabled = true
                 };
-                screen.Animations.Add(firstWindow_HeightAnimation);
+                Animations.Add(firstWindow_HeightAnimation);
             }
         }
 
@@ -82,7 +82,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     AutoReversed = true,
                     Enabled = true
                 };
-                screen.Animations.Add(opacityAnimation);
+                Animations.Add(opacityAnimation);
             }
         }
 
@@ -92,6 +92,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         class ThirdWindow : Window
         {
+            RotateCubeAnimation rotateCubeAnimation;
+
             public ThirdWindow(Screen screen)
                 : base(screen)
             {
@@ -134,9 +136,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(cubeControl);
 
-                var rotateCubeTimelineAnimation = new RotateCubeAnimation
+                rotateCubeAnimation = new RotateCubeAnimation
                 {
-                    Name = "RotateCube",
                     CubeButton = cubeControl,
                     From = 0,
                     To = MathHelper.TwoPi,
@@ -144,7 +145,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(4),
                     Repeat = Repeat.Forever
                 };
-                screen.Animations.Add(rotateCubeTimelineAnimation);
+                Animations.Add(rotateCubeAnimation);
                 cubeControl.MouseEnter += new RoutedEventHandler(OnCubeControlMouseEnter);
                 cubeControl.MouseLeave += new RoutedEventHandler(OnCubeControlMouseLeave);
 
@@ -158,7 +159,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(1),
                     Enabled = true
                 };
-                screen.Animations.Add(thirdWindow_widthAnimation);
+                Animations.Add(thirdWindow_widthAnimation);
 
                 var thirdWindow_heightAnimation = new PropertyLerpAnimation
                 {
@@ -171,7 +172,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Enabled = true
                 };
                 thirdWindow_heightAnimation.Completed += (s, e) => cubeControl.CubeVisible = true;
-                screen.Animations.Add(thirdWindow_heightAnimation);
+                Animations.Add(thirdWindow_heightAnimation);
             }
 
             void OnOpenNewDialogButtonClick(Control sender, ref RoutedEventContext context)
@@ -185,7 +186,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var cubeControl = sender as CubeControl;
                 cubeControl.Scale = 1.5f;
 
-                Screen.Animations["RotateCube"].Enabled = true;
+                rotateCubeAnimation.Enabled = true;
             }
 
             void OnCubeControlMouseLeave(Control sender, ref RoutedEventContext context)
@@ -193,7 +194,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var cubeControl = sender as CubeControl;
                 cubeControl.Scale = 1;
 
-                Screen.Animations["RotateCube"].Enabled = false;
+                rotateCubeAnimation.Enabled = false;
             }
 
             void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
@@ -373,7 +374,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Enabled = true
                 };
                 opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
-                Screen.Animations.Add(opacityAnimation);
+                Animations.Add(opacityAnimation);
             }
 
             void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
@@ -400,7 +401,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
                     uiService.Show("MainMenuDemoScreen");
                 };
-                Screen.Animations.Add(opacityAnimation);
+                Animations.Add(opacityAnimation);
             }
 
             public override void Show()
@@ -534,7 +535,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 startEffectOverlay.Close();
                 thirdWindow.Activate();
             };
-            Animations.Add(startEffectOverlay_opacityAnimation);
+            startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
 
             base.LoadContent();
         }

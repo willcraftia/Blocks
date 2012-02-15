@@ -114,7 +114,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
                     uiService.Show("WindowDemoScreen");
                 };
-                Screen.Animations.Add(opacityAnimation);
+                Animations.Add(opacityAnimation);
             }
 
             void OnExitButtonClick(Control sender, ref RoutedEventContext context)
@@ -137,7 +137,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Enabled = true
                 };
                 opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
-                Screen.Animations.Add(opacityAnimation);
+                Animations.Add(opacityAnimation);
             }
         }
 
@@ -184,7 +184,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 startEffectOverlay.Close();
                 menuWindow.Activate();
             };
-            Animations.Add(startEffectOverlay_opacityAnimation);
+            startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
 
             base.LoadContent();
         }
