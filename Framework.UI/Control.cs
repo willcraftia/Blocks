@@ -630,7 +630,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns></returns>
         public bool Focus()
         {
-            return Screen.MoveFocusTo(this);
+            var focusScope = FocusScope.GetFocusScope(this);
+            if (focusScope == null) return false;
+
+            return focusScope.MoveFocusTo(this);
         }
 
         /// <summary>
@@ -1173,6 +1176,56 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// 指定の方向にあるフォーカス設定可能な Control を取得します。
+        /// そのような Control が存在しない場合には null を返します。
+        /// </summary>
+        /// <param name="direction">フォーカス移動方向。</param>
+        /// <param name="mode">既にフォーカスが先頭あるいは末尾に到達している場合の振る舞い。</param>
+        /// <returns>
+        /// 指定の方向にあるフォーカス設定可能な Control。
+        /// そのような Control が存在しない場合には null。
+        /// </returns>
+        internal Control GetFocusableControl(FocusNavigationDirection direction, FocusNavigationMode mode)
+        {
+            if (mode == FocusNavigationMode.None) return null;
+
+            var focusedControl = Screen.FocusedControl;
+            var baseBounds = new Rect(focusedControl.PointToScreen(Point.Zero), focusedControl.RenderSize);
+            float minDistance = float.PositiveInfinity;
+
+            var candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
+            if (candidate != null) return candidate;
+
+            if (mode == FocusNavigationMode.Wrapped) return null;
+
+            var windowBounds = new Rect(PointToScreen(Point.Zero), RenderSize);
+            switch (direction)
+            {
+                case FocusNavigationDirection.Up:
+                    baseBounds.Y = windowBounds.Bottom;
+                    baseBounds.Height = 0;
+                    break;
+                case FocusNavigationDirection.Down:
+                    baseBounds.Y = windowBounds.Top;
+                    baseBounds.Height = 0;
+                    break;
+                case FocusNavigationDirection.Left:
+                    baseBounds.X = windowBounds.Right;
+                    baseBounds.Width = 0;
+                    break;
+                case FocusNavigationDirection.Right:
+                    baseBounds.X = windowBounds.Left;
+                    baseBounds.Width = 0;
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
+
+            return candidate;
+        }
+
+        /// <summary>
         /// マウス カーソルの移動を処理します。
         /// </summary>
         internal void ProcessMouseMove()
@@ -1286,7 +1339,7 @@ namespace Willcraftia.Xna.Framework.UI
             RaiseEvent(PreviewKeyUpEvent, KeyUpEvent);
         }
 
-        internal Control GetFocusableControl(FocusNavigationDirection direction, ref Rect baseBounds, ref float minDistance)
+        Control GetFocusableControl(FocusNavigationDirection direction, ref Rect baseBounds, ref float minDistance)
         {
             Control candidate = null;
 

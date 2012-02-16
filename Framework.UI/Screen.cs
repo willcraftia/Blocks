@@ -252,12 +252,12 @@ namespace Willcraftia.Xna.Framework.UI
                 throw new InvalidOperationException(
                     "The specified window is already registered.");
 
-            var oldActiveWindow = Desktop.GetTopMostWindow();
-            if (oldActiveWindow != null) oldActiveWindow.Active = false;
+            var topMostWindow = Desktop.GetTopMostWindow();
+            if (topMostWindow != null) topMostWindow.Active = false;
 
             Desktop.Windows.Add(window);
             window.Active = true;
-            FocusedControl = window.LogicalFocusedControl;
+            FocusedControl = window.FocusScope.FocusedControl;
         }
 
         /// <summary>
@@ -276,17 +276,32 @@ namespace Willcraftia.Xna.Framework.UI
             if (window.Active)
             {
                 window.Active = false;
-                var newActiveWindow = Desktop.GetTopMostWindow();
-                if (newActiveWindow != null)
+                var topMostWindow = Desktop.GetTopMostWindow();
+                if (topMostWindow != null)
                 {
-                    newActiveWindow.Active = true;
-                    FocusedControl = newActiveWindow.LogicalFocusedControl;
+                    topMostWindow.Active = true;
+                    FocusedControl = topMostWindow.FocusScope.FocusedControl;
                 }
                 else
                 {
                     FocusedControl = null;
                 }
             }
+        }
+
+        internal void ActivateDesktop(Desktop desktop)
+        {
+            if (desktop == null) throw new ArgumentNullException("desktop");
+
+            // 既にアクティブな場合には処理を終えます。
+            if (desktop.Active) return;
+
+            // 最前面の Window がアクティブならば非アクティブ化します。
+            var topMostWindow = Desktop.GetTopMostWindow();
+            if (topMostWindow != null && topMostWindow.Active) topMostWindow.Active = false;
+
+            desktop.Active = true;
+            FocusedControl = desktop.FocusScope.FocusedControl;
         }
 
         /// <summary>
@@ -303,14 +318,18 @@ namespace Willcraftia.Xna.Framework.UI
             // 既にアクティブな場合には処理を終えます。
             if (window.Active) return;
 
-            var oldActiveWindow = Desktop.GetTopMostWindow();
-            if (oldActiveWindow != null) oldActiveWindow.Active = false;
+            // 最前面の Window がアクティブならば非アクティブ化します。
+            var topMostWindow = Desktop.GetTopMostWindow();
+            if (topMostWindow != null && topMostWindow.Active) topMostWindow.Active = false;
+
+            // Desktop がアクティブならば非アクティブ化します。
+            if (Desktop.Active) Desktop.Active = false;
 
             // 最前面へ移動させます。
             Desktop.Windows.Remove(window);
             Desktop.Windows.Add(window);
             window.Active = true;
-            FocusedControl = window.LogicalFocusedControl;
+            FocusedControl = window.FocusScope.FocusedControl;
         }
 
         /// <summary>
@@ -328,18 +347,22 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (!control.Focusable || !control.Enabled || !control.Visible) return false;
 
+            // アクティブな Window の Control ならばフォーカスを設定します。
             var window = Window.GetWindow(control);
-            if (window == null) return false;
+            if (window != null && window.Active)
+            {
+                FocusedControl = control;
+                return true;
+            }
 
-            // 論理フォーカスを設定します。
-            window.LogicalFocusedControl = control;
+            // アクティブな Desktop の Control ならばフォーカスを設定します。
+            if (Desktop.Active)
+            {
+                FocusedControl = control;
+                return true;
+            }
 
-            // 非アクティブ Window の Control ならば論理フォーカスの設定のみで終えます。
-            if (!window.Active) return false;
-
-            // アクティブ Window の Control ならばフォーカスを設定します。
-            FocusedControl = control;
-            return true;
+            return false;
         }
 
         #region IDisposable

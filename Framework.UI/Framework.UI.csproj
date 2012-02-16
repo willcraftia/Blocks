@@ -106,6 +106,8 @@
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />
+    <Compile Include="FocusScope.cs" />
+    <Compile Include="IFocusScopeControl.cs" />
     <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />
     <Compile Include="Lafs\Sprite\TextBlockLookAndFeel.cs" />
     <Compile Include="RoutedEventContext.cs" />

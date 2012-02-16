@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -9,7 +10,7 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Screen で管理する全ての Control のルートとなる Control です。
     /// </summary>
-    public sealed class Desktop : ContentControl
+    public sealed class Desktop : ContentControl, IFocusScopeControl
     {
         #region InternalWindowCollection
 
@@ -55,9 +56,53 @@ namespace Willcraftia.Xna.Framework.UI
         #endregion
 
         /// <summary>
+        /// アクティブ化された時に発生します。
+        /// </summary>
+        public event EventHandler Activated = delegate { };
+
+        /// <summary>
+        /// 非アクティブ化された時に発生します。
+        /// </summary>
+        public event EventHandler Deactivated = delegate { };
+
+        /// <summary>
+        /// true (アクティブ化されている場合)、false (それ以外の場合)。
+        /// </summary>
+        bool active;
+
+        // I/F
+        public FocusScope FocusScope { get; private set; }
+
+        /// <summary>
         /// 管理している Window のコレクションを取得します。
         /// </summary>
         public WindowCollection Windows { get; private set; }
+
+        /// <summary>
+        /// アクティブ化されているかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (アクティブ化されている場合)、false (それ以外の場合)。
+        /// </value>
+        public bool Active
+        {
+            get { return active; }
+            internal set
+            {
+                if (active == value) return;
+
+                active = value;
+
+                if (active)
+                {
+                    OnActivated();
+                }
+                else
+                {
+                    OnDeactivated();
+                }
+            }
+        }
 
         /// <summary>
         /// Content に Control が設定されているならば Window 数 + 1 を返し、
@@ -76,6 +121,15 @@ namespace Willcraftia.Xna.Framework.UI
             : base(screen)
         {
             Windows = new InternalWindowCollection(this);
+            FocusScope = new FocusScope(this);
+        }
+
+        /// <summary>
+        /// アクティブ化します。
+        /// </summary>
+        public void Activate()
+        {
+            Screen.ActivateDesktop(this);
         }
 
         /// <summary>
@@ -107,6 +161,46 @@ namespace Willcraftia.Xna.Framework.UI
             return (index == 0)  ? Content : Windows[index - 1];
         }
 
+        protected override void OnPreviewKeyDown(ref RoutedEventContext context)
+        {
+            base.OnPreviewKeyDown(ref context);
+
+            // フォーカス移動のキーを優先して処理します。
+            if (Screen.FocusedControl != null)
+            {
+                var focusScope = FocusScope.GetFocusScope(Screen.FocusedControl);
+                if (focusScope != null)
+                {
+                    bool focusMoved = false;
+                    if (Screen.KeyboardDevice.IsKeyPressed(Keys.Up))
+                    {
+                        focusScope.MoveFocus(FocusNavigationDirection.Up);
+                        focusMoved = true;
+                    }
+                    else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Down))
+                    {
+                        focusScope.MoveFocus(FocusNavigationDirection.Down);
+                        focusMoved = true;
+                    }
+                    else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
+                    {
+                        focusScope.MoveFocus(FocusNavigationDirection.Left);
+                        focusMoved = true;
+                    }
+                    else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
+                    {
+                        focusScope.MoveFocus(FocusNavigationDirection.Right);
+                        focusMoved = true;
+                    }
+
+                    if (focusMoved)
+                    {
+                        context.Handled = true;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// InternalWindowCollection へ Control を追加した時に呼び出され、
         /// 追加された Control を Desktop の子として関連付けます。
@@ -125,6 +219,24 @@ namespace Willcraftia.Xna.Framework.UI
         internal void RemoveChildInternal(Control child)
         {
             RemoveChild(child);
+        }
+
+        /// <summary>
+        /// アクティブ化された時に呼び出されます。
+        /// Activated イベントを発生させます。
+        /// </summary>
+        void OnActivated()
+        {
+            if (Activated != null) Activated(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 非アクティブ化された時に呼び出されます。
+        /// Deactivated イベントを発生させます。
+        /// </summary>
+        void OnDeactivated()
+        {
+            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
     }
 }

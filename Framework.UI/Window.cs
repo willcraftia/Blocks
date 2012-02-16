@@ -11,27 +11,27 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Window を表す Control です。
     /// </summary>
-    public class Window : ContentControl
+    public class Window : ContentControl, IFocusScopeControl
     {
         /// <summary>
         /// Window が閉じる前に発生します。
         /// </summary>
-        public event EventHandler Closing;
+        public event EventHandler Closing = delegate { };
 
         /// <summary>
         /// Window が閉じた後に発生します。
         /// </summary>
-        public event EventHandler Closed;
+        public event EventHandler Closed = delegate { };
 
         /// <summary>
-        /// Window がアクティブ化された時に発生します。
+        /// アクティブ化された時に発生します。
         /// </summary>
-        public event EventHandler Activated;
+        public event EventHandler Activated = delegate { };
 
         /// <summary>
-        /// Window が非アクティブ化された時に発生します。
+        /// 非アクティブ化された時に発生します。
         /// </summary>
-        public event EventHandler Deactivated;
+        public event EventHandler Deactivated = delegate { };
 
         /// <summary>
         /// この Window を所有する Window。
@@ -39,14 +39,12 @@ namespace Willcraftia.Xna.Framework.UI
         Window owner;
 
         /// <summary>
-        /// true (Window がアクティブの場合)、false (それ以外の場合)。
+        /// true (アクティブ化されている場合)、false (それ以外の場合)。
         /// </summary>
         bool active;
 
-        /// <summary>
-        /// 論理フォーカスが設定されている Control への弱参照。
-        /// </summary>
-        WeakReference focusedControl = new WeakReference(null);
+        // I/F
+        public FocusScope FocusScope { get; private set; }
 
         /// <summary>
         /// サイズをコンテンツのサイズに合わせて自動調整する方法を取得または設定します。
@@ -75,10 +73,10 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// Window がアクティブどうかを示す値を取得します。
+        /// アクティブ化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
-        /// true (Window がアクティブの場合)、false (それ以外の場合)。
+        /// true (アクティブ化されている場合)、false (それ以外の場合)。
         /// </value>
         public bool Active
         {
@@ -100,30 +98,6 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
-        public FocusNavigationMode FocusNavigationMode { get; set; }
-
-        /// <summary>
-        /// 論理フォーカス。
-        /// </summary>
-        internal Control LogicalFocusedControl
-        {
-            get { return focusedControl.Target as Control; }
-            set
-            {
-                if (focusedControl.Target != null)
-                {
-                    (focusedControl.Target as Control).LogicalFocused = false;
-                }
-
-                focusedControl.Target = value;
-
-                if (focusedControl.Target != null)
-                {
-                    (focusedControl.Target as Control).LogicalFocused = true;
-                }
-            }
-        }
-
         /// <summary>
         /// コンストラクタ。
         /// </summary>
@@ -132,7 +106,7 @@ namespace Willcraftia.Xna.Framework.UI
             : base(screen)
         {
             SizeToContent = SizeToContent.Manual;
-            FocusNavigationMode = FocusNavigationMode.Cycle;
+            FocusScope = new FocusScope(this);
         }
 
         /// <summary>
@@ -178,7 +152,7 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// Window をアクティブ化します。
+        /// アクティブ化します。
         /// </summary>
         public void Activate()
         {
@@ -277,37 +251,22 @@ namespace Willcraftia.Xna.Framework.UI
             if (Closed != null) Closed(this, EventArgs.Empty);
         }
 
-        protected override void OnPreviewKeyDown(ref RoutedEventContext context)
+        /// <summary>
+        /// アクティブ化された時に呼び出されます。
+        /// Activated イベントを発生させます。
+        /// </summary>
+        protected virtual void OnActivated()
         {
-            base.OnPreviewKeyDown(ref context);
+            if (Activated != null) Activated(this, EventArgs.Empty);
+        }
 
-            // フォーカス移動のキーを優先して処理します。
-            bool focusMoved = false;
-            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Up))
-            {
-                MoveFocus(FocusNavigationDirection.Up);
-                focusMoved = true;
-            }
-            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Down))
-            {
-                MoveFocus(FocusNavigationDirection.Down);
-                focusMoved = true;
-            }
-            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
-            {
-                MoveFocus(FocusNavigationDirection.Left);
-                focusMoved = true;
-            }
-            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
-            {
-                MoveFocus(FocusNavigationDirection.Right);
-                focusMoved = true;
-            }
-
-            if (focusMoved)
-            {
-                context.Handled = true;
-            }
+        /// <summary>
+        /// 非アクティブ化された時に呼び出されます。
+        /// Deactivated イベントを発生させます。
+        /// </summary>
+        protected virtual void OnDeactivated()
+        {
+            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -324,86 +283,6 @@ namespace Willcraftia.Xna.Framework.UI
                 default:
                     return base.MeasureOverride(availableSize);
             }
-        }
-
-        /// <summary>
-        /// Window がアクティブ化された時に呼び出されます。
-        /// Activated イベントを発生させます。
-        /// </summary>
-        protected void OnActivated()
-        {
-            if (Activated != null) Activated(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Window が非アクティブ化された時に呼び出されます。
-        /// Deactivated イベントを発生させます。
-        /// </summary>
-        protected void OnDeactivated()
-        {
-            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 指定の方向にある Control へフォーカスを移動します。
-        /// </summary>
-        /// <param name="direction">フォーカス移動方向。</param>
-        void MoveFocus(FocusNavigationDirection direction)
-        {
-            var candidate = GetFocusableControl(direction);
-            if (candidate == null) return;
-
-            // フォーカスを設定します。
-            Screen.MoveFocusTo(candidate);
-        }
-
-        /// <summary>
-        /// 指定の方向にあるフォーカス設定可能な Control を取得します。
-        /// そのような Control が存在しない場合には null を返します。
-        /// </summary>
-        /// <param name="direction">フォーカス移動方向。</param>
-        /// <returns>
-        /// 指定の方向にあるフォーカス設定可能な Control。
-        /// そのような Control が存在しない場合には null。
-        /// </returns>
-        Control GetFocusableControl(FocusNavigationDirection direction)
-        {
-            if (FocusNavigationMode == FocusNavigationMode.None) return null;
-
-            var focusedControl = Screen.FocusedControl;
-            var baseBounds = new Rect(focusedControl.PointToScreen(Point.Zero), focusedControl.RenderSize);
-            float minDistance = float.PositiveInfinity;
-            
-            var candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
-            if (candidate != null) return candidate;
-
-            if (FocusNavigationMode == FocusNavigationMode.Wrapped) return null;
-
-            var windowBounds = new Rect(PointToScreen(Point.Zero), RenderSize);
-            switch (direction)
-            {
-                case FocusNavigationDirection.Up:
-                    baseBounds.Y = windowBounds.Bottom;
-                    baseBounds.Height = 0;
-                    break;
-                case FocusNavigationDirection.Down:
-                    baseBounds.Y = windowBounds.Top;
-                    baseBounds.Height = 0;
-                    break;
-                case FocusNavigationDirection.Left:
-                    baseBounds.X = windowBounds.Right;
-                    baseBounds.Width = 0;
-                    break;
-                case FocusNavigationDirection.Right:
-                    baseBounds.X = windowBounds.Left;
-                    baseBounds.Width = 0;
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
-            candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
-
-            return candidate;
         }
 
         /// <summary>
