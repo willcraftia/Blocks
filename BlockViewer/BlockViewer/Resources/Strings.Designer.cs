@@ -106,6 +106,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   LOD に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LevelOfDetailLabelText {
+            get {
+                return ResourceManager.GetString("LevelOfDetailLabelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Start に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string StartButtonText {

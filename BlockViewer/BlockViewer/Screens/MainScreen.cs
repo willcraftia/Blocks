@@ -25,6 +25,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         MainMenuWindow mainMenuWindow;
 
+        LodListWindow lodListWindow;
+
         public Texture2D CursorTexture { get; private set; }
 
         public MainScreen(Game game)
@@ -44,7 +46,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // TODO: テスト コード。
             mainViewModel.StoreSampleBlockMesh(GraphicsDevice);
 
-            blockMeshView = new BlockMeshView(this);
+            blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0));
             blockMeshView.Width = Desktop.Width;
             blockMeshView.Height = Desktop.Height;
             blockMeshView.Focusable = true;
@@ -54,6 +56,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Left;
             mainMenuWindow.VerticalAlignment = VerticalAlignment.Top;
             mainMenuWindow.Show();
+
+            lodListWindow = new LodListWindow(this, mainViewModel);
+            lodListWindow.HorizontalAlignment = HorizontalAlignment.Left;
+            lodListWindow.VerticalAlignment = VerticalAlignment.Bottom;
+            lodListWindow.Show();
 
             var startEffectOverlay = new Overlay(this)
             {

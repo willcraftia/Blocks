@@ -35,9 +35,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         float cameraPositionYaw = MathHelper.PiOver4;
         float cameraPositionPitch = -MathHelper.PiOver4;
 
-        public BlockMeshView(Screen screen)
+        public BlockMeshView(Screen screen, BlockMeshViewModel viewModel)
             : base(screen)
         {
+            DataContext = viewModel;
+
             gridEffect = new BasicEffect(screen.GraphicsDevice);
             gridEffect.VertexColorEnabled = true;
 
@@ -118,12 +120,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             gridBlockMesh.SetVisibilities(cameraPosition);
             gridBlockMesh.Draw(gridEffect);
 
-            var mainViewModel = DataContext as MainViewModel;
-            if (mainViewModel == null) throw new InvalidOperationException();
+            var blockMeshViewModel = DataContext as BlockMeshViewModel;
+            if (blockMeshViewModel == null) throw new InvalidOperationException();
 
-            var blockMesh = mainViewModel.BlockMesh;
+            var blockMesh = blockMeshViewModel.MainViewModel.BlockMesh;
             if (blockMesh != null)
             {
+                blockMesh.LevelOfDetail = blockMeshViewModel.LevelOfDetail;
+
                 foreach (var effect in blockMesh.Effects)
                 {
                     effect.View = view;
