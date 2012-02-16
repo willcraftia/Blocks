@@ -102,6 +102,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Data Context を取得または設定します。
+        /// </summary>
+        public object DataContext { get; set; }
+        
+        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <param name="game">Game。</param>

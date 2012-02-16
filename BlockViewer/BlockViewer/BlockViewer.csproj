@@ -123,6 +123,7 @@
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

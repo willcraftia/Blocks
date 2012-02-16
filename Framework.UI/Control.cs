@@ -22,6 +22,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="context"></param>
         protected delegate void ClassRoutedEventHandler(ref RoutedEventContext context);
 
+        #region Routing Events
+
         /// <summary>
         /// マウス カーソルが移動した時に発生します。
         /// </summary>
@@ -112,6 +114,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public static readonly string LostLogicalFocusEvent = "LostLogicalFocus";
 
+        #endregion
+
+        #region Event Handlers
+
         /// <summary>
         /// Enabled プロパティが変更された時に発生します。
         /// </summary>
@@ -121,6 +127,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// Visible プロパティが変更された時に発生します。
         /// </summary>
         public event EventHandler VisibleChanged = delegate { };
+
+        #endregion
+
+        #region Routing Event Handlers
 
         /// <summary>
         /// PreviewMouseMove イベントのハンドラを追加または削除します。
@@ -284,6 +294,8 @@ namespace Willcraftia.Xna.Framework.UI
             remove { RemoveHandler(LostLogicalFocusEvent, value); }
         }
 
+        #endregion
+
         /// <summary>
         /// イベント名をキーに RoutedEventHandler を値とするマップ。
         /// </summary>
@@ -316,6 +328,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// true (論理フォーカスが設定されている場合)、false (それ以外の場合)。
         /// </summary>
         bool logicalFocused;
+
+        /// <summary>
+        /// Data Context。
+        /// </summary>
+        object dataContext;
 
         /// <summary>
         /// Screen を取得します。
@@ -541,7 +558,27 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        /// <summary>
+        /// Animation のリストを取得します。
+        /// </summary>
         public List<Animation> Animations { get; private set; }
+
+        /// <summary>
+        /// Data Context を取得または設定します。
+        /// </summary>
+        public object DataContext
+        {
+            get
+            {
+                // 明示的に設定されているならば、それを返します。
+                if (dataContext != null) return dataContext;
+
+                // 明示的に設定されていないならば、親に従います。
+                // Desktop にも DataContext が設定されていないならば、Screen に従います。
+                return (Parent != null) ? Parent.DataContext : Screen.DataContext;
+            }
+            set { dataContext = value; }
+        }
 
         /// <summary>
         /// 子 Control の数を取得します。

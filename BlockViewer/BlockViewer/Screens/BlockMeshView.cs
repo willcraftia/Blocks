@@ -8,6 +8,7 @@ using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Blocks.Graphics;
+using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
 
@@ -33,8 +34,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         float cameraDistance = 3;
         float cameraPositionYaw = MathHelper.PiOver4;
         float cameraPositionPitch = -MathHelper.PiOver4;
-
-        public BlockMesh BlockMesh { get; set; }
 
         public BlockMeshView(Screen screen)
             : base(screen)
@@ -119,15 +118,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             gridBlockMesh.SetVisibilities(cameraPosition);
             gridBlockMesh.Draw(gridEffect);
 
-            if (BlockMesh != null)
+            var mainViewModel = DataContext as MainViewModel;
+            if (mainViewModel == null) throw new InvalidOperationException();
+
+            var blockMesh = mainViewModel.BlockMesh;
+            if (blockMesh != null)
             {
-                foreach (var effect in BlockMesh.Effects)
+                foreach (var effect in blockMesh.Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
                 }
 
-                BlockMesh.Draw();
+                blockMesh.Draw();
             }
         }
     }
