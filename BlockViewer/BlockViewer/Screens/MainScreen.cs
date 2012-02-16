@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -18,6 +20,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     {
         BlockMeshView blockMeshView;
 
+        MainMenuWindow mainMenuWindow;
+
         /// <summary>
         /// LOD サイズ。
         /// </summary>
@@ -28,17 +32,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         /// </summary>
         BlockMeshManager meshManager;
 
+        public Texture2D CursorTexture { get; private set; }
+
         public MainScreen(Game game)
             : base(game)
         {
+            Content.RootDirectory = "Content";
         }
 
         protected override void LoadContent()
         {
+            CursorTexture = Content.Load<Texture2D>("UI/Sprite/Cursor");
+
             blockMeshView = new BlockMeshView(this);
             blockMeshView.Width = Desktop.Width;
             blockMeshView.Height = Desktop.Height;
+            blockMeshView.Focusable = true;
             Desktop.Content = blockMeshView;
+
+
+
+
 
             // テスト用にメモリ上で Block の JSON データを作ります。
             var block = CreateOctahedronLikeBlock();
@@ -54,7 +68,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             blockMeshView.BlockMesh = mesh;
 
 
-
+            mainMenuWindow = new MainMenuWindow(this);
+            mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Left;
+            mainMenuWindow.VerticalAlignment = VerticalAlignment.Top;
+            mainMenuWindow.Show();
 
             var startEffectOverlay = new Overlay(this)
             {
@@ -80,7 +97,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
 
+            Desktop.PreviewKeyDown += new RoutedEventHandler(OnDesktopPreviewKeyDown);
+
+            // BlockMeshView にフォーカスを設定しておきます。
+            blockMeshView.Focus();
+
+            // Desktop をアクティブ化します。
+            Desktop.Activate();
+
             base.LoadContent();
+        }
+
+        void OnDesktopPreviewKeyDown(Control sender, ref RoutedEventContext context)
+        {
+            if (KeyboardDevice.IsKeyPressed(Keys.Y))
+            {
+                if (!mainMenuWindow.Active) mainMenuWindow.Activate();
+            }
+            if (KeyboardDevice.IsKeyPressed(Keys.Escape))
+            {
+                if (mainMenuWindow.Active) Desktop.Activate();
+            }
         }
 
         /// <summary>

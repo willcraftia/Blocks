@@ -24,7 +24,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
+            var cursor = (screen as MainScreen).CursorTexture;
+
             var exitButton = new CustomButton(screen);
+            exitButton.Cursor.Texture = cursor;
             exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
