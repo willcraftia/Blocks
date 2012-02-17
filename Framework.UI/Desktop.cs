@@ -161,44 +161,14 @@ namespace Willcraftia.Xna.Framework.UI
             return (index == 0)  ? Content : Windows[index - 1];
         }
 
-        protected override void OnPreviewKeyDown(ref RoutedEventContext context)
+        protected override void OnKeyDown(ref RoutedEventContext context)
         {
-            base.OnPreviewKeyDown(ref context);
+            base.OnKeyDown(ref context);
 
-            // フォーカス移動のキーを優先して処理します。
-            if (Screen.FocusedControl != null)
-            {
-                var focusScope = FocusScope.GetFocusScope(Screen.FocusedControl);
-                if (focusScope != null)
-                {
-                    bool focusMoved = false;
-                    if (Screen.KeyboardDevice.IsKeyPressed(Keys.Up))
-                    {
-                        focusScope.MoveFocus(FocusNavigationDirection.Up);
-                        focusMoved = true;
-                    }
-                    else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Down))
-                    {
-                        focusScope.MoveFocus(FocusNavigationDirection.Down);
-                        focusMoved = true;
-                    }
-                    else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
-                    {
-                        focusScope.MoveFocus(FocusNavigationDirection.Left);
-                        focusMoved = true;
-                    }
-                    else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
-                    {
-                        focusScope.MoveFocus(FocusNavigationDirection.Right);
-                        focusMoved = true;
-                    }
+            if (context.Handled) return;
 
-                    if (focusMoved)
-                    {
-                        context.Handled = true;
-                    }
-                }
-            }
+            // フォーカス移動を処理します。
+            MoveFocus();
         }
 
         /// <summary>
@@ -237,6 +207,34 @@ namespace Willcraftia.Xna.Framework.UI
         void OnDeactivated()
         {
             if (Deactivated != null) Deactivated(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 押されたキーに応じてフォーカスの移動を試みます。
+        /// </summary>
+        void MoveFocus()
+        {
+            if (Screen.FocusedControl == null) return;
+
+            var focusScope = FocusScope.GetFocusScope(Screen.FocusedControl);
+            if (focusScope == null) return;
+
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Up))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Up);
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Down))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Down);
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Left);
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Right);
+            }
         }
     }
 }
