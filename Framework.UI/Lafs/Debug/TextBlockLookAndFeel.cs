@@ -14,15 +14,15 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 
             var textBlock = control as Controls.TextBlock;
             if (textBlock == null) return;
+            if (string.IsNullOrEmpty(textBlock.Text)) return;
 
             var font = textBlock.Font ?? textBlock.Screen.Font;
+            if (font == null) return;
 
-            if (font != null && !string.IsNullOrEmpty(textBlock.Text))
-            {
-                drawContext.DrawString(
-                    new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
-                    control.HorizontalAlignment, control.VerticalAlignment, control.ForegroundColor, control.Padding);
-            }
+            drawContext.DrawString(
+                new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
+                textBlock.TextHorizontalAlignment, textBlock.TextVerticalAlignment,
+                control.ForegroundColor, control.Padding);
         }
     }
 }

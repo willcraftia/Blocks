@@ -13,11 +13,6 @@ namespace Willcraftia.Xna.Framework.Input
     public class KeyboardDevice
     {
         /// <summary>
-        /// Keys で定義された列挙値の配列。
-        /// </summary>
-        static readonly Keys[] allKeys = (Keys[]) Enum.GetValues(typeof(Keys));
-
-        /// <summary>
         /// 前回の Update メソッドで得られた KeyboardState。
         /// </summary>
         KeyboardState previouseKeyboardState = new KeyboardState();
@@ -101,7 +96,7 @@ namespace Willcraftia.Xna.Framework.Input
             keyboardState = Keyboard.GetState();
 
             // キーが押されたかどうか、および、離されたかどうかを判定します。
-            foreach (var key in allKeys)
+            foreach (var key in KeyboardHelper.AllKeys)
             {
                 var previousState = previouseKeyboardState[key];
                 var state = keyboardState[key];

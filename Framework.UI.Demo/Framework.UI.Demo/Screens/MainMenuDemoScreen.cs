@@ -45,6 +45,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 newGameButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
                 newGameButton.Focus();
 
+                var textBox = new TextBox(screen)
+                {
+                    Width = unit * 8
+                };
+                stackPanel.Children.Add(textBox);
+
                 var switchScreenButton = new Button(screen)
                 {
                     Padding = new Thickness(8),

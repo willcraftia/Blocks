@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -47,11 +48,17 @@ namespace Willcraftia.Xna.Framework.Input
         static readonly Dictionary<Keys, CharacterPair> keyCharacterPairMap = new Dictionary<Keys, CharacterPair>();
 
         /// <summary>
+        /// Keys の列挙値を格納したリストを取得します。
+        /// </summary>
+        public static ReadOnlyCollection<Keys> AllKeys { get; private set; }
+
+        /// <summary>
         /// クラスを初期化します。
         /// </summary>
         static KeyboardHelper()
         {
             InitializeKeyCharacterPairMap();
+            InitializeAllKeyList();
         }
 
         /// <summary>
@@ -152,6 +159,19 @@ namespace Willcraftia.Xna.Framework.Input
             if (1 < characterPair.Length) shiftCharacter = characterPair[1];
 
             keyCharacterPairMap[key] = new CharacterPair(character, shiftCharacter);
+        }
+
+        /// <summary>
+        /// AllKeys クラス プロパティを初期化します。
+        /// </summary>
+        static void InitializeAllKeyList()
+        {
+            List<Keys> list = new List<Keys>();
+            foreach (Keys key in Enum.GetValues(typeof(Keys)))
+            {
+                list.Add(key);
+            }
+            AllKeys = new ReadOnlyCollection<Keys>(list);
         }
     }
 }
