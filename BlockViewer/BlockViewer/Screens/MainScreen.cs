@@ -35,7 +35,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Content.RootDirectory = "Content";
 
             // Data Context
-            mainViewModel = new MainViewModel();
+            mainViewModel = new MainViewModel(game.GraphicsDevice);
             DataContext = mainViewModel;
         }
 
@@ -44,12 +44,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             CursorTexture = Content.Load<Texture2D>("UI/Sprite/Cursor");
 
             // TODO: テスト コード。
-            mainViewModel.StoreSampleBlockMesh(GraphicsDevice);
+            mainViewModel.StoreSampleBlockMesh();
 
             blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0));
             blockMeshView.Width = Desktop.Width;
             blockMeshView.Height = Desktop.Height;
             blockMeshView.Focusable = true;
+            blockMeshView.GridVisible = true;
+            blockMeshView.CameraMovable = true;
             Desktop.Content = blockMeshView;
 
             mainMenuWindow = new MainMenuWindow(this);

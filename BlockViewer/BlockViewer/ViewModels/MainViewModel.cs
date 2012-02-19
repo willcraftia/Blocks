@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Content;
@@ -24,16 +25,37 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
         /// </summary>
         int lodSize = 4;
 
+        public GraphicsDevice GraphicsDevice { get; private set; }
+
         public BlockMesh BlockMesh { get; set; }
 
+        public GridBlockMesh GridBlockMesh { get; private set; }
+
+        // MEMO
+        //
+        // BasicEffect.EnableDefaultLighting() が呼び出されると Normal0 が要求されるため、
+        // 念のため GridBlockMesh 専用の BasicEffect を使用します。
+        //
+
+        public BasicEffect GridBlockMeshEffect { get; private set; }
+
+        public MainViewModel(GraphicsDevice graphicsDevice)
+        {
+            GraphicsDevice = graphicsDevice;
+
+            GridBlockMesh = new GridBlockMesh(graphicsDevice, 16, 0.1f, Color.White);
+            GridBlockMeshEffect = new BasicEffect(GraphicsDevice);
+            GridBlockMeshEffect.VertexColorEnabled = true;
+        }
+
         // TODO: テスト用
-        public void StoreSampleBlockMesh(GraphicsDevice graphicsDevice)
+        public void StoreSampleBlockMesh()
         {
             // テスト用にメモリ上で Block の JSON データを作ります。
             var block = CreateOctahedronLikeBlock();
             var blockJson = JsonHelper.ToJson<Block>(block);
 
-            var meshFactory = new BlockMeshFactory(graphicsDevice, new BasicBlockEffectFactory(graphicsDevice), lodSize);
+            var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), lodSize);
             meshManager = new BlockMeshManager(meshFactory);
 
             // BlockMesh をロードします。

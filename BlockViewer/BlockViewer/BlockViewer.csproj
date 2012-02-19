@@ -118,7 +118,6 @@
     <Compile Include="Screens\BlockMeshView.cs" />
     <Compile Include="Screens\CustomButton.cs" />
     <Compile Include="Screens\LanguageSettingDialog.cs" />
-    <Compile Include="Screens\LodView.cs" />
     <Compile Include="Screens\LodListWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
@@ -126,7 +125,6 @@
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
     <Compile Include="ViewModels\BlockMeshViewModel.cs" />
-    <Compile Include="ViewModels\LodThumbnailViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

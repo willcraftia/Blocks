@@ -16,38 +16,43 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class BlockMeshView : Control
     {
-        // MEMO
-        //
-        // BasicEffect.EnableDefaultLighting() が呼び出されると Normal0 が要求されるため、
-        // 念のため GridBlockMesh 専用の BasicEffect を使用します。
-        //
-
-        BasicEffect gridEffect;
-
-        GridBlockMesh gridBlockMesh;
-
         int mouseOffsetX;
+        
         int mouseOffsetY;
 
-        float cameraMoveScale = 0.01f;
+        Vector3 cameraPosition;
 
-        float cameraDistance = 3;
-        float cameraPositionYaw = MathHelper.PiOver4;
-        float cameraPositionPitch = -MathHelper.PiOver4;
+        Matrix view;
+        
+        Matrix projection;
+
+        public float CameraDistance { get; set; }
+
+        public float CameraPositionYaw { get; set; }
+        
+        public float CameraPositionPitch { get; set; }
+
+        public float CameraMoveScale { get; set; }
+
+        public bool GridVisible { get; set; }
+
+        public bool CameraMovable { get; set; }
 
         public BlockMeshView(Screen screen, BlockMeshViewModel viewModel)
             : base(screen)
         {
             DataContext = viewModel;
 
-            gridEffect = new BasicEffect(screen.GraphicsDevice);
-            gridEffect.VertexColorEnabled = true;
-
-            gridBlockMesh = new GridBlockMesh(screen.GraphicsDevice, 16, 0.1f, Color.White);
+            CameraDistance = 3.5f;
+            CameraPositionYaw = MathHelper.PiOver4;
+            CameraPositionPitch = -MathHelper.PiOver4 * 0.5f;
+            CameraMoveScale = 0.01f;
         }
 
         protected override void OnMouseMove(ref RoutedEventContext context)
         {
+            if (!CameraMovable) return;
+
             var mouseDevice = Screen.MouseDevice;
             var mouseState = mouseDevice.MouseState;
 
@@ -61,14 +66,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                float dy = (float) (mouseState.X - mouseOffsetX) * cameraMoveScale;
-                float dp = (float) (mouseState.Y - mouseOffsetY) * cameraMoveScale;
+                float dy = (float) (mouseState.X - mouseOffsetX) * CameraMoveScale;
+                float dp = (float) (mouseState.Y - mouseOffsetY) * CameraMoveScale;
 
-                cameraPositionYaw += dy;
-                cameraPositionPitch += dp;
+                CameraPositionYaw += dy;
+                CameraPositionPitch += dp;
 
-                cameraPositionYaw = MathHelper.WrapAngle(cameraPositionYaw);
-                cameraPositionPitch = MathHelper.WrapAngle(cameraPositionPitch);
+                CameraPositionYaw = MathHelper.WrapAngle(CameraPositionYaw);
+                CameraPositionPitch = MathHelper.WrapAngle(CameraPositionPitch);
 
                 mouseOffsetX = mouseState.X;
                 mouseOffsetY = mouseState.Y;
@@ -101,41 +106,56 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             graphicsDevice.BlendState = BlendState.Opaque;
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
+            // カメラ座標を算出します。
+            var cameraScale = Matrix.CreateScale(CameraDistance);
+            var cameraRotation = Matrix.CreateFromYawPitchRoll(CameraPositionYaw, CameraPositionPitch, 0);
+            cameraPosition = Vector3.Transform(Vector3.Backward, cameraScale * cameraRotation);
+
             // View 行列を算出します。
-            var cameraScale = Matrix.CreateScale(cameraDistance);
-            var cameraRotation = Matrix.CreateFromYawPitchRoll(cameraPositionYaw, cameraPositionPitch, 0);
-            var cameraPosition = Vector3.Transform(Vector3.Backward, cameraScale * cameraRotation);
             var cameraUp = Vector3.Transform(Vector3.Up, cameraRotation);
-            var view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, cameraUp);
+            view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, cameraUp);
 
             // Projection 行列を算出します。
             var aspect = ((float) RenderSize.Width / (float) RenderSize.Height);
-            var projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.01f, 10);
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.01f, 10);
+
+            // GridBlockMesh を描画します。
+            if (GridVisible) DrawGridBlockMesh();
+
+            // BlockMesh を描画します。
+            DrawBlockMesh();
+        }
+
+        void DrawGridBlockMesh()
+        {
+            var viewModel = DataContext as BlockMeshViewModel;
 
             // GridBlockMesh 描画用 Effect に View と Projection を設定します。
-            gridEffect.View = view;
-            gridEffect.Projection = projection;
+            var effect = viewModel.MainViewModel.GridBlockMeshEffect;
+            effect.View = view;
+            effect.Projection = projection;
 
             // GridBlockMesh の面の描画の有無を決定します。
-            gridBlockMesh.SetVisibilities(cameraPosition);
-            gridBlockMesh.Draw(gridEffect);
+            var mesh = viewModel.MainViewModel.GridBlockMesh;
+            mesh.SetVisibilities(cameraPosition);
+            mesh.Draw(effect);
+        }
 
-            var blockMeshViewModel = DataContext as BlockMeshViewModel;
-            if (blockMeshViewModel == null) throw new InvalidOperationException();
+        void DrawBlockMesh()
+        {
+            var viewModel = DataContext as BlockMeshViewModel;
 
-            var blockMesh = blockMeshViewModel.MainViewModel.BlockMesh;
-            if (blockMesh != null)
+            var mesh = viewModel.MainViewModel.BlockMesh;
+            if (mesh == null) return;
+
+            mesh.LevelOfDetail = viewModel.LevelOfDetail;
+            foreach (var effect in mesh.Effects)
             {
-                blockMesh.LevelOfDetail = blockMeshViewModel.LevelOfDetail;
-
-                foreach (var effect in blockMesh.Effects)
-                {
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
-
-                blockMesh.Draw();
+                effect.View = view;
+                effect.Projection = projection;
             }
+
+            mesh.Draw();
         }
     }
 }
