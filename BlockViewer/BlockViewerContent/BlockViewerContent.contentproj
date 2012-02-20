@@ -56,24 +56,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Sprite\Window.png">
-      <Name>Window</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="UI\Sprite\WindowShadow.png">
-      <Name>WindowShadow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="UI\Sprite\Cursor.png">
       <Name>Cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>BasicScalingTextureProcessor</Processor>
+      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Sprite\Window.png">
+      <Name>Window</Name>
       <Importer>TextureImporter</Importer>
       <Processor>BasicScalingTextureProcessor</Processor>
       <ProcessorParameters_Scale>2</ProcessorParameters_Scale>

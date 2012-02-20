@@ -32,11 +32,12 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         public string WindowSpriteSheetName { get; set; }
 
         /// <summary>
-        /// Window の影を描画するための SpriteSheet のアセット名を取得または設定します。
-        /// null を指定した場合、影の描画は行いません。
-        /// デフォルトは null です。
+        /// Window の影を描画するかどうかを示す値を取得または設定します。
         /// </summary>
-        public string ShadowSpriteSheetName { get; set; }
+        /// <value>
+        /// true (Window の影を描画する場合)、false (それ以外の場合)。
+        /// </value>
+        public bool ShadowEnabled { get; set; }
 
         /// <summary>
         /// SpriteSheet 内の各スプライト イメージの幅を取得または設定します。
@@ -72,9 +73,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         {
             SpriteWidth = 16;
             SpriteHeight = 16;
+            ShadowEnabled = true;
             ShadowColor = Color.Black;
-            ShadowOpacity = 1;
-            ShadowOffset = new Point(8, 8);
+            ShadowOpacity = 0.5f;
+            ShadowOffset = new Point(4, 4);
         }
 
         protected override void LoadContent()
@@ -94,9 +96,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             windowSpriteSheet = new SpriteSheet(windowSpriteSheetTexture);
             PrepareSpriteSheet(windowSpriteSheet);
 
-            if (!string.IsNullOrEmpty(ShadowSpriteSheetName))
+            if (ShadowEnabled)
             {
-                var shadowSpriteSheetTexture = Source.Content.Load<Texture2D>(ShadowSpriteSheetName);
+                var shadowSpriteSheetTexture = CreateShadowSpriteSheetTexture(windowSpriteSheetTexture);
                 shadowSpriteSheet = new SpriteSheet(shadowSpriteSheetTexture);
                 PrepareSpriteSheet(shadowSpriteSheet);
             }
@@ -104,9 +106,24 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             base.LoadContent();
         }
 
+        Texture2D CreateShadowSpriteSheetTexture(Texture2D texture)
+        {
+            var colors = new Color[texture.Width * texture.Height];
+            texture.GetData(colors);
+
+            for (int i = 0; i < colors.Length; i++)
+            {
+                var c = colors[i];
+                colors[i] = new Color(255, 255, 255, c.A);
+            }
+            var shadowTexture = new Texture2D(texture.GraphicsDevice, texture.Width, texture.Height, false, SurfaceFormat.Color);
+            shadowTexture.SetData(colors);
+            return shadowTexture;
+        }
+
         public override void Draw(Control control, IDrawContext drawContext)
         {
-            if (shadowSpriteSheet != null)
+            if (ShadowEnabled)
                 DrawWindow(control, drawContext, shadowSpriteSheet, ShadowColor * ShadowOpacity, ShadowOffset);
 
             DrawWindow(control, drawContext, windowSpriteSheet, Color.White, Point.Zero);

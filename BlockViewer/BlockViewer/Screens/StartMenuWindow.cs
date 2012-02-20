@@ -25,29 +25,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
+            Padding = new Thickness(16);
+
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical,
-                Padding = new Thickness(8)
+                Orientation = Orientation.Vertical
             };
             Content = stackPanel;
 
             var cursor = (screen as StartScreen).CursorTexture;
 
             var startButton = new CustomButton(screen);
-            startButton.Cursor.Texture = cursor;
             startButton.TextBlock.Text = Strings.StartButtonText;
             startButton.Click += new RoutedEventHandler(OnStartButtonClick);
             stackPanel.Children.Add(startButton);
 
             var languageSettingButton = new CustomButton(screen);
-            languageSettingButton.Cursor.Texture = cursor;
             languageSettingButton.TextBlock.Text = Strings.LanguageSettingButtonText;
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
             stackPanel.Children.Add(languageSettingButton);
 
             var exitButton = new CustomButton(screen);
-            exitButton.Cursor.Texture = cursor;
             exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);

@@ -24,29 +24,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public LanguageSettingDialog(Screen screen)
             : base(screen)
         {
+            Padding = new Thickness(16);
+
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical,
-                Padding = new Thickness(8)
+                Orientation = Orientation.Vertical
             };
             Content = stackPanel;
 
             var cursor = (screen as StartScreen).CursorTexture;
 
             setDefaultButton = new CustomButton(screen);
-            setDefaultButton.Cursor.Texture = cursor;
             setDefaultButton.TextBlock.Text = Strings.DefaultButtonText;
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setDefaultButton);
 
             setJaButton = new CustomButton(screen);
-            setJaButton.Cursor.Texture = cursor;
             setJaButton.TextBlock.Text = Strings.JaButtonText;
             setJaButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setJaButton);
 
             setEnButton = new CustomButton(screen);
-            setEnButton.Cursor.Texture = cursor;
             setEnButton.TextBlock.Text = Strings.EnButtonText;
             setEnButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setEnButton);

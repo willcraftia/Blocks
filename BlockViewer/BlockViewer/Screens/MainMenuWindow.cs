@@ -17,17 +17,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public MainMenuWindow(Screen screen)
             : base(screen)
         {
+            Padding = new Thickness(16);
+
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical,
-                Padding = new Thickness(8)
+                Orientation = Orientation.Vertical
             };
             Content = stackPanel;
 
             var cursor = (screen as MainScreen).CursorTexture;
 
             var exitButton = new CustomButton(screen);
-            exitButton.Cursor.Texture = cursor;
             exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);

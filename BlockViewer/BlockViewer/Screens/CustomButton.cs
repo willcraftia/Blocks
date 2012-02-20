@@ -16,20 +16,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
     public class CustomButton : Button
     {
-        public StackPanel ContentStackPanel { get; private set; }
-
-        public Image Cursor { get; private set; }
-
         public TextBlock TextBlock { get; private set; }
 
         public CustomButton(Screen screen)
             : base(screen)
         {
-            Cursor = new Image(screen)
-            {
-                Visible = false
-            };
-
             TextBlock = new TextBlock(screen)
             {
                 ForegroundColor = Color.White,
@@ -43,7 +34,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Padding = new Thickness(4)
             };
 
-            content.Children.Add(Cursor);
             content.Children.Add(TextBlock);
 
             Content = content;
@@ -54,15 +44,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         protected override void OnGotFocus(ref RoutedEventContext context)
         {
             base.OnGotFocus(ref context);
-
-            Cursor.Visible = true;
         }
 
         protected override void OnLostFocus(ref RoutedEventContext context)
         {
             base.OnLostFocus(ref context);
+        }
 
-            Cursor.Visible = false;
+        public override void Draw(GameTime gameTime, IDrawContext drawContext)
+        {
+            // 背景を BackgroundColor で塗り潰します。
+            if (Focused)
+            {
+                var renderBounds = new Rect(RenderSize);
+                drawContext.DrawRectangle(renderBounds, Color.Green * 0.5f);
+            }
+
+            base.Draw(gameTime, drawContext);
         }
     }
 }
