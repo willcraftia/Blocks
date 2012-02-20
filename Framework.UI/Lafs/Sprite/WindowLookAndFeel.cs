@@ -133,95 +133,101 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             Rectangle sourceRectangle;
 
             // Top Lines
-            sourceRectangle = spriteSheet.SourceRectangles["TopLeft"];
-            bounds.X = offsetX;
-            bounds.Y = offsetY;
-            bounds.Width = w;
-            bounds.Height = h;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-
-            sourceRectangle = spriteSheet.SourceRectangles["Top"];
-            for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
             {
-                int adjustedWidth = w;
-                if (renderWidth + offsetX - w < x + w)
+                int adjustedH = AdjustHeight(renderHeight, offsetY, h, offsetY);
+                int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
+                bounds.Height = adjustedH;
+                bounds.Width = adjustedW;
+
+                sourceRectangle = spriteSheet.SourceRectangles["TopLeft"];
+                sourceRectangle.Width = adjustedW;
+                sourceRectangle.Height = adjustedH;
+                bounds.X = offsetX;
+                bounds.Y = offsetY;
+                bounds.Width = sourceRectangle.Width;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+
+                sourceRectangle = spriteSheet.SourceRectangles["Top"];
+                sourceRectangle.Height = adjustedH;
+                for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
                 {
-                    adjustedWidth -= (x + w) - (renderWidth + offsetX - w);
+                    adjustedW = AdjustWidth(renderWidth, offsetX, w, x);
+
+                    sourceRectangle.Width = adjustedW;
+                    bounds.X = x;
+                    bounds.Width = adjustedW;
+                    drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
                 }
-                sourceRectangle.Width = adjustedWidth;
-                bounds.Width = adjustedWidth;
-                bounds.X = x;
+
+                sourceRectangle = spriteSheet.SourceRectangles["TopRight"];
+                sourceRectangle.Height = adjustedH;
+                bounds.X = renderWidth + offsetX - w;
+                bounds.Width = w;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
             }
-            bounds.Width = w;
-
-            sourceRectangle = spriteSheet.SourceRectangles["TopRight"];
-            bounds.X = renderWidth + offsetX - w;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
 
             // Middle Lines
             for (int y = h + offsetY; y < renderHeight + offsetY - h; y += h)
             {
-                int adjustedHeight = h;
-                if (renderHeight + offsetY - h < y + h)
-                {
-                    adjustedHeight -= (y + h) - (renderHeight + offsetY - h);
-                }
-                bounds.Height = adjustedHeight;
+                int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
+                int adjustedH = AdjustHeight(renderHeight, offsetY, h, y);
 
                 sourceRectangle = spriteSheet.SourceRectangles["Left"];
-                sourceRectangle.Height = adjustedHeight;
+                sourceRectangle.Width = adjustedW;
+                sourceRectangle.Height = adjustedH;
                 bounds.X = offsetX;
                 bounds.Y = y;
+                bounds.Width = adjustedW;
+                bounds.Height = adjustedH;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
 
                 sourceRectangle = spriteSheet.SourceRectangles["Fill"];
-                sourceRectangle.Height = adjustedHeight;
+                sourceRectangle.Height = adjustedH;
                 for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
                 {
-                    int adjustedWidth = w;
-                    if (renderWidth + offsetX - w < x + w)
-                    {
-                        adjustedWidth -= (x + w) - (renderWidth + offsetX - w);
-                    }
-                    sourceRectangle.Width = adjustedWidth;
-                    bounds.Width = adjustedWidth;
+                    adjustedW = AdjustWidth(renderWidth, offsetX, w, x);
+
+                    sourceRectangle.Width = adjustedW;
                     bounds.X = x;
+                    bounds.Width = adjustedW;
+                    drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+                }
+
+                sourceRectangle = spriteSheet.SourceRectangles["Right"];
+                sourceRectangle.Height = adjustedH;
+                bounds.X = renderWidth + offsetX - w;
+                bounds.Width = w;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+            }
+
+            // Bottom Lines
+            {
+                int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
+
+                sourceRectangle = spriteSheet.SourceRectangles["BottomLeft"];
+                sourceRectangle.Width = adjustedW;
+                bounds.X = offsetX;
+                bounds.Y = renderHeight + offsetY - h;
+                bounds.Width = adjustedW;
+                bounds.Height = h;
+                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
+
+                sourceRectangle = spriteSheet.SourceRectangles["Bottom"];
+                for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
+                {
+                    adjustedW = AdjustWidth(renderWidth, offsetX, w, x);
+
+                    sourceRectangle.Width = adjustedW;
+                    bounds.X = x;
+                    bounds.Width = adjustedW;
                     drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
                 }
                 bounds.Width = w;
 
-                sourceRectangle = spriteSheet.SourceRectangles["Right"];
-                sourceRectangle.Height = adjustedHeight;
+                sourceRectangle = spriteSheet.SourceRectangles["BottomRight"];
                 bounds.X = renderWidth + offsetX - w;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
             }
-            bounds.Height = h;
-
-            // Bottom Lines
-            sourceRectangle = spriteSheet.SourceRectangles["BottomLeft"];
-            bounds.X = offsetX;
-            bounds.Y = renderHeight + offsetY - h;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-
-            sourceRectangle = spriteSheet.SourceRectangles["Bottom"];
-            for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
-            {
-                int adjustedWidth = w;
-                if (renderWidth + offsetX - w < x + w)
-                {
-                    adjustedWidth -= (x + w) - (renderWidth + offsetX - w);
-                }
-                sourceRectangle.Width = adjustedWidth;
-                bounds.Width = adjustedWidth;
-                bounds.X = x;
-                drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
-            }
-            bounds.Width = w;
-
-            sourceRectangle = spriteSheet.SourceRectangles["BottomRight"];
-            bounds.X = renderWidth + offsetX - w;
-            drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
         }
 
         protected void PrepareSpriteSheet(SpriteSheet spriteSheet)
@@ -237,6 +243,26 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             spriteSheet.SourceRectangles["BottomLeft"] = new Rectangle(0, h * 2, w, h);
             spriteSheet.SourceRectangles["Bottom"] = new Rectangle(w, h * 2, w, h);
             spriteSheet.SourceRectangles["BottomRight"] = new Rectangle(w * 2, h * 2, w, h);
+        }
+
+        int AdjustWidth(int windowWidth, int windowOffsetX, int spriteWidth, int currentOffsetX)
+        {
+            int adjustedWidth = spriteWidth;
+            if (windowWidth + windowOffsetX - spriteWidth < currentOffsetX + spriteWidth)
+            {
+                adjustedWidth -= (currentOffsetX + spriteWidth) - (windowWidth + windowOffsetX - spriteWidth);
+            }
+            return adjustedWidth;
+        }
+
+        int AdjustHeight(int windowHeight, int windowOffsetY, int spriteHeight, int currentOffsetY)
+        {
+            int adjustedHeight = spriteHeight;
+            if (windowHeight + windowOffsetY - spriteHeight < currentOffsetY + spriteHeight)
+            {
+                adjustedHeight -= (currentOffsetY + spriteHeight) - (windowHeight + windowOffsetY - spriteHeight);
+            }
+            return adjustedHeight;
         }
     }
 }
