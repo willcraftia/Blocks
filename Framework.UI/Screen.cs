@@ -253,16 +253,39 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="window">表示する Window。</param>
         internal void ShowWindow(Window window)
         {
-            if (Desktop.Windows.Contains(window))
-                throw new InvalidOperationException(
-                    "The specified window is already registered.");
-
             var topMostWindow = Desktop.GetTopMostWindow();
             if (topMostWindow != null) topMostWindow.Active = false;
 
-            Desktop.Windows.Add(window);
+            if (Desktop.Windows.Contains(window))
+            {
+                Desktop.Windows.Remove(window);
+                Desktop.Windows.Add(window);
+            }
+            else
+            {
+                Desktop.Windows.Add(window);
+            }
+
+            window.Visible = true;
             window.Active = true;
             FocusedControl = window.FocusScope.FocusedControl;
+        }
+
+        /// <summary>
+        /// 指定の Window を非表示にします。
+        /// </summary>
+        /// <param name="window">非表示にする Window。</param>
+        internal void HideWindow(Window window)
+        {
+            if (!Desktop.Windows.Contains(window)) throw new InvalidOperationException("Window could not be found.");
+
+            if (1 < Desktop.Windows.Count)
+            {
+                // 直下にある Window をアクティブ化します。
+                Desktop.Windows[Desktop.Windows.IndexOf(window) - 1].Activate();
+            }
+
+            window.Visible = false;
         }
 
         /// <summary>

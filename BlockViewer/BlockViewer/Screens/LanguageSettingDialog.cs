@@ -32,8 +32,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var cursor = (screen as StartScreen).CursorTexture;
-
             setDefaultButton = new CustomButton(screen);
             setDefaultButton.TextBlock.Text = Strings.DefaultButtonText;
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);

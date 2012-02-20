@@ -51,6 +51,28 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public SizeToContent SizeToContent { get; set; }
 
+        public float Left
+        {
+            get { return Margin.Left; }
+            set
+            {
+                var m = Margin;
+                m.Left = value;
+                Margin = m;
+            }
+        }
+
+        public float Top
+        {
+            get { return Margin.Top; }
+            set
+            {
+                var m = Margin;
+                m.Top = value;
+                Margin = m;
+            }
+        }
+
         /// <summary>
         /// この Window を所有する Window を取得あるいは設定します。
         /// </summary>
@@ -135,6 +157,14 @@ namespace Willcraftia.Xna.Framework.UI
         public virtual void Show()
         {
             Screen.ShowWindow(this);
+        }
+
+        /// <summary>
+        /// Window を非表示にします。
+        /// </summary>
+        public virtual void Hide()
+        {
+            Screen.HideWindow(this);
         }
 
         /// <summary>

@@ -13,8 +13,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class StartScreen : Screen
     {
-        public Texture2D CursorTexture { get; private set; }
-
         public StartScreen(Game game)
             : base(game)
         {
@@ -23,8 +21,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         protected override void LoadContent()
         {
-            CursorTexture = Content.Load<Texture2D>("UI/Sprite/Cursor");
-
             var startMenuWindow = new StartMenuWindow(this);
             startMenuWindow.Show();
 

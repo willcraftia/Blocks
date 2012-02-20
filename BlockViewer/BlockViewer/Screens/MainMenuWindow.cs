@@ -14,6 +14,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainMenuWindow : Window
     {
+        CustomButton fileButton;
+
+        FileMenuWindow fileMenuWindow;
+
         public MainMenuWindow(Screen screen)
             : base(screen)
         {
@@ -25,7 +29,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var cursor = (screen as MainScreen).CursorTexture;
+            fileButton = new CustomButton(screen);
+            fileButton.TextBlock.Text = "File";
+            fileButton.Click += new RoutedEventHandler(OnFileButtonClick);
+            stackPanel.Children.Add(fileButton);
 
             var exitButton = new CustomButton(screen);
             exitButton.TextBlock.Text = Strings.ExitButtonText;
@@ -34,6 +41,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // デフォルト フォーカス。
             exitButton.Focus();
+        }
+
+        void OnFileButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (fileMenuWindow == null)
+            {
+                fileMenuWindow = new FileMenuWindow(Screen);
+                fileMenuWindow.Owner = this;
+            }
+            fileMenuWindow.HorizontalAlignment = HorizontalAlignment.Left;
+            fileMenuWindow.VerticalAlignment = VerticalAlignment.Top;
+
+            var ownerPosition = PointToScreen(RenderOffset);
+            var menuPosition = fileButton.PointToScreen(fileButton.RenderOffset);
+
+            fileMenuWindow.Left = menuPosition.X;
+            fileMenuWindow.Top = ownerPosition.Y + 32;
+            fileMenuWindow.Show();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)

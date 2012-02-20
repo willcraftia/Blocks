@@ -27,8 +27,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         LodListWindow lodListWindow;
 
-        public Texture2D CursorTexture { get; private set; }
-
         public MainScreen(Game game)
             : base(game)
         {
@@ -41,8 +39,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         protected override void LoadContent()
         {
-            CursorTexture = Content.Load<Texture2D>("UI/Sprite/Cursor");
-
             // TODO: テスト コード。
             mainViewModel.StoreSampleBlockMesh();
 
@@ -55,7 +51,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Desktop.Content = blockMeshView;
 
             mainMenuWindow = new MainMenuWindow(this);
-            mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Left;
+            mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Right;
             mainMenuWindow.VerticalAlignment = VerticalAlignment.Top;
             mainMenuWindow.Show();
 

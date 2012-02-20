@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
     <Compile Include="Screens\CustomButton.cs" />
+    <Compile Include="Screens\FileMenuWindow.cs" />
     <Compile Include="Screens\LanguageSettingDialog.cs" />
     <Compile Include="Screens\LodListWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />
