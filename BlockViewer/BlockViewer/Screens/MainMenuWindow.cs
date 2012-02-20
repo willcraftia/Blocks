@@ -50,14 +50,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 fileMenuWindow = new FileMenuWindow(Screen);
                 fileMenuWindow.Owner = this;
             }
-            fileMenuWindow.HorizontalAlignment = HorizontalAlignment.Left;
+            fileMenuWindow.HorizontalAlignment = HorizontalAlignment.Right;
             fileMenuWindow.VerticalAlignment = VerticalAlignment.Top;
-
-            var ownerPosition = PointToScreen(RenderOffset);
-            var menuPosition = fileButton.PointToScreen(fileButton.RenderOffset);
-
-            fileMenuWindow.Left = menuPosition.X;
-            fileMenuWindow.Top = ownerPosition.Y + 32;
             fileMenuWindow.Show();
         }
 

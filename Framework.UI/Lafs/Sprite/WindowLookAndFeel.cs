@@ -113,8 +113,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             for (int i = 0; i < colors.Length; i++)
             {
-                var c = colors[i];
-                colors[i] = new Color(255, 255, 255, c.A);
+                // 元画像内の不透明部分を、透明度が ShadowOpacity の白にした画像を作成します。
+                var alpha = colors[i].ToVector4().W;
+                if (alpha != 0) alpha = ShadowOpacity;
+                colors[i] = new Color(1, 1, 1, alpha);
             }
             var shadowTexture = new Texture2D(texture.GraphicsDevice, texture.Width, texture.Height, false, SurfaceFormat.Color);
             shadowTexture.SetData(colors);
@@ -124,7 +126,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         public override void Draw(Control control, IDrawContext drawContext)
         {
             if (ShadowEnabled)
-                DrawWindow(control, drawContext, shadowSpriteSheet, ShadowColor * ShadowOpacity, ShadowOffset);
+                DrawWindow(control, drawContext, shadowSpriteSheet, ShadowColor, ShadowOffset);
 
             DrawWindow(control, drawContext, windowSpriteSheet, Color.White, Point.Zero);
         }
