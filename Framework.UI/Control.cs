@@ -667,6 +667,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns></returns>
         public bool Focus()
         {
+            if (!Focusable || !Enabled || !Visible) return false;
+
             var focusScope = FocusScope.GetFocusScope(this);
             if (focusScope == null) return false;
 
@@ -1434,9 +1436,9 @@ namespace Willcraftia.Xna.Framework.UI
                 if (direction == FocusNavigationDirection.Up)
                 {
                     // baseBounds よりも下側、左側、右側にある Control は無視します。
-                    if (baseBounds.Top < testBounds.Top ||
-                        testBounds.Right < baseBounds.Left ||
-                        baseBounds.Right < testBounds.Left)
+                    if (baseBounds.Top <= testBounds.Top ||
+                        testBounds.Right <= baseBounds.Left ||
+                        baseBounds.Right <= testBounds.Left)
                     {
                         return float.NaN;
                     }
@@ -1446,9 +1448,9 @@ namespace Willcraftia.Xna.Framework.UI
                 else
                 {
                     // baseBounds よりも上側、左側、右側にある Control は無視します。
-                    if (testBounds.Bottom < baseBounds.Bottom ||
-                        testBounds.Right < baseBounds.Left ||
-                        baseBounds.Right < testBounds.Left)
+                    if (testBounds.Bottom <= baseBounds.Bottom ||
+                        testBounds.Right <= baseBounds.Left ||
+                        baseBounds.Right <= testBounds.Left)
                     {
                         return float.NaN;
                     }
@@ -1461,9 +1463,9 @@ namespace Willcraftia.Xna.Framework.UI
                 if (direction == FocusNavigationDirection.Left)
                 {
                     // baseBounds よりも右側、上側、下側にある Control は無視します。
-                    if (baseBounds.Left < testBounds.Left ||
-                        testBounds.Bottom < baseBounds.Top ||
-                        baseBounds.Bottom < testBounds.Top)
+                    if (baseBounds.Left <= testBounds.Left ||
+                        testBounds.Bottom <= baseBounds.Top ||
+                        baseBounds.Bottom <= testBounds.Top)
                     {
                         return float.NaN;
                     }
@@ -1473,9 +1475,9 @@ namespace Willcraftia.Xna.Framework.UI
                 else
                 {
                     // baseBounds よりも左側、上側、下側にある Control は無視します。
-                    if (testBounds.Right < baseBounds.Right ||
-                        testBounds.Bottom < baseBounds.Top ||
-                        baseBounds.Bottom < testBounds.Top)
+                    if (testBounds.Right <= baseBounds.Right ||
+                        testBounds.Bottom <= baseBounds.Top ||
+                        baseBounds.Bottom <= testBounds.Top)
                     {
                         return float.NaN;
                     }

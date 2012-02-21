@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -19,10 +20,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             var font = textBlock.Font ?? textBlock.Screen.Font;
             if (font == null) return;
 
+            // 文字色を白として描画します。
             drawContext.DrawString(
                 new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
                 textBlock.TextHorizontalAlignment, textBlock.TextVerticalAlignment,
-                control.ForegroundColor, control.Padding);
+                Color.White, control.Padding);
         }
     }
 }

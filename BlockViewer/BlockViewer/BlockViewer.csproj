@@ -118,9 +118,11 @@
     <Compile Include="Screens\BlockMeshView.cs" />
     <Compile Include="Screens\CustomButton.cs" />
     <Compile Include="Screens\FileMenuWindow.cs" />
+    <Compile Include="Screens\InputPathDialog.cs" />
     <Compile Include="Screens\LanguageSettingDialog.cs" />
     <Compile Include="Screens\LodListWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />
+    <Compile Include="Screens\OpenStorageDialog.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />

@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 
@@ -11,6 +12,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class FileMenuWindow : Window
     {
+        OpenStorageDialog openStorageDialog;
+
         public FileMenuWindow(Screen screen)
             : base(screen)
         {
@@ -32,6 +35,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnLoadButtonClick(Control sender, ref RoutedEventContext context)
         {
+            if (openStorageDialog == null)
+            {
+                var showSelectorResult = StorageDevice.BeginShowSelector(null, null);
+                showSelectorResult.AsyncWaitHandle.WaitOne();
+                var storageDevice = StorageDevice.EndShowSelector(showSelectorResult);
+                showSelectorResult.AsyncWaitHandle.Close();
+
+                var openContainerResult = storageDevice.BeginOpenContainer("BlockData", null, null);
+                openContainerResult.AsyncWaitHandle.WaitOne();
+                var storageContainer = storageDevice.EndOpenContainer(openContainerResult);
+                openContainerResult.AsyncWaitHandle.Close();
+
+                openStorageDialog = new OpenStorageDialog(Screen, storageContainer);
+            }
+            openStorageDialog.Show();
         }
 
         protected override void OnKeyDown(ref RoutedEventContext context)

@@ -86,7 +86,7 @@ namespace Willcraftia.Xna.Framework.Serialization
         }
 
         /// <summary>
-        /// していの Stream から JSON を読み込み、オブジェクトへ変換します。
+        /// 指定の Stream から JSON を読み込み、オブジェクトへ変換します。
         /// </summary>
         /// <remarks>
         /// Stream の Close は呼び出し側の責務とします。

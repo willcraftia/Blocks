@@ -110,6 +110,7 @@
     <Compile Include="FocusScope.cs" />
     <Compile Include="IFocusScopeControl.cs" />
     <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />
+    <Compile Include="Lafs\Debug\WindowLookAndFeel.cs" />
     <Compile Include="Lafs\Sprite\TextBlockLookAndFeel.cs" />
     <Compile Include="RoutedEventContext.cs" />
     <Compile Include="RoutedEventHandler.cs" />

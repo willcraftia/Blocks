@@ -120,13 +120,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// <returns>生成された ILookAndFeelSource。</returns>
         ILookAndFeelSource CreateLookAndFeelSource()
         {
-            var lookAndFeelSource = new SpriteLookAndFeelSource(this);
-            lookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
-            var windowLookAndFeel = new WindowLookAndFeel();
-            windowLookAndFeel.SpriteWidth = SpriteSize;
-            windowLookAndFeel.SpriteHeight = SpriteSize;
-            lookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
-            return lookAndFeelSource;
+            //var lookAndFeelSource = new SpriteLookAndFeelSource(this);
+            //lookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
+            //var windowLookAndFeel = new WindowLookAndFeel();
+            //windowLookAndFeel.SpriteWidth = SpriteSize;
+            //windowLookAndFeel.SpriteHeight = SpriteSize;
+            //lookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
+            //return lookAndFeelSource;
+
+            return new Framework.UI.Lafs.Debug.DebugLookAndFeelSource(this);
         }
     }
 }

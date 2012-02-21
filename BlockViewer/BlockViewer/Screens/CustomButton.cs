@@ -23,20 +23,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             TextBlock = new TextBlock(screen)
             {
-                ForegroundColor = Color.White,
-                Margin = new Thickness(4, 0, 0, 0)
+                ForegroundColor = Color.White
             };
-
-            var content = new StackPanel(Screen)
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Padding = new Thickness(4)
-            };
-
-            content.Children.Add(TextBlock);
-
-            Content = content;
+            Content = TextBlock;
 
             HorizontalAlignment = HorizontalAlignment.Left;
         }
@@ -53,7 +42,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Draw(GameTime gameTime, IDrawContext drawContext)
         {
-            // 背景を BackgroundColor で塗り潰します。
             if (Focused)
             {
                 var renderBounds = new Rect(RenderSize);

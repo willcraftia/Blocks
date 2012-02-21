@@ -29,6 +29,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
             : base(game)
         {
             Register(typeof(Control), new DefaultLookAndFeel());
+            Register(typeof(Window), new WindowLookAndFeel());
             Register(typeof(Controls.TextBlock), new TextBlockLookAndFeel());
         }
 

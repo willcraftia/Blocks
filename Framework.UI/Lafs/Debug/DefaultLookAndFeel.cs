@@ -17,13 +17,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
         {
             var renderBounds = new Rect(control.RenderSize);
 
-            // 背景を BackgroundColor で塗り潰します。
-            drawContext.DrawRectangle(renderBounds, control.BackgroundColor);
+            // デフォルトは背景を透過にします。
 
-            // 枠を White で描画します。
-            // ただし、背景色が White の場合には区別が付くように Gray にします。
-            var borderColor = Color.White;
-            if (control.BackgroundColor == Color.White) borderColor = Color.DimGray;
+            // 枠を BackgroundColor で描画します。
+            var borderColor = control.BackgroundColor;
 
             Rect lineBounds;
 
