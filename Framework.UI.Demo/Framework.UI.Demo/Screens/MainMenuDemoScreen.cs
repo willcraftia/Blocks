@@ -159,12 +159,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         protected override void LoadContent()
         {
-            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
-            Desktop.BackgroundColor = Color.CornflowerBlue;
-            Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
-            Desktop.Width = viewportBounds.Width;
-            Desktop.Height = viewportBounds.Height;
-
             var menuWindow = new MenuWindow(this);
             menuWindow.Show();
 

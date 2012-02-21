@@ -498,12 +498,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             // 重いロードのテスト用にスリープさせてます。
             System.Threading.Thread.Sleep(2000);
 
-            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
-            Desktop.BackgroundColor = Color.CornflowerBlue;
-            Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
-            Desktop.Width = viewportBounds.Width;
-            Desktop.Height = viewportBounds.Height;
-
             var firstWindow = new FirstWindow(this);
             firstWindow.Show();
 

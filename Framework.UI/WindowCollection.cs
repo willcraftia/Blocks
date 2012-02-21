@@ -13,18 +13,42 @@ namespace Willcraftia.Xna.Framework.UI
     public class WindowCollection : Collection<Window>
     {
         /// <summary>
-        /// このコレクションを所有する Desktop。
+        /// このコレクションを所有する Root。
         /// </summary>
-        protected Desktop Desktop { get; private set; }
+        protected Root Root { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="desktop">このコレクションを所有する Desktop。</param>
-        public WindowCollection(Desktop desktop)
+        /// <param name="root">このコレクションを所有する Root。</param>
+        public WindowCollection(Root root)
         {
-            if (desktop == null) throw new ArgumentNullException("desktop");
-            Desktop = desktop;
+            if (root == null) throw new ArgumentNullException("root");
+            Root = root;
+        }
+
+        protected override void InsertItem(int index, Window item)
+        {
+            base.InsertItem(index, item);
+
+            Root.AddChildInternal(item);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            var removedItem = this[index];
+            base.RemoveItem(index);
+
+            Root.RemoveChildInternal(removedItem);
+        }
+
+        protected override void SetItem(int index, Window item)
+        {
+            var removedItem = this[index];
+            base.SetItem(index, item);
+
+            Root.AddChildInternal(item);
+            Root.RemoveChildInternal(removedItem);
         }
     }
 }

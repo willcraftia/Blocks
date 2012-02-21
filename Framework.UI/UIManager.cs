@@ -622,10 +622,10 @@ namespace Willcraftia.Xna.Framework.UI
 
             BeingSpriteBatch();
 
-            var desktop = screen.Desktop;
-            drawContext.Location = desktop.RenderOffset;
-            drawContext.PushOpacity(desktop.Opacity);
-            desktop.Draw(gameTime, drawContext);
+            var root = screen.Root;
+            drawContext.Location = root.RenderOffset;
+            drawContext.PushOpacity(root.Opacity);
+            root.Draw(gameTime, drawContext);
 
             EndSpriteBetch();
 

@@ -75,9 +75,9 @@ namespace Willcraftia.Xna.Framework.UI
         public ILookAndFeelSource LookAndFeelSource { get; set; }
 
         /// <summary>
-        /// Desktop を取得します。
+        /// Root を取得します。
         /// </summary>
-        public Desktop Desktop { get; private set; }
+        public Root Root { get; private set; }
 
         /// <summary>
         /// フォーカスが設定されている Control を取得します。
@@ -115,15 +115,10 @@ namespace Willcraftia.Xna.Framework.UI
             Game = game;
             GraphicsDevice = game.GraphicsDevice;
             Content = new ContentManager(game.Services);
+            Root = new Root(this);
 
-            Desktop = new Desktop(this);
-
-            // Desktop のプロパティへデフォルト値を設定します。
-            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
-            Desktop.BackgroundColor = Color.CornflowerBlue;
-            Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
-            Desktop.Width = viewportBounds.Width;
-            Desktop.Height = viewportBounds.Height;
+            // 初期状態では Desktop をアクティブにします。
+            Root.Desktop.Activate();
         }
 
         /// <summary>
@@ -150,25 +145,12 @@ namespace Willcraftia.Xna.Framework.UI
         protected internal virtual void Update(GameTime gameTime)
         {
             // Screen のレイアウトを更新します。
-            UpdateLayout();
+            Root.UpdateLayout();
             // Control の前後関係が変化している可能性があるため、カーソル位置について再処理します。
-            Desktop.ProcessMouseMove();
+            Root.ProcessMouseMove();
 
             // Control を更新します。
-            Desktop.Update(gameTime);
-        }
-
-        /// <summary>
-        /// レイアウトを更新します。
-        /// </summary>
-        protected internal void UpdateLayout()
-        {
-            // 測定を開始します。
-            Desktop.Measure(new Size(Desktop.Width, Desktop.Height));
-
-            // 配置を開始します。
-            var margin = Desktop.Margin;
-            Desktop.Arrange(new Rect(margin.Left, margin.Top, Desktop.Width, Desktop.Height));
+            Root.Update(gameTime);
         }
 
         /// <summary>
@@ -176,7 +158,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected internal void ProcessMouseMove()
         {
-            Desktop.ProcessMouseMove();
+            Root.ProcessMouseMove();
         }
 
         /// <summary>
@@ -184,7 +166,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected internal void ProcessMouseDown()
         {
-            Desktop.ProcessMouseDown();
+            Root.ProcessMouseDown();
         }
 
         /// <summary>
@@ -192,7 +174,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected internal void ProcessMouseUp()
         {
-            Desktop.ProcessMouseUp();
+            Root.ProcessMouseUp();
         }
 
         /// <summary>
@@ -242,122 +224,9 @@ namespace Willcraftia.Xna.Framework.UI
             LoadContent();
 
             // Screen のレイアウトを更新します。
-            UpdateLayout();
+            Root.UpdateLayout();
 
             Initialized = true;
-        }
-
-        /// <summary>
-        /// 指定の Window を表示します。
-        /// </summary>
-        /// <param name="window">表示する Window。</param>
-        internal void ShowWindow(Window window)
-        {
-            var topMostWindow = Desktop.GetTopMostWindow();
-            if (topMostWindow != null) topMostWindow.Active = false;
-
-            if (Desktop.Windows.Contains(window))
-            {
-                Desktop.Windows.Remove(window);
-                Desktop.Windows.Add(window);
-            }
-            else
-            {
-                Desktop.Windows.Add(window);
-            }
-
-            window.Visible = true;
-            window.Active = true;
-            FocusedControl = window.FocusScope.FocusedControl;
-        }
-
-        /// <summary>
-        /// 指定の Window を非表示にします。
-        /// </summary>
-        /// <param name="window">非表示にする Window。</param>
-        internal void HideWindow(Window window)
-        {
-            if (!Desktop.Windows.Contains(window)) throw new InvalidOperationException("Window could not be found.");
-
-            if (1 < Desktop.Windows.Count)
-            {
-                // 直下にある Window をアクティブ化します。
-                Desktop.Windows[Desktop.Windows.IndexOf(window) - 1].Activate();
-            }
-
-            window.Visible = false;
-        }
-
-        /// <summary>
-        /// 指定の Window を閉じます。
-        /// </summary>
-        /// <param name="window">閉じる Window。</param>
-        internal void CloseWindow(Window window)
-        {
-            if (window == null) throw new ArgumentNullException("window");
-            if (!Desktop.Windows.Contains(window))
-                throw new InvalidOperationException(
-                    "The specified window could not be found in this screen.");
-
-            Desktop.Windows.Remove(window);
-
-            if (window.Active)
-            {
-                window.Active = false;
-                var topMostWindow = Desktop.GetTopMostWindow();
-                if (topMostWindow != null)
-                {
-                    topMostWindow.Active = true;
-                    FocusedControl = topMostWindow.FocusScope.FocusedControl;
-                }
-                else
-                {
-                    FocusedControl = null;
-                }
-            }
-        }
-
-        internal void ActivateDesktop(Desktop desktop)
-        {
-            if (desktop == null) throw new ArgumentNullException("desktop");
-
-            // 既にアクティブな場合には処理を終えます。
-            if (desktop.Active) return;
-
-            // 最前面の Window がアクティブならば非アクティブ化します。
-            var topMostWindow = Desktop.GetTopMostWindow();
-            if (topMostWindow != null && topMostWindow.Active) topMostWindow.Active = false;
-
-            desktop.Active = true;
-            FocusedControl = desktop.FocusScope.FocusedControl;
-        }
-
-        /// <summary>
-        /// Window をアクティブ化します。
-        /// </summary>
-        /// <param name="window">アクティブ化する Window。</param>
-        internal void ActivateWindow(Window window)
-        {
-            if (window == null) throw new ArgumentNullException("window");
-            if (!Desktop.Windows.Contains(window))
-                throw new InvalidOperationException(
-                    "The specified window could not be found in this screen.");
-
-            // 既にアクティブな場合には処理を終えます。
-            if (window.Active) return;
-
-            // 最前面の Window がアクティブならば非アクティブ化します。
-            var topMostWindow = Desktop.GetTopMostWindow();
-            if (topMostWindow != null && topMostWindow.Active) topMostWindow.Active = false;
-
-            // Desktop がアクティブならば非アクティブ化します。
-            if (Desktop.Active) Desktop.Active = false;
-
-            // 最前面へ移動させます。
-            Desktop.Windows.Remove(window);
-            Desktop.Windows.Add(window);
-            window.Active = true;
-            FocusedControl = window.FocusScope.FocusedControl;
         }
 
         /// <summary>
@@ -375,16 +244,9 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (!control.Focusable || !control.Enabled || !control.Visible) return false;
 
-            // アクティブな Window の Control ならばフォーカスを設定します。
+            // アクティブ Window の Control ならばフォーカスを設定します。
             var window = Window.GetWindow(control);
             if (window != null && window.Active)
-            {
-                FocusedControl = control;
-                return true;
-            }
-
-            // アクティブな Desktop の Control ならばフォーカスを設定します。
-            if (Desktop.Active)
             {
                 FocusedControl = control;
                 return true;

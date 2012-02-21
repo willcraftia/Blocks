@@ -75,11 +75,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         protected override void LoadContent()
         {
-            var viewportBounds = GraphicsDevice.Viewport.TitleSafeArea;
-            Desktop.BackgroundColor = Color.Black;
-            Desktop.Margin = new Thickness(viewportBounds.Left, viewportBounds.Top, 0, 0);
-            Desktop.Width = viewportBounds.Width;
-            Desktop.Height = viewportBounds.Height;
+            Root.Desktop.BackgroundColor = Color.Black;
 
             var screenOverlay = new Overlay(this)
             {
@@ -105,7 +101,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 FontStretch = new Vector2(2),
                 Padding = new Thickness(8)
             };
-            Desktop.Content = nowLoadingTextBlock;
+            Root.Desktop.Content = nowLoadingTextBlock;
 
             // フラグだけを立てます。
             ScreenLoadCompleted += (s, e) =>

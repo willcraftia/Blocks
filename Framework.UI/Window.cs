@@ -132,14 +132,13 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 指定の Control を管理している Window (直接の親にある Window) を取得します。
+        /// 指定の Control の親 Window を取得します。
         /// Window を指定した場合には、それをそのまま返します。
-        /// なお、Desktop へ直接追加した Control を指定した場合は、
-        /// それら Control は Window で管理されないため null を返します。
         /// </summary>
         /// <param name="control">Control。</param>
         /// <returns>
-        /// 指定の Control を管理している Window、あるいは、Window で管理されていない場合は null。
+        /// 指定の Control を管理している親  Window。
+        /// Window に配置されていない Control の場合には null。
         /// </returns>
         public static Window GetWindow(Control control)
         {
@@ -153,18 +152,22 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// Window を表示します。
+        /// 新たに追加する Window の場合には最前面に Window が追加されます。
+        /// 既に存在する Window の場合には最前面へ移動されます。
+        /// Active プロパティおよび Visible プロパティが true に設定されます。
         /// </summary>
         public virtual void Show()
         {
-            Screen.ShowWindow(this);
+            Screen.Root.ShowWindow(this);
         }
 
         /// <summary>
         /// Window を非表示にします。
+        /// Active プロパティおよび Visible プロパティが false に設定されます。
         /// </summary>
         public virtual void Hide()
         {
-            Screen.HideWindow(this);
+            Screen.Root.HideWindow(this);
         }
 
         /// <summary>
@@ -174,8 +177,8 @@ namespace Willcraftia.Xna.Framework.UI
         {
             // Closing イベントを発生させます。
             OnClosing();
-            
-            Screen.CloseWindow(this);
+
+            Screen.Root.CloseWindow(this);
 
             // Closed イベントを発生させます。
             OnClosed();
@@ -183,10 +186,11 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// アクティブ化します。
+        /// Active プロパティおよび Visible プロパティが true に設定されます。
         /// </summary>
         public void Activate()
         {
-            Screen.ActivateWindow(this);
+            Screen.Root.ActivateWindow(this);
         }
 
         /// <summary>
@@ -299,6 +303,16 @@ namespace Willcraftia.Xna.Framework.UI
             if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 
+        protected override void OnKeyDown(ref RoutedEventContext context)
+        {
+            base.OnKeyDown(ref context);
+
+            if (context.Handled) return;
+
+            // フォーカス移動を処理します。
+            MoveFocus();
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             switch (SizeToContent)
@@ -312,6 +326,34 @@ namespace Willcraftia.Xna.Framework.UI
                 case SizeToContent.Manual:
                 default:
                     return base.MeasureOverride(availableSize);
+            }
+        }
+
+        /// <summary>
+        /// 押されたキーに応じてフォーカスの移動を試みます。
+        /// </summary>
+        void MoveFocus()
+        {
+            if (Screen.FocusedControl == null) return;
+
+            var focusScope = FocusScope.GetFocusScope(Screen.FocusedControl);
+            if (focusScope == null) return;
+
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Up))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Up);
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Down))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Down);
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Left);
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
+            {
+                focusScope.MoveFocus(FocusNavigationDirection.Right);
             }
         }
 

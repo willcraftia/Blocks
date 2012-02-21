@@ -43,12 +43,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mainViewModel.StoreSampleBlockMesh();
 
             blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0));
-            blockMeshView.Width = Desktop.Width;
-            blockMeshView.Height = Desktop.Height;
+            blockMeshView.Width = Root.Desktop.Width;
+            blockMeshView.Height = Root.Desktop.Height;
             blockMeshView.Focusable = true;
             blockMeshView.GridVisible = true;
             blockMeshView.CameraMovable = true;
-            Desktop.Content = blockMeshView;
+            Root.Desktop.Content = blockMeshView;
 
             mainMenuWindow = new MainMenuWindow(this);
             mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Right;
@@ -80,22 +80,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             startEffectOverlay_opacityAnimation.Completed += (s, e) =>
             {
                 startEffectOverlay.Close();
-                //startMenuWindow.Activate();
+                // Desktop をアクティブにしておきます。
+                Root.Desktop.Activate();
             };
             startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
 
-            Desktop.PreviewKeyDown += new RoutedEventHandler(OnDesktopPreviewKeyDown);
+            Root.PreviewKeyDown += new RoutedEventHandler(OnRootPreviewKeyDown);
 
             // BlockMeshView にフォーカスを設定しておきます。
             blockMeshView.Focus();
 
             // Desktop をアクティブ化します。
-            Desktop.Activate();
+            Root.Desktop.Activate();
 
             base.LoadContent();
         }
 
-        void OnDesktopPreviewKeyDown(Control sender, ref RoutedEventContext context)
+        void OnRootPreviewKeyDown(Control sender, ref RoutedEventContext context)
         {
             if (KeyboardDevice.IsKeyPressed(Keys.Y))
             {
@@ -103,7 +104,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
             if (KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
-                if (mainMenuWindow.Active) Desktop.Activate();
+                if (mainMenuWindow.Active) Root.Desktop.Activate();
             }
         }
     }
