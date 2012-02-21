@@ -63,7 +63,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             base.Draw(gameTime, drawContext);
 
             if (Texture != null)
-                drawContext.DrawTexture(new Rect(Point.Zero, RenderSize), Texture, BackgroundColor);
+                drawContext.DrawTexture(new Rect(Vector2.Zero, RenderSize), Texture, BackgroundColor);
         }
     }
 }

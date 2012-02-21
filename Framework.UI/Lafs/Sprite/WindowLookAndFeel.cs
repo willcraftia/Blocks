@@ -64,7 +64,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         /// <summary>
         /// Window の影の描画位置を取得または設定します。
         /// </summary>
-        public Point ShadowOffset { get; set; }
+        public Vector2 ShadowOffset { get; set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -76,7 +76,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             ShadowEnabled = true;
             ShadowColor = Color.Black;
             ShadowOpacity = 0.5f;
-            ShadowOffset = new Point(4, 4);
+            ShadowOffset = new Vector2(4, 4);
         }
 
         protected override void LoadContent()
@@ -128,10 +128,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             if (ShadowEnabled)
                 DrawWindow(control, drawContext, shadowSpriteSheet, ShadowColor, ShadowOffset);
 
-            DrawWindow(control, drawContext, windowSpriteSheet, Color.White, Point.Zero);
+            DrawWindow(control, drawContext, windowSpriteSheet, Color.White, Vector2.Zero);
         }
 
-        protected void DrawWindow(Control control, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Point offset)
+        protected void DrawWindow(Control control, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Vector2 offset)
         {
             var renderSize = control.RenderSize;
             var texture = spriteSheet.Texture;

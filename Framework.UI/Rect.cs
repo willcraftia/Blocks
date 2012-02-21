@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -74,33 +75,33 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 左上の位置を取得します。
         /// </summary>
-        public Point TopLeft
+        public Vector2 TopLeft
         {
-            get { return new Point(Left, Top); }
+            get { return new Vector2(Left, Top); }
         }
 
         /// <summary>
         /// 右上の位置を取得します。
         /// </summary>
-        public Point TopRight
+        public Vector2 TopRight
         {
-            get { return new Point(Right, Top); }
+            get { return new Vector2(Right, Top); }
         }
 
         /// <summary>
         /// 左下の位置を取得します。
         /// </summary>
-        public Point BottomLeft
+        public Vector2 BottomLeft
         {
-            get { return new Point(Left, Bottom); }
+            get { return new Vector2(Left, Bottom); }
         }
 
         /// <summary>
         /// 右下の位置を取得します。
         /// </summary>
-        public Point BottomRight
+        public Vector2 BottomRight
         {
-            get { return new Point(Right, Bottom); }
+            get { return new Vector2(Right, Bottom); }
         }
 
         /// <summary>
@@ -122,7 +123,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="point">左上の位置。</param>
         /// <param name="size">サイズ。</param>
-        public Rect(Point point, Size size) : this(point.X, point.Y, size.Width, size.Height) { }
+        public Rect(Vector2 point, Size size) : this(point.X, point.Y, size.Width, size.Height) { }
 
         /// <summary>
         /// 指定の位置とサイズを持つインスタンスを生成します。
@@ -163,13 +164,13 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 指定の Point が領域に含まれるかどうかを判定します。
+        /// 指定の点が領域に含まれるかどうかを判定します。
         /// </summary>
-        /// <param name="point">Point。</param>
+        /// <param name="point">点。</param>
         /// <returns>
         /// true (領域に含まれる場合)、false (それ以外の場合)。
         /// </returns>
-        public bool Contains(Point point)
+        public bool Contains(Vector2 point)
         {
             return Contains(point.X, point.Y);
         }
@@ -200,12 +201,12 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// Microsoft.Xna.Framework.Rectangle を生成します。
+        /// Rectangle を生成します。
         /// </summary>
-        /// <returns>生成された Microsoft.Xna.Framework.Rectangle。</returns>
-        public Microsoft.Xna.Framework.Rectangle ToXnaRectangle()
+        /// <returns>生成された Rectangle。</returns>
+        public Rectangle ToXnaRectangle()
         {
-            return new Microsoft.Xna.Framework.Rectangle((int) X, (int) Y, (int) Width, (int) Height);
+            return new Rectangle((int) X, (int) Y, (int) Width, (int) Height);
         }
 
         #region Equatable

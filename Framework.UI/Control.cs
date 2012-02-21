@@ -392,7 +392,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 親の座標系における自身の描画座標を取得または設定します。
         /// </summary>
-        public Point RenderOffset { get; set; }
+        public Vector2 RenderOffset { get; set; }
 
         /// <summary>
         /// 配置後の描画サイズを取得します。
@@ -742,37 +742,37 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 画面座標における Point を Control の座標系の Point へ変換します。
+        /// 画面座標における点を Control の座標系の点へ変換します。
         /// </summary>
-        /// <param name="point">画面座標における Point。</param>
-        /// <returns>Control の座標系に変換された Point。</returns>
-        public Point PointFromScreen(Point point)
+        /// <param name="point">画面座標における点。</param>
+        /// <returns>Control の座標系に変換された点。</returns>
+        public Vector2 PointFromScreen(Vector2 point)
         {
             var offset = RenderOffset;
-            var result = new Point(point.X - offset.X, point.Y - offset.Y);
+            var result = new Vector2(point.X - offset.X, point.Y - offset.Y);
             return (Parent != null) ? Parent.PointFromScreen(result) : result;
         }
 
         /// <summary>
-        /// Control の座標系の Point を画面座標における Point へ変換します。
+        /// Control の座標系の点を画面座標における点へ変換します。
         /// </summary>
-        /// <param name="point">Control の座標系を表す Point。</param>
-        /// <returns>画面座標に変換された Point。</returns>
-        public Point PointToScreen(Point point)
+        /// <param name="point">Control の座標系における点。</param>
+        /// <returns>画面座標に変換された点。</returns>
+        public Vector2 PointToScreen(Vector2 point)
         {
             var offset = RenderOffset;
-            var result = new Point(point.X + offset.X, point.Y + offset.Y);
+            var result = new Vector2(point.X + offset.X, point.Y + offset.Y);
             return (Parent != null) ? Parent.PointToScreen(result) : result;
         }
 
         /// <summary>
         /// Hit Test を行います。
         /// </summary>
-        /// <param name="point">画面座標における Point。</param>
+        /// <param name="point">画面座標における点。</param>
         /// <returns>
         /// true (Hit した場合)、false (それ以外の場合)。
         /// </returns>
-        public virtual bool HitTest(Point point)
+        public virtual bool HitTest(Vector2 point)
         {
             var localPoint = PointFromScreen(point);
             return (0 <= localPoint.X) && (localPoint.X < RenderSize.Width)
@@ -1110,7 +1110,7 @@ namespace Willcraftia.Xna.Framework.UI
             //
             // 暫定的な描画領域決定アルゴリズムです。
             // スクロール処理なども考慮して描画領域を算出する必要があります。
-            drawContext.Location = child.PointToScreen(Point.Zero);
+            drawContext.Location = child.PointToScreen(Vector2.Zero);
             drawContext.PushOpacity(child.Opacity);
 
             child.Draw(gameTime, drawContext);
@@ -1229,7 +1229,7 @@ namespace Willcraftia.Xna.Framework.UI
             if (mode == FocusNavigationMode.None) return null;
 
             var focusedControl = Screen.FocusedControl;
-            var baseBounds = new Rect(focusedControl.PointToScreen(Point.Zero), focusedControl.RenderSize);
+            var baseBounds = new Rect(focusedControl.PointToScreen(Vector2.Zero), focusedControl.RenderSize);
             float minDistance = float.PositiveInfinity;
 
             var candidate = GetFocusableControl(direction, ref baseBounds, ref minDistance);
@@ -1237,7 +1237,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (mode == FocusNavigationMode.Wrapped) return null;
 
-            var windowBounds = new Rect(PointToScreen(Point.Zero), RenderSize);
+            var windowBounds = new Rect(PointToScreen(Vector2.Zero), RenderSize);
             switch (direction)
             {
                 case FocusNavigationDirection.Up:
@@ -1279,7 +1279,7 @@ namespace Willcraftia.Xna.Framework.UI
                 if (!child.Visible) continue;
 
                 // Hit Test に失敗するならばスキップします。
-                if (!child.HitTest(new Point(mouseState.X, mouseState.Y)))
+                if (!child.HitTest(new Vector2(mouseState.X, mouseState.Y)))
                     continue;
 
                 // 子に通知します。
@@ -1391,7 +1391,7 @@ namespace Willcraftia.Xna.Framework.UI
 
                 if (child.Focusable)
                 {
-                    var testBounds = new Rect(child.PointToScreen(Point.Zero), child.RenderSize);
+                    var testBounds = new Rect(child.PointToScreen(Vector2.Zero), child.RenderSize);
 
                     var distance = MeasureDirectionalDistance(direction, ref baseBounds, ref testBounds);
 

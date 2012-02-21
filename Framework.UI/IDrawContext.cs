@@ -21,7 +21,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 使用する座標系の画面座標における位置を設定します。
         /// </summary>
-        Point Location { get; set; }
+        Vector2 Location { get; set; }
 
         /// <summary>
         /// 描画処理が指定する Control の透明度を取得します。

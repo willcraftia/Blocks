@@ -129,7 +129,6 @@
     <Compile Include="Controls\Overlay.cs" />
     <Compile Include="Lafs\Debug\DefaultLookAndFeel.cs" />
     <Compile Include="Lafs\Sprite\DesktopLookAndFeel.cs" />
-    <Compile Include="Point.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="IScreenFactoryAware.cs" />
     <Compile Include="ScreenDefinition.cs" />

@@ -274,7 +274,7 @@ namespace Willcraftia.Xna.Framework.UI
             /// <summary>
             /// 使用する座標系の画面座標における位置。
             /// </summary>
-            Point location;
+            Vector2 location;
 
             /// <summary>
             /// クリッピングを制御する ScissorManager。
@@ -305,7 +305,7 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
-            public Point Location
+            public Vector2 Location
             {
                 get { return location; }
                 set { location = value; }
