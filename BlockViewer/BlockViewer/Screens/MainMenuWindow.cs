@@ -40,7 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             stackPanel.Children.Add(exitButton);
 
             // デフォルト フォーカス。
-            exitButton.Focus();
+            fileButton.Focus();
         }
 
         void OnFileButtonClick(Control sender, ref RoutedEventContext context)

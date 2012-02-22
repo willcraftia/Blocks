@@ -102,6 +102,9 @@
     <Compile Include="Animation.cs" />
     <Compile Include="ContentControl.cs" />
     <Compile Include="Controls\Image.cs" />
+    <Compile Include="Controls\MessageBox.cs" />
+    <Compile Include="Controls\MessageBoxButton.cs" />
+    <Compile Include="Controls\MessageBoxResult.cs" />
     <Compile Include="Controls\Panel.cs" />
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />
@@ -112,6 +115,11 @@
     <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />
     <Compile Include="Lafs\Debug\WindowLookAndFeel.cs" />
     <Compile Include="Lafs\Sprite\TextBlockLookAndFeel.cs" />
+    <Compile Include="Resources\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
     <Compile Include="Root.cs" />
     <Compile Include="RoutedEventContext.cs" />
     <Compile Include="RoutedEventHandler.cs" />
@@ -160,7 +168,12 @@
       <Name>Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

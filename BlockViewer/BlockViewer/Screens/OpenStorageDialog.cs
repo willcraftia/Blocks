@@ -29,9 +29,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         // Show() 呼び出しのタイミングでファイルをキャッシュする前提。
         string[] fileNames;
 
-        TextBlock[] fileNameBlocks;
+        Button[] fileNameButtons;
+
+        MessageBox messageBox;
+
+        string targetFileName;
 
         public StorageContainer StorageContainer { get; private set; }
+
+        public string SelectedFileName { get; private set; }
 
         public OpenStorageDialog(Screen screen, StorageContainer storageContainer)
             : base(screen)
@@ -55,6 +61,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var previousePageButton = new Button(screen)
             {
+                Focusable = false,
                 Width = BlockViewerGame.SpriteSize,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Content = new Image(screen)
@@ -66,6 +73,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var nextPageButton = new Button(screen)
             {
+                Focusable = false,
                 Width = BlockViewerGame.SpriteSize,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Content = new Image(screen)
@@ -81,36 +89,54 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             basePanel.Children.Add(fileNameListPanel);
 
-            fileNameBlocks = new TextBlock[listSize];
+            fileNameButtons = new Button[listSize];
             for (int i = 0; i < listSize; i++)
             {
-                fileNameBlocks[i] = new TextBlock(screen)
+                fileNameButtons[i] = new Button(screen)
                 {
                     ForegroundColor = Color.White,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Width = BlockViewerGame.SpriteSize * 8,
-                    Height = BlockViewerGame.SpriteSize
+                    Height = BlockViewerGame.SpriteSize,
+                    Content = new TextBlock(screen)
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        TextHorizontalAlignment = HorizontalAlignment.Left
+                    }
                 };
-                fileNameListPanel.Children.Add(fileNameBlocks[i]);
+                fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
+                fileNameListPanel.Children.Add(fileNameButtons[i]);
+            }
+        }
+
+        void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (messageBox == null)
+            {
+                messageBox = new MessageBox(Screen, MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
+                messageBox.Padding = new Thickness(16);
+                messageBox.TextBlock.Text = "Are you sure you want to load this file?";
+                messageBox.Closed += new EventHandler(OnMessageBoxClosed);
             }
 
-            var acceptButtonsPanel = new StackPanel(screen)
+            SelectedFileName = null;
+            targetFileName = ((sender as Button).Content as TextBlock).Text;
+            messageBox.Show();
+
+            context.Handled = true;
+        }
+
+        void OnMessageBoxClosed(object sender, EventArgs e)
+        {
+            if (messageBox.Result == MessageBoxResult.OK)
             {
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            basePanel.Children.Add(acceptButtonsPanel);
-
-            var okButton = new CustomButton(screen);
-            okButton.TextBlock.Text = "OK";
-            acceptButtonsPanel.Children.Add(okButton);
-
-            var cancelButton = new CustomButton(screen);
-            cancelButton.TextBlock.Text = "Cancel";
-            cancelButton.Click += new RoutedEventHandler(OnCancelButtonClick);
-            acceptButtonsPanel.Children.Add(cancelButton);
-
-            cancelButton.Focus();
+                SelectedFileName = targetFileName;
+                Close();
+            }
+            else
+            {
+                targetFileName = null;
+            }
         }
 
         public override void Show()
@@ -134,19 +160,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void SetFiles(int pageIndex)
         {
+            bool focused = false;
             for (int i = 0; i < listSize; i++)
             {
-                var fileBlock = fileNameBlocks[i];
+                var fileBlock = fileNameButtons[i];
 
                 int fileNameIndex = pageIndex * listSize + i;
                 if (fileNameIndex < fileNames.Length)
                 {
-                    fileBlock.Text = fileNames[fileNameIndex];
+                    (fileBlock.Content as TextBlock).Text = fileNames[fileNameIndex];
                     fileBlock.Focusable = true;
+                    if (!focused)
+                    {
+                        fileBlock.Focus();
+                        focused = true;
+                    }
                 }
                 else
                 {
-                    fileBlock.Text = string.Empty;
+                    (fileBlock.Content as TextBlock).Text = string.Empty;
                     fileBlock.Focusable = false;
                 }
             }
