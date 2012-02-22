@@ -53,6 +53,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             size.Width = measuredWidth + Padding.Left + Padding.Right;
             if (float.IsNaN(Height)) size.Height = ClampHeight(measuredHeight + Padding.Top + Padding.Bottom);
 
+            //if (HorizontalAlignment == UI.HorizontalAlignment.Stretch) size.Width = availableSize.Width;
+
             return size;
         }
 
@@ -110,11 +112,15 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         childBounds.Y = finalSize.Height - child.MeasuredSize.Height - Padding.Bottom - child.Margin.Bottom;
                         break;
                     case VerticalAlignment.Center:
-                    default:
                         var paddedHeight = (finalSize.Height - Padding.Top - Padding.Bottom);
                         childBounds.Y = (paddedHeight - child.MeasuredSize.Height - child.Margin.Top - child.Margin.Bottom) * 0.5f;
                         childBounds.Y += child.Margin.Top;
                         childBounds.Y += Padding.Top;
+                        break;
+                    case VerticalAlignment.Stretch:
+                    default:
+                        childBounds.Y = Padding.Top + child.Margin.Top;
+                        childBounds.Height = finalSize.Height - Padding.Top - Padding.Bottom - child.Margin.Top - child.Margin.Bottom;
                         break;
                 }
 
@@ -152,11 +158,15 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                         childBounds.X = finalSize.Width - child.MeasuredSize.Width - Padding.Right - child.Margin.Right;
                         break;
                     case HorizontalAlignment.Center:
-                    default:
                         var paddedWidth = (finalSize.Width - Padding.Left - Padding.Right);
                         childBounds.X = (paddedWidth - child.MeasuredSize.Width - child.Margin.Left - child.Margin.Right) * 0.5f;
                         childBounds.X += child.Margin.Left;
                         childBounds.X += Padding.Left;
+                        break;
+                    case HorizontalAlignment.Stretch:
+                    default:
+                        childBounds.X = Padding.Left + child.Margin.Left;
+                        childBounds.Width = finalSize.Width - Padding.Left - Padding.Right - child.Margin.Left - child.Margin.Right;
                         break;
                 }
 

@@ -47,12 +47,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = basePanel;
 
-            var pageButtonsPanel = new StackPanel(screen);
+            var pageButtonsPanel = new StackPanel(screen)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
             basePanel.Children.Add(pageButtonsPanel);
 
             var previousePageButton = new Button(screen)
             {
                 Width = BlockViewerGame.SpriteSize,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Content = new Image(screen)
                 {
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowLeft")
@@ -63,6 +67,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var nextPageButton = new Button(screen)
             {
                 Width = BlockViewerGame.SpriteSize,
+                HorizontalAlignment = HorizontalAlignment.Right,
                 Content = new Image(screen)
                 {
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowRight")

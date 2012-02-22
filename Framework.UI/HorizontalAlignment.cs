@@ -22,6 +22,10 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 中央に揃えて配置します。
         /// </summary>
-        Center
+        Center,
+        /// <summary>
+        /// 親 Control が許容するサイズまで引き伸ばして配置します。
+        /// </summary>
+        Stretch
     }
 }
