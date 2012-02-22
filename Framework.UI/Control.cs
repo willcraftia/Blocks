@@ -1029,7 +1029,15 @@ namespace Willcraftia.Xna.Framework.UI
         /// PreviewMouseDown イベントの到達で呼び出されます。
         /// </summary>
         /// <param name="context">RoutedEventContext。</param>
-        protected virtual void OnPreviewMouseDown(ref RoutedEventContext context) { }
+        protected virtual void OnPreviewMouseDown(ref RoutedEventContext context)
+        {
+            // TODO
+            // ここだけ既定実装があるのは嫌だけど、
+            // フォーカス設定を制御できる所がルーティング イベントしか思いつかない。
+
+            // フォーカスを設定します。
+            Focus();
+        }
 
         /// <summary>
         /// MouseDown イベントの到達で呼び出されます。
@@ -1237,23 +1245,23 @@ namespace Willcraftia.Xna.Framework.UI
 
             if (mode == FocusNavigationMode.Wrapped) return null;
 
-            var windowBounds = new Rect(PointToScreen(Vector2.Zero), RenderSize);
+            var containerBounds = new Rect(PointToScreen(Vector2.Zero), RenderSize);
             switch (direction)
             {
                 case FocusNavigationDirection.Up:
-                    baseBounds.Y = windowBounds.Bottom;
+                    baseBounds.Y = containerBounds.Bottom;
                     baseBounds.Height = 0;
                     break;
                 case FocusNavigationDirection.Down:
-                    baseBounds.Y = windowBounds.Top;
+                    baseBounds.Y = containerBounds.Top;
                     baseBounds.Height = 0;
                     break;
                 case FocusNavigationDirection.Left:
-                    baseBounds.X = windowBounds.Right;
+                    baseBounds.X = containerBounds.Right;
                     baseBounds.Width = 0;
                     break;
                 case FocusNavigationDirection.Right:
-                    baseBounds.X = windowBounds.Left;
+                    baseBounds.X = containerBounds.Left;
                     baseBounds.Width = 0;
                     break;
                 default:
@@ -1338,9 +1346,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // mouseOverControl が自分であるならば、自分に通知します。
             RaiseEvent(PreviewMouseDownEvent, MouseDownEvent);
-
-            // フォーカスを設定します。
-            Focus();
         }
 
         /// <summary>
@@ -1425,336 +1430,101 @@ namespace Willcraftia.Xna.Framework.UI
             return candidate;
         }
 
-        float MeasureDirectionalDistanceByUp(ref Rect baseBounds, ref Rect testBounds)
-        {
-            if (baseBounds.Top <= testBounds.Top) return float.NaN;
-
-            Vector2 basePoint;
-            Vector2 testPoint;
-
-            if (testBounds.Right <= baseBounds.Left)
-            {
-                basePoint = baseBounds.TopLeft;
-
-                if (baseBounds.Top <= testBounds.Bottom)
-                {
-                    testPoint = testBounds.TopRight;
-                }
-                else
-                {
-                    testPoint = testBounds.BottomRight;
-                }
-            }
-            else if (baseBounds.Right <= testBounds.Left)
-            {
-                basePoint = baseBounds.TopRight;
-
-                if (baseBounds.Top <= testBounds.Bottom)
-                {
-                    testPoint = testBounds.TopLeft;
-                }
-                else
-                {
-                    testPoint = testBounds.BottomLeft;
-                }
-            }
-            else if (testBounds.Left <= baseBounds.Left)
-            {
-                basePoint = baseBounds.TopLeft;
-
-                if (baseBounds.Top <= testBounds.Bottom)
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Top);
-                }
-                else
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Bottom);
-                }
-            }
-            else if (baseBounds.Right <= testBounds.Right)
-            {
-                basePoint = baseBounds.TopRight;
-
-                if (baseBounds.Top <= testBounds.Bottom)
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Top);
-                }
-                else
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Bottom);
-                }
-            }
-            else
-            {
-                if (baseBounds.Top <= testBounds.Bottom)
-                {
-                    testPoint = testBounds.TopLeft;
-                    basePoint = new Vector2(testPoint.X, baseBounds.Top);
-                }
-                else
-                {
-                    testPoint = testBounds.BottomLeft;
-                    basePoint = new Vector2(testPoint.X, baseBounds.Top);
-                }
-            }
-
-            return Vector2.Distance(basePoint, testPoint);
-        }
-
-        float MeasureDirectionalDistanceByDown(ref Rect baseBounds, ref Rect testBounds)
-        {
-            if (testBounds.Bottom <= baseBounds.Bottom) return float.NaN;
-
-            Vector2 basePoint;
-            Vector2 testPoint;
-
-            if (testBounds.Right <= baseBounds.Left)
-            {
-                basePoint = baseBounds.BottomLeft;
-
-                if (testBounds.Top <= baseBounds.Bottom)
-                {
-                    testPoint = testBounds.BottomRight;
-                }
-                else
-                {
-                    testPoint = testBounds.TopRight;
-                }
-            }
-            else if (baseBounds.Right <= testBounds.Left)
-            {
-                basePoint = baseBounds.BottomRight;
-
-                if (testBounds.Top <= baseBounds.Bottom)
-                {
-                    testPoint = testBounds.BottomLeft;
-                }
-                else
-                {
-                    testPoint = testBounds.TopLeft;
-                }
-            }
-            else if (testBounds.Left <= baseBounds.Left)
-            {
-                basePoint = baseBounds.BottomLeft;
-
-                if (baseBounds.Bottom <= testBounds.Top)
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Bottom);
-                }
-                else
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Top);
-                }
-            }
-            else if (baseBounds.Right <= testBounds.Right)
-            {
-                basePoint = baseBounds.BottomRight;
-
-                if (baseBounds.Bottom <= testBounds.Top)
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Bottom);
-                }
-                else
-                {
-                    testPoint = new Vector2(basePoint.X, testBounds.Top);
-                }
-            }
-            else
-            {
-                if (baseBounds.Bottom <= testBounds.Top)
-                {
-                    testPoint = testBounds.BottomLeft;
-                    basePoint = new Vector2(testPoint.X, baseBounds.Bottom);
-                }
-                else
-                {
-                    testPoint = testBounds.TopLeft;
-                    basePoint = new Vector2(testPoint.X, baseBounds.Bottom);
-                }
-            }
-
-            return Vector2.Distance(basePoint, testPoint);
-        }
-
-        float MeasureDirectionalDistanceByLeft(ref Rect baseBounds, ref Rect testBounds)
-        {
-            if (baseBounds.Left <= testBounds.Left) return float.NaN;
-
-            Vector2 basePoint;
-            Vector2 testPoint;
-
-            if (testBounds.Bottom <= baseBounds.Top)
-            {
-                basePoint = baseBounds.TopLeft;
-
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = testBounds.BottomLeft;
-                }
-                else
-                {
-                    testPoint = testBounds.BottomRight;
-                }
-            }
-            else if (baseBounds.Bottom <= testBounds.Top)
-            {
-                basePoint = baseBounds.BottomLeft;
-
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = testBounds.TopLeft;
-                }
-                else
-                {
-                    testPoint = testBounds.TopRight;
-                }
-            }
-            else if (baseBounds.Top <= testBounds.Bottom)
-            {
-                basePoint = baseBounds.TopLeft;
-
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = new Vector2(testBounds.Left, baseBounds.Y);
-                }
-                else
-                {
-                    testPoint = new Vector2(testBounds.Right, baseBounds.Y);
-                }
-            }
-            else if (testBounds.Top <= baseBounds.Bottom)
-            {
-                basePoint = baseBounds.BottomLeft;
-
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = new Vector2(testBounds.Left, baseBounds.Y);
-                }
-                else
-                {
-                    testPoint = new Vector2(testBounds.Right, baseBounds.Y);
-                }
-            }
-            else
-            {
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = testBounds.TopLeft;
-                    basePoint = new Vector2(testBounds.Left, baseBounds.Y);
-                }
-                else
-                {
-                    testPoint = testBounds.TopRight;
-                    basePoint = new Vector2(testBounds.Left, baseBounds.Y);
-                }
-            }
-
-            return Vector2.Distance(basePoint, testPoint);
-        }
-
-        float MeasureDirectionalDistanceByRight(ref Rect baseBounds, ref Rect testBounds)
-        {
-            if (testBounds.Right <= baseBounds.Right) return float.NaN;
-
-            Vector2 basePoint;
-            Vector2 testPoint;
-
-            if (testBounds.Bottom <= baseBounds.Top)
-            {
-                basePoint = baseBounds.TopRight;
-
-                if (testBounds.Left <= baseBounds.Right)
-                {
-                    testPoint = testBounds.BottomRight;
-                }
-                else
-                {
-                    testPoint = testBounds.BottomLeft;
-                }
-            }
-            else if (baseBounds.Bottom <= testBounds.Top)
-            {
-                basePoint = baseBounds.BottomRight;
-
-                if (testBounds.Left <= baseBounds.Right)
-                {
-                    testPoint = testBounds.TopRight;
-                }
-                else
-                {
-                    testPoint = testBounds.TopLeft;
-                }
-            }
-            else if (baseBounds.Top <= testBounds.Bottom)
-            {
-                basePoint = baseBounds.TopRight;
-
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = new Vector2(testBounds.Right, baseBounds.Y);
-                }
-                else
-                {
-                    testPoint = new Vector2(testBounds.Left, baseBounds.Y);
-                }
-            }
-            else if (testBounds.Top <= baseBounds.Bottom)
-            {
-                basePoint = baseBounds.BottomRight;
-
-                if (baseBounds.Left <= testBounds.Right)
-                {
-                    testPoint = new Vector2(testBounds.Right, baseBounds.Y);
-                }
-                else
-                {
-                    testPoint = new Vector2(testBounds.Left, baseBounds.Y);
-                }
-            }
-            else
-            {
-                if (testBounds.Left <= baseBounds.Right)
-                {
-                    testPoint = testBounds.TopRight;
-                    basePoint = new Vector2(testBounds.Right, baseBounds.Y);
-                }
-                else
-                {
-                    testPoint = testBounds.TopLeft;
-                    basePoint = new Vector2(testBounds.Right, baseBounds.Y);
-                }
-            }
-
-            return Vector2.Distance(basePoint, testPoint);
-        }
-
         float MeasureDirectionalDistance(FocusNavigationDirection direction, ref Rect baseBounds, ref Rect testBounds)
         {
-            // MEMO
-            // 面倒なので少し雑に判定します。
+            //
+            // MEMO:
+            //
+            // Nuclex.UserInterface.Screen の判定ロジックを応用してます。
+            // 先頭や末尾に到達した場合の循環をサポートしているので、全く等いわけではないです。
+            //
+
+            //
+            // TODO:
+            //
+            // Nuclex 方式の挙動は、恐らく WPF の挙動に等しいですが、
+            // この挙動には問題があり、必ずしも人が期待するフォーカス移動先が決定されるとは限りません。
+            // 例えば、右キー押下で右に隣接した Control への移動を期待しても、
+            // 直下にある Control の判定点がそれよりもより右に近いと判定されたならば、そちらへ移動します。
+            // なお、単一 StackPanel に Control を並べるような、上下左右が明確な配置の場合には期待通りとなります。
+            //
+            // WPF ならばタブ ナビゲーションで代替することもできますが、
+            // ゲームパッド操作を考えるとこの代案にも無理があります。
+            //
 
             if (direction == FocusNavigationDirection.Up || direction == FocusNavigationDirection.Down)
             {
+                float baseCenterX = baseBounds.X + baseBounds.Width * 0.5f;
+
+                float testClosestX = Math.Min(Math.Max(baseCenterX, testBounds.Left), testBounds.Right);
+                float testClosestY = testBounds.Y + testBounds.Height * 0.5f;
+
+                bool leavesLeft = (testClosestX < baseBounds.Left);
+                bool leavesRight = (baseBounds.Right < testClosestX);
+
+                float baseY;
                 if (direction == FocusNavigationDirection.Up)
                 {
-                    return MeasureDirectionalDistanceByUp(ref baseBounds, ref testBounds);
+                    baseY = baseBounds.Top;
+                    if (baseY < testClosestY) return float.NaN;
                 }
                 else
                 {
-                    return MeasureDirectionalDistanceByDown(ref baseBounds, ref testBounds);
+                    baseY = baseBounds.Bottom;
+                    if (testClosestY < baseY) return float.NaN;
                 }
+
+                float distanceY = Math.Abs(baseY - testClosestY);
+
+                if (leavesLeft)
+                {
+                    float distanceX = baseBounds.Left - testClosestX;
+                    if (distanceY < distanceX) return float.NaN;
+                }
+                else if (leavesRight)
+                {
+                    float distanceX = testClosestX - baseBounds.Right;
+                    if (distanceY < distanceX) return float.NaN;
+                }
+
+                return distanceY;
             }
             else
             {
+                float baseCenterY = baseBounds.Y + baseBounds.Height * 0.5f;
+
+                float testClosestX = testBounds.X + testBounds.Width * 0.5f;
+                float testClosestY = Math.Min(Math.Max(baseCenterY, testBounds.Top), testBounds.Bottom);
+
+                bool leavesTop = (testClosestY < baseBounds.Top);
+                bool leavesBottom = (baseBounds.Bottom < testClosestY);
+
+                float baseX;
                 if (direction == FocusNavigationDirection.Left)
                 {
-                    return MeasureDirectionalDistanceByLeft(ref baseBounds, ref testBounds);
+                    baseX = baseBounds.Left;
+                    if (baseX < testClosestX) return float.NaN;
                 }
                 else
                 {
-                    return MeasureDirectionalDistanceByRight(ref baseBounds, ref testBounds);
+                    baseX = baseBounds.Right;
+                    if (testClosestX < baseX) return float.NaN;
                 }
+
+                float distanceX = Math.Abs(baseX - testClosestX);
+
+                if (leavesTop)
+                {
+                    float distanceY = baseBounds.Top - testClosestY;
+                    if (distanceX < distanceY) return float.NaN;
+                }
+                else if (leavesBottom)
+                {
+                    float distanceY = testClosestY - baseBounds.Bottom;
+                    if (distanceX < distanceY) return float.NaN;
+                }
+
+                return distanceX;
             }
         }
 
