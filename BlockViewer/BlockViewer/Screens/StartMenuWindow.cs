@@ -34,17 +34,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Content = stackPanel;
 
             var startButton = new TextButton(screen);
-            startButton.TextBlock.Text = Strings.StartButtonText;
+            startButton.TextBlock.Text = Strings.StartButton;
+            startButton.TextBlock.ForegroundColor = Color.White;
+            startButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            startButton.Padding = new Thickness(4);
             startButton.Click += new RoutedEventHandler(OnStartButtonClick);
             stackPanel.Children.Add(startButton);
 
             var languageSettingButton = new TextButton(screen);
-            languageSettingButton.TextBlock.Text = Strings.LanguageSettingButtonText;
+            languageSettingButton.TextBlock.Text = Strings.LanguageSettingButton;
+            languageSettingButton.TextBlock.ForegroundColor = Color.White;
+            languageSettingButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            languageSettingButton.Padding = new Thickness(4);
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
             stackPanel.Children.Add(languageSettingButton);
 
             var exitButton = new TextButton(screen);
-            exitButton.TextBlock.Text = Strings.ExitButtonText;
+            exitButton.TextBlock.Text = Strings.ExitButton;
+            exitButton.TextBlock.ForegroundColor = Color.White;
+            exitButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            exitButton.Padding = new Thickness(4);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
 

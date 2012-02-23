@@ -31,12 +31,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Content = stackPanel;
 
             var loadButton = new TextButton(screen);
-            loadButton.TextBlock.Text = "Load";
+            loadButton.TextBlock.Text = Strings.LoadFileButton;
+            loadButton.TextBlock.ForegroundColor = Color.White;
+            loadButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            loadButton.Padding = new Thickness(4);
             loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
             stackPanel.Children.Add(loadButton);
 
             var exitButton = new TextButton(screen);
-            exitButton.TextBlock.Text = Strings.ExitButtonText;
+            exitButton.TextBlock.Text = Strings.ExitButton;
+            exitButton.TextBlock.ForegroundColor = Color.White;
+            exitButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            exitButton.Padding = new Thickness(4);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
 

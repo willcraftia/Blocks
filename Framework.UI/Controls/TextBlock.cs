@@ -45,48 +45,28 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var size = new Size();
-
-            var textSize = MeasureText();
-
-            if (float.IsNaN(Width))
+            var textSize = MeasureTextSize();
+            return new Size
             {
-                if (string.IsNullOrEmpty(Text))
-                {
-                    size.Width = CalculateWidth(availableSize.Width);
-                }
-                else
-                {
-                    // Text が設定されているならば文字列の幅で希望します。
-                    size.Width = textSize.X;
-                }
-            }
-            else
-            {
-                // 幅が設定されているならばそのまま希望します。
-                size.Width = Width;
-            }
+                Width = float.IsNaN(Width) ? ClampWidth(textSize.X) : Width,
+                Height = float.IsNaN(Height) ? ClampHeight(textSize.Y) : Height
+            };
+        }
 
-            if (float.IsNaN(Height))
-            {
-                if (string.IsNullOrEmpty(Text))
-                {
-                    size.Height = CalculateHeight(availableSize.Height);
-                }
-                else
-                {
-                    // Text が設定されているならば文字列の高さで希望します。
-                    size.Height = textSize.Y;
-                }
-            }
-            else
-            {
-                // 高さが設定されているならばそのまま希望します。
-                size.Height = Height;
-            }
+        /// <summary>
+        /// Text プロパティの文字列のサイズを測定します。
+        /// Text プロパティが空の場合は "X" のサイズを測定して返します。
+        /// Font プロパティあるいは Screen.Font プロパティが null の場合は Vector2.Zero を返します。
+        /// </summary>
+        /// <returns>Text プロパティの文字列のサイズ。</returns>
+        Vector2 MeasureTextSize()
+        {
+            var font = Font ?? Screen.Font;
+            if (font == null) return Vector2.Zero;
 
-            // 子は持たないことを前提として測定を終えます。
-            return size;
+            var sampleText = Text;
+            if (string.IsNullOrEmpty(sampleText)) sampleText = "X";
+            return font.MeasureString(sampleText) * FontStretch;
         }
 
         /// <summary>

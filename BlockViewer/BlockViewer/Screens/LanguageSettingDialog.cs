@@ -33,17 +33,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Content = stackPanel;
 
             setDefaultButton = new TextButton(screen);
-            setDefaultButton.TextBlock.Text = Strings.DefaultButtonText;
+            setDefaultButton.TextBlock.Text = Strings.DefaultButton;
+            setDefaultButton.TextBlock.ForegroundColor = Color.White;
+            setDefaultButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            setDefaultButton.Padding = new Thickness(4);
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setDefaultButton);
 
             setJaButton = new TextButton(screen);
-            setJaButton.TextBlock.Text = Strings.JaButtonText;
+            setJaButton.TextBlock.Text = Strings.JaButton;
+            setJaButton.TextBlock.ForegroundColor = Color.White;
+            setJaButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            setJaButton.Padding = new Thickness(4);
             setJaButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setJaButton);
 
             setEnButton = new TextButton(screen);
-            setEnButton.TextBlock.Text = Strings.EnButtonText;
+            setEnButton.TextBlock.Text = Strings.EnButton;
+            setEnButton.TextBlock.ForegroundColor = Color.White;
+            setEnButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            setEnButton.Padding = new Thickness(4);
             setEnButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setEnButton);
 

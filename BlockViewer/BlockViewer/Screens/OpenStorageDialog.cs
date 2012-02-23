@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
@@ -32,7 +33,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         TextButton[] fileNameButtons;
 
-        MessageBox messageBox;
+        MessageBox openFileConfirmMessageBox;
+
+        MessageBox noFileErrorMessageBox;
 
         string targetFileName;
 
@@ -93,7 +96,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     Width = BlockViewerGame.SpriteSize * 8,
                     Height = BlockViewerGame.SpriteSize,
+                    Padding = new Thickness(4)
                 };
+                fileNameButtons[i].TextBlock.ForegroundColor = Color.White;
                 fileNameButtons[i].TextBlock.FontStretch = new Vector2(0.8f);
                 fileNameButtons[i].TextBlock.HorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
@@ -104,30 +109,32 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (messageBox == null)
+            if (openFileConfirmMessageBox == null)
             {
-                messageBox = new MessageBox(Screen, MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
-                messageBox.Padding = new Thickness(16);
-                messageBox.TextBlock.Text = "Are you sure you want to load this file?";
-                messageBox.TextBlock.ForegroundColor = Color.White;
-                messageBox.OKButton.Content.ForegroundColor = Color.White;
-                messageBox.OKButton.Margin = new Thickness(0, 0, 4, 0);
-                messageBox.CancelButton.Content.ForegroundColor = Color.White;
-                messageBox.CancelButton.Margin = new Thickness(4, 0, 0, 0);
-                messageBox.ButtonsPanel.Padding = new Thickness(4);
-                messageBox.Closed += new EventHandler(OnMessageBoxClosed);
+                openFileConfirmMessageBox = new MessageBox(Screen, MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
+                openFileConfirmMessageBox.Padding = new Thickness(16);
+                openFileConfirmMessageBox.TextBlock.Text = Strings.OpenFileConfirmation;
+                openFileConfirmMessageBox.TextBlock.ForegroundColor = Color.White;
+                openFileConfirmMessageBox.OKButton.Content.ForegroundColor = Color.White;
+                openFileConfirmMessageBox.OKButton.Margin = new Thickness(0, 0, 4, 0);
+                openFileConfirmMessageBox.OKButton.Padding = new Thickness(4);
+                openFileConfirmMessageBox.CancelButton.Content.ForegroundColor = Color.White;
+                openFileConfirmMessageBox.CancelButton.Margin = new Thickness(4, 0, 0, 0);
+                openFileConfirmMessageBox.CancelButton.Padding = new Thickness(4);
+                openFileConfirmMessageBox.ButtonsPanel.Padding = new Thickness(4);
+                openFileConfirmMessageBox.Closed += new EventHandler(OnMessageBoxClosed);
             }
 
             (DataContext as OpenStorageViewModel).SelectedFileName = null;
             targetFileName = ((sender as Button).Content as TextBlock).Text;
-            messageBox.Show();
+            openFileConfirmMessageBox.Show();
 
             context.Handled = true;
         }
 
         void OnMessageBoxClosed(object sender, EventArgs e)
         {
-            if (messageBox.Result == MessageBoxResult.OK)
+            if (openFileConfirmMessageBox.Result == MessageBoxResult.OK)
             {
                 (DataContext as OpenStorageViewModel).SelectedFileName = targetFileName;
                 Close();
@@ -141,9 +148,32 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public override void Show()
         {
             fileNames = (DataContext as OpenStorageViewModel).GetFileNames();
+
+            // ファイルがない場合は、その旨を MessageBox で表示して終えます。
+            if (fileNames.Length == 0)
+            {
+                ShowNoFileErrorMessageBox();
+                return;
+            }
+
             SetFiles(0);
 
             base.Show();
+        }
+
+        void ShowNoFileErrorMessageBox()
+        {
+            if (noFileErrorMessageBox == null)
+            {
+                noFileErrorMessageBox = new MessageBox(Screen, MessageBoxButton.OK, MessageBoxResult.OK);
+                noFileErrorMessageBox.Padding = new Thickness(16);
+                noFileErrorMessageBox.TextBlock.Text = Strings.NoFileInStorageError;
+                noFileErrorMessageBox.TextBlock.ForegroundColor = Color.White;
+                noFileErrorMessageBox.OKButton.Content.ForegroundColor = Color.White;
+                noFileErrorMessageBox.OKButton.Padding = new Thickness(4);
+                noFileErrorMessageBox.ButtonsPanel.Padding = new Thickness(4);
+            }
+            noFileErrorMessageBox.Show();
         }
 
         protected override void OnKeyDown(ref RoutedEventContext context)
@@ -159,26 +189,30 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void SetFiles(int pageIndex)
         {
+            // 状態を初期化します。
+            for (int i = 0; i < listSize; i++)
+            {
+                var fileNameButton = fileNameButtons[i];
+                fileNameButton.TextBlock.Text = string.Empty;
+                fileNameButton.Focusable = false;
+            }
+
+            // ファイル名を設定します。
             bool focused = false;
             for (int i = 0; i < listSize; i++)
             {
-                var fileBlock = fileNameButtons[i];
+                var fileNameButton = fileNameButtons[i];
 
                 int fileNameIndex = pageIndex * listSize + i;
                 if (fileNameIndex < fileNames.Length)
                 {
-                    (fileBlock.Content as TextBlock).Text = fileNames[fileNameIndex];
-                    fileBlock.Focusable = true;
+                    fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
+                    fileNameButton.Focusable = true;
                     if (!focused)
                     {
-                        fileBlock.Focus();
+                        fileNameButton.Focus();
                         focused = true;
                     }
-                }
-                else
-                {
-                    (fileBlock.Content as TextBlock).Text = string.Empty;
-                    fileBlock.Focusable = false;
                 }
             }
         }

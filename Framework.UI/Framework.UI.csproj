@@ -109,6 +109,7 @@
     <Compile Include="Controls\Panel.cs" />
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />
+    <Compile Include="Controls\TextButton.cs" />
     <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="FocusScope.cs" />

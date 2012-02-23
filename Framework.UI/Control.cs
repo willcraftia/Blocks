@@ -899,9 +899,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>自身が希望する幅。</returns>
         protected virtual float CalculateWidth(float availableWidth)
         {
-            float desiredWidth = ClampWidth(availableWidth);
+            float clampedWidth = ClampWidth(availableWidth);
             // 余白で調整します。
-            return MathHelper.Max(MinWidth, desiredWidth - Margin.Left - Margin.Right);
+            return MathHelper.Max(MinWidth, clampedWidth - Margin.Left - Margin.Right);
         }
 
         /// <summary>
@@ -911,9 +911,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>自身が希望する高さ。</returns>
         protected virtual float CalculateHeight(float availableHeight)
         {
-            float desiredHeight = ClampHeight(availableHeight);
+            float clampedHeight = ClampHeight(availableHeight);
             // 余白で調整します。
-            return MathHelper.Max(MinHeight, desiredHeight - Margin.Top - Margin.Bottom);
+            return MathHelper.Max(MinHeight, clampedHeight - Margin.Top - Margin.Bottom);
         }
 
         /// <summary>

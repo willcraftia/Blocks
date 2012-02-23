@@ -63,63 +63,90 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         /// <summary>
         ///   Default に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string DefaultButtonText {
+        internal static string DefaultButton {
             get {
-                return ResourceManager.GetString("DefaultButtonText", resourceCulture);
+                return ResourceManager.GetString("DefaultButton", resourceCulture);
             }
         }
         
         /// <summary>
         ///   English に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string EnButtonText {
+        internal static string EnButton {
             get {
-                return ResourceManager.GetString("EnButtonText", resourceCulture);
+                return ResourceManager.GetString("EnButton", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Exit に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string ExitButtonText {
+        internal static string ExitButton {
             get {
-                return ResourceManager.GetString("ExitButtonText", resourceCulture);
+                return ResourceManager.GetString("ExitButton", resourceCulture);
             }
         }
         
         /// <summary>
         ///   にほんご に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string JaButtonText {
+        internal static string JaButton {
             get {
-                return ResourceManager.GetString("JaButtonText", resourceCulture);
+                return ResourceManager.GetString("JaButton", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Select Language に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string LanguageSettingButtonText {
+        internal static string LanguageSettingButton {
             get {
-                return ResourceManager.GetString("LanguageSettingButtonText", resourceCulture);
+                return ResourceManager.GetString("LanguageSettingButton", resourceCulture);
             }
         }
         
         /// <summary>
         ///   LOD: {0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string LevelOfDetailLabelText {
+        internal static string LevelOfDetailLabel {
             get {
-                return ResourceManager.GetString("LevelOfDetailLabelText", resourceCulture);
+                return ResourceManager.GetString("LevelOfDetailLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Load に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LoadFileButton {
+            get {
+                return ResourceManager.GetString("LoadFileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No file exists in your storage. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string NoFileInStorageError {
+            get {
+                return ResourceManager.GetString("NoFileInStorageError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to load this file? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string OpenFileConfirmation {
+            get {
+                return ResourceManager.GetString("OpenFileConfirmation", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Start に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string StartButtonText {
+        internal static string StartButton {
             get {
-                return ResourceManager.GetString("StartButtonText", resourceCulture);
+                return ResourceManager.GetString("StartButton", resourceCulture);
             }
         }
     }

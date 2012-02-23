@@ -53,8 +53,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             size.Width = measuredWidth + Padding.Left + Padding.Right;
             if (float.IsNaN(Height)) size.Height = ClampHeight(measuredHeight + Padding.Top + Padding.Bottom);
 
-            //if (HorizontalAlignment == UI.HorizontalAlignment.Stretch) size.Width = availableSize.Width;
-
             return size;
         }
 

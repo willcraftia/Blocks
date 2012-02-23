@@ -36,5 +36,11 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             Overlay.Show();
             base.Show();
         }
+
+        public override void Hide()
+        {
+            base.Hide();
+            Overlay.Hide();
+        }
     }
 }

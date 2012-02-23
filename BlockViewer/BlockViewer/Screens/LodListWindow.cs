@@ -42,7 +42,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var textBlock = new TextBlock(Screen)
             {
-                Text = string.Format(Strings.LevelOfDetailLabelText, levelOfDetail),
+                Text = string.Format(Strings.LevelOfDetailLabel, levelOfDetail),
                 FontStretch = new Vector2(0.7f),
                 ForegroundColor = Color.White,
                 HorizontalAlignment = HorizontalAlignment.Left,
