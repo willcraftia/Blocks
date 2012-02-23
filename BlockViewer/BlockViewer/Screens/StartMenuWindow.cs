@@ -33,17 +33,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var startButton = new CustomButton(screen);
+            var startButton = new TextButton(screen);
             startButton.TextBlock.Text = Strings.StartButtonText;
             startButton.Click += new RoutedEventHandler(OnStartButtonClick);
             stackPanel.Children.Add(startButton);
 
-            var languageSettingButton = new CustomButton(screen);
+            var languageSettingButton = new TextButton(screen);
             languageSettingButton.TextBlock.Text = Strings.LanguageSettingButtonText;
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
             stackPanel.Children.Add(languageSettingButton);
 
-            var exitButton = new CustomButton(screen);
+            var exitButton = new TextButton(screen);
             exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);

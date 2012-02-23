@@ -30,7 +30,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         // Show() 呼び出しのタイミングでファイルをキャッシュする前提。
         string[] fileNames;
 
-        Button[] fileNameButtons;
+        TextButton[] fileNameButtons;
 
         MessageBox messageBox;
 
@@ -85,21 +85,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             basePanel.Children.Add(fileNameListPanel);
 
-            fileNameButtons = new Button[listSize];
+            fileNameButtons = new TextButton[listSize];
             for (int i = 0; i < listSize; i++)
             {
-                fileNameButtons[i] = new Button(screen)
+                fileNameButtons[i] = new TextButton(screen)
                 {
-                    ForegroundColor = Color.White,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     Width = BlockViewerGame.SpriteSize * 8,
                     Height = BlockViewerGame.SpriteSize,
-                    Content = new TextBlock(screen)
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        TextHorizontalAlignment = HorizontalAlignment.Left
-                    }
                 };
+                fileNameButtons[i].TextBlock.FontStretch = new Vector2(0.8f);
+                fileNameButtons[i].TextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+                fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
                 fileNameListPanel.Children.Add(fileNameButtons[i]);
             }
@@ -112,6 +109,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 messageBox = new MessageBox(Screen, MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
                 messageBox.Padding = new Thickness(16);
                 messageBox.TextBlock.Text = "Are you sure you want to load this file?";
+                messageBox.TextBlock.ForegroundColor = Color.White;
+                messageBox.OKButton.Content.ForegroundColor = Color.White;
+                messageBox.OKButton.Margin = new Thickness(0, 0, 4, 0);
+                messageBox.CancelButton.Content.ForegroundColor = Color.White;
+                messageBox.CancelButton.Margin = new Thickness(4, 0, 0, 0);
+                messageBox.ButtonsPanel.Padding = new Thickness(4);
                 messageBox.Closed += new EventHandler(OnMessageBoxClosed);
             }
 

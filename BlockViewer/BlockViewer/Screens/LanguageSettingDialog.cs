@@ -15,11 +15,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class LanguageSettingDialog : OverlayDialogBase
     {
-        CustomButton setDefaultButton;
+        TextButton setDefaultButton;
 
-        CustomButton setJaButton;
+        TextButton setJaButton;
 
-        CustomButton setEnButton;
+        TextButton setEnButton;
 
         public LanguageSettingDialog(Screen screen)
             : base(screen)
@@ -32,17 +32,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            setDefaultButton = new CustomButton(screen);
+            setDefaultButton = new TextButton(screen);
             setDefaultButton.TextBlock.Text = Strings.DefaultButtonText;
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setDefaultButton);
 
-            setJaButton = new CustomButton(screen);
+            setJaButton = new TextButton(screen);
             setJaButton.TextBlock.Text = Strings.JaButtonText;
             setJaButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setJaButton);
 
-            setEnButton = new CustomButton(screen);
+            setEnButton = new TextButton(screen);
             setEnButton.TextBlock.Text = Strings.EnButtonText;
             setEnButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setEnButton);

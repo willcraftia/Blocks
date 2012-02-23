@@ -82,24 +82,26 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// <returns>生成された Block。</returns>
         static Block CreateSimpleBlock()
         {
-            var block = new Block();
-            block.Materials = new List<Material>();
-            block.Elements = new List<Element>();
+            var block = new Block
+            {
+                Materials = new List<Material>(),
+                Elements = new List<Element>()
+            };
 
-            var material = new Material()
+            var material = new Material
             {
                 DiffuseColor = new MaterialColor(63, 127, 255)
             };
             block.Materials.Add(material);
 
-            block.Elements.Add(new Element() { Position = new Position( 0,  0,  0), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position( 0,  0, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16,  0, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16,  0,  0), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position( 0, 16,  0), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position( 0, 16, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16, 16, 16), MaterialIndex = 0 });
-            block.Elements.Add(new Element() { Position = new Position(16, 16,  0), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position(-8, -8, -8), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position(-8, -8,  7), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position( 7, -8,  7), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position( 7, -8, -8), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position(-8,  7, -8), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position(-8,  7,  7), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position( 7,  7,  7), MaterialIndex = 0 });
+            block.Elements.Add(new Element { Position = new Position( 7,  7, -8), MaterialIndex = 0 });
 
             return block;
         }
@@ -110,9 +112,11 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// <returns>作成された Block。</returns>
         static Block CreateOctahedronLikeBlock()
         {
-            var block = new Block();
-            block.Materials = new List<Material>();
-            block.Elements = new List<Element>();
+            var block = new Block
+            {
+                Materials = new List<Material>(),
+                Elements = new List<Element>()
+            };
 
             MaterialColor[] diffuses =
             {
@@ -128,8 +132,10 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             Material[] materials = new Material[8];
             for (int i = 0; i < 8; i++)
             {
-                materials[i] = new Material();
-                materials[i].DiffuseColor = diffuses[i];
+                materials[i] = new Material
+                {
+                    DiffuseColor = diffuses[i]
+                };
                 block.Materials.Add(materials[i]);
             }
 
@@ -151,9 +157,11 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
                             if (y < 0) materialIndex |= 2;
                             if (z < 0) materialIndex |= 4;
 
-                            var element = new Element();
-                            element.Position = new Position(x, y, z);
-                            element.MaterialIndex = materialIndex;
+                            var element = new Element
+                            {
+                                Position = new Position(x, y, z),
+                                MaterialIndex = materialIndex
+                            };
                             block.Elements.Add(element);
                         }
                     }

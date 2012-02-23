@@ -14,8 +14,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
     /// </summary>
     public sealed class MessageBox : OverlayDialogBase
     {
-        StackPanel buttonsPanel;
-
         /// <summary>
         /// 配置するボタンを取得します。
         /// </summary>
@@ -30,6 +28,11 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// 文字列を表示する TextBlock を取得します。
         /// </summary>
         public TextBlock TextBlock { get; private set; }
+
+        /// <summary>
+        /// ボタンを配置している StackPanel を取得します。
+        /// </summary>
+        public StackPanel ButtonsPanel { get; private set; }
 
         /// <summary>
         /// OK ボタンを表す Button を取得します。
@@ -82,8 +85,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             TextBlock = new TextBlock(Screen);
             basePanel.Children.Add(TextBlock);
 
-            buttonsPanel = new StackPanel(Screen);
-            basePanel.Children.Add(buttonsPanel);
+            ButtonsPanel = new StackPanel(Screen);
+            basePanel.Children.Add(ButtonsPanel);
 
             switch (Button)
             {
@@ -194,7 +197,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             OKButton = CreateButton(Strings.OK);
             OKButton.Click += new RoutedEventHandler(OnOKButtonClick);
-            buttonsPanel.Children.Add(OKButton);
+            ButtonsPanel.Children.Add(OKButton);
         }
 
         /// <summary>
@@ -204,7 +207,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             CancelButton = CreateButton(Strings.Cancel);
             CancelButton.Click += new RoutedEventHandler(OnCancelButtonClick);
-            buttonsPanel.Children.Add(CancelButton);
+            ButtonsPanel.Children.Add(CancelButton);
         }
 
         /// <summary>
@@ -214,7 +217,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             YesButton = CreateButton(Strings.Yes);
             YesButton.Click += new RoutedEventHandler(OnYesButtonClick);
-            buttonsPanel.Children.Add(YesButton);
+            ButtonsPanel.Children.Add(YesButton);
         }
 
         /// <summary>
@@ -224,7 +227,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         {
             NoButton = CreateButton(Strings.No);
             NoButton.Click += new RoutedEventHandler(OnNoButtonClick);
-            buttonsPanel.Children.Add(NoButton);
+            ButtonsPanel.Children.Add(NoButton);
         }
 
         /// <summary>

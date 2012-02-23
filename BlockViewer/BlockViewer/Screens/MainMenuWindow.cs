@@ -30,12 +30,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var loadButton = new CustomButton(screen);
+            var loadButton = new TextButton(screen);
             loadButton.TextBlock.Text = "Load";
             loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
             stackPanel.Children.Add(loadButton);
 
-            var exitButton = new CustomButton(screen);
+            var exitButton = new TextButton(screen);
             exitButton.TextBlock.Text = Strings.ExitButtonText;
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
@@ -64,8 +64,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 openStorageDialog = new OpenStorageDialog(Screen, mainViewModel.OpenStorageViewModel);
                 openStorageDialog.HorizontalAlignment = HorizontalAlignment.Right;
                 openStorageDialog.VerticalAlignment = VerticalAlignment.Top;
+                openStorageDialog.Closed += new EventHandler(OnOpenStorageDialogClosed);
             }
             openStorageDialog.Show();
+        }
+
+        void OnOpenStorageDialogClosed(object sender, EventArgs e)
+        {
+            var openStorageViewModel = openStorageDialog.DataContext as OpenStorageViewModel;
+            if (string.IsNullOrEmpty(openStorageViewModel.SelectedFileName)) return;
+
+            (DataContext as MainViewModel).LoadBlockMeshFromStorage();
+
+            // Desktop をアクティブにします。
+            Screen.Root.Desktop.Activate();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)
