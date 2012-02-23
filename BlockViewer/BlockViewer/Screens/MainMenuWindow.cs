@@ -2,11 +2,14 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
+using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
 
@@ -14,9 +17,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainMenuWindow : Window
     {
-        CustomButton fileButton;
-
-        FileMenuWindow fileMenuWindow;
+        OpenStorageDialog openStorageDialog;
 
         public MainMenuWindow(Screen screen)
             : base(screen)
@@ -29,10 +30,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            fileButton = new CustomButton(screen);
-            fileButton.TextBlock.Text = "File";
-            fileButton.Click += new RoutedEventHandler(OnFileButtonClick);
-            stackPanel.Children.Add(fileButton);
+            var loadButton = new CustomButton(screen);
+            loadButton.TextBlock.Text = "Load";
+            loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
+            stackPanel.Children.Add(loadButton);
 
             var exitButton = new CustomButton(screen);
             exitButton.TextBlock.Text = Strings.ExitButtonText;
@@ -40,19 +41,31 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             stackPanel.Children.Add(exitButton);
 
             // デフォルト フォーカス。
-            fileButton.Focus();
+            loadButton.Focus();
         }
 
-        void OnFileButtonClick(Control sender, ref RoutedEventContext context)
+        protected override void OnKeyDown(ref RoutedEventContext context)
         {
-            if (fileMenuWindow == null)
+            base.OnKeyDown(ref context);
+
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
-                fileMenuWindow = new FileMenuWindow(Screen);
-                fileMenuWindow.Owner = this;
+                // Desktop をアクティブにすることで自身を非アクティブ化します。
+                Screen.Root.Desktop.Activate();
+                context.Handled = true;
             }
-            fileMenuWindow.HorizontalAlignment = HorizontalAlignment.Right;
-            fileMenuWindow.VerticalAlignment = VerticalAlignment.Top;
-            fileMenuWindow.Show();
+        }
+
+        void OnLoadButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (openStorageDialog == null)
+            {
+                var mainViewModel = (DataContext as MainViewModel);
+                openStorageDialog = new OpenStorageDialog(Screen, mainViewModel.OpenStorageViewModel);
+                openStorageDialog.HorizontalAlignment = HorizontalAlignment.Right;
+                openStorageDialog.VerticalAlignment = VerticalAlignment.Top;
+            }
+            openStorageDialog.Show();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)

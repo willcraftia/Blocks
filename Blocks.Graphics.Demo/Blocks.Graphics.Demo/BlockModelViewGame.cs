@@ -543,12 +543,18 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。
 
             // 通常の BlockMesh をロードします。
-            mesh = meshManager.Load(new StringBlockResource(blockJson));
-            foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
+            using (var stream = blockJson.ToMemoryStream())
+            {
+                mesh = meshManager.Load(stream);
+                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
+            }
 
             // インスタンシング用の BlockMesh をロードします。
-            instancedMesh = instancedMeshManager.Load(new StringBlockResource(blockJson));
-            foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
+            using (var stream = blockJson.ToMemoryStream())
+            {
+                instancedMesh = instancedMeshManager.Load(stream);
+                foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
+            }
         }
 
         /// <summary>

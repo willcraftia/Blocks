@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
 
@@ -35,15 +36,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         string targetFileName;
 
-        public StorageContainer StorageContainer { get; private set; }
-
-        public string SelectedFileName { get; private set; }
-
-        public OpenStorageDialog(Screen screen, StorageContainer storageContainer)
+        public OpenStorageDialog(Screen screen, OpenStorageViewModel viewModel)
             : base(screen)
         {
-            if (storageContainer == null) throw new ArgumentNullException("storageContainer");
-            StorageContainer = storageContainer;
+            DataContext = viewModel;
 
             Padding = new Thickness(16);
 
@@ -119,7 +115,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 messageBox.Closed += new EventHandler(OnMessageBoxClosed);
             }
 
-            SelectedFileName = null;
+            (DataContext as OpenStorageViewModel).SelectedFileName = null;
             targetFileName = ((sender as Button).Content as TextBlock).Text;
             messageBox.Show();
 
@@ -130,7 +126,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (messageBox.Result == MessageBoxResult.OK)
             {
-                SelectedFileName = targetFileName;
+                (DataContext as OpenStorageViewModel).SelectedFileName = targetFileName;
                 Close();
             }
             else
@@ -141,7 +137,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Show()
         {
-            fileNames = StorageContainer.GetFileNames();
+            fileNames = (DataContext as OpenStorageViewModel).GetFileNames();
             SetFiles(0);
 
             base.Show();

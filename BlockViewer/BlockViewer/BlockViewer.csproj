@@ -117,8 +117,6 @@
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
     <Compile Include="Screens\CustomButton.cs" />
-    <Compile Include="Screens\FileMenuWindow.cs" />
-    <Compile Include="Screens\InputPathDialog.cs" />
     <Compile Include="Screens\LanguageSettingDialog.cs" />
     <Compile Include="Screens\LodListWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />
@@ -129,6 +127,7 @@
     <Compile Include="Screens\StartScreen.cs" />
     <Compile Include="ViewModels\BlockMeshViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\OpenStorageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

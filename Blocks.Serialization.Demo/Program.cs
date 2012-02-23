@@ -17,8 +17,8 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
     {
         static void Main(string[] args)
         {
-            //var block = CreateSimpleBlock();
-            var block = CreateOctahedronLikeBlock();
+            var block = CreateSimpleBlock();
+            //var block = CreateOctahedronLikeBlock();
 
             SerializeAndDeserializeAsJson(block);
 

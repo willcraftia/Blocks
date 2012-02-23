@@ -94,9 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\BlockMeshManager.cs" />
-    <Compile Include="Content\DirectBlockResource.cs" />
-    <Compile Include="Content\IBlockResource.cs" />
-    <Compile Include="Content\StringBlockResource.cs" />
     <Compile Include="Graphics\BasicBlockEffect.cs" />
     <Compile Include="Content\BasicBlockEffectFactory.cs" />
     <Compile Include="Graphics\GridBlockMesh.cs" />

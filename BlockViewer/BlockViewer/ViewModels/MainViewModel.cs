@@ -1,9 +1,12 @@
 ﻿#region Using
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Storage;
+using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Graphics;
@@ -27,6 +30,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
+        public StorageContainer StorageContainer { get; private set; }
+
         public BlockMesh BlockMesh { get; set; }
 
         public GridBlockMesh GridBlockMesh { get; private set; }
@@ -39,6 +44,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public BasicEffect GridBlockMeshEffect { get; private set; }
 
+        public OpenStorageViewModel OpenStorageViewModel { get; private set; }
+
         public MainViewModel(GraphicsDevice graphicsDevice)
         {
             GraphicsDevice = graphicsDevice;
@@ -46,6 +53,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             GridBlockMesh = new GridBlockMesh(graphicsDevice, 16, 0.1f, Color.White);
             GridBlockMeshEffect = new BasicEffect(GraphicsDevice);
             GridBlockMeshEffect.VertexColorEnabled = true;
+
+            InitializeStorageContainer();
+
+            OpenStorageViewModel = new OpenStorageViewModel(StorageContainer);
+        }
+
+        public void LoadBlockMeshFromStorage()
+        {
+            var fileName = OpenStorageViewModel.SelectedFileName;
+            if (string.IsNullOrEmpty(fileName)) throw new InvalidOperationException("A file is not selected.");
+
+            using (var stream = StorageContainer.OpenFile(fileName, FileMode.Open))
+            {
+                LoadBlockMesh(stream);
+            }
         }
 
         // TODO: テスト用
@@ -59,10 +81,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             meshManager = new BlockMeshManager(meshFactory);
 
             // BlockMesh をロードします。
-            var mesh = meshManager.Load(new StringBlockResource(blockJson));
-            foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
+            using (var stream = blockJson.ToMemoryStream())
+            {
+                LoadBlockMesh(stream);
+            }
+        }
 
-            BlockMesh = mesh;
+        void InitializeStorageContainer()
+        {
+            var showSelectorResult = StorageDevice.BeginShowSelector(null, null);
+            showSelectorResult.AsyncWaitHandle.WaitOne();
+            var storageDevice = StorageDevice.EndShowSelector(showSelectorResult);
+            showSelectorResult.AsyncWaitHandle.Close();
+
+            var openContainerResult = storageDevice.BeginOpenContainer("BlockData", null, null);
+            openContainerResult.AsyncWaitHandle.WaitOne();
+            StorageContainer = storageDevice.EndOpenContainer(openContainerResult);
+            openContainerResult.AsyncWaitHandle.Close();
+        }
+
+        void LoadBlockMesh(Stream stream)
+        {
+            BlockMesh = meshManager.Load(stream);
+            foreach (var effect in BlockMesh.Effects) effect.EnableDefaultLighting();
         }
 
         /// <summary>
