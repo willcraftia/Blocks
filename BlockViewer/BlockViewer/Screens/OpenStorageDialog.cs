@@ -12,7 +12,7 @@ using Willcraftia.Xna.Framework.UI.Controls;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class OpenStorageDialog : Window
+    public sealed class OpenStorageDialog : OverlayDialogBase
     {
         //
         // MEMO

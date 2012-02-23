@@ -6,6 +6,9 @@ using System;
 
 namespace Willcraftia.Xna.Framework.UI
 {
+    /// <summary>
+    /// Control 木構造のルート ノードです。
+    /// </summary>
     public sealed class Root : Control
     {
         /// <summary>
@@ -219,7 +222,8 @@ namespace Willcraftia.Xna.Framework.UI
         void EnsureWindow(Window window)
         {
             if (Desktop != window && !Windows.Contains(window))
-                throw new InvalidOperationException("window could not be found in this screen.");
+                throw new InvalidOperationException(
+                    "The specified window could not be found in this screen.");
         }
     }
 }

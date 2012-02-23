@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
+    /// <summary>
+    /// Desktop 全体を覆う Window です。
+    /// </summary>
     public class Overlay : Window
     {
         /// <summary>
@@ -16,8 +19,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public Overlay(Screen screen)
             : base(screen)
         {
-            // デフォルト背景色は透明にします。
-            BackgroundColor = Color.White * 0.0f;
+            Opacity = 0;
+            BackgroundColor = Color.Black;
         }
 
         /// <summary>

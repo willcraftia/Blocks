@@ -13,7 +13,7 @@ using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class LanguageSettingDialog : Window
+    public sealed class LanguageSettingDialog : OverlayDialogBase
     {
         CustomButton setDefaultButton;
 
@@ -49,6 +49,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // デフォルト フォーカス。
             setDefaultButton.Focus();
+
+            Overlay.Opacity = 0.5f;
         }
 
         void OnButtonClick(Control sender, ref RoutedEventContext context)
@@ -74,19 +76,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
             uiService.Show(ScreenNames.Start);
-        }
-
-        public override void Show()
-        {
-            var overlay = new Overlay(Screen)
-            {
-                Opacity = 0.5f,
-                BackgroundColor = Color.Black
-            };
-            overlay.Owner = this;
-            overlay.Show();
-
-            base.Show();
         }
     }
 }

@@ -105,6 +105,7 @@
     <Compile Include="Controls\MessageBox.cs" />
     <Compile Include="Controls\MessageBoxButton.cs" />
     <Compile Include="Controls\MessageBoxResult.cs" />
+    <Compile Include="Controls\OverlayDialogBase.cs" />
     <Compile Include="Controls\Panel.cs" />
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />

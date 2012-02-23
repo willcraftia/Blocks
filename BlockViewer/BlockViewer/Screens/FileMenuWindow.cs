@@ -48,6 +48,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 openContainerResult.AsyncWaitHandle.Close();
 
                 openStorageDialog = new OpenStorageDialog(Screen, storageContainer);
+                openStorageDialog.HorizontalAlignment = HorizontalAlignment.Right;
+                openStorageDialog.VerticalAlignment = VerticalAlignment.Top;
             }
             openStorageDialog.Show();
         }

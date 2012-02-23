@@ -7,7 +7,7 @@ using System;
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
     /// <summary>
-    /// MessageBox で選択されたボタンを表します。
+    /// MessageBox で選択された結果を表します。
     /// </summary>
     public enum MessageBoxResult
     {
