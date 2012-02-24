@@ -24,6 +24,11 @@ namespace Willcraftia.Xna.Framework.UI
         WeakReference focusedControl = new WeakReference(null);
 
         /// <summary>
+        /// Root。
+        /// </summary>
+        Root root;
+
+        /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -75,9 +80,20 @@ namespace Willcraftia.Xna.Framework.UI
         public ILookAndFeelSource LookAndFeelSource { get; set; }
 
         /// <summary>
-        /// Root を取得します。
+        /// ルート Control を取得します。
         /// </summary>
-        public Root Root { get; private set; }
+        public Control Root
+        {
+            get { return root; }
+        }
+
+        /// <summary>
+        /// Desktop を取得します。
+        /// </summary>
+        public Desktop Desktop
+        {
+            get { return root.Desktop; }
+        }
 
         /// <summary>
         /// フォーカスが設定されている Control を取得します。
@@ -105,7 +121,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// Data Context を取得または設定します。
         /// </summary>
         public object DataContext { get; set; }
-        
+
         /// <summary>
         /// コンストラクタ。
         /// </summary>
@@ -115,10 +131,10 @@ namespace Willcraftia.Xna.Framework.UI
             Game = game;
             GraphicsDevice = game.GraphicsDevice;
             Content = new ContentManager(game.Services);
-            Root = new Root(this);
+            root = new Root(this);
 
             // 初期状態では Desktop をアクティブにします。
-            Root.Desktop.Activate();
+            root.Desktop.Activate();
         }
 
         /// <summary>
@@ -145,12 +161,12 @@ namespace Willcraftia.Xna.Framework.UI
         protected internal virtual void Update(GameTime gameTime)
         {
             // Screen のレイアウトを更新します。
-            Root.UpdateLayout();
+            root.UpdateLayout();
             // Control の前後関係が変化している可能性があるため、カーソル位置について再処理します。
-            Root.ProcessMouseMove();
+            root.ProcessMouseMove();
 
             // Control を更新します。
-            Root.Update(gameTime);
+            root.Update(gameTime);
         }
 
         /// <summary>
@@ -158,7 +174,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected internal void ProcessMouseMove()
         {
-            Root.ProcessMouseMove();
+            root.ProcessMouseMove();
         }
 
         /// <summary>
@@ -166,7 +182,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected internal void ProcessMouseDown()
         {
-            Root.ProcessMouseDown();
+            root.ProcessMouseDown();
         }
 
         /// <summary>
@@ -174,7 +190,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected internal void ProcessMouseUp()
         {
-            Root.ProcessMouseUp();
+            root.ProcessMouseUp();
         }
 
         /// <summary>
@@ -224,7 +240,7 @@ namespace Willcraftia.Xna.Framework.UI
             LoadContent();
 
             // Screen のレイアウトを更新します。
-            Root.UpdateLayout();
+            root.UpdateLayout();
 
             Initialized = true;
         }
@@ -253,6 +269,46 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 指定の Window を表示します。
+        /// </summary>
+        /// <param name="window">表示する Window。</param>
+        internal void ShowWindow(Window window)
+        {
+            root.ShowWindow(window);
+        }
+
+        /// <summary>
+        /// Window をアクティブ化します。
+        /// Window の Visible プロパティが true に設定されます。
+        /// </summary>
+        /// <param name="window">アクティブ化する Window。</param>
+        internal void ActivateWindow(Window window)
+        {
+            root.ActivateWindow(window);
+        }
+
+        /// <summary>
+        /// 指定の Window を非表示にします。
+        /// </summary>
+        /// <param name="window">非表示にする Window。</param>
+        internal void HideWindow(Window window)
+        {
+            root.HideWindow(window);
+        }
+
+        /// <summary>
+        /// 指定の Window を閉じます。
+        /// </summary>
+        /// <remarks>
+        /// Desktop を指定した場合には例外が発生します (Desktop を閉じることはできません)。
+        /// </remarks>
+        /// <param name="window">閉じる Window。</param>
+        internal void CloseWindow(Window window)
+        {
+            root.CloseWindow(window);
         }
 
         #region IDisposable

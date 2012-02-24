@@ -57,7 +57,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
                 // Desktop をアクティブにすることで自身を非アクティブ化します。
-                Screen.Root.Desktop.Activate();
+                Screen.Desktop.Activate();
                 context.Handled = true;
             }
         }
@@ -83,7 +83,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             (DataContext as MainViewModel).LoadBlockMeshFromStorage();
 
             // Desktop をアクティブにします。
-            Screen.Root.Desktop.Activate();
+            Screen.Desktop.Activate();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)

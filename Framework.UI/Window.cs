@@ -158,7 +158,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public virtual void Show()
         {
-            Screen.Root.ShowWindow(this);
+            Screen.ShowWindow(this);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public virtual void Hide()
         {
-            Screen.Root.HideWindow(this);
+            Screen.HideWindow(this);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Willcraftia.Xna.Framework.UI
             // Closing イベントを発生させます。
             OnClosing();
 
-            Screen.Root.CloseWindow(this);
+            Screen.CloseWindow(this);
 
             // Closed イベントを発生させます。
             OnClosed();
@@ -190,7 +190,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public void Activate()
         {
-            Screen.Root.ActivateWindow(this);
+            Screen.ActivateWindow(this);
         }
 
         /// <summary>

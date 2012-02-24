@@ -9,18 +9,18 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// Control 木構造のルート ノードです。
     /// </summary>
-    public sealed class Root : Control
+    internal sealed class Root : Control
     {
         /// <summary>
         /// Desktop を取得します。
         /// </summary>
-        public Desktop Desktop { get; private set; }
+        internal Desktop Desktop { get; private set; }
 
         /// <summary>
         /// 管理している Window のコレクションを取得します。
         /// ただし、Desktop はこのコレクションに含まれません。
         /// </summary>
-        public WindowCollection Windows { get; private set; }
+        internal WindowCollection Windows { get; private set; }
 
         /// <summary>
         /// Windows.Count + 1 を返します。
@@ -42,49 +42,6 @@ namespace Willcraftia.Xna.Framework.UI
             AddChild(Desktop);
 
             Windows = new WindowCollection(this);
-        }
-
-        /// <summary>
-        /// 最前面の Window を取得します。
-        /// 最前面の Window が存在しない場合には null を返します。
-        /// </summary>
-        /// <remarks>
-        /// 最前面の Window が必ずしもアクティブ Window であるとは限りません。
-        /// </remarks>
-        /// <returns>
-        /// 最前面の Window。
-        /// 最前面の Window が存在しない場合には null。
-        /// </returns>
-        public Window GetTopMostWindow()
-        {
-            for (int i = Windows.Count - 1; 0 <= i; i--)
-            {
-                var window = Windows[i];
-                if (window.Visible) return window;
-            }
-
-            if (Desktop.Visible) return Desktop;
-            return null;
-        }
-
-        /// <summary>
-        /// アクティブ Window を取得します。
-        /// アクティブ Window が存在しない場合には null を返します。
-        /// </summary>
-        /// <returns>
-        /// アクティブ Window。
-        /// アクティブ Window が存在しない場合には null。
-        /// </returns>
-        public Window GetActiveWindow()
-        {
-            if (Desktop.Active) return Desktop;
-
-            foreach (var window in Windows)
-            {
-                if (window.Active) return window;
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -123,6 +80,49 @@ namespace Willcraftia.Xna.Framework.UI
             // 配置を開始します。
             var margin = Desktop.Margin;
             Arrange(new Rect(margin.Left, margin.Top, Desktop.Width, Desktop.Height));
+        }
+
+        /// <summary>
+        /// 最前面の Window を取得します。
+        /// 最前面の Window が存在しない場合には null を返します。
+        /// </summary>
+        /// <remarks>
+        /// 最前面の Window が必ずしもアクティブ Window であるとは限りません。
+        /// </remarks>
+        /// <returns>
+        /// 最前面の Window。
+        /// 最前面の Window が存在しない場合には null。
+        /// </returns>
+        internal Window GetTopMostWindow()
+        {
+            for (int i = Windows.Count - 1; 0 <= i; i--)
+            {
+                var window = Windows[i];
+                if (window.Visible) return window;
+            }
+
+            if (Desktop.Visible) return Desktop;
+            return null;
+        }
+
+        /// <summary>
+        /// アクティブ Window を取得します。
+        /// アクティブ Window が存在しない場合には null を返します。
+        /// </summary>
+        /// <returns>
+        /// アクティブ Window。
+        /// アクティブ Window が存在しない場合には null。
+        /// </returns>
+        internal Window GetActiveWindow()
+        {
+            if (Desktop.Active) return Desktop;
+
+            foreach (var window in Windows)
+            {
+                if (window.Active) return window;
+            }
+
+            return null;
         }
 
         /// <summary>

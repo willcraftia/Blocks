@@ -43,12 +43,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mainViewModel.StoreSampleBlockMesh();
 
             blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0));
-            blockMeshView.Width = Root.Desktop.Width;
-            blockMeshView.Height = Root.Desktop.Height;
+            blockMeshView.Width = Desktop.Width;
+            blockMeshView.Height = Desktop.Height;
             blockMeshView.Focusable = true;
             blockMeshView.GridVisible = true;
             blockMeshView.CameraMovable = true;
-            Root.Desktop.Content = blockMeshView;
+            Desktop.Content = blockMeshView;
 
             mainMenuWindow = new MainMenuWindow(this);
             mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Right;
@@ -81,7 +81,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 startEffectOverlay.Close();
                 // Desktop をアクティブにしておきます。
-                Root.Desktop.Activate();
+                Desktop.Activate();
             };
             startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
 
@@ -91,7 +91,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             blockMeshView.Focus();
 
             // Desktop をアクティブ化します。
-            Root.Desktop.Activate();
+            Desktop.Activate();
 
             base.LoadContent();
         }
@@ -104,7 +104,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
             if (KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
-                if (mainMenuWindow.Active) Root.Desktop.Activate();
+                if (mainMenuWindow.Active) Desktop.Activate();
             }
         }
     }

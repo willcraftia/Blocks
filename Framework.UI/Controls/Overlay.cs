@@ -28,9 +28,9 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// </summary>
         public override void Show()
         {
-            Margin = Screen.Root.Desktop.Margin;
-            Width = Screen.Root.Desktop.Width;
-            Height = Screen.Root.Desktop.Height;
+            Margin = Screen.Desktop.Margin;
+            Width = Screen.Desktop.Width;
+            Height = Screen.Desktop.Height;
             base.Show();
         }
     }
