@@ -110,9 +110,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Padding = new Thickness(4)
                 };
                 fileNameButtons[i].TextBlock.ForegroundColor = Color.White;
+                fileNameButtons[i].TextBlock.BackgroundColor = Color.Black;
                 fileNameButtons[i].TextBlock.FontStretch = new Vector2(0.8f);
                 fileNameButtons[i].TextBlock.HorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
+                fileNameButtons[i].TextBlock.ShadowOffset = new Vector2(2);
                 fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
                 fileNameListPanel.Children.Add(fileNameButtons[i]);
             }

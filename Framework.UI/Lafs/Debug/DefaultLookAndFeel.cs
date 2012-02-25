@@ -19,8 +19,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 
             // デフォルトは背景を透過にします。
 
-            // 枠を BackgroundColor で描画します。
-            var borderColor = control.BackgroundColor;
+            // 枠を白で描画します。
+            var borderColor = Color.White;
 
             Rect lineBounds;
 

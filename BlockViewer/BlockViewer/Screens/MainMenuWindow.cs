@@ -22,7 +22,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public MainMenuWindow(Screen screen)
             : base(screen)
         {
-            Padding = new Thickness(16);
+            Padding = new Thickness(16, 4, 16, 16);
 
             TitleContent = new TextBlock(screen)
             {

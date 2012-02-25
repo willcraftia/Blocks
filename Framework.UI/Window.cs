@@ -426,8 +426,12 @@ namespace Willcraftia.Xna.Framework.UI
             switch (SizeToContent)
             {
                 case SizeToContent.Width:
+                    if (float.IsNaN(Height))
+                        throw new InvalidOperationException("SizeToContent.Width requires a explicit Height.");
                     return MeasureWidthToContent(availableSize);
                 case SizeToContent.Height:
+                    if (float.IsNaN(Width))
+                        throw new InvalidOperationException("SizeToContent.Height requires a explicit Width.");
                     return MeasureHeightToContent(availableSize);
                 case SizeToContent.WidthAndHeight:
                     return MeasureWidthAndHeightToContent(availableSize);
