@@ -24,6 +24,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var hAlign = textBlock.TextHorizontalAlignment;
             var vAlign = textBlock.TextVerticalAlignment;
 
+            var shadowOffset = textBlock.ShadowOffset;
+            if (shadowOffset.X != 0 || shadowOffset.Y != 0)
+            {
+                drawContext.DrawString(
+                    new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
+                    hAlign, vAlign, control.BackgroundColor, control.Padding, shadowOffset);
+            }
+
             if (0 < outlineWidth)
             {
                 drawContext.DrawString(

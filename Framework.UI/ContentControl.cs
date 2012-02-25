@@ -34,7 +34,7 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected override Control GetChild(int index)
         {
-            if (index != 0) throw new ArgumentOutOfRangeException("index");
+            if (index != 0 || content == null) throw new ArgumentOutOfRangeException("index");
 
             return content;
         }

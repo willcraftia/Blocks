@@ -196,7 +196,7 @@ namespace Willcraftia.Xna.Framework.UI
                 var newBounds = Rectangle.Intersect(previousViewport.Bounds, viewportRectangle);
 
                 // サイズを持つ場合にだけ設定するようにします。
-                if (0 < viewportRectangle.Width && 0 < viewportRectangle.Height)
+                if (0 < newBounds.Width && 0 < newBounds.Height)
                     graphicsDevice.Viewport = new Viewport(newBounds);
             }
 

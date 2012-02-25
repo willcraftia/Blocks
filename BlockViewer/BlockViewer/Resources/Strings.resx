@@ -133,7 +133,7 @@
     <value>Select Language</value>
   </data>
   <data name="LevelOfDetailLabel" xml:space="preserve">
-    <value>LOD: {0}</value>
+    <value>LoD: {0}</value>
   </data>
   <data name="LoadFileButton" xml:space="preserve">
     <value>Load</value>

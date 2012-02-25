@@ -39,6 +39,11 @@ namespace Willcraftia.Xna.Framework.UI
         Window owner;
 
         /// <summary>
+        /// タイトル Control。
+        /// </summary>
+        Control titleContent;
+
+        /// <summary>
         /// true (アクティブ化されている場合)、false (それ以外の場合)。
         /// </summary>
         bool active;
@@ -70,6 +75,24 @@ namespace Willcraftia.Xna.Framework.UI
                 var m = Margin;
                 m.Top = value;
                 Margin = m;
+            }
+        }
+
+        /// <summary>
+        /// タイトル Control を取得または設定します。
+        /// </summary>
+        public Control TitleContent
+        {
+            get { return titleContent; }
+            set
+            {
+                if (titleContent == value) return;
+
+                if (titleContent != null) RemoveChild(titleContent);
+
+                titleContent = value;
+
+                if (titleContent != null) AddChild(titleContent);
             }
         }
 
@@ -120,6 +143,14 @@ namespace Willcraftia.Xna.Framework.UI
             }
         }
 
+        protected override int ChildrenCount
+        {
+            get
+            {
+                return (TitleContent != null) ? base.ChildrenCount + 1 : base.ChildrenCount;
+            }
+        }
+
         /// <summary>
         /// コンストラクタ。
         /// </summary>
@@ -127,7 +158,7 @@ namespace Willcraftia.Xna.Framework.UI
         public Window(Screen screen)
             : base(screen)
         {
-            SizeToContent = SizeToContent.Manual;
+            SizeToContent = SizeToContent.WidthAndHeight;
             FocusScope = new FocusScope(this);
         }
 
@@ -204,15 +235,24 @@ namespace Willcraftia.Xna.Framework.UI
             size.Width = availableSize.Width;
             size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
 
-            // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(0, size.Height);
-            for (int i = 0; i < ChildrenCount; i++)
-            {
-                var child = GetChild(i);
-                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
-                child.Measure(size);
 
-                finalSize.Width += child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right;
+            if (titleContent != null)
+            {
+                titleContent.Measure(size);
+
+                finalSize.Width = titleContent.MeasuredSize.Width + titleContent.Margin.Left + titleContent.Margin.Right;
+            }
+
+            if (Content != null)
+            {
+                size.Width -= Padding.Left + Padding.Right;
+                size.Height -= Padding.Top + Padding.Bottom;
+
+                Content.Measure(size);
+
+                var w = Content.MeasuredSize.Width + Content.Margin.Left + Content.Margin.Right;
+                finalSize.Width = Math.Max(finalSize.Width, w + Padding.Left + Padding.Right);
             }
 
             return finalSize;
@@ -229,15 +269,24 @@ namespace Willcraftia.Xna.Framework.UI
             size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
             size.Height = availableSize.Height;
 
-            // 一旦、自分が希望するサイズで子の希望サイズを定めます。
             var finalSize = new Size(size.Width, 0);
-            for (int i = 0; i < ChildrenCount; i++)
-            {
-                var child = GetChild(i);
-                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
-                child.Measure(size);
 
-                finalSize.Height += child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom;
+            if (titleContent != null)
+            {
+                titleContent.Measure(size);
+
+                finalSize.Height = titleContent.MeasuredSize.Height + titleContent.Margin.Top + titleContent.Margin.Bottom;
+            }
+
+            if (Content != null)
+            {
+                size.Width -= Padding.Left + Padding.Right;
+                size.Height -= Padding.Top + Padding.Bottom;
+
+                Content.Measure(size);
+
+                var h = Content.MeasuredSize.Height + Content.Margin.Top + Content.Margin.Bottom;
+                finalSize.Height += h + Padding.Top + Padding.Bottom;
             }
 
             return finalSize;
@@ -250,18 +299,62 @@ namespace Willcraftia.Xna.Framework.UI
         /// <returns>自身が希望するサイズ。</returns>
         protected virtual Size MeasureWidthAndHeightToContent(Size availableSize)
         {
+            var finalSize = new Size(0, 0);
             var size = availableSize;
 
-            // 一旦、自分が希望するサイズで子の希望サイズを定めます。
-            var finalSize = new Size(0, 0);
-            for (int i = 0; i < ChildrenCount; i++)
+            if (titleContent != null)
             {
-                var child = GetChild(i);
-                // 自身の希望サイズを測定したので、子が測定済かどうかによらず再測定します。
-                child.Measure(size);
+                titleContent.Measure(size);
 
-                finalSize.Width += child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right;
-                finalSize.Height += child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom;
+                finalSize.Width = titleContent.MeasuredSize.Width + titleContent.Margin.Left + titleContent.Margin.Right;
+                finalSize.Height = titleContent.MeasuredSize.Height + titleContent.Margin.Top + titleContent.Margin.Bottom;
+            }
+
+            if (Content != null)
+            {
+                size.Width -= Padding.Left + Padding.Right;
+                size.Height -= Padding.Top + Padding.Bottom;
+
+                Content.Measure(size);
+
+                var w = Content.MeasuredSize.Width + Content.Margin.Left + Content.Margin.Right;
+                var h = Content.MeasuredSize.Height + Content.Margin.Top + Content.Margin.Bottom;
+                finalSize.Width = Math.Max(finalSize.Width, w + Padding.Left + Padding.Right);
+                finalSize.Height += h + Padding.Top + Padding.Bottom;
+            }
+
+            return finalSize;
+        }
+
+        /// <summary>
+        /// SizeToContent に Manual が設定された場合の測定を行います。
+        /// </summary>
+        /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
+        /// <returns>自身が希望するサイズ。</returns>
+        protected virtual Size MeasureManual(Size availableSize)
+        {
+            // 暫定的に自身の希望サイズを計算します。
+            var finalSize = new Size();
+            finalSize.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
+            finalSize.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
+
+            // 子が利用可能なサイズを計算します。
+            var size = finalSize;
+
+            if (titleContent != null)
+            {
+                titleContent.Measure(size);
+
+                var titleHeght = titleContent.MeasuredSize.Height + titleContent.Margin.Top + titleContent.Margin.Bottom;
+                size.Height -= titleHeght;
+            }
+
+            if (Content != null)
+            {
+                size.Width -= Padding.Left + Padding.Right;
+                size.Height -= Padding.Top + Padding.Bottom;
+
+                Content.Measure(size);
             }
 
             return finalSize;
@@ -303,6 +396,21 @@ namespace Willcraftia.Xna.Framework.UI
             if (Deactivated != null) Deactivated(this, EventArgs.Empty);
         }
 
+        protected override Control GetChild(int index)
+        {
+            if (TitleContent != null)
+            {
+                if (index < 0 || 1 < index) throw new ArgumentOutOfRangeException("index");
+
+                if (index == 0) return TitleContent;
+
+                if (Content == null) throw new ArgumentOutOfRangeException("index");
+                return Content;
+            }
+
+            return base.GetChild(index);
+        }
+
         protected override void OnKeyDown(ref RoutedEventContext context)
         {
             base.OnKeyDown(ref context);
@@ -325,8 +433,107 @@ namespace Willcraftia.Xna.Framework.UI
                     return MeasureWidthAndHeightToContent(availableSize);
                 case SizeToContent.Manual:
                 default:
-                    return base.MeasureOverride(availableSize);
+                    if (float.IsNaN(Width) || float.IsNaN(Height))
+                        throw new InvalidOperationException("SizeToContent.Manual requires explicit Width and Height.");
+                    return MeasureManual(availableSize);
             }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            //
+            // MEMO
+            //
+            // StackPanel の垂直方向整列のロジックと基本は同じです。
+            // ただし、Window.Padding は Content にのみ影響し、TitleContent には影響しないようにします。
+            //
+
+            float offsetY = 0;
+            if (titleContent != null)
+            {
+                offsetY += titleContent.Margin.Top;
+
+                var childBounds = new Rect(titleContent.MeasuredSize);
+                childBounds.Y = offsetY;
+
+                switch (titleContent.HorizontalAlignment)
+                {
+                    case HorizontalAlignment.Left:
+                        childBounds.X = titleContent.Margin.Left;
+                        break;
+                    case HorizontalAlignment.Right:
+                        childBounds.X = finalSize.Width - titleContent.MeasuredSize.Width - titleContent.Margin.Right;
+                        break;
+                    case HorizontalAlignment.Center:
+                        childBounds.X = (finalSize.Width - titleContent.MeasuredSize.Width - titleContent.Margin.Left - titleContent.Margin.Right) * 0.5f;
+                        childBounds.X += titleContent.Margin.Left;
+                        break;
+                    case HorizontalAlignment.Stretch:
+                    default:
+                        childBounds.X = titleContent.Margin.Left;
+                        childBounds.Width = finalSize.Width - titleContent.Margin.Left - titleContent.Margin.Right;
+                        break;
+                }
+
+                titleContent.Arrange(childBounds);
+
+                // 子が確定した幅の分だけ次の子の座標をずらします。
+                offsetY += titleContent.ActualHeight + titleContent.Margin.Bottom;
+            }
+
+            if (Content != null)
+            {
+                var childBounds = new Rect(Content.MeasuredSize);
+                childBounds.Y = offsetY;
+
+                switch (Content.HorizontalAlignment)
+                {
+                    case HorizontalAlignment.Left:
+                        childBounds.X = Padding.Left + Content.Margin.Left;
+                        break;
+                    case HorizontalAlignment.Right:
+                        childBounds.X = finalSize.Width - Content.MeasuredSize.Width - Padding.Right - Content.Margin.Right;
+                        break;
+                    case HorizontalAlignment.Center:
+                        var paddedWidth = (finalSize.Width - Padding.Left - Padding.Right);
+                        childBounds.X = (paddedWidth - Content.MeasuredSize.Width - Content.Margin.Left - Content.Margin.Right) * 0.5f;
+                        childBounds.X += Content.Margin.Left;
+                        childBounds.X += Padding.Left;
+                        break;
+                    case HorizontalAlignment.Stretch:
+                    default:
+                        childBounds.X = Padding.Left + Content.Margin.Left;
+                        childBounds.Width = finalSize.Width - Padding.Left - Padding.Right - Content.Margin.Left - Content.Margin.Right;
+                        break;
+                }
+
+                var contentAvailableHeight = finalSize.Height - offsetY;
+
+                switch (Content.VerticalAlignment)
+                {
+                    case VerticalAlignment.Top:
+                        childBounds.Y += Padding.Top + Content.Margin.Top;
+                        break;
+                    case VerticalAlignment.Bottom:
+                        childBounds.Y += contentAvailableHeight - Content.MeasuredSize.Height - Padding.Bottom - Content.Margin.Bottom;
+                        break;
+                    case VerticalAlignment.Center:
+                        var paddedHeight = (contentAvailableHeight - Padding.Top - Padding.Bottom);
+                        childBounds.Y += (paddedHeight - Content.MeasuredSize.Height - Content.Margin.Top - Content.Margin.Bottom) * 0.5f;
+                        childBounds.Y += Content.Margin.Top;
+                        childBounds.Y += Padding.Top;
+                        break;
+                    case VerticalAlignment.Stretch:
+                    default:
+                        childBounds.Y += Padding.Top + Content.Margin.Top;
+                        childBounds.Height = contentAvailableHeight - Padding.Top - Padding.Bottom - Content.Margin.Top - Content.Margin.Bottom;
+                        break;
+                }
+
+                Content.Arrange(childBounds);
+            }
+
+            return finalSize;
         }
 
         /// <summary>

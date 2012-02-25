@@ -129,8 +129,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             var windowLookAndFeel = new WindowLookAndFeel();
             windowLookAndFeel.SpriteWidth = SpriteSize;
             windowLookAndFeel.SpriteHeight = SpriteSize;
+            windowLookAndFeel.TitleEnabled = true;
             lookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
-            
+
             return lookAndFeelSource;
 
             //return new Framework.UI.Lafs.Debug.DebugLookAndFeelSource(this);

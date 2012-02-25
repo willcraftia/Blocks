@@ -26,6 +26,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             Padding = new Thickness(16);
 
+            TitleContent = new TextBlock(screen)
+            {
+                Text = "Select Language",
+                Margin = new Thickness(20, 4, 20, 4),
+                Padding = new Thickness(4, 0, 4, 0),
+                ForegroundColor = Color.Yellow,
+                BackgroundColor = Color.Black,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                ShadowOffset = new Vector2(2)
+            };
+
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical
