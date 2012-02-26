@@ -25,11 +25,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
-            Padding = new Thickness(16);
-
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(16)
             };
             Content = stackPanel;
 

@@ -19,8 +19,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             public MenuWindow(Screen screen)
                 : base(screen)
             {
-                Width = unit * 10;
-                Height = unit * 4;
                 BackgroundColor = Color.Blue;
 
                 var stackPanel = new StackPanel(screen)
@@ -98,11 +96,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
             {
-                var overlay = new Overlay(Screen)
-                {
-                    Opacity = 0,
-                    BackgroundColor = Color.Black
-                };
+                var overlay = new Overlay(Screen);
                 overlay.Show();
 
                 var opacityAnimation = new PropertyLerpAnimation
@@ -115,7 +109,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                opacityAnimation.Completed += (s, evt) =>
+                opacityAnimation.Completed += (s, e) =>
                 {
                     var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
                     uiService.Show("WindowDemoScreen");
@@ -142,7 +136,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
+                opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
                 Animations.Add(opacityAnimation);
             }
         }

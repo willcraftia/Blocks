@@ -52,11 +52,22 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var textSize = MeasureTextSize();
+            var controlSize = new Size(Width, Height);
+            if (float.IsNaN(controlSize.Width) || float.IsNaN(controlSize.Height))
+            {
+                var textSize = MeasureTextSize();
+
+                if (float.IsNaN(controlSize.Width))
+                    controlSize.Width = ClampWidth(textSize.X + Padding.Left + Padding.Right);
+
+                if (float.IsNaN(controlSize.Height))
+                    controlSize.Height = ClampHeight(textSize.Y + Padding.Top + Padding.Bottom);
+            }
+
             return new Size
             {
-                Width = float.IsNaN(Width) ? ClampWidth(textSize.X + Padding.Left + Padding.Right) : Width,
-                Height = float.IsNaN(Height) ? ClampHeight(textSize.Y + Padding.Top + Padding.Bottom) : Height
+                Width = controlSize.Width + Margin.Left + Margin.Right,
+                Height = controlSize.Height + Margin.Top + Margin.Bottom
             };
         }
 
@@ -74,21 +85,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             var sampleText = Text;
             if (string.IsNullOrEmpty(sampleText)) sampleText = "X";
             return font.MeasureString(sampleText) * FontStretch;
-        }
-
-        /// <summary>
-        /// Text プロパティの文字列のサイズを測定します。
-        /// </summary>
-        /// <returns>Text プロパティの文字列のサイズ。</returns>
-        Vector2 MeasureText()
-        {
-            var fontSize = new Vector2();
-            if (!string.IsNullOrEmpty(Text))
-            {
-                var font = Font ?? Screen.Font;
-                fontSize = font.MeasureString(Text) * FontStretch;
-            }
-            return fontSize;
         }
     }
 }

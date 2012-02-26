@@ -78,8 +78,7 @@ namespace Willcraftia.Xna.Framework.UI
             Measure(new Size(Desktop.Width, Desktop.Height));
 
             // 配置を開始します。
-            var margin = Desktop.Margin;
-            Arrange(new Rect(margin.Left, margin.Top, Desktop.Width, Desktop.Height));
+            Arrange(new Rect(Desktop.Margin.Left, Desktop.Margin.Top, Desktop.Width, Desktop.Height));
         }
 
         /// <summary>

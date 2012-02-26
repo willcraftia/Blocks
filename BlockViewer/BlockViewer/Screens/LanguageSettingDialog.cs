@@ -24,8 +24,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public LanguageSettingDialog(Screen screen)
             : base(screen)
         {
-            Padding = new Thickness(16);
-
             TitleContent = new TextBlock(screen)
             {
                 Text = "Select Language",
@@ -39,7 +37,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(16, 4, 16, 16)
             };
             Content = stackPanel;
 

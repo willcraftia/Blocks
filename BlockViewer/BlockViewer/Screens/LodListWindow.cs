@@ -18,8 +18,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public LodListWindow(Screen screen, MainViewModel mainViewModel)
             : base(screen)
         {
-            Padding = new Thickness(8);
-
             TitleContent = new TextBlock(screen)
             {
                 Text = "LoD",
@@ -34,7 +32,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
-                Padding = new Thickness(8)
+                Margin = new Thickness(8, 0, 8, 8)
             };
             Content = stackPanel;
 

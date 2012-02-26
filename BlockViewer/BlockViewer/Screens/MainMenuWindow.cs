@@ -22,8 +22,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public MainMenuWindow(Screen screen)
             : base(screen)
         {
-            Padding = new Thickness(16, 4, 16, 16);
-
             TitleContent = new TextBlock(screen)
             {
                 Text = "Main Menu",
@@ -37,7 +35,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(16, 4, 16, 16)
             };
             Content = stackPanel;
 

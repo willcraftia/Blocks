@@ -51,11 +51,6 @@ namespace Willcraftia.Xna.Framework.UI
         // I/F
         public FocusScope FocusScope { get; private set; }
 
-        /// <summary>
-        /// サイズをコンテンツのサイズに合わせて自動調整する方法を取得または設定します。
-        /// </summary>
-        public SizeToContent SizeToContent { get; set; }
-
         public float Left
         {
             get { return Margin.Left; }
@@ -158,7 +153,6 @@ namespace Willcraftia.Xna.Framework.UI
         public Window(Screen screen)
             : base(screen)
         {
-            SizeToContent = SizeToContent.WidthAndHeight;
             FocusScope = new FocusScope(this);
         }
 
@@ -228,136 +222,183 @@ namespace Willcraftia.Xna.Framework.UI
         /// SizeToContent に Width が設定された場合の測定を行います。
         /// </summary>
         /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
-        /// <returns>自身が希望するサイズ。</returns>
+        /// <returns>配置で希望するサイズ。</returns>
         protected virtual Size MeasureWidthToContent(Size availableSize)
         {
-            var size = new Size();
-            size.Width = availableSize.Width;
-            size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
+            var windowSize = new Size
+            {
+                Width = availableSize.Width,
+                Height = Height
+            };
 
-            var finalSize = new Size(0, size.Height);
-
+            var titleMeasuredSize = new Size();
             if (titleContent != null)
             {
-                titleContent.Measure(size);
+                titleContent.Measure(windowSize);
 
-                finalSize.Width = titleContent.MeasuredSize.Width + titleContent.Margin.Left + titleContent.Margin.Right;
+                titleMeasuredSize = titleContent.MeasuredSize;
             }
 
+            var contentMeasuredSize = new Size();
             if (Content != null)
             {
-                size.Width -= Padding.Left + Padding.Right;
-                size.Height -= Padding.Top + Padding.Bottom;
+                // Content の利用できるサイズは、タイトルの高さ、および、内側の余白をとった領域のサイズです。
+                var widthPadding = Padding.Left + Padding.Right;
+                var heightPadding = Padding.Top + Padding.Bottom;
+                var childAvailableSize = new Size
+                {
+                    Width = windowSize.Width - widthPadding,
+                    Height = windowSize.Height - titleMeasuredSize.Height - heightPadding
+                };
 
-                Content.Measure(size);
+                Content.Measure(childAvailableSize);
 
-                var w = Content.MeasuredSize.Width + Content.Margin.Left + Content.Margin.Right;
-                finalSize.Width = Math.Max(finalSize.Width, w + Padding.Left + Padding.Right);
+                contentMeasuredSize = Content.MeasuredSize;
             }
 
-            return finalSize;
+            windowSize.Width = Math.Max(titleMeasuredSize.Width, contentMeasuredSize.Width + Padding.Left + Padding.Right);
+
+            return new Size
+            {
+                Width = windowSize.Width + Margin.Left + Margin.Right,
+                Height = windowSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
         /// <summary>
         /// SizeToContent に Height が設定された場合の測定を行います。
         /// </summary>
         /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
-        /// <returns>自身が希望するサイズ。</returns>
+        /// <returns>配置で希望するサイズ。</returns>
         protected virtual Size MeasureHeightToContent(Size availableSize)
         {
-            var size = new Size();
-            size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
-            size.Height = availableSize.Height;
+            // 暫定的に Control のサイズを計算します。
+            var windowSize = new Size
+            {
+                Width = Width,
+                Height = availableSize.Height - Margin.Top - Margin.Bottom
+            };
 
-            var finalSize = new Size(size.Width, 0);
-
+            var titleMeasuredSize = new Size();
             if (titleContent != null)
             {
-                titleContent.Measure(size);
+                titleContent.Measure(windowSize);
 
-                finalSize.Height = titleContent.MeasuredSize.Height + titleContent.Margin.Top + titleContent.Margin.Bottom;
+                titleMeasuredSize = titleContent.MeasuredSize;
             }
 
+            var contentMeasuredSize = new Size();
             if (Content != null)
             {
-                size.Width -= Padding.Left + Padding.Right;
-                size.Height -= Padding.Top + Padding.Bottom;
+                // Content の利用できるサイズは、タイトルの高さ、および、内側の余白をとった領域のサイズです。
+                var widthPadding = Padding.Left + Padding.Right;
+                var heightPadding = Padding.Top + Padding.Bottom;
+                var childAvailableSize = new Size
+                {
+                    Width = windowSize.Width - widthPadding,
+                    Height = windowSize.Height - titleMeasuredSize.Height - heightPadding
+                };
 
-                Content.Measure(size);
+                Content.Measure(childAvailableSize);
 
-                var h = Content.MeasuredSize.Height + Content.Margin.Top + Content.Margin.Bottom;
-                finalSize.Height += h + Padding.Top + Padding.Bottom;
+                contentMeasuredSize = Content.MeasuredSize;
             }
 
-            return finalSize;
+            windowSize.Height = titleMeasuredSize.Height + contentMeasuredSize.Height + Padding.Top + Padding.Bottom;
+
+            return new Size
+            {
+                Width = windowSize.Width + Margin.Left + Margin.Right,
+                Height = windowSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
         /// <summary>
         /// SizeToContent に WidthAndHeight が設定された場合の測定を行います。
         /// </summary>
         /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
-        /// <returns>自身が希望するサイズ。</returns>
+        /// <returns>配置で希望するサイズ。</returns>
         protected virtual Size MeasureWidthAndHeightToContent(Size availableSize)
         {
-            var finalSize = new Size(0, 0);
-            var size = availableSize;
+            // 暫定的に Control のサイズを計算します。
+            var windowSize = new Size
+            {
+                Width = availableSize.Width - Margin.Left + Margin.Right,
+                Height = availableSize.Height - Margin.Top - Margin.Bottom
+            };
 
+            var titleMeasuredSize = new Size();
             if (titleContent != null)
             {
-                titleContent.Measure(size);
+                titleContent.Measure(windowSize);
 
-                finalSize.Width = titleContent.MeasuredSize.Width + titleContent.Margin.Left + titleContent.Margin.Right;
-                finalSize.Height = titleContent.MeasuredSize.Height + titleContent.Margin.Top + titleContent.Margin.Bottom;
+                titleMeasuredSize = titleContent.MeasuredSize;
             }
 
+            var contentMeasuredSize = new Size();
             if (Content != null)
             {
-                size.Width -= Padding.Left + Padding.Right;
-                size.Height -= Padding.Top + Padding.Bottom;
+                // Content の利用できるサイズは、タイトルの高さ、および、内側の余白をとった領域のサイズです。
+                var widthPadding = Padding.Left + Padding.Right;
+                var heightPadding = Padding.Top + Padding.Bottom;
+                var childAvailableSize = new Size
+                {
+                    Width = windowSize.Width - widthPadding,
+                    Height = windowSize.Height - titleMeasuredSize.Height - heightPadding
+                };
 
-                Content.Measure(size);
+                Content.Measure(childAvailableSize);
 
-                var w = Content.MeasuredSize.Width + Content.Margin.Left + Content.Margin.Right;
-                var h = Content.MeasuredSize.Height + Content.Margin.Top + Content.Margin.Bottom;
-                finalSize.Width = Math.Max(finalSize.Width, w + Padding.Left + Padding.Right);
-                finalSize.Height += h + Padding.Top + Padding.Bottom;
+                contentMeasuredSize = Content.MeasuredSize;
             }
 
-            return finalSize;
+            windowSize.Width = Math.Max(titleMeasuredSize.Width, contentMeasuredSize.Width + Padding.Left + Padding.Right);
+            windowSize.Height = titleMeasuredSize.Height + contentMeasuredSize.Height + Padding.Top + Padding.Bottom;
+
+            return new Size
+            {
+                Width = windowSize.Width + Margin.Left + Margin.Right,
+                Height = windowSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
         /// <summary>
         /// SizeToContent に Manual が設定された場合の測定を行います。
         /// </summary>
         /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
-        /// <returns>自身が希望するサイズ。</returns>
+        /// <returns>配置で希望するサイズ。</returns>
         protected virtual Size MeasureManual(Size availableSize)
         {
-            // 暫定的に自身の希望サイズを計算します。
-            var finalSize = new Size();
-            finalSize.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
-            finalSize.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
+            // Control のサイズは Width と Height で確定しています。
+            var windowSize = new Size(Width, Height);
 
-            // 子が利用可能なサイズを計算します。
-            var size = finalSize;
-
+            var titleMeasuredSize = new Size();
             if (titleContent != null)
             {
-                titleContent.Measure(size);
+                titleContent.Measure(windowSize);
 
-                var titleHeght = titleContent.MeasuredSize.Height + titleContent.Margin.Top + titleContent.Margin.Bottom;
-                size.Height -= titleHeght;
+                titleMeasuredSize = titleContent.MeasuredSize;
             }
 
             if (Content != null)
             {
-                size.Width -= Padding.Left + Padding.Right;
-                size.Height -= Padding.Top + Padding.Bottom;
+                // Content の利用できるサイズは、タイトルの高さ、および、内側の余白をとった領域のサイズです。
+                var widthPadding = Padding.Left + Padding.Right;
+                var heightPadding = Padding.Top + Padding.Bottom;
+                var childAvailableSize = new Size
+                {
+                    Width = windowSize.Width - widthPadding,
+                    Height = windowSize.Height - titleMeasuredSize.Height - heightPadding
+                };
 
-                Content.Measure(size);
+                Content.Measure(childAvailableSize);
             }
 
-            return finalSize;
+            return new Size
+            {
+                Width = windowSize.Width + Margin.Left + Margin.Right,
+                Height = windowSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
         /// <summary>
@@ -423,121 +464,145 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            switch (SizeToContent)
+            // 暫定的に Control のサイズを計算します。
+            var controlSize = new Size(Width, Height);
+            if (float.IsNaN(controlSize.Width))
+                controlSize.Width = CalculateWidth(availableSize.Width - Margin.Left - Margin.Right);
+            if (float.IsNaN(controlSize.Height))
+                controlSize.Height = CalculateWidth(availableSize.Height - Margin.Top - Margin.Bottom);
+
+            // 子の利用できるサイズは、内側の余白をとった領域のサイズです。
+            var widthPadding = Padding.Left + Padding.Right;
+            var heightPadding = Padding.Top + Padding.Bottom;
+            var childAvailableSize = new Size
             {
-                case SizeToContent.Width:
-                    if (float.IsNaN(Height))
-                        throw new InvalidOperationException("SizeToContent.Width requires a explicit Height.");
-                    return MeasureWidthToContent(availableSize);
-                case SizeToContent.Height:
-                    if (float.IsNaN(Width))
-                        throw new InvalidOperationException("SizeToContent.Height requires a explicit Width.");
-                    return MeasureHeightToContent(availableSize);
-                case SizeToContent.WidthAndHeight:
-                    return MeasureWidthAndHeightToContent(availableSize);
-                case SizeToContent.Manual:
-                default:
-                    if (float.IsNaN(Width) || float.IsNaN(Height))
-                        throw new InvalidOperationException("SizeToContent.Manual requires explicit Width and Height.");
-                    return MeasureManual(availableSize);
+                Width = controlSize.Width - widthPadding,
+                Height = controlSize.Height - heightPadding
+            };
+
+            // 子の希望サイズを定めます。
+            float maxChildMeasuredWidth = 0;
+            float maxChildMeasuredHeight = 0;
+            for (int i = 0; i < ChildrenCount; i++)
+            {
+                var child = GetChild(i);
+                child.Measure(childAvailableSize);
+
+                maxChildMeasuredWidth = Math.Max(maxChildMeasuredWidth, child.MeasuredSize.Width);
+                maxChildMeasuredHeight += child.MeasuredSize.Height;
             }
+
+            if (float.IsNaN(Width)) controlSize.Width = ClampWidth(maxChildMeasuredWidth + widthPadding);
+            if (float.IsNaN(Height)) controlSize.Height = ClampHeight(maxChildMeasuredHeight + heightPadding);
+
+            // 外側の余白を含めて描画に必要な希望サイズとします。
+            return new Size
+            {
+                Width = controlSize.Width + Margin.Left + Margin.Right,
+                Height = controlSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        protected override Size ArrangeOverride(Size arrangeSize)
         {
-            //
-            // MEMO
-            //
-            // StackPanel の垂直方向整列のロジックと基本は同じです。
-            // ただし、Window.Padding は Content にのみ影響し、TitleContent には影響しないようにします。
-            //
+            var controlSize = new Size
+            {
+                Width = arrangeSize.Width - Margin.Left - Margin.Right,
+                Height = arrangeSize.Height - Margin.Top - Margin.Bottom
+            };
 
-            float offsetY = 0;
+            var paddedBounds = new Rect
+            {
+                X = Padding.Left,
+                Y = Padding.Top,
+                Width = controlSize.Width - Padding.Left + Padding.Right,
+                Height = controlSize.Height - Padding.Top + Padding.Bottom
+            };
+
             if (titleContent != null)
             {
-                offsetY += titleContent.Margin.Top;
-
-                var childBounds = new Rect(titleContent.MeasuredSize);
-                childBounds.Y = offsetY;
+                // TitleContent は常に上部に張り付きます。
+                var childBounds = new Rect
+                {
+                    Y = paddedBounds.Top,
+                    Width = titleContent.MeasuredSize.Width,
+                    Height = titleContent.MeasuredSize.Height
+                };
 
                 switch (titleContent.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
-                        childBounds.X = titleContent.Margin.Left;
+                        childBounds.X = paddedBounds.Left;
                         break;
                     case HorizontalAlignment.Right:
-                        childBounds.X = finalSize.Width - titleContent.MeasuredSize.Width - titleContent.Margin.Right;
+                        childBounds.X = paddedBounds.Right - titleContent.MeasuredSize.Width;
                         break;
                     case HorizontalAlignment.Center:
-                        childBounds.X = (finalSize.Width - titleContent.MeasuredSize.Width - titleContent.Margin.Left - titleContent.Margin.Right) * 0.5f;
-                        childBounds.X += titleContent.Margin.Left;
+                        childBounds.X = paddedBounds.Left + (paddedBounds.Width - titleContent.MeasuredSize.Width) * 0.5f;
                         break;
                     case HorizontalAlignment.Stretch:
                     default:
-                        childBounds.X = titleContent.Margin.Left;
-                        childBounds.Width = finalSize.Width - titleContent.Margin.Left - titleContent.Margin.Right;
+                        childBounds.X = paddedBounds.Left;
+                        childBounds.Width = paddedBounds.Width;
                         break;
                 }
 
                 titleContent.Arrange(childBounds);
 
-                // 子が確定した幅の分だけ次の子の座標をずらします。
-                offsetY += titleContent.ActualHeight + titleContent.Margin.Bottom;
+                // Content の配置に備えて、TitleContent の領域分を取り除きます。
+                paddedBounds.Y = childBounds.Bottom;
+                paddedBounds.Height -= childBounds.Height;
             }
 
             if (Content != null)
             {
-                var childBounds = new Rect(Content.MeasuredSize);
-                childBounds.Y = offsetY;
+                // Content は TitleContent を除いた領域で配置します。
+                var childBounds = new Rect
+                {
+                    Width = Content.MeasuredSize.Width,
+                    Height = Content.MeasuredSize.Height
+                };
 
                 switch (Content.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
-                        childBounds.X = Padding.Left + Content.Margin.Left;
+                        childBounds.X = paddedBounds.Left;
                         break;
                     case HorizontalAlignment.Right:
-                        childBounds.X = finalSize.Width - Content.MeasuredSize.Width - Padding.Right - Content.Margin.Right;
+                        childBounds.X = paddedBounds.Right - Content.MeasuredSize.Width;
                         break;
                     case HorizontalAlignment.Center:
-                        var paddedWidth = (finalSize.Width - Padding.Left - Padding.Right);
-                        childBounds.X = (paddedWidth - Content.MeasuredSize.Width - Content.Margin.Left - Content.Margin.Right) * 0.5f;
-                        childBounds.X += Content.Margin.Left;
-                        childBounds.X += Padding.Left;
+                        childBounds.X = paddedBounds.Left + (paddedBounds.Width - Content.MeasuredSize.Width) * 0.5f;
                         break;
                     case HorizontalAlignment.Stretch:
                     default:
-                        childBounds.X = Padding.Left + Content.Margin.Left;
-                        childBounds.Width = finalSize.Width - Padding.Left - Padding.Right - Content.Margin.Left - Content.Margin.Right;
+                        childBounds.X = paddedBounds.Left;
+                        childBounds.Width = paddedBounds.Width;
                         break;
                 }
-
-                var contentAvailableHeight = finalSize.Height - offsetY;
 
                 switch (Content.VerticalAlignment)
                 {
                     case VerticalAlignment.Top:
-                        childBounds.Y += Padding.Top + Content.Margin.Top;
+                        childBounds.Y = paddedBounds.Top;
                         break;
                     case VerticalAlignment.Bottom:
-                        childBounds.Y += contentAvailableHeight - Content.MeasuredSize.Height - Padding.Bottom - Content.Margin.Bottom;
+                        childBounds.Y = paddedBounds.Bottom - Content.MeasuredSize.Height;
                         break;
                     case VerticalAlignment.Center:
-                        var paddedHeight = (contentAvailableHeight - Padding.Top - Padding.Bottom);
-                        childBounds.Y += (paddedHeight - Content.MeasuredSize.Height - Content.Margin.Top - Content.Margin.Bottom) * 0.5f;
-                        childBounds.Y += Content.Margin.Top;
-                        childBounds.Y += Padding.Top;
+                        childBounds.Y = paddedBounds.Top + (paddedBounds.Height - Content.MeasuredSize.Height) * 0.5f;
                         break;
                     case VerticalAlignment.Stretch:
                     default:
-                        childBounds.Y += Padding.Top + Content.Margin.Top;
-                        childBounds.Height = contentAvailableHeight - Padding.Top - Padding.Bottom - Content.Margin.Top - Content.Margin.Bottom;
+                        childBounds.Y = paddedBounds.Top;
+                        childBounds.Height = paddedBounds.Height;
                         break;
                 }
 
                 Content.Arrange(childBounds);
             }
 
-            return finalSize;
+            return controlSize;
         }
 
         /// <summary>

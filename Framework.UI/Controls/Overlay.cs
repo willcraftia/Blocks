@@ -19,7 +19,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public Overlay(Screen screen)
             : base(screen)
         {
-            SizeToContent = SizeToContent.Manual;
             Opacity = 0;
             BackgroundColor = Color.Black;
         }

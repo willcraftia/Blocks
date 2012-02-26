@@ -44,8 +44,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             DataContext = viewModel;
 
-            Padding = new Thickness(16);
-
             TitleContent = new TextBlock(screen)
             {
                 Text = "Load",
@@ -59,7 +57,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var basePanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(16, 4, 16, 16)
             };
             Content = basePanel;
 
@@ -135,7 +134,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     ShadowOffset = new Vector2(2)
                 };
-                openFileConfirmMessageBox.Padding = new Thickness(16);
+                openFileConfirmMessageBox.Content.Margin = new Thickness(16, 4, 16, 16);
                 openFileConfirmMessageBox.TextBlock.Text = Strings.OpenFileConfirmation;
                 openFileConfirmMessageBox.TextBlock.ForegroundColor = Color.White;
                 openFileConfirmMessageBox.OKButton.Content.ForegroundColor = Color.White;

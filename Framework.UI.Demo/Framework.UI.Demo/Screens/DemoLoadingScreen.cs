@@ -40,11 +40,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 if (screenLoadCompleted)
                 {
-                    var exitOverlay = new Overlay(this)
-                    {
-                        Opacity = 0,
-                        BackgroundColor = Color.Black
-                    };
+                    var exitOverlay = new Overlay(this);
 
                     var animation = new PropertyLerpAnimation
                     {
@@ -79,8 +75,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             var screenOverlay = new Overlay(this)
             {
-                Opacity = 1,
-                BackgroundColor = Color.Black
+                Opacity = 1
             };
             var screenOverlay_opacityAnimation = new PropertyLerpAnimation
             {
@@ -98,6 +93,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             var nowLoadingTextBlock = new TextBlock(this)
             {
                 Text = "NOW LOADING...",
+                ForegroundColor = Color.White,
+                BackgroundColor = Color.Black,
                 FontStretch = new Vector2(2),
                 Padding = new Thickness(8)
             };

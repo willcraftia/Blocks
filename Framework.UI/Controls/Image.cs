@@ -16,46 +16,20 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var size = new Size();
+            var controlSize = new Size(Width, Height);
 
-            if (float.IsNaN(Width))
-            {
-                if (Texture == null)
-                {
-                    size.Width = CalculateWidth(availableSize.Width);
-                }
-                else
-                {
-                    // Texture が設定されているならば Texture の幅で希望します。
-                    size.Width = Texture.Width;
-                }
-            }
-            else
-            {
-                // 幅が設定されているならばそのまま希望します。
-                size.Width = Width;
-            }
+            if (float.IsNaN(controlSize.Width))
+                controlSize.Width = (Texture == null) ? CalculateWidth(0) : Texture.Width;
 
-            if (float.IsNaN(Height))
-            {
-                if (Texture == null)
-                {
-                    size.Height = CalculateHeight(availableSize.Height);
-                }
-                else
-                {
-                    // Texture が設定されているならば Texture の高さで希望します。
-                    size.Height = Texture.Height;
-                }
-            }
-            else
-            {
-                // 高さが設定されているならばそのまま希望します。
-                size.Height = Height;
-            }
+            if (float.IsNaN(controlSize.Height))
+                controlSize.Height = (Texture == null) ? CalculateHeight(0) : Texture.Height;
 
             // 子は持たないことを前提として測定を終えます。
-            return size;
+            return new Size
+            {
+                Width = controlSize.Width + Margin.Left + Margin.Right,
+                Height = controlSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
         public override void Draw(GameTime gameTime, IDrawContext drawContext)

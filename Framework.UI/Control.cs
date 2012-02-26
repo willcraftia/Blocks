@@ -385,7 +385,7 @@ namespace Willcraftia.Xna.Framework.UI
         public float Height { get; set; }
 
         /// <summary>
-        /// 測定後のサイズを取得します。
+        /// 配置で希望するサイズを取得します。
         /// </summary>
         public Size MeasuredSize { get; private set; }
 
@@ -749,7 +749,7 @@ namespace Willcraftia.Xna.Framework.UI
         public Vector2 PointFromScreen(Vector2 point)
         {
             var offset = RenderOffset;
-            var result = new Vector2(point.X - offset.X, point.Y - offset.Y);
+            var result = new Vector2(point.X - offset.X - Margin.Left, point.Y - offset.Y - Margin.Top);
             return (Parent != null) ? Parent.PointFromScreen(result) : result;
         }
 
@@ -761,7 +761,7 @@ namespace Willcraftia.Xna.Framework.UI
         public Vector2 PointToScreen(Vector2 point)
         {
             var offset = RenderOffset;
-            var result = new Vector2(point.X + offset.X, point.Y + offset.Y);
+            var result = new Vector2(point.X + offset.X + Margin.Left, point.Y + offset.Y + Margin.Top);
             return (Parent != null) ? Parent.PointToScreen(result) : result;
         }
 
@@ -824,36 +824,48 @@ namespace Willcraftia.Xna.Framework.UI
         /// 測定します。
         /// </summary>
         /// <param name="availableSize">親が指定する利用可能なサイズ。</param>
-        /// <returns>自身が希望するサイズ。</returns>
+        /// <returns>配置で希望するサイズ。</returns>
         protected virtual Size MeasureOverride(Size availableSize)
         {
-            // 暫定的に自身の希望サイズを計算します。
-            var size = new Size();
-            size.Width = !float.IsNaN(Width) ? Width : CalculateWidth(availableSize.Width);
-            size.Height = !float.IsNaN(Height) ? Height : CalculateHeight(availableSize.Height);
+            // 暫定的に Control のサイズを計算します。
+            var controlSize = new Size(Width, Height);
+            if (float.IsNaN(controlSize.Width))
+                controlSize.Width = CalculateWidth(availableSize.Width - Margin.Left - Margin.Right);
+            if (float.IsNaN(controlSize.Height))
+                controlSize.Height = CalculateWidth(availableSize.Height - Margin.Top - Margin.Bottom);
 
-            // 子が利用可能なサイズを計算します。
-            var childAvailableSize = size;
-            childAvailableSize.Width -= Padding.Left + Padding.Right;
-            childAvailableSize.Height -= Padding.Top + Padding.Bottom;
+            // 子の利用できるサイズは、内側の余白をとった領域のサイズです。
+            var widthPadding = Padding.Left + Padding.Right;
+            var heightPadding = Padding.Top + Padding.Bottom;
+            var childAvailableSize = new Size
+            {
+                Width = controlSize.Width - widthPadding,
+                Height = controlSize.Height - heightPadding
+            };
 
             // 子の希望サイズを定めます。
-            float measuredWidth = 0;
-            float measuredHeight = 0;
+            float maxChildMeasuredWidth = 0;
+            float maxChildMeasuredHeight = 0;
             for (int i = 0; i < ChildrenCount; i++)
             {
                 var child = GetChild(i);
                 child.Measure(childAvailableSize);
 
-                measuredWidth = Math.Max(measuredWidth, child.MeasuredSize.Width + child.Margin.Left + child.Margin.Right);
-                measuredHeight = Math.Max(measuredHeight, child.MeasuredSize.Height + child.Margin.Top + child.Margin.Bottom);
+                var childMeasuredSize = child.MeasuredSize;
+                maxChildMeasuredWidth = Math.Max(maxChildMeasuredWidth, childMeasuredSize.Width);
+                maxChildMeasuredHeight = Math.Max(maxChildMeasuredHeight, childMeasuredSize.Height);
             }
 
-            // 幅や高さが未設定ならば子のうちの最大の値に合わせます。
-            if (float.IsNaN(Width)) size.Width = ClampWidth(measuredWidth + Padding.Left + Padding.Right);
-            if (float.IsNaN(Height)) size.Height = ClampHeight(measuredHeight + Padding.Top + Padding.Bottom);
+            // 幅や高さが未設定ならば子のうちの最大の値を Control のサイズにします。
+            if (float.IsNaN(Width)) controlSize.Width = ClampWidth(maxChildMeasuredWidth + widthPadding);
+            if (float.IsNaN(Height)) controlSize.Height = ClampHeight(maxChildMeasuredHeight + heightPadding);
 
-            return size;
+            // 外側の余白を含めて描画に必要な希望サイズとします。
+            return new Size
+            {
+                Width = controlSize.Width + Margin.Left + Margin.Right,
+                Height = controlSize.Height + Margin.Top + Margin.Bottom
+            };
         }
 
         /// <summary>
@@ -919,64 +931,75 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 配置します。
         /// </summary>
-        /// <param name="finalSize">親 Control が指定する配置に利用可能な領域。</param>
-        /// <returns>配置により自身が希望する最終的なサイズ。</returns>
-        protected virtual Size ArrangeOverride(Size finalSize)
+        /// <param name="arrangeSize">親 Control が指定する配置に利用可能な領域。</param>
+        /// <returns>配置による Control の最終的なサイズ。</returns>
+        protected virtual Size ArrangeOverride(Size arrangeSize)
         {
+            // デフォルトは自由配置を仮定しておきます。
+
+            var controlSize = new Size
+            {
+                Width = arrangeSize.Width - Margin.Left - Margin.Right,
+                Height = arrangeSize.Height - Margin.Top - Margin.Bottom
+            };
+
+            var paddedBounds = new Rect
+            {
+                X = Padding.Left,
+                Y = Padding.Top,
+                Width = controlSize.Width - Padding.Left - Padding.Right,
+                Height = controlSize.Height - Padding.Top - Padding.Bottom
+            };
+
             for (int i = 0; i < ChildrenCount; i++)
             {
                 var child = GetChild(i);
-                var childBounds = new Rect(child.MeasuredSize);
+                var childBounds = new Rect
+                {
+                    Width = child.MeasuredSize.Width,
+                    Height = child.MeasuredSize.Height
+                };
 
                 switch (child.HorizontalAlignment)
                 {
                     case HorizontalAlignment.Left:
-                        childBounds.X = Padding.Left + child.Margin.Left;
+                        childBounds.X = paddedBounds.Left;
                         break;
                     case HorizontalAlignment.Right:
-                        childBounds.X = finalSize.Width - child.MeasuredSize.Width - Padding.Right - child.Margin.Right;
+                        childBounds.X = paddedBounds.Right - child.MeasuredSize.Width;
                         break;
                     case HorizontalAlignment.Center:
-                        // Padding された座標系から Magin を含む子領域の相対位置を計算します。
-                        var paddedWidth = (finalSize.Width - Padding.Left - Padding.Right);
-                        childBounds.X = (paddedWidth - child.MeasuredSize.Width - child.Margin.Left - child.Margin.Right) * 0.5f;
-                        // Magin を含む子領域からの実際の子領域の位置をもとめます。
-                        childBounds.X += child.Margin.Left;
-                        // Padding された座標系を指定領域の座標系へ変換します。
-                        childBounds.X += Padding.Left;
+                        childBounds.X = paddedBounds.Left + (paddedBounds.Width - child.MeasuredSize.Width) * 0.5f;
                         break;
                     case HorizontalAlignment.Stretch:
                     default:
-                        childBounds.X = Padding.Left + child.Margin.Left;
-                        childBounds.Width = finalSize.Width - Padding.Left - Padding.Right - child.Margin.Left - child.Margin.Right;
+                        childBounds.X = paddedBounds.Left;
+                        childBounds.Width = paddedBounds.Width;
                         break;
                 }
 
                 switch (child.VerticalAlignment)
                 {
                     case VerticalAlignment.Top:
-                        childBounds.Y = Padding.Top + child.Margin.Top;
+                        childBounds.Y = paddedBounds.Top;
                         break;
                     case VerticalAlignment.Bottom:
-                        childBounds.Y = finalSize.Height - child.MeasuredSize.Height - Padding.Bottom - child.Margin.Bottom;
+                        childBounds.Y = paddedBounds.Bottom - child.MeasuredSize.Height;
                         break;
-                    case UI.VerticalAlignment.Center:
-                        var paddedHeight = (finalSize.Height - Padding.Top - Padding.Bottom);
-                        childBounds.Y = (paddedHeight - child.MeasuredSize.Height - child.Margin.Top - child.Margin.Bottom) * 0.5f;
-                        childBounds.Y += child.Margin.Top;
-                        childBounds.Y += Padding.Top;
+                    case VerticalAlignment.Center:
+                        childBounds.Y = paddedBounds.Top + (paddedBounds.Height - child.MeasuredSize.Height) * 0.5f;
                         break;
                     case VerticalAlignment.Stretch:
                     default:
-                        childBounds.Y = Padding.Top + child.Margin.Top;
-                        childBounds.Height = finalSize.Height - Padding.Top - Padding.Bottom - child.Margin.Top - child.Margin.Bottom;
+                        childBounds.Y = paddedBounds.Top;
+                        childBounds.Height = paddedBounds.Height;
                         break;
                 }
 
                 child.Arrange(childBounds);
             }
 
-            return finalSize;
+            return controlSize;
         }
 
         /// <summary>
@@ -1126,6 +1149,7 @@ namespace Willcraftia.Xna.Framework.UI
             //
             // 暫定的な描画領域決定アルゴリズムです。
             // スクロール処理なども考慮して描画領域を算出する必要があります。
+
             drawContext.Location = child.PointToScreen(Vector2.Zero);
             drawContext.PushOpacity(child.Opacity);
 

@@ -125,7 +125,6 @@
     <Compile Include="Root.cs" />
     <Compile Include="RoutedEventContext.cs" />
     <Compile Include="RoutedEventHandler.cs" />
-    <Compile Include="SizeToContent.cs" />
     <Compile Include="DefaultScreenFactory.cs" />
     <Compile Include="Desktop.cs" />
     <Compile Include="IDrawContext.cs" />
