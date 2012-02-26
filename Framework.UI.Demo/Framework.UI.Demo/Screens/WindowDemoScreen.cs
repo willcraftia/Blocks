@@ -19,6 +19,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             public FirstWindow(Screen screen)
                 : base(screen)
             {
+                SizeToContent = SizeToContent.Manual;
                 Width = unit * 10;
                 Height = unit * 10;
                 HorizontalAlignment = HorizontalAlignment.Left;
@@ -63,6 +64,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             public SecondWindow(Screen screen)
                 : base(screen)
             {
+                SizeToContent = SizeToContent.Manual;
                 Width = unit * 10;
                 Height = unit * 10;
                 HorizontalAlignment = HorizontalAlignment.Right;
@@ -97,6 +99,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             public ThirdWindow(Screen screen)
                 : base(screen)
             {
+                SizeToContent = SizeToContent.Manual;
                 Width = unit * 15;
                 Height = unit * 10;
                 BackgroundColor = Color.Blue;
