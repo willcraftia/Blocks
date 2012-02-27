@@ -62,7 +62,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                 debugLookAndFeelSource = new DebugLookAndFeelSource(this);
 
-                var windowTemplate = new WindowSpriteSheetTemplate(16, 16, false);
+                var windowTemplate = new WindowSpriteSheetTemplate(16, 16);
                 var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
 
                 var spriteSheetSource = new DefaultSpriteSheetSource(this);

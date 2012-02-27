@@ -122,13 +122,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// <returns>生成された ILookAndFeelSource。</returns>
         ILookAndFeelSource CreateLookAndFeelSource()
         {
-            var windowTemplate = new WindowSpriteSheetTemplate(32, 32, true);
+            var windowTemplate = new WindowSpriteSheetTemplate(32, 32);
             var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
 
             var spriteSheetSource = new DefaultSpriteSheetSource(this);
             spriteSheetSource.Content.RootDirectory = "Content/UI/Sprite";
             spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
             spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
+            spriteSheetSource.DefinitionMap["TitledWindow"] = new SpriteSheetDefinition(windowTemplate, "TitledWindow");
+            spriteSheetSource.DefinitionMap["TitledWindowShadow"] = new SpriteSheetDefinition(windowTemplate, "TitledWindow", windowShadowConverter);
 
             var lookAndFeelSource = new SpriteLookAndFeelSource(this, spriteSheetSource);
             lookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";

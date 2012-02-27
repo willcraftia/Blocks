@@ -20,9 +20,19 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         SpriteSheet windowSpriteSheet;
 
         /// <summary>
+        /// タイトル付き Window の SpriteSheet。
+        /// </summary>
+        SpriteSheet titledWindowSpriteSheet;
+
+        /// <summary>
         /// Window の影の SpriteSheet。
         /// </summary>
         SpriteSheet shadowSpriteSheet;
+
+        /// <summary>
+        /// タイトル付き Window の影の SpriteSheet。
+        /// </summary>
+        SpriteSheet titledShadowSpriteSheet;
 
         /// <summary>
         /// Window の影の描画位置を取得または設定します。
@@ -50,7 +60,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //----------------------------------------------------------------
 
             windowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("Window");
+            titledWindowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("TitledWindow");
             shadowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("WindowShadow");
+            titledShadowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("TitledWindowShadow");
 
             base.LoadContent();
         }
@@ -59,10 +71,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         {
             var window = control as Window;
 
-            if (shadowSpriteSheet != null)
-                DrawWindow(window, drawContext, shadowSpriteSheet, Color.White, ShadowOffset);
+            var shadowTarget = (window.TitleContent == null) ? shadowSpriteSheet : titledShadowSpriteSheet;
+            var windowTarget = (window.TitleContent == null) ? windowSpriteSheet : titledWindowSpriteSheet;
 
-            DrawWindow(window, drawContext, windowSpriteSheet, Color.White, Vector2.Zero);
+            if (shadowTarget != null)
+                DrawWindow(window, drawContext, shadowTarget, Color.White, ShadowOffset);
+
+            if (windowTarget != null)
+                DrawWindow(window, drawContext, windowTarget, Color.White, Vector2.Zero);
         }
 
         protected void DrawWindow(Window window, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Vector2 offset)
@@ -85,18 +101,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             // Top Lines
             {
-                var titleDrawn = (template.ContainsTitle && window.TitleContent != null);
-
-                var topLeft = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTopLeft : WindowSpriteSheetTemplate.TopLeft;
-                var top = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTop : WindowSpriteSheetTemplate.Top;
-                var topRight = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTopRight : WindowSpriteSheetTemplate.TopRight;
+                var titleDrawn = (window.TitleContent != null && titledWindowSpriteSheet != null);
 
                 int adjustedH = AdjustHeight(renderHeight, offsetY, h, offsetY);
                 int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
                 bounds.Height = adjustedH;
                 bounds.Width = adjustedW;
 
-                sourceRectangle = spriteSheet.Template[topLeft];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.TopLeft];
                 sourceRectangle.Width = adjustedW;
                 sourceRectangle.Height = adjustedH;
                 bounds.X = offsetX;
@@ -104,7 +116,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 bounds.Width = sourceRectangle.Width;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
 
-                sourceRectangle = spriteSheet.Template[top];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.Top];
                 sourceRectangle.Height = adjustedH;
                 for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
                 {
@@ -116,7 +128,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                     drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
                 }
 
-                sourceRectangle = spriteSheet.Template[topRight];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.TopRight];
                 sourceRectangle.Height = adjustedH;
                 bounds.X = renderWidth + offsetX - w;
                 bounds.Width = w;
