@@ -133,12 +133,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             spriteSheetSource.DefinitionMap["TitledWindowShadow"] = new SpriteSheetDefinition(windowTemplate, "TitledWindow", windowShadowConverter);
 
             var lookAndFeelSource = new SpriteLookAndFeelSource(this, spriteSheetSource);
-            lookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
-
             lookAndFeelSource.Register(typeof(Button), new ViewerButtonLookAndFeel());
-
-            var windowLookAndFeel = new WindowLookAndFeel();
-            lookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
 
             return lookAndFeelSource;
 

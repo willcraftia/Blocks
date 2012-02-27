@@ -59,10 +59,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //
             //----------------------------------------------------------------
 
-            windowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("Window");
-            titledWindowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("TitledWindow");
-            shadowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("WindowShadow");
-            titledShadowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("TitledWindowShadow");
+            windowSpriteSheet = SpriteSheetSource.GetSpriteSheet("Window");
+            titledWindowSpriteSheet = SpriteSheetSource.GetSpriteSheet("TitledWindow");
+            shadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("WindowShadow");
+            titledShadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("TitledWindowShadow");
 
             base.LoadContent();
         }
@@ -101,8 +101,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             // Top Lines
             {
-                var titleDrawn = (window.TitleContent != null && titledWindowSpriteSheet != null);
-
                 int adjustedH = AdjustHeight(renderHeight, offsetY, h, offsetY);
                 int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
                 bounds.Height = adjustedH;

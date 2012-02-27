@@ -22,11 +22,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         Dictionary<Type, LookAndFeelBase> lookAndFeelMap = new Dictionary<Type, LookAndFeelBase>();
 
         /// <summary>
-        /// ContentManager を取得します。
-        /// </summary>
-        public ContentManager Content { get; private set; }
-
-        /// <summary>
         /// ISpriteSheetSource を取得します。
         /// </summary>
         public ISpriteSheetSource SpriteSheetSource { get; private set; }
@@ -41,8 +36,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         {
             if (spriteSheetSource == null) throw new ArgumentNullException("spriteSheetSource");
             SpriteSheetSource = spriteSheetSource;
-
-            Content = new ContentManager(Game.Services);
 
             Register(typeof(Desktop), new DesktopLookAndFeel());
             Register(typeof(Window), new WindowLookAndFeel());
@@ -61,7 +54,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             if (lookAndFeel == null) throw new ArgumentNullException("lookAndFeel");
 
             lookAndFeelMap[type] = lookAndFeel;
-            lookAndFeel.Source = this;
+            lookAndFeel.SpriteSheetSource = SpriteSheetSource;
         }
 
         /// <summary>
@@ -76,6 +69,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             if (lookAndFeelMap.TryGetValue(type, out lookAndFeel))
             {
                 lookAndFeelMap.Remove(type);
+                lookAndFeel.SpriteSheetSource = null;
                 lookAndFeel.Dispose();
             }
         }
@@ -112,7 +106,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             lookAndFeelMap.Clear();
 
             SpriteSheetSource.Dispose();
-            if (Content != null) Content.Unload();
 
             base.UnloadContent();
         }

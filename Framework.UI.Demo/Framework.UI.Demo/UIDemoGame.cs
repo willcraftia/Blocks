@@ -71,7 +71,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
 
                 spriteLookAndFeelSource = new SpriteLookAndFeelSource(this, spriteSheetSource);
-                spriteLookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
 
                 //screenFactory.LookAndFeelSource = debugLookAndFeelSource;
                 screenFactory.LookAndFeelSource = spriteLookAndFeelSource;

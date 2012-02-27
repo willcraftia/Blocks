@@ -3,21 +3,22 @@
 using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// スプライト イメージで描画する Look and Feel の基礎クラスです。
+    /// SpriteSheet で Control を描画する Look and Feel の基礎クラスです。
     /// </summary>
     public abstract class LookAndFeelBase : ILookAndFeel, IDisposable
     {
         /// <summary>
-        /// SpriteLookAndFeelSource を取得します。
+        /// ISpriteSheetSource を取得します。
         /// </summary>
-        protected internal SpriteLookAndFeelSource Source { get; internal set; }
-        
+        protected internal ISpriteSheetSource SpriteSheetSource { get; internal set; }
+
         // I/F
         public abstract void Draw(Control control, IDrawContext drawContext);
 
