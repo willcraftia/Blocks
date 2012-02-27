@@ -106,11 +106,13 @@
     <Compile Include="Graphics\ColorHelper.cs" />
     <Compile Include="Graphics\ColoredCubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\CubeVertexSourceFactory.cs" />
+    <Compile Include="Graphics\DefaultSpriteSheetTemplate.cs" />
     <Compile Include="Graphics\GeometricPrimitive.cs" />
     <Compile Include="Graphics\GridPlane.cs" />
     <Compile Include="Graphics\IVertexSourceFactory.cs" />
     <Compile Include="Graphics\Quadrangle.cs" />
     <Compile Include="Graphics\SpriteSheet.cs" />
+    <Compile Include="Graphics\ISpriteSheetTemplate.cs" />
     <Compile Include="Graphics\Texture2DHelper.cs" />
     <Compile Include="Graphics\VertexPositionNormal.cs" />
     <Compile Include="Graphics\VertexPositionNormalColor.cs" />

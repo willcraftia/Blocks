@@ -14,19 +14,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
     /// </summary>
     public class WindowLookAndFeel : LookAndFeelBase
     {
-        static readonly string TitleTopLeft = "TitleTopLeft";
-        static readonly string TitleTop = "TitleTop";
-        static readonly string TitleTopRight = "TitleTopRight";
-        static readonly string TopLeft = "TopLeft";
-        static readonly string Top = "Top";
-        static readonly string TopRight = "TopRight";
-        static readonly string Left = "Left";
-        static readonly string Fill = "Fill";
-        static readonly string Right = "Right";
-        static readonly string BottomLeft = "BottomLeft";
-        static readonly string Bottom = "Bottom";
-        static readonly string BottomRight = "BottomRight";
-
         /// <summary>
         /// Window を描画するための SpriteSheet。
         /// </summary>
@@ -117,16 +104,16 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //
             //----------------------------------------------------------------
 
+            var template = new WindowSpriteSheetTemplate(SpriteWidth, SpriteHeight, TitleEnabled);
+
             var windowSpriteSheetAssetName = WindowSpriteSheetName ?? "Window";
             var windowSpriteSheetTexture = Source.Content.Load<Texture2D>(windowSpriteSheetAssetName);
-            windowSpriteSheet = new SpriteSheet(windowSpriteSheetTexture);
-            PrepareSpriteSheet(windowSpriteSheet);
+            windowSpriteSheet = new SpriteSheet(template, windowSpriteSheetTexture);
 
             if (ShadowEnabled)
             {
                 var shadowSpriteSheetTexture = CreateShadowSpriteSheetTexture(windowSpriteSheetTexture);
-                shadowSpriteSheet = new SpriteSheet(shadowSpriteSheetTexture);
-                PrepareSpriteSheet(shadowSpriteSheet);
+                shadowSpriteSheet = new SpriteSheet(template, shadowSpriteSheetTexture);
             }
 
             base.LoadContent();
@@ -166,16 +153,16 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             {
                 var titleDrawn = (TitleEnabled && window.TitleContent != null);
 
-                var topLeft = (titleDrawn) ? TitleTopLeft : TopLeft;
-                var top = (titleDrawn) ? TitleTop : Top;
-                var topRight = (titleDrawn) ? TitleTopRight : TopRight;
+                var topLeft = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTopLeft : WindowSpriteSheetTemplate.TopLeft;
+                var top = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTop : WindowSpriteSheetTemplate.Top;
+                var topRight = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTopRight : WindowSpriteSheetTemplate.TopRight;
 
                 int adjustedH = AdjustHeight(renderHeight, offsetY, h, offsetY);
                 int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
                 bounds.Height = adjustedH;
                 bounds.Width = adjustedW;
 
-                sourceRectangle = spriteSheet.SourceRectangles[topLeft];
+                sourceRectangle = spriteSheet.Template[topLeft];
                 sourceRectangle.Width = adjustedW;
                 sourceRectangle.Height = adjustedH;
                 bounds.X = offsetX;
@@ -183,7 +170,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 bounds.Width = sourceRectangle.Width;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
 
-                sourceRectangle = spriteSheet.SourceRectangles[top];
+                sourceRectangle = spriteSheet.Template[top];
                 sourceRectangle.Height = adjustedH;
                 for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
                 {
@@ -195,7 +182,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                     drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
                 }
 
-                sourceRectangle = spriteSheet.SourceRectangles[topRight];
+                sourceRectangle = spriteSheet.Template[topRight];
                 sourceRectangle.Height = adjustedH;
                 bounds.X = renderWidth + offsetX - w;
                 bounds.Width = w;
@@ -208,7 +195,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
                 int adjustedH = AdjustHeight(renderHeight, offsetY, h, y);
 
-                sourceRectangle = spriteSheet.SourceRectangles["Left"];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.Left];
                 sourceRectangle.Width = adjustedW;
                 sourceRectangle.Height = adjustedH;
                 bounds.X = offsetX;
@@ -217,7 +204,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 bounds.Height = adjustedH;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
 
-                sourceRectangle = spriteSheet.SourceRectangles["Fill"];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.Fill];
                 sourceRectangle.Height = adjustedH;
                 for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
                 {
@@ -229,7 +216,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                     drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
                 }
 
-                sourceRectangle = spriteSheet.SourceRectangles["Right"];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.Right];
                 sourceRectangle.Height = adjustedH;
                 bounds.X = renderWidth + offsetX - w;
                 bounds.Width = w;
@@ -240,7 +227,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             {
                 int adjustedW = AdjustWidth(renderWidth, offsetX, w, offsetX);
 
-                sourceRectangle = spriteSheet.SourceRectangles["BottomLeft"];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.BottomLeft];
                 sourceRectangle.Width = adjustedW;
                 bounds.X = offsetX;
                 bounds.Y = renderHeight + offsetY - h;
@@ -248,7 +235,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 bounds.Height = h;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
 
-                sourceRectangle = spriteSheet.SourceRectangles["Bottom"];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.Bottom];
                 for (int x = w + offsetX; x < renderWidth + offsetX - w; x += w)
                 {
                     adjustedW = AdjustWidth(renderWidth, offsetX, w, x);
@@ -260,36 +247,10 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 }
                 bounds.Width = w;
 
-                sourceRectangle = spriteSheet.SourceRectangles["BottomRight"];
+                sourceRectangle = spriteSheet.Template[WindowSpriteSheetTemplate.BottomRight];
                 bounds.X = renderWidth + offsetX - w;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
             }
-        }
-
-        protected void PrepareSpriteSheet(SpriteSheet spriteSheet)
-        {
-            var w = SpriteWidth;
-            var h = SpriteHeight;
-
-            var offsetY = 0;
-            if (TitleEnabled)
-            {
-                spriteSheet.SourceRectangles[TitleTopLeft] = new Rectangle(0, offsetY, w, h);
-                spriteSheet.SourceRectangles[TitleTop] = new Rectangle(w, offsetY, w, h);
-                spriteSheet.SourceRectangles[TitleTopRight] = new Rectangle(w * 2, offsetY, w, h);
-                offsetY += h;
-            }
-            spriteSheet.SourceRectangles[TopLeft] = new Rectangle(0, offsetY, w, h);
-            spriteSheet.SourceRectangles[Top] = new Rectangle(w, offsetY, w, h);
-            spriteSheet.SourceRectangles[TopRight] = new Rectangle(w * 2, offsetY, w, h);
-            offsetY += h;
-            spriteSheet.SourceRectangles[Left] = new Rectangle(0, offsetY, w, h);
-            spriteSheet.SourceRectangles[Fill] = new Rectangle(w, offsetY, w, h);
-            spriteSheet.SourceRectangles[Right] = new Rectangle(w * 2, offsetY, w, h);
-            offsetY += h;
-            spriteSheet.SourceRectangles[BottomLeft] = new Rectangle(0, offsetY, w, h);
-            spriteSheet.SourceRectangles[Bottom] = new Rectangle(w, offsetY, w, h);
-            spriteSheet.SourceRectangles[BottomRight] = new Rectangle(w * 2, offsetY, w, h);
         }
 
         Texture2D CreateShadowSpriteSheetTexture(Texture2D texture)

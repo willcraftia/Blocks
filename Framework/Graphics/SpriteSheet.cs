@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,9 +15,9 @@ namespace Willcraftia.Xna.Framework.Graphics
     public sealed class SpriteSheet
     {
         /// <summary>
-        /// スプライト イメージの配置場所を定義するディクショナリを取得します。
+        /// スプライト イメージの配置場所を管理する ISpriteSheetTemplate を取得します。
         /// </summary>
-        public Dictionary<string, Rectangle> SourceRectangles { get; private set; }
+        public ISpriteSheetTemplate Template { get; private set; }
 
         /// <summary>
         /// テクスチャを取得します。
@@ -29,11 +28,12 @@ namespace Willcraftia.Xna.Framework.Graphics
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="texture">テクスチャ。</param>
-        public SpriteSheet(Texture2D texture)
+        public SpriteSheet(ISpriteSheetTemplate template, Texture2D texture)
         {
+            if (template == null) throw new ArgumentNullException("template");
             if (texture == null) throw new ArgumentNullException("texture");
+            Template = template;
             Texture = texture;
-            SourceRectangles = new Dictionary<string, Rectangle>();
         }
     }
 }
