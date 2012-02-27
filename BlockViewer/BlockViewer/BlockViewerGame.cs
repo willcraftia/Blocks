@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -121,15 +122,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// <returns>生成された ILookAndFeelSource。</returns>
         ILookAndFeelSource CreateLookAndFeelSource()
         {
-            var lookAndFeelSource = new SpriteLookAndFeelSource(this);
+            var windowTemplate = new WindowSpriteSheetTemplate(32, 32, true);
+            var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+
+            var spriteSheetSource = new DefaultSpriteSheetSource(this);
+            spriteSheetSource.Content.RootDirectory = "Content/UI/Sprite";
+            spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
+            spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
+
+            var lookAndFeelSource = new SpriteLookAndFeelSource(this, spriteSheetSource);
             lookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
 
             lookAndFeelSource.Register(typeof(Button), new ViewerButtonLookAndFeel());
 
             var windowLookAndFeel = new WindowLookAndFeel();
-            windowLookAndFeel.SpriteWidth = SpriteSize;
-            windowLookAndFeel.SpriteHeight = SpriteSize;
-            windowLookAndFeel.TitleEnabled = true;
             lookAndFeelSource.Register(typeof(Window), windowLookAndFeel);
 
             return lookAndFeelSource;

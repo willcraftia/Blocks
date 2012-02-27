@@ -9,25 +9,25 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Willcraftia.Xna.Framework.Graphics
 {
     /// <summary>
-    /// 1 枚のテクスチャに纏められたスプライト イメージ、および、
-    /// 個々のスプライト イメージの配置場所を管理するクラスです。
+    /// 1 枚の Texture2D に纏められたスプライトを管理するクラスです。
     /// </summary>
     public sealed class SpriteSheet
     {
         /// <summary>
-        /// スプライト イメージの配置場所を管理する ISpriteSheetTemplate を取得します。
+        /// ISpriteSheetTemplate を取得します。
         /// </summary>
         public ISpriteSheetTemplate Template { get; private set; }
 
         /// <summary>
-        /// テクスチャを取得します。
+        /// Texture2D を取得します。
         /// </summary>
         public Texture2D Texture { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="texture">テクスチャ。</param>
+        /// <param name="template">ISpriteSheetTemplate。</param>
+        /// <param name="texture">Texture2D。</param>
         public SpriteSheet(ISpriteSheetTemplate template, Texture2D texture)
         {
             if (template == null) throw new ArgumentNullException("template");

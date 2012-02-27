@@ -15,63 +15,14 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
     public class WindowLookAndFeel : LookAndFeelBase
     {
         /// <summary>
-        /// Window を描画するための SpriteSheet。
+        /// Window の SpriteSheet。
         /// </summary>
         SpriteSheet windowSpriteSheet;
 
         /// <summary>
-        /// Window の影を描画するための SpriteSheet。
+        /// Window の影の SpriteSheet。
         /// </summary>
         SpriteSheet shadowSpriteSheet;
-
-        /// <summary>
-        /// Window を描画するための SpriteSheet のアセット名を取得または設定します。
-        /// null を指定した場合、アセット名はデフォルトで "Window" が仮定されます。
-        /// デフォルトは null です。
-        /// </summary>
-        public string WindowSpriteSheetName { get; set; }
-
-        /// <summary>
-        /// SpriteSheet 内の各スプライト イメージの幅を取得または設定します。
-        /// デフォルトは 16 です。
-        /// </summary>
-        public int SpriteWidth { get; set; }
-
-        /// <summary>
-        /// SpriteSheet 内の各スプライト イメージの高さを取得または設定します。
-        /// デフォルトは 16 です。
-        /// </summary>
-        public int SpriteHeight { get; set; }
-
-        /// <summary>
-        /// Window を描画するための SpriteSheet が、
-        /// タイトル描画用スプライト イメージを含むかどうかを示す値を取得または設定します。
-        /// タイトル描画用スプライト イメージは、
-        /// Window.Title プロパティが null または空以外の場合に用いられます。
-        /// </summary>
-        /// <value>
-        /// true (Window を描画するための SpriteSheet がタイトル描画用スプライト イメージを含む場合)、
-        /// false (それ以外の場合)。
-        /// </value>
-        public bool TitleEnabled { get; set; }
-
-        /// <summary>
-        /// Window の影を描画するかどうかを示す値を取得または設定します。
-        /// </summary>
-        /// <value>
-        /// true (Window の影を描画する場合)、false (それ以外の場合)。
-        /// </value>
-        public bool ShadowEnabled { get; set; }
-
-        /// <summary>
-        /// Window の影の色を取得または設定します。
-        /// </summary>
-        public Color ShadowColor { get; set; }
-
-        /// <summary>
-        /// Window の影の透明度を取得または設定します。
-        /// </summary>
-        public float ShadowOpacity { get; set; }
 
         /// <summary>
         /// Window の影の描画位置を取得または設定します。
@@ -83,12 +34,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         /// </summary>
         public WindowLookAndFeel()
         {
-            SpriteWidth = 16;
-            SpriteHeight = 16;
-            TitleEnabled = false;
-            ShadowEnabled = true;
-            ShadowColor = Color.Black;
-            ShadowOpacity = 0.5f;
             ShadowOffset = new Vector2(4, 4);
         }
 
@@ -104,17 +49,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //
             //----------------------------------------------------------------
 
-            var template = new WindowSpriteSheetTemplate(SpriteWidth, SpriteHeight, TitleEnabled);
-
-            var windowSpriteSheetAssetName = WindowSpriteSheetName ?? "Window";
-            var windowSpriteSheetTexture = Source.Content.Load<Texture2D>(windowSpriteSheetAssetName);
-            windowSpriteSheet = new SpriteSheet(template, windowSpriteSheetTexture);
-
-            if (ShadowEnabled)
-            {
-                var shadowSpriteSheetTexture = CreateShadowSpriteSheetTexture(windowSpriteSheetTexture);
-                shadowSpriteSheet = new SpriteSheet(template, shadowSpriteSheetTexture);
-            }
+            windowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("Window");
+            shadowSpriteSheet = Source.SpriteSheetSource.GetSpriteSheet("WindowShadow");
 
             base.LoadContent();
         }
@@ -123,8 +59,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         {
             var window = control as Window;
 
-            if (ShadowEnabled)
-                DrawWindow(window, drawContext, shadowSpriteSheet, ShadowColor, ShadowOffset);
+            if (shadowSpriteSheet != null)
+                DrawWindow(window, drawContext, shadowSpriteSheet, Color.White, ShadowOffset);
 
             DrawWindow(window, drawContext, windowSpriteSheet, Color.White, Vector2.Zero);
         }
@@ -134,11 +70,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var renderSize = window.RenderSize;
             var texture = spriteSheet.Texture;
 
-            // 全てのスプライト イメージが同サイズであることを強制します。
-            // SpriteSheet には異なるサイズで指定できますが、このクラスでは異なるサイズを取り扱うことができません。
-            // 異なるサイズを扱おうとすると、どのスプライト イメージのサイズに基準を揃えるかの制御が複雑になります。
-            int w = SpriteWidth;
-            int h = SpriteHeight;
+            var template = spriteSheet.Template as WindowSpriteSheetTemplate;
+            int w = template.SpriteWidth;
+            int h = template.SpriteHeight;
 
             // 計算誤差の問題から先に int 化しておきます。
             int offsetX = (int) offset.X;
@@ -151,7 +85,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
             // Top Lines
             {
-                var titleDrawn = (TitleEnabled && window.TitleContent != null);
+                var titleDrawn = (template.ContainsTitle && window.TitleContent != null);
 
                 var topLeft = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTopLeft : WindowSpriteSheetTemplate.TopLeft;
                 var top = (titleDrawn) ? WindowSpriteSheetTemplate.TitleTop : WindowSpriteSheetTemplate.Top;
@@ -251,23 +185,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 bounds.X = renderWidth + offsetX - w;
                 drawContext.DrawTexture(bounds, texture, color, sourceRectangle);
             }
-        }
-
-        Texture2D CreateShadowSpriteSheetTexture(Texture2D texture)
-        {
-            var colors = new Color[texture.Width * texture.Height];
-            texture.GetData(colors);
-
-            for (int i = 0; i < colors.Length; i++)
-            {
-                // 元画像内の不透明部分を、透明度が ShadowOpacity の白にした画像を作成します。
-                var alpha = colors[i].ToVector4().W;
-                if (alpha != 0) alpha = ShadowOpacity;
-                colors[i] = new Color(1, 1, 1, alpha);
-            }
-            var shadowTexture = new Texture2D(texture.GraphicsDevice, texture.Width, texture.Height, false, SurfaceFormat.Color);
-            shadowTexture.SetData(colors);
-            return shadowTexture;
         }
 
         int AdjustWidth(int windowWidth, int windowOffsetX, int spriteWidth, int currentOffsetX)

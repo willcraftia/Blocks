@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
@@ -60,12 +61,20 @@ namespace Willcraftia.Xna.Framework.UI.Demo
                 var screenFactory = new DefaultScreenFactory(this);
 
                 debugLookAndFeelSource = new DebugLookAndFeelSource(this);
-                
-                spriteLookAndFeelSource = new SpriteLookAndFeelSource(this);
+
+                var windowTemplate = new WindowSpriteSheetTemplate(16, 16, false);
+                var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+
+                var spriteSheetSource = new DefaultSpriteSheetSource(this);
+                spriteSheetSource.Content.RootDirectory = "Content/UI/Sprite";
+                spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
+                spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
+
+                spriteLookAndFeelSource = new SpriteLookAndFeelSource(this, spriteSheetSource);
                 spriteLookAndFeelSource.Content.RootDirectory = "Content/UI/Sprite";
 
-                screenFactory.LookAndFeelSource = debugLookAndFeelSource;
-                //screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
+                //screenFactory.LookAndFeelSource = debugLookAndFeelSource;
+                screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
 
                 screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
 

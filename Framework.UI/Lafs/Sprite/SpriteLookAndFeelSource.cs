@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 {
     /// <summary>
-    /// スプライト イメージの Look and Feel を提供する ILookAndFeelSource です。
+    /// SpriteSheet を用いた Look and Feel を提供する ILookAndFeelSource です。
     /// </summary>
     public class SpriteLookAndFeelSource : LookAndFeelSourceBase
     {
@@ -21,17 +22,26 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         Dictionary<Type, LookAndFeelBase> lookAndFeelMap = new Dictionary<Type, LookAndFeelBase>();
 
         /// <summary>
-        /// 専用の ContentManager を取得します。
+        /// ContentManager を取得します。
         /// </summary>
         public ContentManager Content { get; private set; }
+
+        /// <summary>
+        /// ISpriteSheetSource を取得します。
+        /// </summary>
+        public ISpriteSheetSource SpriteSheetSource { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="game">Game。</param>
-        public SpriteLookAndFeelSource(Game game)
+        /// <param name="spriteSheetSource">ISpriteSheetSource。</param>
+        public SpriteLookAndFeelSource(Game game, ISpriteSheetSource spriteSheetSource)
             : base(game)
         {
+            if (spriteSheetSource == null) throw new ArgumentNullException("spriteSheetSource");
+            SpriteSheetSource = spriteSheetSource;
+
             Content = new ContentManager(Game.Services);
 
             Register(typeof(Desktop), new DesktopLookAndFeel());
@@ -89,6 +99,8 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
 
         protected override void LoadContent()
         {
+            if (!SpriteSheetSource.Initialized) SpriteSheetSource.Initialize();
+
             foreach (var lookAndFeel in lookAndFeelMap.Values) lookAndFeel.Initialize();
 
             base.LoadContent();
@@ -99,6 +111,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             foreach (var lookAndFeel in lookAndFeelMap.Values) lookAndFeel.Dispose();
             lookAndFeelMap.Clear();
 
+            SpriteSheetSource.Dispose();
             if (Content != null) Content.Unload();
 
             base.UnloadContent();

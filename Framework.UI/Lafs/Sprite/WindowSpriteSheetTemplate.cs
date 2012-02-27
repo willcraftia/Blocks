@@ -25,7 +25,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         public static readonly string BottomRight = "BottomRight";
 
         /// <summary>
-        /// ID と配置場所のマップ。
+        /// ID と配置領域のマップ。
         /// </summary>
         Dictionary<string, Rectangle> sourceRectangles = new Dictionary<string, Rectangle>();
 
@@ -36,30 +36,30 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         }
 
         /// <summary>
-        /// スプライト イメージの幅を取得します。
+        /// スプライトの幅を取得します。
         /// </summary>
         public int SpriteWidth { get; private set; }
 
         /// <summary>
-        /// スプライト イメージの高さを取得します。
+        /// スプライトの高さを取得します。
         /// </summary>
         public int SpriteHeight { get; private set; }
 
         /// <summary>
-        /// SpriteSheet がタイトル用スプライト イメージを含むかどうかを示す値を取得します。
+        /// SpriteSheet がタイトル用スプライトを含むかどうかを示す値を取得します。
         /// </summary>
         /// <value>
-        /// true (SpriteSheet がタイトル用スプライト イメージを含む場合)、false (それ以外の場合)。
+        /// true (SpriteSheet がタイトル用スプライトを含む場合)、false (それ以外の場合)。
         /// </value>
         public bool ContainsTitle { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="spriteWidth">スプライト イメージの幅。</param>
-        /// <param name="spriteHeight">スプライト イメージの高さ。</param>
+        /// <param name="spriteWidth">スプライトの幅。</param>
+        /// <param name="spriteHeight">スプライトの高さ。</param>
         /// <param name="containsTitle">
-        /// true (SpriteSheet がタイトル用スプライト イメージを含む場合)、false (それ以外の場合)。
+        /// true (SpriteSheet がタイトル用スプライトを含む場合)、false (それ以外の場合)。
         /// </param>
         public WindowSpriteSheetTemplate(int spriteWidth, int spriteHeight, bool containsTitle)
         {
