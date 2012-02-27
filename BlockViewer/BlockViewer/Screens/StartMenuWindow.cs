@@ -28,31 +28,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
+                Width = 240,
                 Margin = new Thickness(16)
             };
             Content = stackPanel;
 
-            var startButton = new TextButton(screen);
-            startButton.TextBlock.Text = Strings.StartButton;
-            startButton.TextBlock.ForegroundColor = Color.White;
-            startButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            startButton.Padding = new Thickness(4);
+            var startButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.StartButton);
             startButton.Click += new RoutedEventHandler(OnStartButtonClick);
             stackPanel.Children.Add(startButton);
 
-            var languageSettingButton = new TextButton(screen);
-            languageSettingButton.TextBlock.Text = Strings.LanguageSettingButton;
-            languageSettingButton.TextBlock.ForegroundColor = Color.White;
-            languageSettingButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            languageSettingButton.Padding = new Thickness(4);
+            var languageSettingButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.LanguageSettingButton);
             languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
             stackPanel.Children.Add(languageSettingButton);
 
-            var exitButton = new TextButton(screen);
-            exitButton.TextBlock.Text = Strings.ExitButton;
-            exitButton.TextBlock.ForegroundColor = Color.White;
-            exitButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            exitButton.Padding = new Thickness(4);
+            var exitButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
 
@@ -62,11 +51,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnStartButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var overlay = new Overlay(Screen)
-            {
-                Opacity = 0,
-                BackgroundColor = Color.Black
-            };
+            var overlay = new Overlay(Screen);
             overlay.Show();
 
             var opacityAnimation = new PropertyLerpAnimation
@@ -95,11 +80,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var overlay = new Overlay(Screen)
-            {
-                Opacity = 0,
-                BackgroundColor = Color.Black
-            };
+            var overlay = new Overlay(Screen);
             overlay.Show();
 
             var opacityAnimation = new PropertyLerpAnimation

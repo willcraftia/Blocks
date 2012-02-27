@@ -130,6 +130,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
+    <Compile Include="Screens\ControlUtil.cs" />
     <Compile Include="Screens\LanguageSettingDialog.cs" />
     <Compile Include="Screens\LodListWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />

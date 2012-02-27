@@ -17,11 +17,11 @@ namespace Willcraftia.Xna.Framework.UI
     /// </summary>
     public class UIManager : DrawableGameComponent, IUIService
     {
-        #region Scissor
+        #region ScissorManager
 
         /// <summary>
         /// Control 描画のための GraphicsDevice の ScissorRectangle
-        /// および SpriteBatch の Begin/End 状態を管理する構造体です。
+        /// および SpriteBatch の Begin/End 状態を管理するクラスです。
         /// </summary>
         /// <remarks>
         /// Control の描画は再帰的に行うため、スタック的に ScissorRectangle の状態を維持する必要があります。

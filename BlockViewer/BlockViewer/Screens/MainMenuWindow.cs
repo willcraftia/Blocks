@@ -22,16 +22,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public MainMenuWindow(Screen screen)
             : base(screen)
         {
-            TitleContent = new TextBlock(screen)
-            {
-                Text = "Main Menu",
-                Margin = new Thickness(20, 4, 20, 4),
-                Padding = new Thickness(4, 0, 4, 0),
-                ForegroundColor = Color.Yellow,
-                BackgroundColor = Color.Black,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                ShadowOffset = new Vector2(2)
-            };
+            TitleContent = ControlUtil.CreateDefaultTitle(screen, "Main Menu");
 
             var stackPanel = new StackPanel(screen)
             {
@@ -41,19 +32,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var loadButton = new TextButton(screen);
-            loadButton.TextBlock.Text = Strings.LoadFileButton;
-            loadButton.TextBlock.ForegroundColor = Color.White;
-            loadButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            loadButton.Padding = new Thickness(4);
+            var loadButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.LoadFileButton);
             loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
             stackPanel.Children.Add(loadButton);
 
-            var exitButton = new TextButton(screen);
-            exitButton.TextBlock.Text = Strings.ExitButton;
-            exitButton.TextBlock.ForegroundColor = Color.White;
-            exitButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            exitButton.Padding = new Thickness(4);
+            var exitButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
 

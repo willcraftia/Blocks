@@ -96,6 +96,13 @@ namespace Willcraftia.Xna.Framework.UI.Animations
             Enabled = false;
         }
 
+        /// <summary>
+        /// 再生期間内の場合に呼び出されます。
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="playElapsedTime">再生を開始してからの経過時間。</param>
+        protected abstract void Update(GameTime gameTime, TimeSpan playElapsedTime);
+
         public sealed override void Update(GameTime gameTime)
         {
             if (!activated)
@@ -143,7 +150,6 @@ namespace Willcraftia.Xna.Framework.UI.Animations
 
                     // 再生を終えます。
                     Enabled = false;
-                    repeatCount = 0;
                     // 完了イベントを発生させます。
                     OnCompleted();
                     return;
@@ -155,11 +161,19 @@ namespace Willcraftia.Xna.Framework.UI.Animations
             }
         }
 
-        /// <summary>
-        /// 再生期間内の場合に呼び出されます。
-        /// </summary>
-        /// <param name="gameTime"></param>
-        /// <param name="playElapsedTime">再生を開始してからの経過時間。</param>
-        protected abstract void Update(GameTime gameTime, TimeSpan playElapsedTime);
+        protected override void OnEnanbledChanged()
+        {
+            if (!Enabled)
+            {
+                // false が設定されたならば再生を強制終了させます。
+                // なお、強制終了の場合には、Completed イベントを発生させないことにします。
+                activatedTime = TimeSpan.Zero;
+                repeatCount = 0;
+                activated = false;
+                Reversed = false;
+            }
+
+            base.OnEnanbledChanged();
+        }
     }
 }
