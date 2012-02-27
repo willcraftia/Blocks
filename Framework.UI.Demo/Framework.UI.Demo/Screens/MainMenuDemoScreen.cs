@@ -99,13 +99,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 var overlay = new Overlay(Screen);
                 overlay.Show();
 
-                var opacityAnimation = new PropertyLerpAnimation
+                var opacityAnimation = new FloatLerpAnimation
                 {
-                    Target = overlay,
-                    PropertyName = "Opacity",
-                    From = 0,
+                    Action = (current) => { overlay.Opacity = current; },
                     To = 1,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
@@ -119,20 +116,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             void OnExitButtonClick(Control sender, ref RoutedEventContext context)
             {
-                var overlay = new Overlay(Screen)
-                {
-                    Opacity = 0,
-                    BackgroundColor = Color.Black
-                };
+                var overlay = new Overlay(Screen);
                 overlay.Show();
 
-                var opacityAnimation = new PropertyLerpAnimation
+                var opacityAnimation = new FloatLerpAnimation
                 {
-                    Target = overlay,
-                    PropertyName = "Opacity",
-                    From = 0,
+                    Action = (current) => { overlay.Opacity = current; },
                     To = 1,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
@@ -158,18 +148,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             var startEffectOverlay = new Overlay(this)
             {
-                Opacity = 1,
-                BackgroundColor = Color.Black
+                Opacity = 1
             };
             startEffectOverlay.Show();
 
-            var startEffectOverlay_opacityAnimation = new PropertyLerpAnimation
+            var startEffectOverlay_opacityAnimation = new FloatLerpAnimation
             {
-                Target = startEffectOverlay,
-                PropertyName = "Opacity",
+                Action = (current) => { startEffectOverlay.Opacity = current; },
                 From = 1,
                 To = 0,
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };

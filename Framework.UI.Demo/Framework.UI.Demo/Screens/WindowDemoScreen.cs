@@ -26,27 +26,21 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Margin = new Thickness(unit, unit, 0, 0);
                 BackgroundColor = Color.Red;
 
-                var firstWindow_widthAnimation = new PropertyLerpAnimation
+                var firstWindow_widthAnimation = new FloatLerpAnimation
                 {
-                    Target = this,
-                    PropertyName = "Width",
-                    From = 0,
+                    Action = (current) => { Width = current; },
                     To = Width,
                     Repeat = Repeat.Forever,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(2),
                     Enabled = true
                 };
                 Animations.Add(firstWindow_widthAnimation);
 
-                var firstWindow_HeightAnimation = new PropertyLerpAnimation
+                var firstWindow_HeightAnimation = new FloatLerpAnimation
                 {
-                    Target = this,
-                    PropertyName = "Height",
-                    From = 0,
+                    Action = (current) => { Height = current; },
                     To = Height,
                     Repeat = Repeat.Forever,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(2),
                     Enabled = true
                 };
@@ -70,14 +64,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Margin = new Thickness(0, 0, unit, unit);
                 BackgroundColor = Color.Green;
 
-                var opacityAnimation = new PropertyLerpAnimation
+                var opacityAnimation = new FloatLerpAnimation
                 {
-                    Target = this,
-                    PropertyName = "Opacity",
-                    From = 0,
+                    Action = (current) => { Opacity = current; },
                     To = 1,
                     Repeat = Repeat.Forever,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(2),
                     AutoReversed = true,
                     Enabled = true
@@ -92,7 +83,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         class ThirdWindow : Window
         {
-            RotateCubeAnimation rotateCubeAnimation;
+            FloatLerpAnimation rotateCubeAnimation;
 
             public ThirdWindow(Screen screen)
                 : base(screen)
@@ -135,12 +126,13 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(cubeControl);
 
-                rotateCubeAnimation = new RotateCubeAnimation
+                rotateCubeAnimation = new FloatLerpAnimation
                 {
-                    CubeButton = cubeControl,
-                    From = 0,
+                    Action = (current) =>
+                    {
+                        cubeControl.Orientation = Matrix.CreateFromYawPitchRoll(current, current, current);
+                    },
                     To = MathHelper.TwoPi,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(4),
                     Repeat = Repeat.Forever
                 };
@@ -148,25 +140,19 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 cubeControl.MouseEnter += new RoutedEventHandler(OnCubeControlMouseEnter);
                 cubeControl.MouseLeave += new RoutedEventHandler(OnCubeControlMouseLeave);
 
-                var thirdWindow_widthAnimation = new PropertyLerpAnimation
+                var thirdWindow_widthAnimation = new FloatLerpAnimation
                 {
-                    Target = this,
-                    PropertyName = "Width",
-                    From = 0,
+                    Action = (current) => { Width = current; },
                     To = Width,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(1),
                     Enabled = true
                 };
                 Animations.Add(thirdWindow_widthAnimation);
 
-                var thirdWindow_heightAnimation = new PropertyLerpAnimation
+                var thirdWindow_heightAnimation = new FloatLerpAnimation
                 {
-                    Target = this,
-                    PropertyName = "Height",
-                    From = 0,
+                    Action = (current) => { Height = current; },
                     To = Height,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(1),
                     Enabled = true
                 };
@@ -360,17 +346,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 overlay.Show();
 
-                var opacityAnimation = new PropertyLerpAnimation
+                var opacityAnimation = new FloatLerpAnimation
                 {
-                    Target = overlay,
-                    PropertyName = "Opacity",
-                    From = 0,
+                    Action = (current) => { overlay.Opacity = current; },
                     To = 1,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                opacityAnimation.Completed += (s, evt) => Screen.Game.Exit();
+                opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
                 Animations.Add(opacityAnimation);
             }
 
@@ -383,17 +366,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 overlay.Show();
 
-                var opacityAnimation = new PropertyLerpAnimation
+                var opacityAnimation = new FloatLerpAnimation
                 {
-                    Target = overlay,
-                    PropertyName = "Opacity",
-                    From = 0,
+                    Action = (current) => { overlay.Opacity = current; },
                     To = 1,
-                    BeginTime = TimeSpan.Zero,
                     Duration = TimeSpan.FromSeconds(0.5d),
                     Enabled = true
                 };
-                opacityAnimation.Completed += (s, evt) =>
+                opacityAnimation.Completed += (s, e) =>
                 {
                     var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
                     uiService.Show("MainMenuDemoScreen");
@@ -405,8 +385,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 var overlay = new Overlay(Screen)
                 {
-                    Opacity = 0.5f,
-                    BackgroundColor = Color.Black
+                    Opacity = 0.5f
                 };
                 overlay.Owner = this;
                 overlay.Show();
@@ -505,18 +484,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
             var startEffectOverlay = new Overlay(this)
             {
-                Opacity = 1,
-                BackgroundColor = Color.Black
+                Opacity = 1
             };
             startEffectOverlay.Show();
 
-            var startEffectOverlay_opacityAnimation = new PropertyLerpAnimation
+            var startEffectOverlay_opacityAnimation = new FloatLerpAnimation
             {
-                Target = startEffectOverlay,
-                PropertyName = "Opacity",
+                Action = (current) => { startEffectOverlay.Opacity = current; },
                 From = 1,
                 To = 0,
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };

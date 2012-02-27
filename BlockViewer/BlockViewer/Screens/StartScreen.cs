@@ -26,18 +26,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var startEffectOverlay = new Overlay(this)
             {
-                Opacity = 1,
-                BackgroundColor = Color.Black
+                Opacity = 1
             };
             startEffectOverlay.Show();
 
-            var startEffectOverlay_opacityAnimation = new PropertyLerpAnimation
+            var startEffectOverlay_opacityAnimation = new FloatLerpAnimation
             {
-                Target = startEffectOverlay,
-                PropertyName = "Opacity",
+                Action = (current) => { startEffectOverlay.Opacity = current; },
                 From = 1,
                 To = 0,
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };

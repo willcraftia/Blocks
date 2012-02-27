@@ -112,7 +112,6 @@
     <Compile Include="Screens\MainMenuDemoScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Screens\RotateCubeAnimation.cs" />
     <Compile Include="UIDemoGame.cs" />
     <Compile Include="Screens\WindowDemoScreen.cs" />
   </ItemGroup>

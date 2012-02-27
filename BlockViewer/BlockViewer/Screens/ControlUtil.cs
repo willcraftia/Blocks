@@ -55,7 +55,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 From = Vector2.One,
                 To = new Vector2(1.2f),
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.1f),
                 AutoReversed = true,
                 Action = (current) => { button.Content.FontStretch = current; }

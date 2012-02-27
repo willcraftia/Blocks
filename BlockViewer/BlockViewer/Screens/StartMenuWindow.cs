@@ -54,13 +54,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var overlay = new Overlay(Screen);
             overlay.Show();
 
-            var opacityAnimation = new PropertyLerpAnimation
+            var opacityAnimation = new FloatLerpAnimation
             {
-                Target = overlay,
-                PropertyName = "Opacity",
-                From = 0,
+                Action = (current) => { overlay.Opacity = current; },
                 To = 1,
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };
@@ -83,13 +80,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var overlay = new Overlay(Screen);
             overlay.Show();
 
-            var opacityAnimation = new PropertyLerpAnimation
+            var opacityAnimation = new FloatLerpAnimation
             {
-                Target = overlay,
-                PropertyName = "Opacity",
-                From = 0,
+                Action = (current) => { overlay.Opacity = current; },
                 To = 1,
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };

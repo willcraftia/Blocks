@@ -42,13 +42,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 {
                     var exitOverlay = new Overlay(this);
 
-                    var animation = new PropertyLerpAnimation
+                    var animation = new FloatLerpAnimation
                     {
-                        Target = exitOverlay,
-                        PropertyName = "Opacity",
-                        From = 0,
+                        Action = (current) => { exitOverlay.Opacity = current; },
                         To = 1,
-                        BeginTime = TimeSpan.Zero,
                         Duration = TimeSpan.FromSeconds(0.5d),
                         Enabled = true
                     };
@@ -77,13 +74,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             {
                 Opacity = 1
             };
-            var screenOverlay_opacityAnimation = new PropertyLerpAnimation
+            var screenOverlay_opacityAnimation = new FloatLerpAnimation
             {
-                Target = screenOverlay,
-                PropertyName = "Opacity",
+                Action = (current) => { screenOverlay.Opacity = current; },
                 From = 1,
                 To = 0,
-                BeginTime = TimeSpan.Zero,
                 Duration = TimeSpan.FromSeconds(0.5d),
                 Enabled = true
             };
