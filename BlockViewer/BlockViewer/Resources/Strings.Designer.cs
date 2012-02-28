@@ -61,6 +61,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Close に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CloseButton {
+            get {
+                return ResourceManager.GetString("CloseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Confirmation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ConfirmationTitle {
+            get {
+                return ResourceManager.GetString("ConfirmationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Default に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DefaultButton {
@@ -75,6 +93,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string EnButton {
             get {
                 return ResourceManager.GetString("EnButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Error に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ErrorTitle {
+            get {
+                return ResourceManager.GetString("ErrorTitle", resourceCulture);
             }
         }
         
@@ -97,15 +124,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Select Language に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string LanguageSettingButton {
-            get {
-                return ResourceManager.GetString("LanguageSettingButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   LoD: {0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string LevelOfDetailLabel {
@@ -124,11 +142,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Main Menu ([Y] key) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MainMenuButton {
+            get {
+                return ResourceManager.GetString("MainMenuButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Main Menu に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MainMenuTitle {
+            get {
+                return ResourceManager.GetString("MainMenuTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   No file exists in your storage. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string NoFileInStorageError {
+        internal static string NoFileError {
             get {
-                return ResourceManager.GetString("NoFileInStorageError", resourceCulture);
+                return ResourceManager.GetString("NoFileError", resourceCulture);
             }
         }
         
@@ -138,6 +174,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string OpenFileConfirmation {
             get {
                 return ResourceManager.GetString("OpenFileConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select Language に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SelectLanguageButton {
+            get {
+                return ResourceManager.GetString("SelectLanguageButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select Language に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SelectLanguageTitle {
+            get {
+                return ResourceManager.GetString("SelectLanguageTitle", resourceCulture);
             }
         }
         

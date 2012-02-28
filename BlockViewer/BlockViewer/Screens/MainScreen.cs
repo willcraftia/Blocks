@@ -11,6 +11,7 @@ using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
@@ -20,6 +21,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     public sealed class MainScreen : Screen
     {
         MainViewModel mainViewModel;
+
+        ImageButton mainMenuButton;
 
         BlockMeshView blockMeshView;
 
@@ -42,22 +45,58 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // TODO: テスト コード。
             mainViewModel.StoreSampleBlockMesh();
 
-            blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0));
-            blockMeshView.Width = Desktop.Width;
-            blockMeshView.Height = Desktop.Height;
-            blockMeshView.Focusable = true;
-            blockMeshView.GridVisible = true;
-            blockMeshView.CameraMovable = true;
-            Desktop.Content = blockMeshView;
+            //Desktop.BackgroundColor = Color.MidnightBlue;
 
-            mainMenuWindow = new MainMenuWindow(this);
-            mainMenuWindow.HorizontalAlignment = HorizontalAlignment.Right;
-            mainMenuWindow.VerticalAlignment = VerticalAlignment.Top;
-            mainMenuWindow.Show();
+            var canvas = new Canvas(this);
+            canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
+            canvas.VerticalAlignment = VerticalAlignment.Stretch;
+            Desktop.Content = canvas;
 
-            lodListWindow = new LodListWindow(this, mainViewModel);
-            lodListWindow.HorizontalAlignment = HorizontalAlignment.Left;
-            lodListWindow.VerticalAlignment = VerticalAlignment.Bottom;
+            blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0))
+            {
+                Width = Desktop.Width,
+                Height = Desktop.Height,
+                Focusable = true,
+                GridVisible = true,
+                CameraMovable = true
+            };
+            canvas.Children.Add(blockMeshView);
+
+            mainMenuButton = new ImageButton(this)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            mainMenuButton.Image.Texture = Content.Load<Texture2D>("UI/MainMenuButton");
+            mainMenuButton.TextBlock.Text = Strings.MainMenuButton;
+            mainMenuButton.TextBlock.HorizontalAlignment = HorizontalAlignment.Right;
+            mainMenuButton.TextBlock.Padding = new Thickness(4);
+            mainMenuButton.TextBlock.ForegroundColor = Color.Yellow;
+            mainMenuButton.TextBlock.BackgroundColor = Color.Black;
+            mainMenuButton.TextBlock.ShadowOffset = new Vector2(2);
+            mainMenuButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                mainMenuButton.Visible = false;
+                mainMenuWindow.Show();
+            };
+            canvas.Children.Add(mainMenuButton);
+
+            mainMenuWindow = new MainMenuWindow(this)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            mainMenuWindow.VisibleChanged += (s, e) =>
+            {
+                mainMenuButton.Visible = !mainMenuWindow.Visible;
+            };
+            //mainMenuWindow.Show();
+
+            lodListWindow = new LodListWindow(this, mainViewModel)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
             lodListWindow.Show();
 
             var startEffectOverlay = new Overlay(this)
@@ -97,11 +136,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (KeyboardDevice.IsKeyPressed(Keys.Y))
             {
-                if (!mainMenuWindow.Active) mainMenuWindow.Activate();
-            }
-            if (KeyboardDevice.IsKeyPressed(Keys.Escape))
-            {
-                if (mainMenuWindow.Active) Desktop.Activate();
+                mainMenuWindow.Show();
             }
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework.UI;
+using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
@@ -33,9 +34,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         TextButton[] fileNameButtons;
 
-        MessageBox openFileConfirmMessageBox;
+        FloatLerpAnimation openAnimation;
 
-        MessageBox noFileErrorMessageBox;
+        FloatLerpAnimation closeAnimation;
+
+        ConfirmationDialog openFileConfirmationDialog;
+
+        ErrorDialog noFileErrorDialog;
 
         string targetFileName;
 
@@ -44,13 +49,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             DataContext = viewModel;
 
-            TitleContent = ControlUtil.CreateDefaultTitle(screen, "Load");
+            // 開く際に openAnimation で Width を設定するので 0 で初期化します。
+            Width = 0;
             ShadowOffset = new Vector2(4);
+            Padding = new Thickness(16);
 
             var basePanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
-                Margin = new Thickness(16, 4, 16, 16)
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
             Content = basePanel;
 
@@ -86,7 +93,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var fileNameListPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
             basePanel.Children.Add(fileNameListPanel);
 
@@ -96,7 +104,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 fileNameButtons[i] = new TextButton(screen)
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
-                    Width = BlockViewerGame.SpriteSize * 8,
                     Height = BlockViewerGame.SpriteSize,
                     Padding = new Thickness(4)
                 };
@@ -109,54 +116,36 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
                 fileNameListPanel.Children.Add(fileNameButtons[i]);
             }
+
+            const float windowWidth = 320;
+
+            openAnimation = new FloatLerpAnimation
+            {
+                Action = (current) => { Width = current; },
+                From = 0,
+                To = windowWidth,
+                Duration = TimeSpan.FromSeconds(0.1f)
+            };
+            Animations.Add(openAnimation);
+
+            // 閉じる場合には closeAnimation を実行し、その完了で完全に閉じます。
+            closeAnimation = new FloatLerpAnimation
+            {
+                Action = (current) => { Width = current; },
+                From = windowWidth,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(0.1f)
+            };
+            closeAnimation.Completed += (s, e) => base.Close();
+            Animations.Add(closeAnimation);
         }
 
-        void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
+        protected override void OnVisibleChanged()
         {
-            if (openFileConfirmMessageBox == null)
-            {
-                openFileConfirmMessageBox = new MessageBox(Screen, MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
-                openFileConfirmMessageBox.TitleContent = ControlUtil.CreateDefaultTitle(Screen, "Confirmation");
-                openFileConfirmMessageBox.ShadowOffset = new Vector2(4);
-                openFileConfirmMessageBox.Content.Margin = new Thickness(16, 4, 16, 16);
-                openFileConfirmMessageBox.TextBlock.Text = Strings.OpenFileConfirmation;
-                openFileConfirmMessageBox.TextBlock.ForegroundColor = Color.White;
-                openFileConfirmMessageBox.TextBlock.BackgroundColor = Color.Black;
-                openFileConfirmMessageBox.TextBlock.ShadowOffset = new Vector2(2);
-                openFileConfirmMessageBox.OKButton.Content.ForegroundColor = Color.White;
-                openFileConfirmMessageBox.OKButton.Content.BackgroundColor = Color.Black;
-                openFileConfirmMessageBox.OKButton.Content.ShadowOffset = new Vector2(2);
-                openFileConfirmMessageBox.OKButton.Margin = new Thickness(0, 0, 4, 0);
-                openFileConfirmMessageBox.OKButton.Padding = new Thickness(4);
-                openFileConfirmMessageBox.CancelButton.Content.ForegroundColor = Color.White;
-                openFileConfirmMessageBox.CancelButton.Content.BackgroundColor = Color.Black;
-                openFileConfirmMessageBox.CancelButton.Content.ShadowOffset = new Vector2(2);
-                openFileConfirmMessageBox.CancelButton.Margin = new Thickness(4, 0, 0, 0);
-                openFileConfirmMessageBox.CancelButton.Padding = new Thickness(4);
-                openFileConfirmMessageBox.ButtonsPanel.Padding = new Thickness(4);
-                openFileConfirmMessageBox.Closed += new EventHandler(OnMessageBoxClosed);
-                ControlUtil.SetDefaultBehavior(openFileConfirmMessageBox.OKButton);
-                ControlUtil.SetDefaultBehavior(openFileConfirmMessageBox.CancelButton);
-            }
+            // 表示されたら openAnimation を実行します。
+            if (Visible) openAnimation.Enabled = true;
 
-            (DataContext as OpenStorageViewModel).SelectedFileName = null;
-            targetFileName = ((sender as Button).Content as TextBlock).Text;
-            openFileConfirmMessageBox.Show();
-
-            context.Handled = true;
-        }
-
-        void OnMessageBoxClosed(object sender, EventArgs e)
-        {
-            if (openFileConfirmMessageBox.Result == MessageBoxResult.OK)
-            {
-                (DataContext as OpenStorageViewModel).SelectedFileName = targetFileName;
-                Close();
-            }
-            else
-            {
-                targetFileName = null;
-            }
+            base.OnVisibleChanged();
         }
 
         public override void Show()
@@ -175,30 +164,78 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             base.Show();
         }
 
-        void ShowNoFileErrorMessageBox()
+        public override void Close()
         {
-            if (noFileErrorMessageBox == null)
-            {
-                noFileErrorMessageBox = new MessageBox(Screen, MessageBoxButton.OK, MessageBoxResult.OK);
-                noFileErrorMessageBox.Padding = new Thickness(16);
-                noFileErrorMessageBox.TextBlock.Text = Strings.NoFileInStorageError;
-                noFileErrorMessageBox.TextBlock.ForegroundColor = Color.White;
-                noFileErrorMessageBox.OKButton.Content.ForegroundColor = Color.White;
-                noFileErrorMessageBox.OKButton.Padding = new Thickness(4);
-                noFileErrorMessageBox.ButtonsPanel.Padding = new Thickness(4);
-            }
-            noFileErrorMessageBox.Show();
+            // Close 処理はまだ呼び出さずに closeAnimation を実行します。
+            closeAnimation.Enabled = true;
         }
 
         protected override void OnKeyDown(ref RoutedEventContext context)
         {
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
-                Hide();
+                Close();
+
                 context.Handled = true;
             }
 
             base.OnKeyDown(ref context);
+        }
+
+        void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (openFileConfirmationDialog == null)
+            {
+                openFileConfirmationDialog = new ConfirmationDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        Text = Strings.OpenFileConfirmation,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        ShadowOffset = new Vector2(2)
+                    }
+                };
+                openFileConfirmationDialog.Closed += new EventHandler(OnOpenFileConfirmationDialogClosed);
+            }
+
+            (DataContext as OpenStorageViewModel).SelectedFileName = null;
+            targetFileName = ((sender as Button).Content as TextBlock).Text;
+
+            openFileConfirmationDialog.Show();
+
+            context.Handled = true;
+        }
+
+        void OnOpenFileConfirmationDialogClosed(object sender, EventArgs e)
+        {
+            if (openFileConfirmationDialog.Result == MessageBoxResult.OK)
+            {
+                (DataContext as OpenStorageViewModel).SelectedFileName = targetFileName;
+                Close();
+            }
+            else
+            {
+                targetFileName = null;
+            }
+        }
+
+        void ShowNoFileErrorMessageBox()
+        {
+            if (noFileErrorDialog == null)
+            {
+                noFileErrorDialog = new ErrorDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        Text = Strings.NoFileError,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        ShadowOffset = new Vector2(2)
+                    }
+                };
+            }
+            noFileErrorDialog.Show();
         }
 
         void SetFiles(int pageIndex)
@@ -229,12 +266,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     }
                 }
             }
-        }
-
-        void OnCancelButtonClick(Control sender, ref RoutedEventContext context)
-        {
-            Hide();
-            context.Handled = true;
         }
     }
 }

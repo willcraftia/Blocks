@@ -25,13 +25,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
+            Width = 240;
             ShadowOffset = new Vector2(4);
+            Padding = new Thickness(16);
 
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
-                Width = 240,
-                Margin = new Thickness(16)
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
             Content = stackPanel;
 
@@ -39,9 +40,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             startButton.Click += new RoutedEventHandler(OnStartButtonClick);
             stackPanel.Children.Add(startButton);
 
-            var languageSettingButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.LanguageSettingButton);
-            languageSettingButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
-            stackPanel.Children.Add(languageSettingButton);
+            var selectLanguageButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.SelectLanguageButton);
+            selectLanguageButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
+            stackPanel.Children.Add(selectLanguageButton);
 
             var exitButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
@@ -73,7 +74,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var dialog = new LanguageSettingDialog(Screen);
+            var dialog = new SelectLanguageDialog(Screen);
             dialog.Show();
         }
 

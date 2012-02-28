@@ -3,9 +3,11 @@
 using System;
 using System.Globalization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
+using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
@@ -13,7 +15,7 @@ using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class LanguageSettingDialog : OverlayDialogBase
+    public sealed class SelectLanguageDialog : OverlayDialogBase
     {
         Button setDefaultButton;
 
@@ -21,19 +23,42 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         Button setEnButton;
 
-        public LanguageSettingDialog(Screen screen)
+        FloatLerpAnimation openAnimation;
+
+        public SelectLanguageDialog(Screen screen)
             : base(screen)
         {
-            TitleContent = ControlUtil.CreateDefaultTitle(screen, "Select Language");
+            // 開く際に openAnimation で Width を設定するので 0 で初期化します。
+            Width = 0;
             ShadowOffset = new Vector2(4);
+            Padding = new Thickness(16);
 
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
-                Width = 280,
-                Margin = new Thickness(16, 4, 16, 16)
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
             Content = stackPanel;
+
+            var title = new TextBlock(screen)
+            {
+                Text = Strings.SelectLanguageTitle,
+                Padding = new Thickness(4),
+                ForegroundColor = Color.Yellow,
+                BackgroundColor = Color.Black,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                TextHorizontalAlignment = HorizontalAlignment.Left,
+                ShadowOffset = new Vector2(2)
+            };
+            stackPanel.Children.Add(title);
+
+            var separator = new Image(screen)
+            {
+                Texture = screen.Content.Load<Texture2D>("UI/Separator"),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 4)
+            };
+            stackPanel.Children.Add(separator);
 
             setDefaultButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.DefaultButton);
             setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
@@ -47,10 +72,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             setEnButton.Click += new RoutedEventHandler(OnButtonClick);
             stackPanel.Children.Add(setEnButton);
 
+            openAnimation = new FloatLerpAnimation
+            {
+                Action = (current) => { Width = current; },
+                From = 0,
+                To = 240,
+                Duration = TimeSpan.FromSeconds(0.1f)
+            };
+            Animations.Add(openAnimation);
+
             // デフォルト フォーカス。
             setDefaultButton.Focus();
 
             Overlay.Opacity = 0.5f;
+        }
+
+        protected override void OnVisibleChanged()
+        {
+            // 表示されたら openAnimation を実行します。
+            if (Visible) openAnimation.Enabled = true;
+
+            base.OnVisibleChanged();
         }
 
         void OnButtonClick(Control sender, ref RoutedEventContext context)

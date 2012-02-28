@@ -20,19 +20,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         SpriteSheet windowSpriteSheet;
 
         /// <summary>
-        /// タイトル付き Window の SpriteSheet。
-        /// </summary>
-        SpriteSheet titledWindowSpriteSheet;
-
-        /// <summary>
         /// Window の影の SpriteSheet。
         /// </summary>
         SpriteSheet shadowSpriteSheet;
-
-        /// <summary>
-        /// タイトル付き Window の影の SpriteSheet。
-        /// </summary>
-        SpriteSheet titledShadowSpriteSheet;
 
         protected override void LoadContent()
         {
@@ -47,9 +37,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             //----------------------------------------------------------------
 
             windowSpriteSheet = SpriteSheetSource.GetSpriteSheet("Window");
-            titledWindowSpriteSheet = SpriteSheetSource.GetSpriteSheet("TitledWindow");
             shadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("WindowShadow");
-            titledShadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("TitledWindowShadow");
 
             base.LoadContent();
         }
@@ -58,14 +46,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         {
             var window = control as Window;
 
-            var shadowTarget = (window.TitleContent == null) ? shadowSpriteSheet : titledShadowSpriteSheet;
-            var windowTarget = (window.TitleContent == null) ? windowSpriteSheet : titledWindowSpriteSheet;
+            if (shadowSpriteSheet != null && window.ShadowOffset != Vector2.Zero)
+                DrawWindow(window, drawContext, shadowSpriteSheet, Color.White, window.ShadowOffset);
 
-            if (shadowTarget != null)
-                DrawWindow(window, drawContext, shadowTarget, Color.White, window.ShadowOffset);
-
-            if (windowTarget != null)
-                DrawWindow(window, drawContext, windowTarget, Color.White, Vector2.Zero);
+            if (windowSpriteSheet != null)
+                DrawWindow(window, drawContext, windowSpriteSheet, Color.White, Vector2.Zero);
         }
 
         protected void DrawWindow(Window window, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Vector2 offset)

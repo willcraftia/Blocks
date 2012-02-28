@@ -12,20 +12,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public static class ControlUtil
     {
-        public static TextBlock CreateDefaultTitle(Screen screen, String text)
-        {
-            return new TextBlock(screen)
-            {
-                Text = text,
-                Margin = new Thickness(20, 4, 20, 4),
-                Padding = new Thickness(4, 0, 4, 0),
-                ForegroundColor = Color.Yellow,
-                BackgroundColor = Color.Black,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                ShadowOffset = new Vector2(2)
-            };
-        }
-
         public static Button CreateDefaultMenuButton(Screen screen, String text)
         {
             float buttonHeight = 32;
@@ -73,11 +59,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             var animation = new Vector2LerpAnimation
             {
+                Action = (current) => { button.Content.FontStretch = current; },
                 From = Vector2.One,
                 To = new Vector2(1.2f),
                 Duration = TimeSpan.FromSeconds(0.1f),
-                AutoReversed = true,
-                Action = (current) => { button.Content.FontStretch = current; }
+                AutoReversed = true
             };
             button.Animations.Add(animation);
             button.GotFocus += (Control s, ref RoutedEventContext c) =>

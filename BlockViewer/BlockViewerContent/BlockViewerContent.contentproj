@@ -70,29 +70,36 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Sprite\Window.png">
-      <Name>Window</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-    <Compile Include="UI\Sprite\TitledWindow.png">
-      <Name>TitledWindow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>BasicScalingTextureProcessor</Processor>
-      <ProcessorParameters_Scale>2</ProcessorParameters_Scale>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="UI\_FocusedButtonBackground.png">
-      <Name>_FocusedButtonBackground</Name>
+    <Compile Include="UI\MainMenuButton.png">
+      <Name>MainMenuButton</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\FocusedButtonBackground.png">
-      <Name>FocusedButtonBackground</Name>
+    <Compile Include="UI\MainMenuWindow.png">
+      <Name>MainMenuWindow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\SpriteSheet\Window.png">
+      <Name>Window</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Focus.png">
+      <Name>Focus</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Separator.png">
+      <Name>Separator</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

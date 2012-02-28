@@ -126,16 +126,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
 
             var spriteSheetSource = new DefaultSpriteSheetSource(this);
-            spriteSheetSource.Content.RootDirectory = "Content/UI/Sprite";
+            spriteSheetSource.Content.RootDirectory = "Content/UI/SpriteSheet";
             spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
             spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
-            spriteSheetSource.DefinitionMap["TitledWindow"] = new SpriteSheetDefinition(windowTemplate, "TitledWindow");
-            spriteSheetSource.DefinitionMap["TitledWindowShadow"] = new SpriteSheetDefinition(windowTemplate, "TitledWindow", windowShadowConverter);
 
             var lookAndFeelSource = new SpriteLookAndFeelSource(this, spriteSheetSource);
 
             var buttonLookAndFeel = new ViewerButtonLookAndFeel();
-            buttonLookAndFeel.FocusedButtonBackground = Content.Load<Texture2D>("UI/FocusedButtonBackground");
+            buttonLookAndFeel.FocusedButtonBackground = Content.Load<Texture2D>("UI/Focus");
 
             lookAndFeelSource.Register(typeof(Button), buttonLookAndFeel);
 

@@ -130,8 +130,12 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
+    <Compile Include="Screens\ConfirmationDialog.cs" />
     <Compile Include="Screens\ControlUtil.cs" />
-    <Compile Include="Screens\LanguageSettingDialog.cs" />
+    <Compile Include="Screens\DialogMessageContainer.cs" />
+    <Compile Include="Screens\ErrorDialog.cs" />
+    <Compile Include="Screens\ImageButton.cs" />
+    <Compile Include="Screens\SelectLanguageDialog.cs" />
     <Compile Include="Screens\LodListWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />
     <Compile Include="Screens\OpenStorageDialog.cs" />

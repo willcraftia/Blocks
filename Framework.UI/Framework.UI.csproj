@@ -100,6 +100,7 @@
     <Compile Include="Animations\Vector2LerpAnimation.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="ContentControl.cs" />
+    <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Controls\Image.cs" />
     <Compile Include="Controls\MessageBox.cs" />
     <Compile Include="Controls\MessageBoxButton.cs" />

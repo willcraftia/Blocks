@@ -18,13 +18,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public LodListWindow(Screen screen, MainViewModel mainViewModel)
             : base(screen)
         {
-            TitleContent = ControlUtil.CreateDefaultTitle(screen, "LoD");
             ShadowOffset = new Vector2(4);
+            Padding = new Thickness(8);
 
             var stackPanel = new StackPanel(screen)
             {
-                Orientation = Orientation.Vertical,
-                Margin = new Thickness(8, 0, 8, 8)
+                Orientation = Orientation.Vertical
             };
             Content = stackPanel;
 

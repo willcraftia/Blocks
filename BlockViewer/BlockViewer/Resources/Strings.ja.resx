@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CloseButton" xml:space="preserve">
+    <value>とじる</value>
+  </data>
+  <data name="ConfirmationTitle" xml:space="preserve">
+    <value>かくにん</value>
+  </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
   </data>
   <data name="EnButton" xml:space="preserve">
     <value>ENGLISH</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>エラー</value>
   </data>
   <data name="ExitButton" xml:space="preserve">
     <value>やめる</value>
@@ -129,17 +138,26 @@
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
   </data>
-  <data name="LanguageSettingButton" xml:space="preserve">
-    <value>げんご を せんたく</value>
-  </data>
   <data name="LoadFileButton" xml:space="preserve">
     <value>ロード</value>
   </data>
-  <data name="NoFileInStorageError" xml:space="preserve">
+  <data name="MainMenuButton" xml:space="preserve">
+    <value>メイン メニュー ([Y] キー)</value>
+  </data>
+  <data name="MainMenuTitle" xml:space="preserve">
+    <value>メイン メニュー</value>
+  </data>
+  <data name="NoFileError" xml:space="preserve">
     <value>ストレージ に ファイル が ありません。</value>
   </data>
   <data name="OpenFileConfirmation" xml:space="preserve">
     <value>この ファイル を ひらきますか？</value>
+  </data>
+  <data name="SelectLanguageButton" xml:space="preserve">
+    <value>げんご を せんたく</value>
+  </data>
+  <data name="SelectLanguageTitle" xml:space="preserve">
+    <value>げんご を せんたく</value>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>はじめる</value>

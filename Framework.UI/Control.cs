@@ -731,8 +731,7 @@ namespace Willcraftia.Xna.Framework.UI
         public virtual void Draw(GameTime gameTime, IDrawContext drawContext)
         {
             // Look & Feel を描画します。
-            var lookAndFeel = Screen.LookAndFeelSource.GetLookAndFeel(this);
-            if (lookAndFeel != null) lookAndFeel.Draw(this, drawContext);
+            DrawLookAndFeel(gameTime, drawContext);
 
             if (ClipEnabled)
             {
@@ -1142,6 +1141,18 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         /// <param name="context">RoutedEventContext。</param>
         protected virtual void OnLostLogicalFocus(ref RoutedEventContext context) { }
+
+        /// <summary>
+        /// Look and Feel を描画します。
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="drawContext"></param>
+        protected virtual void DrawLookAndFeel(GameTime gameTime, IDrawContext drawContext)
+        {
+            // Look & Feel を描画します。
+            var lookAndFeel = Screen.LookAndFeelSource.GetLookAndFeel(this);
+            if (lookAndFeel != null) lookAndFeel.Draw(this, drawContext);
+        }
 
         /// <summary>
         /// 子 Control を描画します。

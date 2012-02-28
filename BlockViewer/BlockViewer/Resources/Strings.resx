@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ConfirmationTitle" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>Default</value>
   </data>
   <data name="EnButton" xml:space="preserve">
     <value>English</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Error</value>
   </data>
   <data name="ExitButton" xml:space="preserve">
     <value>Exit</value>
@@ -129,20 +138,29 @@
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
   </data>
-  <data name="LanguageSettingButton" xml:space="preserve">
-    <value>Select Language</value>
-  </data>
   <data name="LevelOfDetailLabel" xml:space="preserve">
     <value>LoD: {0}</value>
   </data>
   <data name="LoadFileButton" xml:space="preserve">
     <value>Load</value>
   </data>
-  <data name="NoFileInStorageError" xml:space="preserve">
+  <data name="MainMenuButton" xml:space="preserve">
+    <value>Main Menu ([Y] key)</value>
+  </data>
+  <data name="MainMenuTitle" xml:space="preserve">
+    <value>Main Menu</value>
+  </data>
+  <data name="NoFileError" xml:space="preserve">
     <value>No file exists in your storage.</value>
   </data>
   <data name="OpenFileConfirmation" xml:space="preserve">
     <value>Are you sure you want to load this file?</value>
+  </data>
+  <data name="SelectLanguageButton" xml:space="preserve">
+    <value>Select Language</value>
+  </data>
+  <data name="SelectLanguageTitle" xml:space="preserve">
+    <value>Select Language</value>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>Start</value>
