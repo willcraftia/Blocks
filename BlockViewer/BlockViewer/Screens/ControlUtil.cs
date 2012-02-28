@@ -28,7 +28,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public static Button CreateDefaultMenuButton(Screen screen, String text)
         {
-            const float buttonHeight = 32;
+            float buttonHeight = 32;
 
             var button = new Button(screen)
             {
@@ -44,12 +44,32 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     ShadowOffset = new Vector2(2)
                 }
             };
-            ControlUtil.PopContentFontOnGotFocus(button);
+
+            SetDefaultBehavior(button);
 
             return button;
         }
 
-        public static void PopContentFontOnGotFocus(Button button)
+        public static void SetDefaultBehavior(Button button)
+        {
+            float focusedTextOpacity = 1;
+            float defocusedTextOpacity = 0.5f;
+
+            button.Content.Opacity = defocusedTextOpacity;
+
+            button.GotFocus += (Control s, ref RoutedEventContext c) =>
+            {
+                button.Content.Opacity = focusedTextOpacity;
+            };
+            button.LostFocus += (Control s, ref RoutedEventContext c) =>
+            {
+                button.Content.Opacity = defocusedTextOpacity;
+            };
+
+            ControlUtil.PopContentFontOnGotFocus(button);
+        }
+
+        static void PopContentFontOnGotFocus(Button button)
         {
             var animation = new Vector2LerpAnimation
             {

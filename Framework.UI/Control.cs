@@ -459,6 +459,13 @@ namespace Willcraftia.Xna.Framework.UI
         public VerticalAlignment VerticalAlignment { get; set; }
 
         /// <summary>
+        /// 影の描画位置を取得または設定します。
+        /// [0, 0] は影を描画しないことを表します。
+        /// デフォルトは [0, 0] です。
+        /// </summary>
+        public Vector2 ShadowOffset { get; set; }
+
+        /// <summary>
         /// Control が有効かどうかを取得または設定します。
         /// </summary>
         /// <value>true (Control が有効な場合)、false (それ以外の場合)。</value>

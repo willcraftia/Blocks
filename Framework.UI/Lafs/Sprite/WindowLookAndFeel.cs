@@ -34,19 +34,6 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
         /// </summary>
         SpriteSheet titledShadowSpriteSheet;
 
-        /// <summary>
-        /// Window の影の描画位置を取得または設定します。
-        /// </summary>
-        public Vector2 ShadowOffset { get; set; }
-
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
-        public WindowLookAndFeel()
-        {
-            ShadowOffset = new Vector2(4, 4);
-        }
-
         protected override void LoadContent()
         {
             //----------------------------------------------------------------
@@ -75,7 +62,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
             var windowTarget = (window.TitleContent == null) ? windowSpriteSheet : titledWindowSpriteSheet;
 
             if (shadowTarget != null)
-                DrawWindow(window, drawContext, shadowTarget, Color.White, ShadowOffset);
+                DrawWindow(window, drawContext, shadowTarget, Color.White, window.ShadowOffset);
 
             if (windowTarget != null)
                 DrawWindow(window, drawContext, windowTarget, Color.White, Vector2.Zero);

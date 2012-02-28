@@ -23,6 +23,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             : base(screen)
         {
             TitleContent = ControlUtil.CreateDefaultTitle(screen, "Main Menu");
+            ShadowOffset = new Vector2(4);
 
             var stackPanel = new StackPanel(screen)
             {

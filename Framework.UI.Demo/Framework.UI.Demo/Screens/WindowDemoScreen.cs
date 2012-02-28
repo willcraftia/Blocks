@@ -226,6 +226,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 : base(screen)
             {
                 BackgroundColor = Color.Green;
+                Opacity = 0.8f;
 
                 var stackPanel = new StackPanel(screen)
                 {

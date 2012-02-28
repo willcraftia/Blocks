@@ -25,6 +25,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
+            ShadowOffset = new Vector2(4);
+
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,

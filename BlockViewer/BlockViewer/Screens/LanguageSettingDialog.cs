@@ -25,11 +25,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             : base(screen)
         {
             TitleContent = ControlUtil.CreateDefaultTitle(screen, "Select Language");
+            ShadowOffset = new Vector2(4);
 
             var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
-                Width = 240,
+                Width = 280,
                 Margin = new Thickness(16, 4, 16, 16)
             };
             Content = stackPanel;

@@ -44,16 +44,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             DataContext = viewModel;
 
-            TitleContent = new TextBlock(screen)
-            {
-                Text = "Load",
-                Margin = new Thickness(20, 4, 20, 4),
-                Padding = new Thickness(4, 0, 4, 0),
-                ForegroundColor = Color.Yellow,
-                BackgroundColor = Color.Black,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                ShadowOffset = new Vector2(2)
-            };
+            TitleContent = ControlUtil.CreateDefaultTitle(screen, "Load");
+            ShadowOffset = new Vector2(4);
 
             var basePanel = new StackPanel(screen)
             {
@@ -124,27 +116,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             if (openFileConfirmMessageBox == null)
             {
                 openFileConfirmMessageBox = new MessageBox(Screen, MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
-                openFileConfirmMessageBox.TitleContent = new TextBlock(Screen)
-                {
-                    Text = "Confirmation",
-                    Margin = new Thickness(20, 4, 20, 4),
-                    Padding = new Thickness(4, 0, 4, 0),
-                    ForegroundColor = Color.Yellow,
-                    BackgroundColor = Color.Black,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    ShadowOffset = new Vector2(2)
-                };
+                openFileConfirmMessageBox.TitleContent = ControlUtil.CreateDefaultTitle(Screen, "Confirmation");
+                openFileConfirmMessageBox.ShadowOffset = new Vector2(4);
                 openFileConfirmMessageBox.Content.Margin = new Thickness(16, 4, 16, 16);
                 openFileConfirmMessageBox.TextBlock.Text = Strings.OpenFileConfirmation;
                 openFileConfirmMessageBox.TextBlock.ForegroundColor = Color.White;
+                openFileConfirmMessageBox.TextBlock.BackgroundColor = Color.Black;
+                openFileConfirmMessageBox.TextBlock.ShadowOffset = new Vector2(2);
                 openFileConfirmMessageBox.OKButton.Content.ForegroundColor = Color.White;
+                openFileConfirmMessageBox.OKButton.Content.BackgroundColor = Color.Black;
+                openFileConfirmMessageBox.OKButton.Content.ShadowOffset = new Vector2(2);
                 openFileConfirmMessageBox.OKButton.Margin = new Thickness(0, 0, 4, 0);
                 openFileConfirmMessageBox.OKButton.Padding = new Thickness(4);
                 openFileConfirmMessageBox.CancelButton.Content.ForegroundColor = Color.White;
+                openFileConfirmMessageBox.CancelButton.Content.BackgroundColor = Color.Black;
+                openFileConfirmMessageBox.CancelButton.Content.ShadowOffset = new Vector2(2);
                 openFileConfirmMessageBox.CancelButton.Margin = new Thickness(4, 0, 0, 0);
                 openFileConfirmMessageBox.CancelButton.Padding = new Thickness(4);
                 openFileConfirmMessageBox.ButtonsPanel.Padding = new Thickness(4);
                 openFileConfirmMessageBox.Closed += new EventHandler(OnMessageBoxClosed);
+                ControlUtil.SetDefaultBehavior(openFileConfirmMessageBox.OKButton);
+                ControlUtil.SetDefaultBehavior(openFileConfirmMessageBox.CancelButton);
             }
 
             (DataContext as OpenStorageViewModel).SelectedFileName = null;

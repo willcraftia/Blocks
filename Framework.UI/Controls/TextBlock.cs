@@ -32,13 +32,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         public float TextOutlineWidth { get; set; }
 
         /// <summary>
-        /// 表示文字列の影の描画位置を取得または設定します。
-        /// [0, 0] を指定した場合、影は描画されません。
-        /// デフォルトは [0, 0] です。
-        /// </summary>
-        public Vector2 ShadowOffset { get; set; }
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
         /// <pparam name="screen">Screen。</pparam>
