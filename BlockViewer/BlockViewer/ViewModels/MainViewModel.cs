@@ -46,6 +46,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public OpenStorageViewModel OpenStorageViewModel { get; private set; }
 
+        public bool LodWindowVisible { get; set; }
+
         public MainViewModel(GraphicsDevice graphicsDevice)
         {
             GraphicsDevice = graphicsDevice;

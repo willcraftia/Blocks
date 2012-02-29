@@ -11,13 +11,16 @@ using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class LodListWindow : Window
+    public sealed class LodWindow : Window
     {
         Control[] controls = new Control[4];
 
-        public LodListWindow(Screen screen, MainViewModel mainViewModel)
+        public LodWindow(Screen screen)
             : base(screen)
         {
+            // この Window はアクティブにできません。
+            Activatable = false;
+
             ShadowOffset = new Vector2(4);
             Padding = new Thickness(8);
 
@@ -27,6 +30,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
+            var mainViewModel = DataContext as MainViewModel;
             for (int i = 0; i < controls.Length; i++)
             {
                 controls[i] = CreateLodControl(mainViewModel, i);

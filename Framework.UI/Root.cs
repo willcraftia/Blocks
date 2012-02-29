@@ -84,29 +84,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// 最前面の Window を取得します。
-        /// 最前面の Window が存在しない場合には null を返します。
-        /// </summary>
-        /// <remarks>
-        /// 最前面の Window が必ずしもアクティブ Window であるとは限りません。
-        /// </remarks>
-        /// <returns>
-        /// 最前面の Window。
-        /// 最前面の Window が存在しない場合には null。
-        /// </returns>
-        internal Window GetTopMostWindow()
-        {
-            for (int i = Windows.Count - 1; 0 <= i; i--)
-            {
-                var window = Windows[i];
-                if (window.Visible) return window;
-            }
-
-            if (Desktop.Visible) return Desktop;
-            return null;
-        }
-
-        /// <summary>
         /// アクティブ Window を取得します。
         /// アクティブ Window が存在しない場合には null を返します。
         /// </summary>
@@ -137,19 +114,24 @@ namespace Willcraftia.Xna.Framework.UI
             // 未登録ならば追加します。
             if (!(window is Desktop) && !Windows.Contains(window)) Windows.Add(window);
 
-            // アクティブ化します。
-            ActivateWindow(window);
+            window.Visible = true;
+
+            // アクティブにします。
+            if (window.Activatable) ActivateWindow(window);
         }
 
         /// <summary>
-        /// Window をアクティブ化します。
-        /// Window の Visible プロパティが true に設定されます。
+        /// Window をアクティブにします。
+        /// Activatable = false あるいは Visible = false の Window はアクティブにできません。
         /// </summary>
-        /// <param name="window">アクティブ化する Window。</param>
+        /// <param name="window">アクティブにする Window。</param>
         internal void ActivateWindow(Window window)
         {
             if (window == null) throw new ArgumentNullException("window");
             EnsureWindow(window);
+
+            // アクティブにできない Window は無視します。
+            if (!window.Activatable || !window.Visible) return;
 
             // 既にアクティブな場合には処理を終えます。
             if (window.Active) return;
@@ -166,7 +148,6 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             window.Active = true;
-            window.Visible = true;
 
             // 論理フォーカスにフォーカスを設定します。
             Screen.FocusedControl = window.FocusScope.FocusedControl;
@@ -212,8 +193,25 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         void ActivateTopMostWindow()
         {
-            var topMostWindow = GetTopMostWindow();
-            if (topMostWindow != null) ActivateWindow(topMostWindow);
+            var window = GetActivatableTopMostWindow();
+            if (window != null) ActivateWindow(window);
+        }
+
+        /// <summary>
+        /// アクティブにできる最前面の Window を取得します。
+        /// そのような Window が存在しない場合には null を返します。
+        /// </summary>
+        /// <returns></returns>
+        Window GetActivatableTopMostWindow()
+        {
+            for (int i = Windows.Count - 1; 0 <= i; i--)
+            {
+                var window = Windows[i];
+                if (window.Activatable && window.Visible) return window;
+            }
+
+            if (Desktop.Activatable && Desktop.Visible) return Desktop;
+            return null;
         }
 
         /// <summary>

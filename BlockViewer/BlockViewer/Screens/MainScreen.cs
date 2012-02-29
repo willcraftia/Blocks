@@ -32,7 +32,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         MainMenuWindow mainMenuWindow;
 
-        LodListWindow lodListWindow;
+        LodWindow lodListWindow;
 
         public MainScreen(Game game)
             : base(game)
@@ -42,6 +42,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // Data Context
             mainViewModel = new MainViewModel(game.GraphicsDevice);
             DataContext = mainViewModel;
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (mainViewModel.LodWindowVisible)
+            {
+                if (!lodListWindow.Visible) lodListWindow.Show();
+            }
+            else
+            {
+                if (lodListWindow.Visible) lodListWindow.Close();
+            }
+
+            base.Update(gameTime);
         }
 
         protected override void LoadContent()
@@ -81,7 +95,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 Texture = Content.Load<Texture2D>("UI/MainMenuWindow")
             };
-            source.LookAndFeelMap[typeof(LodListWindow)] = new SpriteSheetWindowLookAndFeel
+            source.LookAndFeelMap[typeof(LodWindow)] = new SpriteSheetWindowLookAndFeel
             {
                 WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("LodWindow")
             };
@@ -145,12 +159,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             //mainMenuWindow.Show();
 
-            lodListWindow = new LodListWindow(this, mainViewModel)
+            lodListWindow = new LodWindow(this)
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Bottom
             };
-            lodListWindow.Show();
+            //lodListWindow.Show();
 
             var startEffectOverlay = new Overlay(this)
             {

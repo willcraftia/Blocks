@@ -123,6 +123,9 @@
   <data name="CloseButton" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="CloseLodWindowButton" xml:space="preserve">
+    <value>Close LoD</value>
+  </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>Default</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="SelectLanguageTitle" xml:space="preserve">
     <value>Select Language</value>
+  </data>
+  <data name="ShowLodWindowButton" xml:space="preserve">
+    <value>Show LoD</value>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>Start</value>

@@ -123,6 +123,9 @@
   <data name="CloseButton" xml:space="preserve">
     <value>とじる</value>
   </data>
+  <data name="CloseLodWindowButton" xml:space="preserve">
+    <value>LoD OFF</value>
+  </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="SelectLanguageTitle" xml:space="preserve">
     <value>げんご を せんたく</value>
+  </data>
+  <data name="ShowLodWindowButton" xml:space="preserve">
+    <value>LoD ON</value>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>はじめる</value>

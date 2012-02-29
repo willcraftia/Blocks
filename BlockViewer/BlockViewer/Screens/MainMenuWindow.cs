@@ -18,6 +18,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainMenuWindow : Window
     {
+        Button lodWindowButton;
+
         OpenStorageDialog openStorageDialog;
 
         Texture2D backgroundTexture;
@@ -60,6 +62,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var loadButton = CreateMainMenuButton(screen, Strings.LoadFileButton);
             loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
             stackPanel.Children.Add(loadButton);
+
+            lodWindowButton = CreateMainMenuButton(screen, Strings.ShowLodWindowButton);
+            lodWindowButton.Click += new RoutedEventHandler(OnLodWindowButtonClick);
+            stackPanel.Children.Add(lodWindowButton);
 
             var exitButton = CreateMainMenuButton(screen, Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
@@ -147,6 +153,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // TODO: 少しでも負荷がかかると短い Animation が効果を表すことなく完了してしまう。
             (DataContext as MainViewModel).LoadBlockMeshFromStorage();
+        }
+
+        void OnLodWindowButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            var viewModel = DataContext as MainViewModel;
+            viewModel.LodWindowVisible = !viewModel.LodWindowVisible;
+
+            var buttonText = (viewModel.LodWindowVisible) ? Strings.CloseLodWindowButton : Strings.ShowLodWindowButton;
+            (lodWindowButton.Content as TextBlock).Text = buttonText;
+
+            Close();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)

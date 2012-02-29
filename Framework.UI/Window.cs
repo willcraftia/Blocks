@@ -68,6 +68,11 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// アクティブにできるかどうかを示す値を取得または設定します。
+        /// </summary>
+        public bool Activatable { get; set; }
+
+        /// <summary>
         /// アクティブ化されているかどうかを示す値を取得します。
         /// </summary>
         /// <value>
@@ -101,6 +106,7 @@ namespace Willcraftia.Xna.Framework.UI
             : base(screen)
         {
             FocusScope = new FocusScope(this);
+            Activatable = true;
 
             // Window は表示されるまで Visible = false です。
             Visible = false;
@@ -160,8 +166,8 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
-        /// アクティブ化します。
-        /// Active プロパティおよび Visible プロパティが true に設定されます。
+        /// アクティブにします。
+        /// Activatable = false あるいは Visible = false の場合はアクティブにできません。
         /// </summary>
         public void Activate()
         {

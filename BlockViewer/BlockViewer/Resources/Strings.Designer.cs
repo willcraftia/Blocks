@@ -79,6 +79,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Close LoD に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CloseLodWindowButton {
+            get {
+                return ResourceManager.GetString("CloseLodWindowButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Default に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DefaultButton {
@@ -201,6 +210,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string SelectLanguageTitle {
             get {
                 return ResourceManager.GetString("SelectLanguageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show LoD に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ShowLodWindowButton {
+            get {
+                return ResourceManager.GetString("ShowLodWindowButton", resourceCulture);
             }
         }
         

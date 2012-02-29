@@ -133,8 +133,8 @@ namespace Willcraftia.Xna.Framework.UI
             Content = new ContentManager(game.Services);
             root = new Root(this);
 
-            // 初期状態では Desktop をアクティブにします。
-            root.Desktop.Activate();
+            // 初期状態では Desktop を表示します。
+            root.Desktop.Show();
         }
 
         /// <summary>
