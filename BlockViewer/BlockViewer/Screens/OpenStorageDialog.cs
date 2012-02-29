@@ -116,6 +116,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.ShadowOffset = new Vector2(2);
                 fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
+                fileNameButtons[i].KeyDown += new RoutedEventHandler(OnFileNameButtonKeyDown);
                 fileNameListPanel.Children.Add(fileNameButtons[i]);
             }
 
@@ -149,16 +150,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Animations.Add(closeAnimation);
         }
 
-        protected override void OnVisibleChanged()
-        {
-            // 表示されたら openAnimation を実行します。
-            if (Visible) openAnimation.Enabled = true;
-
-            base.OnVisibleChanged();
-        }
-
         public override void Show()
         {
+            (DataContext as OpenStorageViewModel).SelectedFileName = null;
             fileNames = (DataContext as OpenStorageViewModel).GetFileNames();
 
             // ファイルがない場合は、その旨を MessageBox で表示して終えます。
@@ -168,7 +162,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 return;
             }
 
-            SetFiles(0);
+            ReloadFileNameButtons();
 
             // 常に Cancel ボタンにフォーカスを設定します。
             cancelButton.Focus();
@@ -182,6 +176,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeAnimation.Enabled = true;
         }
 
+        protected override void OnVisibleChanged()
+        {
+            // 表示されたら openAnimation を実行します。
+            if (Visible) openAnimation.Enabled = true;
+
+            base.OnVisibleChanged();
+        }
+
         protected override void OnKeyDown(ref RoutedEventContext context)
         {
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape))
@@ -192,6 +194,38 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
 
             base.OnKeyDown(ref context);
+        }
+
+        void OnFileNameButtonKeyDown(Control sender, ref RoutedEventContext context)
+        {
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
+            {
+                BackPage();
+                context.Handled = true;
+            }
+            else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
+            {
+                ForwardPage();
+                context.Handled = true;
+            }
+        }
+
+        void BackPage()
+        {
+            currentPageIndex--;
+            // 先頭を越えるならば末尾のページを設定します。
+            if (currentPageIndex < 0) currentPageIndex = fileNames.Length / listSize;
+
+            ReloadFileNameButtons();
+        }
+
+        void ForwardPage()
+        {
+            currentPageIndex++;
+            // 末尾を越えるならば先頭のページを設定します。
+            if (fileNames.Length / listSize < currentPageIndex) currentPageIndex = 0;
+
+            ReloadFileNameButtons();
         }
 
         void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
@@ -212,7 +246,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 confirmationDialog.Closed += new EventHandler(OnOpenFileConfirmationDialogClosed);
             }
 
-            (DataContext as OpenStorageViewModel).SelectedFileName = null;
             targetFileName = ((sender as Button).Content as TextBlock).Text;
 
             confirmationDialog.Show();
@@ -252,7 +285,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             noFileErrorDialog.Show();
         }
 
-        void SetFiles(int pageIndex)
+        void ReloadFileNameButtons()
         {
             // 状態を初期化します。
             for (int i = 0; i < listSize; i++)
@@ -267,11 +300,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 var fileNameButton = fileNameButtons[i];
 
-                int fileNameIndex = pageIndex * listSize + i;
+                int fileNameIndex = currentPageIndex * listSize + i;
                 if (fileNameIndex < fileNames.Length)
                 {
                     fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
                     fileNameButton.Focusable = true;
+                }
+                else
+                {
+                    // フォーカスが設定されていたボタンがファイルなしになった場合、
+                    // フォーカスを先頭のボタンに設定することを試みます。
+                    if (fileNameButton.Focused)
+                    {
+                        if (!fileNameButtons[0].Focus())
+                        {
+                            // 先頭のボタンに設定できない場合は Cancel ボタンに設定します。
+                            cancelButton.Focus();
+                        }
+                    }
                 }
             }
         }
