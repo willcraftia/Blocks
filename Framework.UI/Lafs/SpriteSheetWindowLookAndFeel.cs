@@ -12,7 +12,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
     /// <summary>
     /// Window の Look and Feel です。
     /// </summary>
-    public class SpriteSheetWindowLookAndFeel : SpriteSheetLookAndFeel
+    public class SpriteSheetWindowLookAndFeel : ILookAndFeel
     {
         //----------------------------------------------------------------
         // TODO test code
@@ -24,9 +24,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         //
         //----------------------------------------------------------------
 
-        public SpriteSheetWindowLookAndFeel(ISpriteSheetSource spriteSheetSource) : base(spriteSheetSource) { }
+        public ISpriteSheetSource SpriteSheetSource { get; set; }
 
-        public override void Draw(Control control, IDrawContext drawContext)
+        public virtual void Draw(Control control, IDrawContext drawContext)
         {
             var window = control as Window;
 

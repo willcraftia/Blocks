@@ -90,7 +90,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void LoadContent()
         {
-            if (LookAndFeelSource != null && !LookAndFeelSource.Initialized) LookAndFeelSource.Initialize();
         }
 
         /// <summary>
@@ -98,7 +97,6 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void UnloadContent()
         {
-            if (LookAndFeelSource != null && LookAndFeelSource.Initialized) LookAndFeelSource.Dispose();
         }
 
         /// <summary>

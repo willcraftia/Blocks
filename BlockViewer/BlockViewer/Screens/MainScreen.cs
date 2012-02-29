@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
+using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
@@ -20,6 +22,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainScreen : Screen
     {
+        DefaultSpriteSheetSource spriteSheetSource;
+
         MainViewModel mainViewModel;
 
         ImageButton mainMenuButton;
@@ -41,6 +45,57 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         }
 
         protected override void LoadContent()
+        {
+            InitializeSpriteSheet();
+            InitializeLookAndFeelSource();
+            InitializeControls();
+
+            base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            if (spriteSheetSource != null) spriteSheetSource.Dispose();
+
+            base.UnloadContent();
+        }
+
+        void InitializeSpriteSheet()
+        {
+            var windowTemplate = new WindowSpriteSheetTemplate(32, 32);
+            var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+            spriteSheetSource = new DefaultSpriteSheetSource(Game);
+            spriteSheetSource.Content.RootDirectory = "Content/UI/SpriteSheet";
+            spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
+            spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
+
+            spriteSheetSource.Initialize();
+        }
+
+        void InitializeLookAndFeelSource()
+        {
+            var source = new DefaultLookAndFeelSource(Game);
+
+            source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
+            source.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
+            {
+                SpriteSheetSource = spriteSheetSource
+            };
+            source.LookAndFeelMap[typeof(MainMenuWindow)] = new TextureBackgroundLookAndFeel
+            {
+                Texture = Content.Load<Texture2D>("UI/MainMenuWindow")
+            };
+            source.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
+            source.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
+            source.LookAndFeelMap[typeof(Button)] = new ButtonLookAndFeel
+            {
+                FocusTexture = Content.Load<Texture2D>("UI/Focus")
+            };
+
+            LookAndFeelSource = source;
+        }
+
+        void InitializeControls()
         {
             // TODO: テスト コード。
             mainViewModel.StoreSampleBlockMesh();
@@ -126,8 +181,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // Desktop をアクティブ化します。
             Desktop.Activate();
-
-            base.LoadContent();
         }
 
         void OnRootPreviewKeyDown(Control sender, ref RoutedEventContext context)

@@ -101,19 +101,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeButton.Focus();
         }
 
-        public override void Draw(GameTime gameTime, IDrawContext drawContext)
-        {
-            var renderBounds = new Rect(RenderSize);
-            drawContext.DrawTexture(renderBounds, backgroundTexture, Color.White);
-
-            base.Draw(gameTime, drawContext);
-        }
-
-        protected override void DrawLookAndFeel(GameTime gameTime, IDrawContext drawContext)
-        {
-            // デフォルトの LookAndFeel を無視します。
-        }
-
         public override void Close()
         {
             // Close 処理はまだ呼び出さずに closeAnimation を実行します。

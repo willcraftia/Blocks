@@ -11,7 +11,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
     /// <summary>
     /// デバッグ用のデフォルトの Look and Feel です。
     /// </summary>
-    public class DefaultLookAndFeel : ILookAndFeel
+    public class DebugDefaultLookAndFeel : ILookAndFeel
     {
         // I/F
         public virtual void Draw(Control control, IDrawContext drawContext)

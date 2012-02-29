@@ -10,9 +10,6 @@ namespace Willcraftia.Xna.Framework.UI
 {
     public class DefaultLookAndFeelSource : ILookAndFeelSource
     {
-        // I/F
-        public bool Initialized { get; private set; }
-
         /// <summary>
         /// Game を取得します。
         /// </summary>
@@ -35,14 +32,6 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         // I/F
-        public void Initialize()
-        {
-            LoadContent();
-
-            Initialized = true;
-        }
-
-        // I/F
         public virtual ILookAndFeel GetLookAndFeel(Control control)
         {
             if (control == null) throw new ArgumentNullException("control");
@@ -59,41 +48,5 @@ namespace Willcraftia.Xna.Framework.UI
 
             return lookAndFeel;
         }
-
-        /// <summary>
-        /// Initialize メソッドから呼び出されます。
-        /// </summary>
-        protected virtual void LoadContent() { }
-
-        /// <summary>
-        /// Dispose メソッドから呼び出されます。
-        /// </summary>
-        protected virtual void UnloadContent() { }
-
-        #region IDisposable
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        
-        bool disposed;
-
-        ~DefaultLookAndFeelSource()
-        {
-            Dispose(false);
-        }
-
-        void Dispose(bool disposing)
-        {
-            if (disposed) return;
-
-            if (disposing) UnloadContent();
-
-            disposed = true;
-        }
-
-        #endregion
     }
 }

@@ -9,21 +9,8 @@ namespace Willcraftia.Xna.Framework.UI
     /// <summary>
     /// ILookAndFeel を提供するクラスのインタフェースです。
     /// </summary>
-    public interface ILookAndFeelSource : IDisposable
+    public interface ILookAndFeelSource
     {
-        /// <summary>
-        /// Initialize メソッドが呼び出されたかどうかを示す値を取得します。
-        /// </summary>
-        /// <value>
-        /// true (Initialize メソッドが呼び出された場合)、false (それ以外の場合)。
-        /// </value>
-        bool Initialized { get; }
-
-        /// <summary>
-        /// 初期化します。
-        /// </summary>
-        void Initialize();
-
         /// <summary>
         /// Control に対応する ILookAndFeel を取得します。
         /// </summary>

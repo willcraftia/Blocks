@@ -74,12 +74,15 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
                 spriteLookAndFeelSource = new DefaultLookAndFeelSource(this);
                 spriteLookAndFeelSource.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
-                spriteLookAndFeelSource.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel(spriteSheetSource);
+                spriteLookAndFeelSource.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
+                {
+                    SpriteSheetSource = spriteSheetSource
+                };
                 spriteLookAndFeelSource.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
                 spriteLookAndFeelSource.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
 
-                //screenFactory.LookAndFeelSource = debugLookAndFeelSource;
-                screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
+                screenFactory.LookAndFeelSource = debugLookAndFeelSource;
+                //screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
 
                 screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
 
@@ -106,8 +109,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void UnloadContent()
         {
-            debugLookAndFeelSource.Dispose();
-            spriteLookAndFeelSource.Dispose();
         }
 
         protected override void Update(GameTime gameTime)

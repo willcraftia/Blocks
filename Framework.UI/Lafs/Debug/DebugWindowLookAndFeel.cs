@@ -7,13 +7,13 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
-    public class DebugWindowLookAndFeel : ILookAndFeel
+    public class DebugWindowLookAndFeel : DebugDefaultLookAndFeel
     {
-        // I/F
-        public virtual void Draw(Control control, IDrawContext drawContext)
+        public override void Draw(Control control, IDrawContext drawContext)
         {
-            var renderBounds = new Rect(control.RenderSize);
-            drawContext.DrawRectangle(renderBounds, Color.Black);
+            drawContext.DrawRectangle(new Rect(control.RenderSize), Color.Black);
+
+            base.Draw(control, drawContext);
         }
     }
 }
