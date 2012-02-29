@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -11,11 +10,6 @@ namespace Willcraftia.Xna.Framework.UI
     public class DefaultLookAndFeelSource : ILookAndFeelSource
     {
         /// <summary>
-        /// Game を取得します。
-        /// </summary>
-        public Game Game { get; private set; }
-
-        /// <summary>
         /// Control の型をキーに ILookAndFeel を値とするマップを取得します。
         /// </summary>
         public Dictionary<Type, ILookAndFeel> LookAndFeelMap { get; private set; }
@@ -23,11 +17,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="game">Game。</param>
-        public DefaultLookAndFeelSource(Game game)
+        public DefaultLookAndFeelSource()
         {
-            if (game == null) throw new ArgumentNullException("game");
-            Game = game;
             LookAndFeelMap = new Dictionary<Type, ILookAndFeel>();
         }
 

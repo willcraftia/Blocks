@@ -32,28 +32,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             base.LoadContent();
         }
 
-        protected override void UnloadContent()
-        {
-            if (spriteSheetSource != null) spriteSheetSource.Dispose();
-
-            base.UnloadContent();
-        }
-
         void InitializeSpriteSheet()
         {
             var windowTemplate = new WindowSpriteSheetTemplate(32, 32);
             var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
-            spriteSheetSource = new DefaultSpriteSheetSource(Game);
-            spriteSheetSource.Content.RootDirectory = "Content/UI/SpriteSheet";
-            spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
-            spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
+            var windowTexture = Content.Load<Texture2D>("UI/SpriteSheet/Window");
+            var windowShadowTexture = windowShadowConverter.Convert(windowTexture);
 
-            spriteSheetSource.Initialize();
+            spriteSheetSource = new DefaultSpriteSheetSource();
+            spriteSheetSource.SpriteSheetMap["Window"] = new SpriteSheet(windowTemplate, windowTexture);
+            spriteSheetSource.SpriteSheetMap["WindowShadow"] = new SpriteSheet(windowTemplate, windowShadowTexture);
         }
 
         void InitializeLookAndFeelSource()
         {
-            var source = new DefaultLookAndFeelSource(Game);
+            var source = new DefaultLookAndFeelSource();
 
             source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
             source.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel

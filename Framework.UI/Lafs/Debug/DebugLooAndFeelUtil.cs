@@ -11,7 +11,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
     {
         public static ILookAndFeelSource CreateLookAndFeelSource(Game game)
         {
-            var source = new DefaultLookAndFeelSource(game);
+            var source = new DefaultLookAndFeelSource();
             
             source.LookAndFeelMap[typeof(Control)] = new DebugDefaultLookAndFeel();
             source.LookAndFeelMap[typeof(Window)] = new DebugWindowLookAndFeel();

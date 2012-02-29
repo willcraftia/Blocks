@@ -10,6 +10,7 @@ using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
+using Willcraftia.Xna.Framework.UI.Demo.Screens;
 
 #endregion
 
@@ -58,42 +59,12 @@ namespace Willcraftia.Xna.Framework.UI.Demo
 
         protected override void Initialize()
         {
-            var windowTemplate = new WindowSpriteSheetTemplate(16, 16);
-            var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+            InitializeSpriteSheetSource();
 
-            spriteSheetSource = new DefaultSpriteSheetSource(this);
-            spriteSheetSource.Content.RootDirectory = "Content/UI/Sprite";
-            spriteSheetSource.DefinitionMap["Window"] = new SpriteSheetDefinition(windowTemplate, "Window");
-            spriteSheetSource.DefinitionMap["WindowShadow"] = new SpriteSheetDefinition(windowTemplate, "Window", windowShadowConverter);
-
-            uiManager = new UIManager(this);
+            uiManager = new UIManager(this)
             {
-                var screenFactory = new DefaultScreenFactory(this);
-
-                debugLookAndFeelSource = DebugLooAndFeelUtil.CreateLookAndFeelSource(this);
-
-                spriteLookAndFeelSource = new DefaultLookAndFeelSource(this);
-                spriteLookAndFeelSource.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
-                spriteLookAndFeelSource.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
-                {
-                    SpriteSheetSource = spriteSheetSource
-                };
-                spriteLookAndFeelSource.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
-                spriteLookAndFeelSource.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
-
-                screenFactory.LookAndFeelSource = debugLookAndFeelSource;
-                //screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
-
-                screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(Screens.MainMenuDemoScreen)));
-
-                var loadingWindowDemoScreen = new ScreenDefinition("WindowDemoScreen", typeof(Screens.DemoLoadingScreen));
-                loadingWindowDemoScreen.Properties["LoadedScreenName"] = "WindowDemoScreenImpl";
-
-                screenFactory.Definitions.Add(loadingWindowDemoScreen);
-                screenFactory.Definitions.Add(new ScreenDefinition("WindowDemoScreenImpl", typeof(Screens.WindowDemoScreen)));
-                
-                uiManager.ScreenFactory = screenFactory;
-            }
+                ScreenFactory = CreateScreenFactory()
+            };
             Components.Add(uiManager);
 
             IsMouseVisible = true;
@@ -101,9 +72,56 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             base.Initialize();
         }
 
+        void InitializeSpriteSheetSource()
+        {
+            var windowTemplate = new WindowSpriteSheetTemplate(16, 16);
+            var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+            var windowTexture = Content.Load<Texture2D>("UI/Sprite/Window");
+            var windowShadowTexture = windowShadowConverter.Convert(windowTexture);
+
+            spriteSheetSource = new DefaultSpriteSheetSource();
+            spriteSheetSource.SpriteSheetMap["Window"] = new SpriteSheet(windowTemplate, windowTexture);
+            spriteSheetSource.SpriteSheetMap["WindowShadow"] = new SpriteSheet(windowTemplate, windowShadowTexture);
+        }
+
+        IScreenFactory CreateScreenFactory()
+        {
+            var screenFactory = new DefaultScreenFactory(this);
+            InitializeScreenDefinitions(screenFactory);
+            InitializeLookAndFeelSource(screenFactory);
+            return screenFactory;
+        }
+
+        void InitializeLookAndFeelSource(DefaultScreenFactory screenFactory)
+        {
+            debugLookAndFeelSource = DebugLooAndFeelUtil.CreateLookAndFeelSource(this);
+
+            spriteLookAndFeelSource = new DefaultLookAndFeelSource();
+            spriteLookAndFeelSource.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
+            spriteLookAndFeelSource.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
+            {
+                SpriteSheetSource = spriteSheetSource
+            };
+            spriteLookAndFeelSource.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
+            spriteLookAndFeelSource.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
+
+            screenFactory.LookAndFeelSource = debugLookAndFeelSource;
+            //screenFactory.LookAndFeelSource = spriteLookAndFeelSource;
+        }
+
+        void InitializeScreenDefinitions(DefaultScreenFactory screenFactory)
+        {
+            screenFactory.Definitions.Add(new ScreenDefinition("MainMenuDemoScreen", typeof(MainMenuDemoScreen)));
+
+            var loadingWindowDemoScreen = new ScreenDefinition("WindowDemoScreen", typeof(DemoLoadingScreen));
+            loadingWindowDemoScreen.Properties["LoadedScreenName"] = "WindowDemoScreenImpl";
+
+            screenFactory.Definitions.Add(loadingWindowDemoScreen);
+            screenFactory.Definitions.Add(new ScreenDefinition("WindowDemoScreenImpl", typeof(WindowDemoScreen)));
+        }
+
         protected override void LoadContent()
         {
-            spriteSheetSource.Initialize();
             uiManager.Show("MainMenuDemoScreen");
         }
 
