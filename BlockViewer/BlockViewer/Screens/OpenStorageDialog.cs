@@ -34,11 +34,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         TextButton[] fileNameButtons;
 
+        Button cancelButton;
+
         FloatLerpAnimation openAnimation;
 
         FloatLerpAnimation closeAnimation;
 
-        ConfirmationDialog openFileConfirmationDialog;
+        ConfirmationDialog confirmationDialog;
 
         ErrorDialog noFileErrorDialog;
 
@@ -120,10 +122,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var loadButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.LoadThisFileButton);
-            stackPanel.Children.Add(loadButton);
-
-            var cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelLoadFileButton);
+            cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelButton);
+            cancelButton.Click += (Control s, ref RoutedEventContext c) => Close();
             stackPanel.Children.Add(cancelButton);
 
             const float windowWidth = 320;
@@ -170,6 +170,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             SetFiles(0);
 
+            // 常に Cancel ボタンにフォーカスを設定します。
+            cancelButton.Focus();
+
             base.Show();
         }
 
@@ -193,9 +196,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (openFileConfirmationDialog == null)
+            if (confirmationDialog == null)
             {
-                openFileConfirmationDialog = new ConfirmationDialog(Screen)
+                confirmationDialog = new ConfirmationDialog(Screen)
                 {
                     Message = new TextBlock(Screen)
                     {
@@ -206,20 +209,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         ShadowOffset = new Vector2(2)
                     }
                 };
-                openFileConfirmationDialog.Closed += new EventHandler(OnOpenFileConfirmationDialogClosed);
+                confirmationDialog.Closed += new EventHandler(OnOpenFileConfirmationDialogClosed);
             }
 
             (DataContext as OpenStorageViewModel).SelectedFileName = null;
             targetFileName = ((sender as Button).Content as TextBlock).Text;
 
-            openFileConfirmationDialog.Show();
+            confirmationDialog.Show();
 
             context.Handled = true;
         }
 
         void OnOpenFileConfirmationDialogClosed(object sender, EventArgs e)
         {
-            if (openFileConfirmationDialog.Result == MessageBoxResult.OK)
+            if (confirmationDialog.Result == MessageBoxResult.OK)
             {
                 (DataContext as OpenStorageViewModel).SelectedFileName = targetFileName;
                 Close();
@@ -260,7 +263,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
 
             // ファイル名を設定します。
-            bool focused = false;
             for (int i = 0; i < listSize; i++)
             {
                 var fileNameButton = fileNameButtons[i];
@@ -270,11 +272,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
                     fileNameButton.Focusable = true;
-                    if (!focused)
-                    {
-                        fileNameButton.Focus();
-                        focused = true;
-                    }
                 }
             }
         }

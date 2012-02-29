@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CancelLoadFileButton" xml:space="preserve">
+  <data name="CancelButton" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
@@ -144,9 +144,6 @@
   <data name="LoadFileButton" xml:space="preserve">
     <value>Load</value>
   </data>
-  <data name="LoadThisFileButton" xml:space="preserve">
-    <value>Load</value>
-  </data>
   <data name="MainMenuButton" xml:space="preserve">
     <value>Main Menu ([Y] key)</value>
   </data>
@@ -155,6 +152,9 @@
   </data>
   <data name="NoFileError" xml:space="preserve">
     <value>No file exists in your storage.</value>
+  </data>
+  <data name="OKButton" xml:space="preserve">
+    <value>OK</value>
   </data>
   <data name="OpenFileConfirmation" xml:space="preserve">
     <value>Are you sure you want to load this file?</value>

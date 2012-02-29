@@ -46,11 +46,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var okButton = CreateButton(screen, MessageBox.OKText);
+            var okButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.OKButton);
             stackPanel.Children.Add(okButton);
             RegisterOKButton(okButton);
 
-            cancelButton = CreateButton(screen, MessageBox.CancelText);
+            cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelButton);
             stackPanel.Children.Add(cancelButton);
             RegisterCancelButton(cancelButton);
         }
@@ -61,37 +61,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             cancelButton.Focus();
 
             base.Show();
-        }
-
-        //
-        // MEMO:
-        // MainMenuWindow からコピーしました。
-        //
-        Button CreateButton(Screen screen, String text)
-        {
-            float buttonHeight = 32;
-
-            var button = new Button(screen)
-            {
-                Height = buttonHeight,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Padding = new Thickness(4),
-
-                Content = new TextBlock(screen)
-                {
-                    Text = text,
-                    ForegroundColor = Color.White,
-                    BackgroundColor = Color.Black,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
-                    //Margin = new Thickness(16, 0, 0, 0),
-                    ShadowOffset = new Vector2(2)
-                }
-            };
-
-            ControlUtil.SetDefaultBehavior(button);
-
-            return button;
         }
     }
 }

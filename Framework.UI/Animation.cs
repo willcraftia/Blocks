@@ -25,7 +25,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// true (Update の実行が有効な場合)、false (それ以外の場合)。
         /// </summary>
-        bool enabled = true;
+        bool enabled;
 
         /// <summary>
         /// Update の実行が有効かどうかを示す値を取得または設定します。

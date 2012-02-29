@@ -63,9 +63,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         /// <summary>
         ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string CancelLoadFileButton {
+        internal static string CancelButton {
             get {
-                return ResourceManager.GetString("CancelLoadFileButton", resourceCulture);
+                return ResourceManager.GetString("CancelButton", resourceCulture);
             }
         }
         
@@ -142,15 +142,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Load に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string LoadThisFileButton {
-            get {
-                return ResourceManager.GetString("LoadThisFileButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Main Menu ([Y] key) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MainMenuButton {
@@ -174,6 +165,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string NoFileError {
             get {
                 return ResourceManager.GetString("NoFileError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   OK に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string OKButton {
+            get {
+                return ResourceManager.GetString("OKButton", resourceCulture);
             }
         }
         

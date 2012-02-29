@@ -91,10 +91,7 @@ namespace Willcraftia.Xna.Framework.UI.Animations
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        protected TimelineAnimation()
-        {
-            Enabled = false;
-        }
+        protected TimelineAnimation() { }
 
         /// <summary>
         /// 再生期間内の場合に呼び出されます。
@@ -102,6 +99,18 @@ namespace Willcraftia.Xna.Framework.UI.Animations
         /// <param name="gameTime"></param>
         /// <param name="playElapsedTime">再生を開始してからの経過時間。</param>
         protected abstract void Update(GameTime gameTime, TimeSpan playElapsedTime);
+
+        /// <summary>
+        /// 再生を完了させます。
+        /// </summary>
+        /// <param name="gameTime"></param>
+        protected virtual void Complete(GameTime gameTime)
+        {
+            // 再生を終えます。
+            Enabled = false;
+            // 完了イベントを発生させます。
+            OnCompleted();
+        }
 
         public sealed override void Update(GameTime gameTime)
         {
@@ -149,9 +158,7 @@ namespace Willcraftia.Xna.Framework.UI.Animations
                     }
 
                     // 再生を終えます。
-                    Enabled = false;
-                    // 完了イベントを発生させます。
-                    OnCompleted();
+                    Complete(gameTime);
                     return;
                 }
 

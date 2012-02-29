@@ -14,11 +14,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
     /// </summary>
     public class MessageBox : OverlayDialogBase
     {
-        public static readonly string OKText = Strings.OK;
-        public static readonly string CancelText = Strings.Cancel;
-        public static readonly string YesText = Strings.Yes;
-        public static readonly string NoText = Strings.No;
-
         /// <summary>
         /// Escape キーの押下で設定する Result プロパティを取得または設定します。
         /// デフォルトは MessageBoxResult.None です。
@@ -62,7 +57,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="context"></param>
         protected virtual void OnOKButtonClick(Control sender, ref RoutedEventContext context)
         {
-            OnButtonClick(MessageBoxResult.OK);
+            OnButtonClick(sender, ref context, MessageBoxResult.OK);
         }
 
         /// <summary>
@@ -72,7 +67,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="context"></param>
         protected virtual void OnCancelButtonClick(Control sender, ref RoutedEventContext context)
         {
-            OnButtonClick(MessageBoxResult.Cancel);
+            OnButtonClick(sender, ref context, MessageBoxResult.Cancel);
         }
 
         /// <summary>
@@ -82,7 +77,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="context"></param>
         protected virtual void OnYesButtonClick(Control sender, ref RoutedEventContext context)
         {
-            OnButtonClick(MessageBoxResult.Yes);
+            OnButtonClick(sender, ref context, MessageBoxResult.Yes);
         }
 
         /// <summary>
@@ -92,7 +87,19 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// <param name="context"></param>
         protected virtual void OnNoButtonClick(Control sender, ref RoutedEventContext context)
         {
-            OnButtonClick(MessageBoxResult.No);
+            OnButtonClick(sender, ref context, MessageBoxResult.No);
+        }
+
+        /// <summary>
+        /// ボタンがクリックされると呼びだされます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="context"></param>
+        /// <param name="result"></param>
+        protected virtual void OnButtonClick(Control sender, ref RoutedEventContext context, MessageBoxResult result)
+        {
+            Result = result;
+            Close();
         }
 
         protected void RegisterOKButton(Button button)
@@ -113,12 +120,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         protected void RegisterNoButton(Button button)
         {
             button.Click += new RoutedEventHandler(OnNoButtonClick);
-        }
-
-        void OnButtonClick(MessageBoxResult result)
-        {
-            Result = result;
-            Close();
         }
     }
 }

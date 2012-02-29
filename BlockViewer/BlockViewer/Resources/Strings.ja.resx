@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CancelLoadFileButton" xml:space="preserve">
+  <data name="CancelButton" xml:space="preserve">
     <value>やめる</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
@@ -141,9 +141,6 @@
   <data name="LoadFileButton" xml:space="preserve">
     <value>ロード</value>
   </data>
-  <data name="LoadThisFileButton" xml:space="preserve">
-    <value>ロード</value>
-  </data>
   <data name="MainMenuButton" xml:space="preserve">
     <value>メイン メニュー ([Y] キー)</value>
   </data>
@@ -152,6 +149,9 @@
   </data>
   <data name="NoFileError" xml:space="preserve">
     <value>ストレージ に ファイル が ありません。</value>
+  </data>
+  <data name="OKButton" xml:space="preserve">
+    <value>OK</value>
   </data>
   <data name="OpenFileConfirmation" xml:space="preserve">
     <value>この ファイル を ひらきますか？</value>
