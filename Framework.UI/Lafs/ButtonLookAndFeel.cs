@@ -16,6 +16,11 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         public Texture2D FocusTexture { get; set; }
 
         /// <summary>
+        /// Control にマウスがある場合に描画する Texture2D を取得または設定します。
+        /// </summary>
+        public Texture2D MouseOverTexture { get; set; }
+
+        /// <summary>
         /// Texture2D の描画で着色する色を取得します。
         /// </summary>
         public Color Color { get; set; }
@@ -33,6 +38,9 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         {
             if (FocusTexture != null && control.Focused)
                 drawContext.DrawTexture(new Rect(control.RenderSize), FocusTexture, Color);
+
+            if (MouseOverTexture != null && control.MouseOver)
+                drawContext.DrawTexture(new Rect(control.RenderSize), MouseOverTexture, Color);
         }
     }
 }

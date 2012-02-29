@@ -62,7 +62,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             source.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
             source.LookAndFeelMap[typeof(Button)] = new ButtonLookAndFeel
             {
-                FocusTexture = Content.Load<Texture2D>("UI/Focus")
+                FocusTexture = Content.Load<Texture2D>("UI/Focus"),
+                MouseOverTexture = Content.Load<Texture2D>("UI/MouseOver")
             };
 
             LookAndFeelSource = source;
