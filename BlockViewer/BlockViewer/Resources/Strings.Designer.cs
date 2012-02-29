@@ -61,20 +61,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Cancel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CancelLoadFileButton {
+            get {
+                return ResourceManager.GetString("CancelLoadFileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Close に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CloseButton {
             get {
                 return ResourceManager.GetString("CloseButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Confirmation に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string ConfirmationTitle {
-            get {
-                return ResourceManager.GetString("ConfirmationTitle", resourceCulture);
             }
         }
         
@@ -138,6 +138,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string LoadFileButton {
             get {
                 return ResourceManager.GetString("LoadFileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Load に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LoadThisFileButton {
+            get {
+                return ResourceManager.GetString("LoadThisFileButton", resourceCulture);
             }
         }
         

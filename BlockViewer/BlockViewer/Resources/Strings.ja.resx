@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CancelLoadFileButton" xml:space="preserve">
+    <value>やめる</value>
+  </data>
   <data name="CloseButton" xml:space="preserve">
     <value>とじる</value>
-  </data>
-  <data name="ConfirmationTitle" xml:space="preserve">
-    <value>かくにん</value>
   </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
@@ -139,6 +139,9 @@
     <value>にほんご</value>
   </data>
   <data name="LoadFileButton" xml:space="preserve">
+    <value>ロード</value>
+  </data>
+  <data name="LoadThisFileButton" xml:space="preserve">
     <value>ロード</value>
   </data>
   <data name="MainMenuButton" xml:space="preserve">

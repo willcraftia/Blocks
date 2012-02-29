@@ -54,12 +54,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(title);
 
-            var separator = new Image(screen)
-            {
-                Texture = screen.Content.Load<Texture2D>("UI/Separator"),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Margin = new Thickness(0, 0, 0, 4)
-            };
+            var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
             var loadButton = CreateMainMenuButton(screen, Strings.LoadFileButton);

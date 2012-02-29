@@ -11,35 +11,46 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>88 Zen</FontName>
-    <!--<FontName>ゆな字P</FontName>-->
-    <!--<FontName>FAMania</FontName>-->
-
     <!--
     Size is a float value, measured in points. Modify this value to change
     the size of the font.
     -->
-    <Size>12</Size>
-    <!--<Size>12</Size>-->
-    <!--<Size>8</Size>-->
-
     <!--
     Spacing is a float value, measured in pixels. Modify this value to change
     the amount of spacing in between characters.
     -->
-    <Spacing>0</Spacing>
-
     <!--
     UseKerning controls the layout of the font. If this value is true, kerning information
     will be used when placing characters.
     -->
-    <UseKerning>true</UseKerning>
-
     <!--
     Style controls the style of the font. Valid entries are "Regular", "Bold", "Italic",
     and "Bold, Italic", and are case sensitive.
     -->
-    <Style>Bold</Style>
+
+    <!--<FontName>梅UIゴシック</FontName>
+    <Size>14</Size>
+    <Spacing>0</Spacing>
+    <UseKerning>true</UseKerning>
+    <Style>Regular</Style>-->
+
+    <FontName>88 Zen</FontName>
+    <Size>12</Size>
+    <Spacing>0</Spacing>
+    <UseKerning>true</UseKerning>
+    <Style>Regular</Style>
+
+    <!--<FontName>ゆな字P</FontName>
+    <Size>16</Size>
+    <Spacing>0</Spacing>
+    <UseKerning>true</UseKerning>
+    <Style>Bold</Style>-->
+
+    <!--<FontName>FAMania</FontName>
+    <Size>12</Size>
+    <Spacing>0</Spacing>
+    <UseKerning>true</UseKerning>
+    <Style>Regular</Style>-->
 
     <!--
     If you uncomment this line, the default character will be substituted if you draw

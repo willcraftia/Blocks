@@ -54,18 +54,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             ShadowOffset = new Vector2(4);
             Padding = new Thickness(16);
 
-            var basePanel = new StackPanel(screen)
+            var stackPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            Content = basePanel;
+            Content = stackPanel;
 
             var pageButtonsPanel = new StackPanel(screen)
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            basePanel.Children.Add(pageButtonsPanel);
+            stackPanel.Children.Add(pageButtonsPanel);
 
             var previousePageButton = new Button(screen)
             {
@@ -96,7 +96,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Orientation = Orientation.Vertical,
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            basePanel.Children.Add(fileNameListPanel);
+            stackPanel.Children.Add(fileNameListPanel);
 
             fileNameButtons = new TextButton[listSize];
             for (int i = 0; i < listSize; i++)
@@ -116,6 +116,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
                 fileNameListPanel.Children.Add(fileNameButtons[i]);
             }
+
+            var separator = ControlUtil.CreateDefaultSeparator(screen);
+            stackPanel.Children.Add(separator);
+
+            var loadButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.LoadThisFileButton);
+            stackPanel.Children.Add(loadButton);
+
+            var cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelLoadFileButton);
+            stackPanel.Children.Add(cancelButton);
 
             const float windowWidth = 320;
 
@@ -191,6 +200,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Message = new TextBlock(Screen)
                     {
                         Text = Strings.OpenFileConfirmation,
+                        HorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black,
                         ShadowOffset = new Vector2(2)
@@ -229,6 +239,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Message = new TextBlock(Screen)
                     {
                         Text = Strings.NoFileError,
+                        HorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black,
                         ShadowOffset = new Vector2(2)

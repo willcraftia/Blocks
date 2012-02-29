@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -12,13 +13,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public static class ControlUtil
     {
+        const float menuButtonHeight = 32;
+
+        const float dialogButtonHeight = 32;
+
         public static Button CreateDefaultMenuButton(Screen screen, String text)
         {
-            float buttonHeight = 32;
-
             var button = new Button(screen)
             {
-                Height = buttonHeight,
+                Height = menuButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Padding = new Thickness(4),
 
@@ -36,10 +39,43 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             return button;
         }
 
+        public static Button CreateDefaultDialogButton(Screen screen, String text)
+        {
+            var button = new Button(screen)
+            {
+                Height = menuButtonHeight,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Padding = new Thickness(4),
+
+                Content = new TextBlock(screen)
+                {
+                    Text = text,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    ShadowOffset = new Vector2(2)
+                }
+            };
+
+            SetDefaultBehavior(button);
+
+            return button;
+        }
+
+        public static Image CreateDefaultSeparator(Screen screen)
+        {
+            return new Image(screen)
+            {
+                Texture = screen.Content.Load<Texture2D>("UI/Separator"),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 8, 0, 4)
+            };
+        }
+
         public static void SetDefaultBehavior(Button button)
         {
             float focusedTextOpacity = 1;
-            float defocusedTextOpacity = 0.5f;
+            float defocusedTextOpacity = 1;
 
             button.Content.Opacity = defocusedTextOpacity;
 
