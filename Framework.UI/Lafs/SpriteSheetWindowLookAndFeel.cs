@@ -24,20 +24,19 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         //
         //----------------------------------------------------------------
 
-        public ISpriteSheetSource SpriteSheetSource { get; set; }
+        public SpriteSheet WindowSpriteSheet { get; set; }
+
+        public SpriteSheet WindowShadowSpriteSheet { get; set; }
 
         public virtual void Draw(Control control, IDrawContext drawContext)
         {
             var window = control as Window;
 
-            var windowSpriteSheet = SpriteSheetSource.GetSpriteSheet("Window");
-            var shadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("WindowShadow");
+            if (WindowShadowSpriteSheet != null && window.ShadowOffset != Vector2.Zero)
+                DrawWindow(window, drawContext, WindowShadowSpriteSheet, Color.White, window.ShadowOffset);
 
-            if (shadowSpriteSheet != null && window.ShadowOffset != Vector2.Zero)
-                DrawWindow(window, drawContext, shadowSpriteSheet, Color.White, window.ShadowOffset);
-
-            if (windowSpriteSheet != null)
-                DrawWindow(window, drawContext, windowSpriteSheet, Color.White, Vector2.Zero);
+            if (WindowSpriteSheet != null)
+                DrawWindow(window, drawContext, WindowSpriteSheet, Color.White, Vector2.Zero);
         }
 
         protected virtual void DrawWindow(Window window, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Vector2 offset)

@@ -51,7 +51,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
             source.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
             {
-                SpriteSheetSource = spriteSheetSource
+                WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("Window"),
+                WindowShadowSpriteSheet = spriteSheetSource.GetSpriteSheet("WindowShadow")
             };
             source.LookAndFeelMap[typeof(MainMenuWindow)] = new TextureBackgroundLookAndFeel
             {

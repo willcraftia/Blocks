@@ -100,7 +100,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo
             spriteLookAndFeelSource.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
             spriteLookAndFeelSource.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
             {
-                SpriteSheetSource = spriteSheetSource
+                WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("Window"),
+                WindowShadowSpriteSheet = spriteSheetSource.GetSpriteSheet("WindowShadow")
             };
             spriteLookAndFeelSource.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
             spriteLookAndFeelSource.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();

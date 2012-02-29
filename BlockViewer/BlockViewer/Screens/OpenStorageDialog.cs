@@ -32,6 +32,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         // Show() 呼び出しのタイミングでファイルをキャッシュする前提。
         string[] fileNames;
 
+        TextBlock pageTextBlock;
+
         TextButton[] fileNameButtons;
 
         Button cancelButton;
@@ -63,13 +65,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var pageButtonsPanel = new StackPanel(screen)
+            var pageButtonPanel = new StackPanel(screen)
             {
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Right
             };
-            stackPanel.Children.Add(pageButtonsPanel);
+            stackPanel.Children.Add(pageButtonPanel);
 
-            var previousePageButton = new Button(screen)
+            var backPageButton = new Button(screen)
             {
                 Focusable = false,
                 Width = BlockViewerGame.SpriteSize,
@@ -79,9 +81,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowLeft")
                 }
             };
-            pageButtonsPanel.Children.Add(previousePageButton);
+            pageButtonPanel.Children.Add(backPageButton);
 
-            var nextPageButton = new Button(screen)
+            pageTextBlock = new TextBlock(screen)
+            {
+                Width = BlockViewerGame.SpriteSize * 2,
+                ForegroundColor = Color.White,
+                BackgroundColor = Color.Black,
+                ShadowOffset = new Vector2(2)
+            };
+            pageButtonPanel.Children.Add(pageTextBlock);
+
+            var forwardPageButton = new Button(screen)
             {
                 Focusable = false,
                 Width = BlockViewerGame.SpriteSize,
@@ -91,7 +102,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowRight")
                 }
             };
-            pageButtonsPanel.Children.Add(nextPageButton);
+            pageButtonPanel.Children.Add(forwardPageButton);
 
             var fileNameListPanel = new StackPanel(screen)
             {
@@ -162,7 +173,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 return;
             }
 
-            ReloadFileNameButtons();
+            ReloadPage();
 
             // 常に Cancel ボタンにフォーカスを設定します。
             cancelButton.Focus();
@@ -216,7 +227,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // 先頭を越えるならば末尾のページを設定します。
             if (currentPageIndex < 0) currentPageIndex = fileNames.Length / listSize;
 
-            ReloadFileNameButtons();
+            ReloadPage();
         }
 
         void ForwardPage()
@@ -225,7 +236,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // 末尾を越えるならば先頭のページを設定します。
             if (fileNames.Length / listSize < currentPageIndex) currentPageIndex = 0;
 
-            ReloadFileNameButtons();
+            ReloadPage();
         }
 
         void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
@@ -285,7 +296,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             noFileErrorDialog.Show();
         }
 
-        void ReloadFileNameButtons()
+        void ReloadPage()
         {
             // 状態を初期化します。
             for (int i = 0; i < listSize; i++)
@@ -320,6 +331,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     }
                 }
             }
+
+            var currentPageNo = currentPageIndex + 1;
+            var lastPageNo = fileNames.Length / listSize + 1;
+
+            pageTextBlock.Text = currentPageNo + "/" + lastPageNo;
         }
     }
 }

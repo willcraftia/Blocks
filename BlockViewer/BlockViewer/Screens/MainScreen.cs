@@ -59,10 +59,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
             var windowTexture = Content.Load<Texture2D>("UI/SpriteSheet/Window");
             var windowShadowTexture = windowShadowConverter.Convert(windowTexture);
+            var lodWindowTexture = Content.Load<Texture2D>("UI/SpriteSheet/LodWindow");
 
             spriteSheetSource = new DefaultSpriteSheetSource();
             spriteSheetSource.SpriteSheetMap["Window"] = new SpriteSheet(windowTemplate, windowTexture);
             spriteSheetSource.SpriteSheetMap["WindowShadow"] = new SpriteSheet(windowTemplate, windowShadowTexture);
+            spriteSheetSource.SpriteSheetMap["LodWindow"] = new SpriteSheet(windowTemplate, lodWindowTexture);
         }
 
         void InitializeLookAndFeelSource()
@@ -72,11 +74,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
             source.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
             {
-                SpriteSheetSource = spriteSheetSource
+                WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("Window"),
+                WindowShadowSpriteSheet = spriteSheetSource.GetSpriteSheet("WindowShadow")
             };
             source.LookAndFeelMap[typeof(MainMenuWindow)] = new TextureBackgroundLookAndFeel
             {
                 Texture = Content.Load<Texture2D>("UI/MainMenuWindow")
+            };
+            source.LookAndFeelMap[typeof(LodListWindow)] = new SpriteSheetWindowLookAndFeel
+            {
+                WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("LodWindow")
             };
             source.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
             source.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
