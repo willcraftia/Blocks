@@ -7,12 +7,11 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
 {
-    public class TextBlockLookAndFeel : DefaultLookAndFeel
+    public class DebugTextBlockLookAndFeel : ILookAndFeel
     {
-        public override void Draw(Control control, IDrawContext drawContext)
+        // I/F
+        public virtual void Draw(Control control, IDrawContext drawContext)
         {
-            base.Draw(control, drawContext);
-
             var textBlock = control as Controls.TextBlock;
             if (textBlock == null) return;
             if (string.IsNullOrEmpty(textBlock.Text)) return;

@@ -45,8 +45,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // TODO: テスト コード。
             mainViewModel.StoreSampleBlockMesh();
 
-            //Desktop.BackgroundColor = Color.MidnightBlue;
-
             var canvas = new Canvas(this);
             canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
             canvas.VerticalAlignment = VerticalAlignment.Stretch;

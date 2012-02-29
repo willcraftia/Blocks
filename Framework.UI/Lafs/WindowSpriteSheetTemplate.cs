@@ -7,7 +7,7 @@ using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     public sealed class WindowSpriteSheetTemplate : ISpriteSheetTemplate
     {

@@ -1,18 +1,14 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs
+namespace Willcraftia.Xna.Framework.UI
 {
-    /// <summary>
-    /// ILookAndFeelSource 実装の基礎を提供するクラスです。
-    /// </summary>
-    public abstract class LookAndFeelSourceBase : ILookAndFeelSource
+    public class DefaultLookAndFeelSource : ILookAndFeelSource
     {
         // I/F
         public bool Initialized { get; private set; }
@@ -23,13 +19,19 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         public Game Game { get; private set; }
 
         /// <summary>
+        /// Control の型をキーに ILookAndFeel を値とするマップを取得します。
+        /// </summary>
+        public Dictionary<Type, ILookAndFeel> LookAndFeelMap { get; private set; }
+
+        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="game">Game。</param>
-        protected LookAndFeelSourceBase(Game game)
+        public DefaultLookAndFeelSource(Game game)
         {
             if (game == null) throw new ArgumentNullException("game");
             Game = game;
+            LookAndFeelMap = new Dictionary<Type, ILookAndFeel>();
         }
 
         // I/F
@@ -41,7 +43,22 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         }
 
         // I/F
-        public abstract ILookAndFeel GetLookAndFeel(Control control);
+        public virtual ILookAndFeel GetLookAndFeel(Control control)
+        {
+            if (control == null) throw new ArgumentNullException("control");
+
+            var type = control.GetType();
+
+            ILookAndFeel lookAndFeel = null;
+            while (type != typeof(object))
+            {
+                if (LookAndFeelMap.TryGetValue(type, out lookAndFeel)) break;
+
+                type = type.BaseType;
+            }
+
+            return lookAndFeel;
+        }
 
         /// <summary>
         /// Initialize メソッドから呼び出されます。
@@ -63,7 +80,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
         
         bool disposed;
 
-        ~LookAndFeelSourceBase()
+        ~DefaultLookAndFeelSource()
         {
             Dispose(false);
         }

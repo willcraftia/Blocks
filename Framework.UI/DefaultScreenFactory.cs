@@ -119,8 +119,8 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void PopulateProperties(ScreenDefinition definition, Screen screen)
         {
             // デフォルトの SpriteFont を設定します。
-            // Screen の Font プロパティは、ScreenDefinition のプロパティ定義や、
-            // Screen の Initialize メソッド内で、独自の SpriteFont へオーバライドされる可能性があります。
+            // Screen.Font プロパティは、ScreenDefinition のプロパティ定義や、
+            // Screen.Initialize() 内で、独自の SpriteFont へオーバライドされる可能性があります。
             screen.Font = Font;
 
             // デフォルトの ILookAndFeelSource を設定します。

@@ -1,0 +1,23 @@
+﻿#region Using
+
+using System;
+using Microsoft.Xna.Framework;
+
+#endregion
+
+namespace Willcraftia.Xna.Framework.UI.Lafs.Debug
+{
+    public static class DebugLooAndFeelUtil
+    {
+        public static ILookAndFeelSource CreateLookAndFeelSource(Game game)
+        {
+            var source = new DefaultLookAndFeelSource(game);
+            
+            source.LookAndFeelMap[typeof(Control)] = new DefaultLookAndFeel();
+            source.LookAndFeelMap[typeof(Window)] = new DebugWindowLookAndFeel();
+            source.LookAndFeelMap[typeof(Controls.TextBlock)] = new DebugTextBlockLookAndFeel();
+            
+            return source;
+        }
+    }
+}

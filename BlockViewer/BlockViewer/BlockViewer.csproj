@@ -120,7 +120,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lafs\Sprite\ViewerButtonLookAndFeel.cs" />
+    <Compile Include="Lafs\ViewerButtonLookAndFeel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="BlockViewerGame.cs" />

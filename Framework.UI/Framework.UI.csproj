@@ -112,14 +112,17 @@
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />
     <Compile Include="Controls\TextButton.cs" />
+    <Compile Include="DefaultLookAndFeelSource.cs" />
     <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="FocusScope.cs" />
     <Compile Include="IFocusScopeControl.cs" />
-    <Compile Include="Lafs\Debug\TextBlockLookAndFeel.cs" />
-    <Compile Include="Lafs\Debug\WindowLookAndFeel.cs" />
-    <Compile Include="Lafs\Sprite\TextBlockLookAndFeel.cs" />
-    <Compile Include="Lafs\Sprite\WindowSpriteSheetTemplate.cs" />
+    <Compile Include="Lafs\Debug\DebugLooAndFeelUtil.cs" />
+    <Compile Include="Lafs\Debug\DebugTextBlockLookAndFeel.cs" />
+    <Compile Include="Lafs\Debug\DebugWindowLookAndFeel.cs" />
+    <Compile Include="Lafs\SpriteSheetLookAndFeel.cs" />
+    <Compile Include="Lafs\TextBlockLookAndFeel.cs" />
+    <Compile Include="Lafs\WindowSpriteSheetTemplate.cs" />
     <Compile Include="Resources\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -132,7 +135,6 @@
     <Compile Include="Desktop.cs" />
     <Compile Include="IDrawContext.cs" />
     <Compile Include="IScreenFactory.cs" />
-    <Compile Include="Lafs\LookAndFeelSourceBase.cs" />
     <Compile Include="Controls\Orientation.cs" />
     <Compile Include="Controls\StackPanel.cs" />
     <Compile Include="HorizontalAlignment.cs" />
@@ -140,7 +142,7 @@
     <Compile Include="ILookAndFeelSource.cs" />
     <Compile Include="Controls\Overlay.cs" />
     <Compile Include="Lafs\Debug\DefaultLookAndFeel.cs" />
-    <Compile Include="Lafs\Sprite\DesktopLookAndFeel.cs" />
+    <Compile Include="Lafs\DesktopLookAndFeel.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="IScreenFactoryAware.cs" />
     <Compile Include="ScreenDefinition.cs" />
@@ -156,12 +158,8 @@
     <Compile Include="Control.cs" />
     <Compile Include="ControlCollection.cs" />
     <Compile Include="Screen.cs" />
-    <Compile Include="Lafs\Debug\LookAndFeelBase.cs" />
-    <Compile Include="Lafs\Debug\DebugLookAndFeelSource.cs" />
-    <Compile Include="Lafs\Sprite\LookAndFeelBase.cs" />
-    <Compile Include="Lafs\Sprite\OverlayLookAndFeel.cs" />
-    <Compile Include="Lafs\Sprite\SpriteLookAndFeelSource.cs" />
-    <Compile Include="Lafs\Sprite\WindowLookAndFeel.cs" />
+    <Compile Include="Lafs\OverlayLookAndFeel.cs" />
+    <Compile Include="Lafs\SpriteSheetWindowLookAndFeel.cs" />
     <Compile Include="TextHelper.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="WindowCollection.cs" />

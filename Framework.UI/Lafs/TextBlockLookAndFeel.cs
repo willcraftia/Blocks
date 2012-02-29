@@ -2,16 +2,17 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Willcraftia.Xna.Framework.UI.Controls;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
-    public class TextBlockLookAndFeel : LookAndFeelBase
+    public class TextBlockLookAndFeel : ILookAndFeel
     {
-        public override void Draw(Control control, IDrawContext drawContext)
+        public virtual void Draw(Control control, IDrawContext drawContext)
         {
-            var textBlock = control as Controls.TextBlock;
+            var textBlock = control as TextBlock;
             if (textBlock == null) return;
             if (string.IsNullOrEmpty(textBlock.Text)) return;
 

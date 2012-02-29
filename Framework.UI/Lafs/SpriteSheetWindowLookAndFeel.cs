@@ -7,44 +7,31 @@ using Willcraftia.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     /// <summary>
     /// Window の Look and Feel です。
     /// </summary>
-    public class WindowLookAndFeel : LookAndFeelBase
+    public class SpriteSheetWindowLookAndFeel : SpriteSheetLookAndFeel
     {
-        /// <summary>
-        /// Window の SpriteSheet。
-        /// </summary>
-        SpriteSheet windowSpriteSheet;
+        //----------------------------------------------------------------
+        // TODO test code
+        //
+        //System.Net.WebClient webClient = new System.Net.WebClient();
+        //webClient.DownloadFile("http://blocks/Framework.UI.Demo/Framework.UI.DemoContent/UI/Sprite/WindowTopLeft.png", "Content/UI/Sprite/WindowTopLeft.png");
 
-        /// <summary>
-        /// Window の影の SpriteSheet。
-        /// </summary>
-        SpriteSheet shadowSpriteSheet;
+        //topLeft = Texture2D.FromStream(Source.GraphicsDevice, new System.IO.FileStream("Content/UI/Sprite/WindowTopLeft.png", System.IO.FileMode.Open));
+        //
+        //----------------------------------------------------------------
 
-        protected override void LoadContent()
-        {
-            //----------------------------------------------------------------
-            // TODO test code
-            //
-            //System.Net.WebClient webClient = new System.Net.WebClient();
-            //webClient.DownloadFile("http://blocks/Framework.UI.Demo/Framework.UI.DemoContent/UI/Sprite/WindowTopLeft.png", "Content/UI/Sprite/WindowTopLeft.png");
-
-            //topLeft = Texture2D.FromStream(Source.GraphicsDevice, new System.IO.FileStream("Content/UI/Sprite/WindowTopLeft.png", System.IO.FileMode.Open));
-            //
-            //----------------------------------------------------------------
-
-            windowSpriteSheet = SpriteSheetSource.GetSpriteSheet("Window");
-            shadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("WindowShadow");
-
-            base.LoadContent();
-        }
+        public SpriteSheetWindowLookAndFeel(ISpriteSheetSource spriteSheetSource) : base(spriteSheetSource) { }
 
         public override void Draw(Control control, IDrawContext drawContext)
         {
             var window = control as Window;
+
+            var windowSpriteSheet = SpriteSheetSource.GetSpriteSheet("Window");
+            var shadowSpriteSheet = SpriteSheetSource.GetSpriteSheet("WindowShadow");
 
             if (shadowSpriteSheet != null && window.ShadowOffset != Vector2.Zero)
                 DrawWindow(window, drawContext, shadowSpriteSheet, Color.White, window.ShadowOffset);
@@ -53,7 +40,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
                 DrawWindow(window, drawContext, windowSpriteSheet, Color.White, Vector2.Zero);
         }
 
-        protected void DrawWindow(Window window, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Vector2 offset)
+        protected virtual void DrawWindow(Window window, IDrawContext drawContext, SpriteSheet spriteSheet, Color color, Vector2 offset)
         {
             var renderSize = window.RenderSize;
             var texture = spriteSheet.Texture;

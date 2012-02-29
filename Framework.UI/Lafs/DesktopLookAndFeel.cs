@@ -4,14 +4,14 @@ using System;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.UI.Lafs.Sprite
+namespace Willcraftia.Xna.Framework.UI.Lafs
 {
     /// <summary>
     /// Desktop の Look and Feel です。
     /// </summary>
-    public sealed class DesktopLookAndFeel : LookAndFeelBase
+    public class DesktopLookAndFeel : ILookAndFeel
     {
-        public override void Draw(Control control, IDrawContext drawContext)
+        public virtual void Draw(Control control, IDrawContext drawContext)
         {
             drawContext.DrawRectangle(new Rect(control.RenderSize), control.BackgroundColor);
         }
