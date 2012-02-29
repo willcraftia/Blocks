@@ -81,6 +81,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowLeft")
                 }
             };
+            backPageButton.Click += (Control s, ref RoutedEventContext c) => BackPage();
             pageButtonPanel.Children.Add(backPageButton);
 
             pageTextBlock = new TextBlock(screen)
@@ -102,6 +103,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowRight")
                 }
             };
+            forwardPageButton.Click += (Control s, ref RoutedEventContext c) => ForwardPage();
             pageButtonPanel.Children.Add(forwardPageButton);
 
             var fileNameListPanel = new StackPanel(screen)
