@@ -34,6 +34,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         LodWindow lodListWindow;
 
+        bool canHandleKey;
+
         public MainScreen(Game game)
             : base(game)
         {
@@ -174,10 +176,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 overlay.Close();
                 // Desktop をアクティブにしておきます。
                 Desktop.Activate();
+                // キー操作が行えるようにします。
+                canHandleKey = true;
             };
             overlay.Show();
 
-            Root.PreviewKeyDown += new RoutedEventHandler(OnRootPreviewKeyDown);
+            Root.KeyDown += new RoutedEventHandler(OnKeyDown);
 
             // BlockMeshView にフォーカスを設定しておきます。
             blockMeshView.Focus();
@@ -186,11 +190,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Desktop.Activate();
         }
 
-        void OnRootPreviewKeyDown(Control sender, ref RoutedEventContext context)
+        void OnKeyDown(Control sender, ref RoutedEventContext context)
         {
+            // フェード効果が終わるまでキー操作は無効になります。
+            if (!canHandleKey) return;
+
             if (KeyboardDevice.IsKeyPressed(Keys.Y))
             {
-                mainMenuWindow.Show();
+                if (!mainMenuWindow.Visible) mainMenuWindow.Show();
             }
         }
     }

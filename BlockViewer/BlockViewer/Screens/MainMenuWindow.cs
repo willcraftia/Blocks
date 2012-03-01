@@ -107,18 +107,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeButton.Focus();
         }
 
+        public override void Show()
+        {
+            openAnimation.Enabled = true;
+
+            base.Show();
+        }
+
         public override void Close()
         {
             // Close 処理はまだ呼び出さずに closeAnimation を実行します。
             closeAnimation.Enabled = true;
-        }
-
-        protected override void OnVisibleChanged()
-        {
-            // 表示されたら openAnimation を実行します。
-            if (Visible) openAnimation.Enabled = true;
-
-            base.OnVisibleChanged();
         }
 
         protected override void OnKeyDown(ref RoutedEventContext context)
@@ -171,19 +170,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var overlay = new FadeOverlay(Screen);
             overlay.OpacityAnimation.To = 1;
             overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(1);
-            overlay.OpacityAnimation.Completed += new EventHandler(OnExitAnimationCompleted);
+            overlay.OpacityAnimation.Completed += (s, e) => Screen.ShowScreen(ScreenNames.Start);
             overlay.Show();
         }
 
         void OnCloseButtonClick(Control sender, ref RoutedEventContext context)
         {
             Close();
-        }
-
-        void OnExitAnimationCompleted(object sender, EventArgs e)
-        {
-            var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-            uiService.Show(ScreenNames.Start);
         }
 
         Button CreateMainMenuButton(Screen screen, String text)

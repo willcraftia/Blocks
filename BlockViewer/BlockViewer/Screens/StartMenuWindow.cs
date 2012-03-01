@@ -18,6 +18,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     /// </summary>
     public sealed class StartMenuWindow : Window
     {
+        SelectLanguageDialog selectLanguageDialog;
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -57,18 +59,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var overlay = new FadeOverlay(Screen);
             overlay.OpacityAnimation.To = 1;
             overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(0.5d);
-            overlay.OpacityAnimation.Completed += (s, e) =>
-            {
-                var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-                uiService.Show(ScreenNames.Main);
-            };
+            overlay.OpacityAnimation.Completed += (s, e) => Screen.ShowScreen(ScreenNames.Main);
             overlay.Show();
         }
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var dialog = new SelectLanguageDialog(Screen);
-            dialog.Show();
+            if (selectLanguageDialog == null)
+                selectLanguageDialog = new SelectLanguageDialog(Screen);
+
+            selectLanguageDialog.Show();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)

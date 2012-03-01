@@ -180,6 +180,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // 常に Cancel ボタンにフォーカスを設定します。
             cancelButton.Focus();
 
+            openAnimation.Enabled = true;
+
             base.Show();
         }
 
@@ -187,14 +189,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             // Close 処理はまだ呼び出さずに closeAnimation を実行します。
             closeAnimation.Enabled = true;
-        }
-
-        protected override void OnVisibleChanged()
-        {
-            // 表示されたら openAnimation を実行します。
-            if (Visible) openAnimation.Enabled = true;
-
-            base.OnVisibleChanged();
         }
 
         protected override void OnKeyDown(ref RoutedEventContext context)

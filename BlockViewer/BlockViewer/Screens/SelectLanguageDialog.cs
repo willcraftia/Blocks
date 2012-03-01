@@ -17,11 +17,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class SelectLanguageDialog : OverlayDialogBase
     {
-        Button setDefaultButton;
+        static CultureInfo cultureJa = new CultureInfo("ja");
 
-        Button setJaButton;
-
-        Button setEnButton;
+        static CultureInfo cultureEn = new CultureInfo("en");
 
         FloatLerpAnimation openAnimation;
 
@@ -32,6 +30,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Width = 0;
             ShadowOffset = new Vector2(4);
             Padding = new Thickness(16);
+
+            Overlay.Opacity = 0.5f;
 
             var stackPanel = new StackPanel(screen)
             {
@@ -52,25 +52,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(title);
 
-            var separator = new Image(screen)
-            {
-                Texture = screen.Content.Load<Texture2D>("UI/Separator"),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Margin = new Thickness(0, 0, 0, 4)
-            };
+            var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            setDefaultButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.DefaultButton);
-            setDefaultButton.Click += new RoutedEventHandler(OnButtonClick);
-            stackPanel.Children.Add(setDefaultButton);
+            var jaButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.JaButton);
+            jaButton.Click += new RoutedEventHandler(OnJaButtonClick);
+            stackPanel.Children.Add(jaButton);
 
-            setJaButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.JaButton);
-            setJaButton.Click += new RoutedEventHandler(OnButtonClick);
-            stackPanel.Children.Add(setJaButton);
+            var enButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.EnButton);
+            enButton.Click += new RoutedEventHandler(OnEnButtonClick);
+            stackPanel.Children.Add(enButton);
 
-            setEnButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.EnButton);
-            setEnButton.Click += new RoutedEventHandler(OnButtonClick);
-            stackPanel.Children.Add(setEnButton);
+            var defaultButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.DefaultButton);
+            defaultButton.Click += new RoutedEventHandler(OnDefaultButtonClick);
+            stackPanel.Children.Add(defaultButton);
+
+            var cancelButon = ControlUtil.CreateDefaultMenuButton(screen, Strings.CancelButton);
+            cancelButon.Click += (Control s, ref RoutedEventContext c) => Close();
+            stackPanel.Children.Add(cancelButon);
 
             openAnimation = new FloatLerpAnimation
             {
@@ -81,43 +80,34 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Animations.Add(openAnimation);
 
-            // デフォルト フォーカス。
-            setDefaultButton.Focus();
-
-            Overlay.Opacity = 0.5f;
+            cancelButon.Focus();
         }
 
-        protected override void OnVisibleChanged()
+        public override void Show()
         {
-            // 表示されたら openAnimation を実行します。
-            if (Visible) openAnimation.Enabled = true;
-
-            base.OnVisibleChanged();
+            openAnimation.Enabled = true;
+            base.Show();
         }
 
-        void OnButtonClick(Control sender, ref RoutedEventContext context)
+        void OnDefaultButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var button = sender as Button;
+            Complete(CultureInfo.CurrentCulture);
+        }
 
-            CultureInfo culture = null;
+        void OnJaButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            Complete(cultureJa);
+        }
 
-            if (button == setDefaultButton)
-            {
-                culture = CultureInfo.CurrentCulture;
-            }
-            else if (button == setJaButton)
-            {
-                culture = new CultureInfo("ja");
-            }
-            else if (button == setEnButton)
-            {
-                culture = new CultureInfo("en");
-            }
+        void OnEnButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            Complete(cultureEn);
+        }
 
-            if (culture != null) Strings.Culture  = culture;
-
-            var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-            uiService.Show(ScreenNames.Start);
+        void Complete(CultureInfo culture)
+        {
+            Strings.Culture = culture;
+            Screen.ShowScreen(ScreenNames.Start);
         }
     }
 }

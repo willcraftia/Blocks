@@ -138,6 +138,18 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// screenName が示す Screen の表示を要求します。
+        /// </summary>
+        /// <param name="screenName">表示する Screen の名前。</param>
+        public void ShowScreen(String screenName)
+        {
+            if (screenName == null) throw new ArgumentNullException("screenName");
+
+            var uiService = Game.Services.GetRequiredService<IUIService>();
+            uiService.Show(screenName);
+        }
+
+        /// <summary>
         /// コンテンツをロードします。
         /// </summary>
         /// <remarks>
