@@ -46,7 +46,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             CameraDistance = 3.5f;
             CameraPositionYaw = MathHelper.PiOver4;
             CameraPositionPitch = -MathHelper.PiOver4 * 0.5f;
-            CameraMoveScale = 0.01f;
+            CameraMoveScale = 0.05f;
         }
 
         protected override void OnMouseMove(ref RoutedEventContext context)
@@ -66,8 +66,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                float dy = (float) (mouseState.X - mouseOffsetX) * CameraMoveScale;
-                float dp = (float) (mouseState.Y - mouseOffsetY) * CameraMoveScale;
+                float dy = (float) (Math.Sign(mouseState.X - mouseOffsetX)) * CameraMoveScale;
+                float dp = (float) (Math.Sign(mouseState.Y - mouseOffsetY)) * CameraMoveScale;
 
                 CameraPositionYaw += dy;
                 CameraPositionPitch += dp;
