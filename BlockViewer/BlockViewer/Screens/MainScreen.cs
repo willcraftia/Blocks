@@ -158,36 +158,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 mainMenuButton.Visible = !mainMenuWindow.Visible;
             };
-            //mainMenuWindow.Show();
 
             lodListWindow = new LodWindow(this)
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Bottom
             };
-            //lodListWindow.Show();
 
-            var startEffectOverlay = new Overlay(this)
+            var overlay = new FadeOverlay(this);
+            overlay.OpacityAnimation.From = 1;
+            overlay.OpacityAnimation.To = 0;
+            overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(1);
+            overlay.OpacityAnimation.Completed += (s, e) =>
             {
-                Opacity = 1
-            };
-            startEffectOverlay.Show();
-
-            var startEffectOverlay_opacityAnimation = new FloatLerpAnimation
-            {
-                Action = (current) => { startEffectOverlay.Opacity = current; },
-                From = 1,
-                To = 0,
-                Duration = TimeSpan.FromSeconds(0.5d),
-                Enabled = true
-            };
-            startEffectOverlay_opacityAnimation.Completed += (s, e) =>
-            {
-                startEffectOverlay.Close();
+                overlay.Close();
                 // Desktop をアクティブにしておきます。
                 Desktop.Activate();
             };
-            startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
+            overlay.Show();
 
             Root.PreviewKeyDown += new RoutedEventHandler(OnRootPreviewKeyDown);
 

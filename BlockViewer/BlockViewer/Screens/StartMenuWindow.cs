@@ -54,22 +54,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnStartButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var overlay = new Overlay(Screen);
-            overlay.Show();
-
-            var opacityAnimation = new FloatLerpAnimation
-            {
-                Action = (current) => { overlay.Opacity = current; },
-                To = 1,
-                Duration = TimeSpan.FromSeconds(0.5d),
-                Enabled = true
-            };
-            opacityAnimation.Completed += (s, e) =>
+            var overlay = new FadeOverlay(Screen);
+            overlay.OpacityAnimation.To = 1;
+            overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(0.5d);
+            overlay.OpacityAnimation.Completed += (s, e) =>
             {
                 var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
                 uiService.Show(ScreenNames.Main);
             };
-            Animations.Add(opacityAnimation);
+            overlay.Show();
         }
 
         void OnLanguageSettingButtonClick(Control sender, ref RoutedEventContext context)
@@ -80,18 +73,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var overlay = new Overlay(Screen);
+            var overlay = new FadeOverlay(Screen);
+            overlay.OpacityAnimation.To = 1;
+            overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(0.5d);
+            overlay.OpacityAnimation.Completed += (s, e) => Screen.Game.Exit();
             overlay.Show();
-
-            var opacityAnimation = new FloatLerpAnimation
-            {
-                Action = (current) => { overlay.Opacity = current; },
-                To = 1,
-                Duration = TimeSpan.FromSeconds(0.5d),
-                Enabled = true
-            };
-            opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
-            Animations.Add(opacityAnimation);
         }
     }
 }

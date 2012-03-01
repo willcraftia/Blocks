@@ -168,18 +168,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var overlay = new Overlay(Screen);
+            var overlay = new FadeOverlay(Screen);
+            overlay.OpacityAnimation.To = 1;
+            overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(1);
+            overlay.OpacityAnimation.Completed += new EventHandler(OnExitAnimationCompleted);
             overlay.Show();
-
-            var opacityAnimation = new FloatLerpAnimation
-            {
-                Action = (current) => { overlay.Opacity = current; },
-                To = 1,
-                Duration = TimeSpan.FromSeconds(0.5d),
-                Enabled = true
-            };
-            opacityAnimation.Completed += new EventHandler(OnExitAnimationCompleted);
-            Animations.Add(opacityAnimation);
         }
 
         void OnCloseButtonClick(Control sender, ref RoutedEventContext context)
