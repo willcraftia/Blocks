@@ -56,9 +56,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(textBlock);
 
-            var BlockMeshView = new BlockMeshView(Screen, new BlockMeshViewModel(mainViewModel, levelOfDetail));
-            BlockMeshView.Width = 32 * 2;
-            BlockMeshView.Height = 32 * 2;
+            var viewModel = new BlockMeshViewModel(mainViewModel)
+            {
+                LevelOfDetail = levelOfDetail
+            };
+            var BlockMeshView = new BlockMeshView(Screen)
+            {
+                Width = 32 * 2,
+                Height = 32 * 2,
+
+                DataContext = new BlockMeshViewModel(mainViewModel)
+                {
+                    LevelOfDetail = levelOfDetail
+                }
+            };
             stackPanel.Children.Add(BlockMeshView);
 
             return stackPanel;

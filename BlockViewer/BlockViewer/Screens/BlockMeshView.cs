@@ -21,33 +21,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         
         int mouseOffsetY;
 
-        ChaseView view = new ChaseView();
+        BlockMeshViewModel ViewModel
+        {
+            get { return DataContext as BlockMeshViewModel; }
+        }
 
-        PerspectiveFov projection = new PerspectiveFov();
-
-        public float CameraMoveScale { get; set; }
-
-        public bool GridVisible { get; set; }
-
-        public bool CameraMovable { get; set; }
-
-        public BlockMeshView(Screen screen, BlockMeshViewModel viewModel)
+        public BlockMeshView(Screen screen)
             : base(screen)
         {
-            DataContext = viewModel;
-
-            view.Distance = 3.5f;
-            view.Angle = new Vector2(-MathHelper.PiOver4 * 0.5f, MathHelper.PiOver4);
-
-            projection.NearPlaneDistance = 0.01f;
-            projection.FarPlaneDistance = 10;
-
-            CameraMoveScale = 0.05f;
         }
 
         protected override void OnMouseMove(ref RoutedEventContext context)
         {
-            if (!CameraMovable) return;
+            if (!ViewModel.CameraMovable) return;
 
             var mouseDevice = Screen.MouseDevice;
             var mouseState = mouseDevice.MouseState;
@@ -62,16 +48,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                float dy = (float) (Math.Sign(mouseState.X - mouseOffsetX)) * CameraMoveScale;
-                float dp = (float) (Math.Sign(mouseState.Y - mouseOffsetY)) * CameraMoveScale;
-
-                // カメラの位置の角度を更新します。
-                var angle = view.Angle;
-                angle.X += dp;
-                angle.Y += dy;
-                angle.X = MathHelper.WrapAngle(angle.X);
-                angle.Y = MathHelper.WrapAngle(angle.Y);
-                view.Angle = angle;
+                // 指定の角度方向へカメラを移動させます。
+                var angleSign = new Vector2
+                {
+                    X = Math.Sign(mouseState.Y - mouseOffsetY),
+                    Y = Math.Sign(mouseState.X - mouseOffsetX)
+                };
+                ViewModel.MoveCamera(angleSign);
 
                 mouseOffsetX = mouseState.X;
                 mouseOffsetY = mouseState.Y;
@@ -80,17 +63,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             base.OnMouseMove(ref context);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
         public override void Draw(GameTime gameTime, IDrawContext drawContext)
         {
             base.Draw(gameTime, drawContext);
 
             var bounds = new Rect(0, 0, RenderSize.Width, RenderSize.Height);
-
             using (var draw3d = drawContext.BeginDraw3D())
             {
                 using (var localViewport = drawContext.BeginViewport(bounds))
@@ -109,15 +86,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             graphicsDevice.BlendState = BlendState.Opaque;
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            // View 行列を更新します。
-            view.Update();
-
-            // Projection 行列を更新します。
-            projection.AspectRatio = graphicsDevice.Viewport.AspectRatio;
-            projection.Update();
+            // カメラを更新します。
+            ViewModel.SetAspectRatio(graphicsDevice.Viewport.AspectRatio);
+            ViewModel.UpdateCamera();
 
             // GridBlockMesh を描画します。
-            if (GridVisible) DrawGridBlockMesh();
+            if (ViewModel.GridVisible) DrawGridBlockMesh();
 
             // BlockMesh を描画します。
             DrawBlockMesh();
@@ -125,31 +99,28 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void DrawGridBlockMesh()
         {
-            var viewModel = DataContext as BlockMeshViewModel;
-
             // GridBlockMesh 描画用 Effect に View と Projection を設定します。
-            var effect = viewModel.MainViewModel.GridBlockMeshEffect;
-            effect.View = view.Matrix;
-            effect.Projection = projection.Matrix;
+            var effect = ViewModel.MainViewModel.GridBlockMeshEffect;
+            effect.View = ViewModel.View.Matrix;
+            effect.Projection = ViewModel.Projection.Matrix;
 
             // GridBlockMesh の面の描画の有無を決定します。
-            var mesh = viewModel.MainViewModel.GridBlockMesh;
-            mesh.SetVisibilities(view.Position);
+            var mesh = ViewModel.MainViewModel.GridBlockMesh;
+            mesh.SetVisibilities(ViewModel.View.Position);
             mesh.Draw(effect);
         }
 
         void DrawBlockMesh()
         {
-            var viewModel = DataContext as BlockMeshViewModel;
-
-            var mesh = viewModel.MainViewModel.BlockMesh;
+            var mesh = ViewModel.MainViewModel.BlockMesh;
             if (mesh == null) return;
 
-            mesh.LevelOfDetail = viewModel.LevelOfDetail;
+            mesh.LevelOfDetail = ViewModel.LevelOfDetail;
+
             foreach (var effect in mesh.Effects)
             {
-                effect.View = view.Matrix;
-                effect.Projection = projection.Matrix;
+                effect.View = ViewModel.View.Matrix;
+                effect.Projection = ViewModel.Projection.Matrix;
             }
 
             mesh.Draw();

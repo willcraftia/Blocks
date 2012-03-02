@@ -60,7 +60,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             InitializeStorageContainer();
 
-            BlockMeshViewModel = new BlockMeshViewModel(this, 0);
+            BlockMeshViewModel = new BlockMeshViewModel(this)
+            {
+                CameraMovable = true,
+                GridVisible = true
+            };
             OpenStorageViewModel = new OpenStorageViewModel(StorageContainer);
         }
 

@@ -122,13 +122,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             canvas.VerticalAlignment = VerticalAlignment.Stretch;
             Desktop.Content = canvas;
 
-            blockMeshView = new BlockMeshView(this, mainViewModel.BlockMeshViewModel)
+            blockMeshView = new BlockMeshView(this)
             {
                 Width = Desktop.Width,
                 Height = Desktop.Height,
                 Focusable = true,
-                GridVisible = true,
-                CameraMovable = true
+                DataContext = mainViewModel.BlockMeshViewModel
             };
             canvas.Children.Add(blockMeshView);
 

@@ -94,6 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cameras\PerspectiveFov.cs" />
+    <Compile Include="Cameras\ProjectionBase.cs" />
+    <Compile Include="Cameras\ViewBase.cs" />
     <Compile Include="Projection.cs" />
     <Compile Include="View.cs" />
     <Compile Include="Cameras\ChaseView.cs" />

@@ -10,7 +10,7 @@ namespace Willcraftia.Xna.Framework.Cameras
     /// <summary>
     /// 視野に基づいた Perspective 行列を管理するクラスです。
     /// </summary>
-    public sealed class PerspectiveFov : Projection
+    public sealed class PerspectiveFov : ProjectionBase
     {
         /// <summary>
         /// デフォルトの FOV。

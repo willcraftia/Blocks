@@ -12,7 +12,7 @@ namespace Willcraftia.Xna.Framework.Cameras
     /// カメラは常に注視点を向くため、その姿勢における Yaw/Pitch はカメラ位置から決定されます。
     /// 現時点ではカメラの姿勢の Roll を考慮する予定がないため、Roll には対応していません。
     /// </summary>
-    public class ChaseView : View
+    public class ChaseView : ViewBase
     {
         /// <summary>
         /// 球面の半径。
