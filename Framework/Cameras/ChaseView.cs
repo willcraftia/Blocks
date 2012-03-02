@@ -8,11 +8,11 @@ using Microsoft.Xna.Framework;
 namespace Willcraftia.Xna.Framework.Cameras
 {
     /// <summary>
-    /// 注視点を中心にした球面上を移動するカメラの CameraView です。
+    /// 注視点を中心にした球面上を移動するカメラの View 行列を管理するクラスです。
     /// カメラは常に注視点を向くため、その姿勢における Yaw/Pitch はカメラ位置から決定されます。
     /// 現時点ではカメラの姿勢の Roll を考慮する予定がないため、Roll には対応していません。
     /// </summary>
-    public class ChaseCameraView : CameraView
+    public class ChaseView : View
     {
         /// <summary>
         /// 球面の半径。
@@ -43,15 +43,6 @@ namespace Willcraftia.Xna.Framework.Cameras
         /// 位置算出のための移動行列。
         /// </summary>
         Matrix translation = Matrix.Identity;
-
-        /// <summary>
-        /// Matrix プロパティの値が有効であるかどうかを示す値を取得します。
-        /// Matrix プロパティの再計算を必要とするプロパティが変更された場合、
-        /// このプロパティが true に設定されます。
-        /// このプロパティが true の場合にのみ、
-        /// Update() メソッドは Matrix プロパティの再計算を行います。
-        /// </summary>
-        public bool MatrixDirty { get; private set; }
 
         /// <summary>
         /// 注視点からカメラまでの距離 (球面の半径) を取得または設定します。
@@ -103,11 +94,8 @@ namespace Willcraftia.Xna.Framework.Cameras
             }
         }
 
-        public override void Update()
+        protected override void UpdateOverride()
         {
-            // 行列の再計算が必要な場合にだけ更新します。
-            if (!MatrixDirty) return;
-
             // 変換行列を算出します。
             Matrix transform;
             Matrix.Multiply(ref scale, ref rotation, out transform);

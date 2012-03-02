@@ -21,9 +21,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         
         int mouseOffsetY;
 
-        ChaseCameraView cameraView = new ChaseCameraView();
+        ChaseView view = new ChaseView();
 
-        Matrix projection;
+        PerspectiveFov projection = new PerspectiveFov();
 
         public float CameraMoveScale { get; set; }
 
@@ -36,8 +36,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             DataContext = viewModel;
 
-            cameraView.Distance = 3.5f;
-            cameraView.Angle = new Vector2(-MathHelper.PiOver4 * 0.5f, MathHelper.PiOver4);
+            view.Distance = 3.5f;
+            view.Angle = new Vector2(-MathHelper.PiOver4 * 0.5f, MathHelper.PiOver4);
+
+            projection.NearPlaneDistance = 0.01f;
+            projection.FarPlaneDistance = 10;
 
             CameraMoveScale = 0.05f;
         }
@@ -63,12 +66,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 float dp = (float) (Math.Sign(mouseState.Y - mouseOffsetY)) * CameraMoveScale;
 
                 // カメラの位置の角度を更新します。
-                var angle = cameraView.Angle;
+                var angle = view.Angle;
                 angle.X += dp;
                 angle.Y += dy;
                 angle.X = MathHelper.WrapAngle(angle.X);
                 angle.Y = MathHelper.WrapAngle(angle.Y);
-                cameraView.Angle = angle;
+                view.Angle = angle;
 
                 mouseOffsetX = mouseState.X;
                 mouseOffsetY = mouseState.Y;
@@ -79,8 +82,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Update(GameTime gameTime)
         {
-            cameraView.Update();
-
             base.Update(gameTime);
         }
 
@@ -108,9 +109,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             graphicsDevice.BlendState = BlendState.Opaque;
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            // Projection 行列を算出します。
-            var aspect = ((float) RenderSize.Width / (float) RenderSize.Height);
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.01f, 10);
+            // View 行列を更新します。
+            view.Update();
+
+            // Projection 行列を更新します。
+            projection.AspectRatio = graphicsDevice.Viewport.AspectRatio;
+            projection.Update();
 
             // GridBlockMesh を描画します。
             if (GridVisible) DrawGridBlockMesh();
@@ -125,12 +129,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // GridBlockMesh 描画用 Effect に View と Projection を設定します。
             var effect = viewModel.MainViewModel.GridBlockMeshEffect;
-            effect.View = cameraView.Matrix;
-            effect.Projection = projection;
+            effect.View = view.Matrix;
+            effect.Projection = projection.Matrix;
 
             // GridBlockMesh の面の描画の有無を決定します。
             var mesh = viewModel.MainViewModel.GridBlockMesh;
-            mesh.SetVisibilities(cameraView.Position);
+            mesh.SetVisibilities(view.Position);
             mesh.Draw(effect);
         }
 
@@ -144,8 +148,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mesh.LevelOfDetail = viewModel.LevelOfDetail;
             foreach (var effect in mesh.Effects)
             {
-                effect.View = cameraView.Matrix;
-                effect.Projection = projection;
+                effect.View = view.Matrix;
+                effect.Projection = projection.Matrix;
             }
 
             mesh.Draw();

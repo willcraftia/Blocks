@@ -1,0 +1,100 @@
+﻿#region Using
+
+using System;
+using Microsoft.Xna.Framework;
+
+#endregion
+
+namespace Willcraftia.Xna.Framework
+{
+    /// <summary>
+    /// カメラの Projection 行列を管理するクラスです。
+    /// </summary>
+    public abstract class Projection
+    {
+        /// <summary>
+        /// 近くのビュー プレーンとの距離のデフォルト。
+        /// </summary>
+        public const float DefaultNearPlaneDistance = 0.1f;
+
+        /// <summary>
+        /// 遠くのビュー プレーンとの距離のデフォルト。
+        /// </summary>
+        public const float DefaultFarPlaneDistance = 1000.0f;
+
+        /// <summary>
+        /// 近くのビュー プレーンとの距離。
+        /// </summary>
+        float nearPlaneDistance = DefaultNearPlaneDistance;
+
+        /// <summary>
+        /// 遠くのビュー プレーンとの距離。
+        /// </summary>
+        float farPlaneDistance = DefaultFarPlaneDistance;
+
+        /// <summary>
+        /// カメラの Projection 行列。
+        /// Update メソッドで更新されます。
+        /// </summary>
+        public Matrix Matrix = Matrix.Identity;
+
+        /// <summary>
+        /// Matrix プロパティの値が有効であるかどうかを示す値を取得します。
+        /// Matrix プロパティの再計算を必要とするプロパティが変更されると、
+        /// このプロパティが true に設定されます。
+        /// このプロパティが true の場合にのみ、
+        /// Update メソッドは Matrix プロパティの再計算を行います。
+        /// サブクラスで MatrixDirty プロパティによる制御が不要な場合は
+        /// MatrixDirty プロパティが常に true であるように実装します。
+        /// </summary>
+        public bool MatrixDirty { get; protected set; }
+
+        /// <summary>
+        /// 近くのビュー プレーンとの距離を取得または設定します。
+        /// </summary>
+        public float NearPlaneDistance
+        {
+            get { return nearPlaneDistance; }
+            set
+            {
+                if (nearPlaneDistance == value) return;
+
+                nearPlaneDistance = value;
+                MatrixDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// 遠くのビュー プレーンとの距離を取得または設定します。
+        /// </summary>
+        public float FarPlaneDistance
+        {
+            get { return farPlaneDistance; }
+            set
+            {
+                if (farPlaneDistance == value) return;
+
+                farPlaneDistance = value;
+                MatrixDirty = true;
+            }
+        }
+
+        protected Projection()
+        {
+            MatrixDirty = true;
+        }
+
+        /// <summary>
+        /// Matrix プロパティを更新します。
+        /// </summary>
+        public void Update()
+        {
+            if (MatrixDirty) UpdateOverride();
+        }
+
+        /// <summary>
+        /// MatrixDirty プロパティが true の場合に Update メソッドから呼び出されます。
+        /// </summary>
+        protected abstract void UpdateOverride();
+    }
+}
