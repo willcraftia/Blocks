@@ -129,6 +129,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
+    <Compile Include="Screens\ColorButton.cs" />
     <Compile Include="Screens\ConfirmationDialog.cs" />
     <Compile Include="Screens\ControlUtil.cs" />
     <Compile Include="Screens\DialogMessageContainer.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
     <Compile Include="ViewModels\BlockMeshViewModel.cs" />
+    <Compile Include="ViewModels\LightViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OpenStorageViewModel.cs" />
     <Compile Include="ViewModels\ViewMode.cs" />

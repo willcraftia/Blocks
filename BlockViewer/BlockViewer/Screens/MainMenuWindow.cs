@@ -18,6 +18,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainMenuWindow : Window
     {
+        Button changeModeButton;
+
         Button lodWindowButton;
 
         OpenStorageDialog openStorageDialog;
@@ -29,6 +31,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         FloatLerpAnimation openAnimation;
 
         FloatLerpAnimation closeAnimation;
+
+        MainViewModel ViewModel
+        {
+            get { return DataContext as MainViewModel; }
+        }
 
         public MainMenuWindow(Screen screen)
             : base(screen)
@@ -65,9 +72,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
             stackPanel.Children.Add(loadButton);
 
-            var lightButton = CreateMainMenuButton("[Light]");
-            lightButton.Click += new RoutedEventHandler(OnLightButtonClick);
-            stackPanel.Children.Add(lightButton);
+            changeModeButton = CreateMainMenuButton(Strings.LightModeButton);
+            changeModeButton.Click += new RoutedEventHandler(OnChangeModeButtonClick);
+            stackPanel.Children.Add(changeModeButton);
 
             lodWindowButton = CreateMainMenuButton(Strings.ShowLodWindowButton);
             lodWindowButton.Click += new RoutedEventHandler(OnLodWindowButtonClick);
@@ -142,8 +149,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (openStorageDialog == null)
             {
-                var mainViewModel = (DataContext as MainViewModel);
-                openStorageDialog = new OpenStorageDialog(Screen, mainViewModel.OpenStorageViewModel);
+                openStorageDialog = new OpenStorageDialog(Screen)
+                {
+                    DataContext = ViewModel.OpenStorageViewModel
+                };
                 openStorageDialog.Closed += new EventHandler(OnOpenStorageDialogClosed);
             }
             openStorageDialog.Show();
@@ -151,32 +160,45 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnOpenStorageDialogClosed(object sender, EventArgs e)
         {
-            var openStorageViewModel = openStorageDialog.DataContext as OpenStorageViewModel;
+            var openStorageViewModel = ViewModel.OpenStorageViewModel;
             if (string.IsNullOrEmpty(openStorageViewModel.SelectedFileName)) return;
 
             Close();
 
             // TODO: 少しでも負荷がかかると短い Animation が効果を表すことなく完了してしまう。
-            (DataContext as MainViewModel).LoadBlockMeshFromStorage();
+            ViewModel.LoadBlockMeshFromStorage();
         }
 
-        void OnLightButtonClick(Control sender, ref RoutedEventContext context)
+        void OnChangeModeButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (lightWindow == null)
+            if (ViewModel.BlockMeshViewModel.ViewMode == ViewMode.Camera)
             {
-                lightWindow = new LightWindow(Screen);
+                if (lightWindow == null)
+                {
+                    lightWindow = new LightWindow(Screen)
+                    {
+                        DataContext = ViewModel.BlockMeshViewModel
+                    };
+                }
+                lightWindow.Show();
+
+                (changeModeButton.Content as TextBlock).Text = Strings.CameraModeButton;
+            }
+            else
+            {
+                if (lightWindow != null) lightWindow.Close();
+
+                (changeModeButton.Content as TextBlock).Text = Strings.LightModeButton;
             }
 
-            lightWindow.Show();
             Close();
         }
 
         void OnLodWindowButtonClick(Control sender, ref RoutedEventContext context)
         {
-            var viewModel = DataContext as MainViewModel;
-            viewModel.LodWindowVisible = !viewModel.LodWindowVisible;
+            ViewModel.LodWindowVisible = !ViewModel.LodWindowVisible;
 
-            var buttonText = (viewModel.LodWindowVisible) ? Strings.CloseLodWindowButton : Strings.ShowLodWindowButton;
+            var buttonText = (ViewModel.LodWindowVisible) ? Strings.CloseLodWindowButton : Strings.ShowLodWindowButton;
             (lodWindowButton.Content as TextBlock).Text = buttonText;
 
             Close();

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CameraModeButton" xml:space="preserve">
+    <value>Camera</value>
+  </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -143,6 +146,21 @@
   </data>
   <data name="LevelOfDetailLabel" xml:space="preserve">
     <value>LoD: {0}</value>
+  </data>
+  <data name="Light0Button" xml:space="preserve">
+    <value>Light #0</value>
+  </data>
+  <data name="Light1Button" xml:space="preserve">
+    <value>Light #1</value>
+  </data>
+  <data name="Light2Button" xml:space="preserve">
+    <value>Light #2</value>
+  </data>
+  <data name="LightModeButton" xml:space="preserve">
+    <value>Light Mode</value>
+  </data>
+  <data name="LightModeTitle" xml:space="preserve">
+    <value>Light Mode</value>
   </data>
   <data name="LoadFileButton" xml:space="preserve">
     <value>Load</value>

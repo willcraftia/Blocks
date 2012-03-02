@@ -61,6 +61,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Camera に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CameraModeButton {
+            get {
+                return ResourceManager.GetString("CameraModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CancelButton {
@@ -138,6 +147,51 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string LevelOfDetailLabel {
             get {
                 return ResourceManager.GetString("LevelOfDetailLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light #0 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light0Button {
+            get {
+                return ResourceManager.GetString("Light0Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light #1 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light1Button {
+            get {
+                return ResourceManager.GetString("Light1Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light #2 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light2Button {
+            get {
+                return ResourceManager.GetString("Light2Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light Mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LightModeButton {
+            get {
+                return ResourceManager.GetString("LightModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light Mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LightModeTitle {
+            get {
+                return ResourceManager.GetString("LightModeTitle", resourceCulture);
             }
         }
         

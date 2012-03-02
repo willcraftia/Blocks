@@ -48,11 +48,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         string targetFileName;
 
-        public OpenStorageDialog(Screen screen, OpenStorageViewModel viewModel)
+        OpenStorageViewModel ViewModel
+        {
+            get { return DataContext as OpenStorageViewModel; }
+        }
+
+        public OpenStorageDialog(Screen screen)
             : base(screen)
         {
-            DataContext = viewModel;
-
             // 開く際に openAnimation で Width を設定するので 0 で初期化します。
             Width = 0;
             ShadowOffset = new Vector2(4);
@@ -165,8 +168,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Show()
         {
-            (DataContext as OpenStorageViewModel).SelectedFileName = null;
-            fileNames = (DataContext as OpenStorageViewModel).GetFileNames();
+            ViewModel.SelectedFileName = null;
+            fileNames = ViewModel.GetFileNames();
 
             // ファイルがない場合は、その旨を MessageBox で表示して終えます。
             if (fileNames.Length == 0)
@@ -264,7 +267,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (confirmationDialog.Result == MessageBoxResult.OK)
             {
-                (DataContext as OpenStorageViewModel).SelectedFileName = targetFileName;
+                ViewModel.SelectedFileName = targetFileName;
                 Close();
             }
             else

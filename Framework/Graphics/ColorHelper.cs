@@ -14,6 +14,8 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// </summary>
     public static class ColorHelper
     {
+        #region PropertyInfoNameComparer
+
         /// <summary>
         /// PropertyInfo を Name プロパティで比較する IComparer です。
         /// </summary>
@@ -40,6 +42,8 @@ namespace Willcraftia.Xna.Framework.Graphics
                 return x.Name.CompareTo(y.Name);
             }
         }
+
+        #endregion
 
         /// <summary>
         /// 定義済み Color の PropertyInfo のリスト (Name で昇順ソート済み)。
