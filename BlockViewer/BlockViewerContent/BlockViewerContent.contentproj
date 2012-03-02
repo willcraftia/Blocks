@@ -98,13 +98,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Separator.png">
-      <Name>Separator</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="UI\SpriteSheet\LodWindow.png">
       <Name>LodWindow</Name>
       <Importer>TextureImporter</Importer>
@@ -114,6 +107,16 @@
   <ItemGroup>
     <Compile Include="UI\MouseOver.png">
       <Name>MouseOver</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\Icons\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Separator.png">
+      <Name>Separator</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

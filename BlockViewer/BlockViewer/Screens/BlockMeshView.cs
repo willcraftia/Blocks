@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.Cameras;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
@@ -20,17 +21,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         
         int mouseOffsetY;
 
-        Vector3 cameraPosition;
+        ChaseCameraView cameraView = new ChaseCameraView();
 
-        Matrix view;
-        
         Matrix projection;
-
-        public float CameraDistance { get; set; }
-
-        public float CameraPositionYaw { get; set; }
-        
-        public float CameraPositionPitch { get; set; }
 
         public float CameraMoveScale { get; set; }
 
@@ -43,9 +36,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             DataContext = viewModel;
 
-            CameraDistance = 3.5f;
-            CameraPositionYaw = MathHelper.PiOver4;
-            CameraPositionPitch = -MathHelper.PiOver4 * 0.5f;
+            cameraView.Distance = 3.5f;
+            cameraView.Angle = new Vector2(-MathHelper.PiOver4 * 0.5f, MathHelper.PiOver4);
+
             CameraMoveScale = 0.05f;
         }
 
@@ -69,17 +62,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 float dy = (float) (Math.Sign(mouseState.X - mouseOffsetX)) * CameraMoveScale;
                 float dp = (float) (Math.Sign(mouseState.Y - mouseOffsetY)) * CameraMoveScale;
 
-                CameraPositionYaw += dy;
-                CameraPositionPitch += dp;
-
-                CameraPositionYaw = MathHelper.WrapAngle(CameraPositionYaw);
-                CameraPositionPitch = MathHelper.WrapAngle(CameraPositionPitch);
+                // カメラの位置の角度を更新します。
+                var angle = cameraView.Angle;
+                angle.X += dp;
+                angle.Y += dy;
+                angle.X = MathHelper.WrapAngle(angle.X);
+                angle.Y = MathHelper.WrapAngle(angle.Y);
+                cameraView.Angle = angle;
 
                 mouseOffsetX = mouseState.X;
                 mouseOffsetY = mouseState.Y;
             }
 
             base.OnMouseMove(ref context);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            cameraView.Update();
+
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, IDrawContext drawContext)
@@ -106,15 +108,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             graphicsDevice.BlendState = BlendState.Opaque;
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            // カメラ座標を算出します。
-            var cameraScale = Matrix.CreateScale(CameraDistance);
-            var cameraRotation = Matrix.CreateFromYawPitchRoll(CameraPositionYaw, CameraPositionPitch, 0);
-            cameraPosition = Vector3.Transform(Vector3.Backward, cameraScale * cameraRotation);
-
-            // View 行列を算出します。
-            var cameraUp = Vector3.Transform(Vector3.Up, cameraRotation);
-            view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, cameraUp);
-
             // Projection 行列を算出します。
             var aspect = ((float) RenderSize.Width / (float) RenderSize.Height);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.01f, 10);
@@ -132,12 +125,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             // GridBlockMesh 描画用 Effect に View と Projection を設定します。
             var effect = viewModel.MainViewModel.GridBlockMeshEffect;
-            effect.View = view;
+            effect.View = cameraView.Matrix;
             effect.Projection = projection;
 
             // GridBlockMesh の面の描画の有無を決定します。
             var mesh = viewModel.MainViewModel.GridBlockMesh;
-            mesh.SetVisibilities(cameraPosition);
+            mesh.SetVisibilities(cameraView.Position);
             mesh.Draw(effect);
         }
 
@@ -151,7 +144,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mesh.LevelOfDetail = viewModel.LevelOfDetail;
             foreach (var effect in mesh.Effects)
             {
-                effect.View = view;
+                effect.View = cameraView.Matrix;
                 effect.Projection = projection;
             }
 

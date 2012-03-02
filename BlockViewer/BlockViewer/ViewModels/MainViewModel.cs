@@ -44,6 +44,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public BasicEffect GridBlockMeshEffect { get; private set; }
 
+        public BlockMeshViewModel BlockMeshViewModel { get; private set; }
+
         public OpenStorageViewModel OpenStorageViewModel { get; private set; }
 
         public bool LodWindowVisible { get; set; }
@@ -58,6 +60,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             InitializeStorageContainer();
 
+            BlockMeshViewModel = new BlockMeshViewModel(this, 0);
             OpenStorageViewModel = new OpenStorageViewModel(StorageContainer);
         }
 

@@ -135,6 +135,7 @@
     <Compile Include="Screens\ErrorDialog.cs" />
     <Compile Include="Screens\FadeOverlay.cs" />
     <Compile Include="Screens\ImageButton.cs" />
+    <Compile Include="Screens\LightWindow.cs" />
     <Compile Include="Screens\SelectLanguageDialog.cs" />
     <Compile Include="Screens\LodWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />

@@ -93,6 +93,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cameras\CameraView.cs" />
+    <Compile Include="Cameras\ChaseCameraView.cs" />
     <Compile Include="Debug\FpsCounter.cs" />
     <Compile Include="Debug\DebugHorizontalAlignment.cs" />
     <Compile Include="Debug\DebugLayout.cs" />

@@ -22,6 +22,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         OpenStorageDialog openStorageDialog;
 
+        LightWindow lightWindow;
+
         Texture2D backgroundTexture;
 
         FloatLerpAnimation openAnimation;
@@ -59,19 +61,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var loadButton = CreateMainMenuButton(screen, Strings.LoadFileButton);
+            var loadButton = CreateMainMenuButton(Strings.LoadFileButton);
             loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
             stackPanel.Children.Add(loadButton);
 
-            lodWindowButton = CreateMainMenuButton(screen, Strings.ShowLodWindowButton);
+            var lightButton = CreateMainMenuButton("[Light]");
+            lightButton.Click += new RoutedEventHandler(OnLightButtonClick);
+            stackPanel.Children.Add(lightButton);
+
+            lodWindowButton = CreateMainMenuButton(Strings.ShowLodWindowButton);
             lodWindowButton.Click += new RoutedEventHandler(OnLodWindowButtonClick);
             stackPanel.Children.Add(lodWindowButton);
 
-            var exitButton = CreateMainMenuButton(screen, Strings.ExitButton);
+            var exitButton = CreateMainMenuButton(Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
 
-            var closeButton = CreateMainMenuButton(screen, Strings.CloseButton);
+            var closeButton = CreateMainMenuButton(Strings.CloseButton);
             closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
             stackPanel.Children.Add(closeButton);
 
@@ -99,7 +105,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 base.Close();
                 // Screen は最前面の Window をアクティブにするので、
                 // 強制的に Desktop をアクティブにします。
-                Screen.Desktop.Activate();
+                //Screen.Desktop.Activate();
             };
             Animations.Add(closeAnimation);
 
@@ -154,6 +160,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             (DataContext as MainViewModel).LoadBlockMeshFromStorage();
         }
 
+        void OnLightButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (lightWindow == null)
+            {
+                lightWindow = new LightWindow(Screen);
+            }
+
+            lightWindow.Show();
+            Close();
+        }
+
         void OnLodWindowButtonClick(Control sender, ref RoutedEventContext context)
         {
             var viewModel = DataContext as MainViewModel;
@@ -179,17 +196,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Close();
         }
 
-        Button CreateMainMenuButton(Screen screen, String text)
+        Button CreateMainMenuButton(String text)
         {
             float buttonHeight = 32;
 
-            var button = new Button(screen)
+            var button = new Button(Screen)
             {
                 Height = buttonHeight,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Padding = new Thickness(4),
 
-                Content = new TextBlock(screen)
+                Content = new TextBlock(Screen)
                 {
                     Text = text,
                     ForegroundColor = Color.White,

@@ -122,7 +122,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             canvas.VerticalAlignment = VerticalAlignment.Stretch;
             Desktop.Content = canvas;
 
-            blockMeshView = new BlockMeshView(this, new BlockMeshViewModel(mainViewModel, 0))
+            blockMeshView = new BlockMeshView(this, mainViewModel.BlockMeshViewModel)
             {
                 Width = Desktop.Width,
                 Height = Desktop.Height,
