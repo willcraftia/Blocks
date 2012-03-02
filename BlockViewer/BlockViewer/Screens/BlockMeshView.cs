@@ -2,13 +2,9 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Willcraftia.Xna.Framework.Cameras;
-using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Blocks.Graphics;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
@@ -26,10 +22,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             get { return DataContext as BlockMeshViewModel; }
         }
 
-        public BlockMeshView(Screen screen)
-            : base(screen)
-        {
-        }
+        public BlockMeshView(Screen screen) : base(screen) { }
 
         protected override void OnMouseMove(ref RoutedEventContext context)
         {
@@ -82,48 +75,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void Draw3D(GameTime gameTime, IDrawContext drawContext)
         {
-            var graphicsDevice = Screen.GraphicsDevice;
-            graphicsDevice.BlendState = BlendState.Opaque;
-            graphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            // カメラを更新します。
-            ViewModel.SetAspectRatio(graphicsDevice.Viewport.AspectRatio);
-            ViewModel.UpdateCamera();
-
-            // GridBlockMesh を描画します。
-            if (ViewModel.GridVisible) DrawGridBlockMesh();
-
-            // BlockMesh を描画します。
-            DrawBlockMesh();
-        }
-
-        void DrawGridBlockMesh()
-        {
-            // GridBlockMesh 描画用 Effect に View と Projection を設定します。
-            var effect = ViewModel.MainViewModel.GridBlockMeshEffect;
-            effect.View = ViewModel.View.Matrix;
-            effect.Projection = ViewModel.Projection.Matrix;
-
-            // GridBlockMesh の面の描画の有無を決定します。
-            var mesh = ViewModel.MainViewModel.GridBlockMesh;
-            mesh.SetVisibilities(ViewModel.View.Position);
-            mesh.Draw(effect);
-        }
-
-        void DrawBlockMesh()
-        {
-            var mesh = ViewModel.MainViewModel.BlockMesh;
-            if (mesh == null) return;
-
-            mesh.LevelOfDetail = ViewModel.LevelOfDetail;
-
-            foreach (var effect in mesh.Effects)
-            {
-                effect.View = ViewModel.View.Matrix;
-                effect.Projection = ViewModel.Projection.Matrix;
-            }
-
-            mesh.Draw();
+            ViewModel.Draw();
         }
     }
 }

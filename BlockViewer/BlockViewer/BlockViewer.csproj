@@ -147,6 +147,7 @@
     <Compile Include="ViewModels\BlockMeshViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OpenStorageViewModel.cs" />
+    <Compile Include="ViewModels\ViewMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
