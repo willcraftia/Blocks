@@ -117,17 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BackButton" xml:space="preserve">
+    <value>もどる</value>
+  </data>
   <data name="CameraModeButton" xml:space="preserve">
-    <value>カメラ モード</value>
+    <value>カメラ</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>やめる</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>とじる</value>
-  </data>
-  <data name="CloseLodWindowButton" xml:space="preserve">
-    <value>LoD OFF</value>
   </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
@@ -141,16 +141,28 @@
   <data name="ExitButton" xml:space="preserve">
     <value>やめる</value>
   </data>
+  <data name="HideButton" xml:space="preserve">
+    <value>ひょうじしない</value>
+  </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
   </data>
   <data name="Light0Button" xml:space="preserve">
     <value>ライト #0</value>
   </data>
+  <data name="Light0ModeButton" xml:space="preserve">
+    <value>ライト #0</value>
+  </data>
   <data name="Light1Button" xml:space="preserve">
     <value>ライト #1</value>
   </data>
+  <data name="Light1ModeButton" xml:space="preserve">
+    <value>ライト #1</value>
+  </data>
   <data name="Light2Button" xml:space="preserve">
+    <value>ライト #2</value>
+  </data>
+  <data name="Light2ModeButton" xml:space="preserve">
     <value>ライト #2</value>
   </data>
   <data name="LightModeButton" xml:space="preserve">
@@ -159,14 +171,26 @@
   <data name="LightModeTitle" xml:space="preserve">
     <value>ライト モード</value>
   </data>
-  <data name="LoadFileButton" xml:space="preserve">
+  <data name="LoadButton" xml:space="preserve">
     <value>ロード</value>
+  </data>
+  <data name="LodButton" xml:space="preserve">
+    <value>LoD</value>
+  </data>
+  <data name="LodMenuTitle" xml:space="preserve">
+    <value>LoD</value>
   </data>
   <data name="MainMenuButton" xml:space="preserve">
     <value>メイン メニュー ([Y] キー)</value>
   </data>
   <data name="MainMenuTitle" xml:space="preserve">
     <value>メイン メニュー</value>
+  </data>
+  <data name="ModeButton" xml:space="preserve">
+    <value>モード</value>
+  </data>
+  <data name="ModeMenuTitle" xml:space="preserve">
+    <value>モード</value>
   </data>
   <data name="NoFileError" xml:space="preserve">
     <value>ストレージ に ファイル が ありません。</value>
@@ -183,8 +207,8 @@
   <data name="SelectLanguageTitle" xml:space="preserve">
     <value>げんご を せんたく</value>
   </data>
-  <data name="ShowLodWindowButton" xml:space="preserve">
-    <value>LoD ON</value>
+  <data name="ShowButton" xml:space="preserve">
+    <value>ひょうじする</value>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>はじめる</value>

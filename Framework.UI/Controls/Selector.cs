@@ -48,6 +48,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         #endregion
 
+        public event EventHandler SelectionChanged = delegate { };
+
         int selectedIndex = -1;
 
         public ControlCollection Items { get; private set; }
@@ -66,6 +68,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 if (selectedIndex == value) return;
 
                 selectedIndex = value;
+
+                OnSelectionChanged();
             }
         }
 
@@ -90,6 +94,15 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 throw new ArgumentOutOfRangeException("index");
 
             return SelectedItem;
+        }
+
+        /// <summary>
+        /// SelectedIndex/SelectedItem プロパティが変更された時に呼び出されます。
+        /// SelectionChanged イベントを発生させます。
+        /// </summary>
+        protected virtual void OnSelectionChanged()
+        {
+            if (SelectionChanged != null) SelectionChanged(this, EventArgs.Empty);
         }
 
         internal void AddChildInternal(Control child)

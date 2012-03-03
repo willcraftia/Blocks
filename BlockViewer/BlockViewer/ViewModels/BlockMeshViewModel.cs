@@ -39,7 +39,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
         /// </summary>
         Vector3 ambientLightColor = new Vector3(0.05333332f, 0.09882354f, 0.1819608f);
 
-        ViewMode viewMode;
+        Mode mode;
 
         public MainViewModel MainViewModel { get; private set; }
 
@@ -66,29 +66,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
         /// </summary>
         public LightViewModel Light2ViewModel { get; private set; }
 
-        public ViewMode ViewMode
+        public Mode Mode
         {
-            get { return viewMode; }
+            get { return mode; }
             set
             {
-                if (viewMode == value) return;
+                if (mode == value) return;
 
-                viewMode = value;
+                mode = value;
 
-                switch (viewMode)
+                switch (mode)
                 {
-                    case ViewMode.Camera:
+                    case Mode.Camera:
                         currentView = camera;
                         break;
-                    case ViewMode.DirectionalLight0:
+                    case Mode.DirectionalLight0:
                         currentLight = Light0ViewModel;
                         currentView = currentLight.View;
                         break;
-                    case ViewMode.DirectionalLight1:
+                    case Mode.DirectionalLight1:
                         currentLight = Light1ViewModel;
                         currentView = currentLight.View;
                         break;
-                    case ViewMode.DirectionalLight2:
+                    case Mode.DirectionalLight2:
                         currentLight = Light2ViewModel;
                         currentView = currentLight.View;
                         break;
@@ -148,7 +148,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             };
 
             CameraMoveScale = 0.05f;
-            ViewMode = ViewMode.Camera;
+            Mode = Mode.Camera;
             currentView = camera;
         }
 

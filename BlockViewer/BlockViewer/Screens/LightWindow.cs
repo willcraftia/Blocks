@@ -78,7 +78,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 light0Button = ControlUtil.CreateDefaultMenuButton(screen, Strings.Light0Button);
                 light0Button.GotFocus += (Control s, ref RoutedEventContext c) =>
                 {
-                    ViewModel.ViewMode = ViewMode.DirectionalLight0;
+                    ViewModel.Mode = Mode.DirectionalLight0;
                 };
                 light0Panel.Children.Add(light0Button);
 
@@ -108,7 +108,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 light1Button = ControlUtil.CreateDefaultMenuButton(screen, Strings.Light1Button);
                 light1Button.GotFocus += (Control s, ref RoutedEventContext c) =>
                 {
-                    ViewModel.ViewMode = ViewMode.DirectionalLight1;
+                    ViewModel.Mode = Mode.DirectionalLight1;
                 };
                 light1Panel.Children.Add(light1Button);
 
@@ -138,7 +138,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 light2Button = ControlUtil.CreateDefaultMenuButton(screen, Strings.Light2Button);
                 light2Button.GotFocus += (Control s, ref RoutedEventContext c) =>
                 {
-                    ViewModel.ViewMode = ViewMode.DirectionalLight2;
+                    ViewModel.Mode = Mode.DirectionalLight2;
                 };
                 light2Panel.Children.Add(light2Button);
 
@@ -187,7 +187,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Close()
         {
-            ViewModel.ViewMode = ViewMode.Camera;
+            ViewModel.Mode = Mode.Camera;
 
             base.Close();
         }

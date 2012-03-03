@@ -61,6 +61,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Back に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BackButton {
+            get {
+                return ResourceManager.GetString("BackButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Camera に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CameraModeButton {
@@ -84,15 +93,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string CloseButton {
             get {
                 return ResourceManager.GetString("CloseButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Close LoD に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string CloseLodWindowButton {
-            get {
-                return ResourceManager.GetString("CloseLodWindowButton", resourceCulture);
             }
         }
         
@@ -133,6 +133,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Hide に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HideButton {
+            get {
+                return ResourceManager.GetString("HideButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   にほんご に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string JaButton {
@@ -160,6 +169,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Light #0 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light0ModeButton {
+            get {
+                return ResourceManager.GetString("Light0ModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Light #1 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Light1Button {
@@ -169,11 +187,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Light #1 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light1ModeButton {
+            get {
+                return ResourceManager.GetString("Light1ModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Light #2 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Light2Button {
             get {
                 return ResourceManager.GetString("Light2Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light #2 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light2ModeButton {
+            get {
+                return ResourceManager.GetString("Light2ModeButton", resourceCulture);
             }
         }
         
@@ -198,9 +234,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         /// <summary>
         ///   Load に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string LoadFileButton {
+        internal static string LoadButton {
             get {
-                return ResourceManager.GetString("LoadFileButton", resourceCulture);
+                return ResourceManager.GetString("LoadButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   LoD に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LodButton {
+            get {
+                return ResourceManager.GetString("LodButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   LoD に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LodMenuTitle {
+            get {
+                return ResourceManager.GetString("LodMenuTitle", resourceCulture);
             }
         }
         
@@ -219,6 +273,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string MainMenuTitle {
             get {
                 return ResourceManager.GetString("MainMenuTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModeButton {
+            get {
+                return ResourceManager.GetString("ModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModeMenuTitle {
+            get {
+                return ResourceManager.GetString("ModeMenuTitle", resourceCulture);
             }
         }
         
@@ -268,11 +340,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Show LoD に類似しているローカライズされた文字列を検索します。
+        ///   Show に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string ShowLodWindowButton {
+        internal static string ShowButton {
             get {
-                return ResourceManager.GetString("ShowLodWindowButton", resourceCulture);
+                return ResourceManager.GetString("ShowButton", resourceCulture);
             }
         }
         

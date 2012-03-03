@@ -32,8 +32,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         MainMenuWindow mainMenuWindow;
 
-        LodWindow lodListWindow;
-
         bool canHandleKey;
 
         public MainScreen(Game game)
@@ -44,20 +42,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // Data Context
             mainViewModel = new MainViewModel(game.GraphicsDevice);
             DataContext = mainViewModel;
-        }
-
-        protected override void Update(GameTime gameTime)
-        {
-            if (mainViewModel.LodWindowVisible)
-            {
-                if (!lodListWindow.Visible) lodListWindow.Show();
-            }
-            else
-            {
-                if (lodListWindow.Visible) lodListWindow.Close();
-            }
-
-            base.Update(gameTime);
         }
 
         protected override void LoadContent()
@@ -158,12 +142,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mainMenuWindow.VisibleChanged += (s, e) =>
             {
                 mainMenuButton.Visible = !mainMenuWindow.Visible;
-            };
-
-            lodListWindow = new LodWindow(this)
-            {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Bottom
             };
 
             var overlay = new FadeOverlay(this);

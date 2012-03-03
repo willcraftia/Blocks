@@ -18,19 +18,59 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainMenuWindow : Window
     {
+        #region Controls
+
         TabControl tab;
 
-        Button changeModeButton;
+        const int mainMenuIndex = 0;
+        
+        const int modeMenuIndex = 1;
 
-        Button lodWindowButton;
+        const int lodMenuIndex = 2;
+
+        #region Main Menu
+
+        Button loadButton;
+
+        Button modeButton;
+
+        Button lodButton;
+
+        #endregion
+
+        #region Mode Menu
+
+        Button cameraModeButton;
+
+        Button light0ModeButton;
+        
+        Button light1ModeButton;
+        
+        Button light2ModeButton;
+
+        #endregion
+
+        #region LoD Menu
+
+        Button showLodButton;
+
+        Button hideLodButton;
+
+        #endregion
 
         OpenStorageDialog openStorageDialog;
 
-        LightWindow lightWindow;
+        LodWindow lodWindow;
+
+        #endregion
+
+        #region Animations
 
         FloatLerpAnimation openAnimation;
 
         FloatLerpAnimation closeAnimation;
+
+        #endregion
 
         MainViewModel ViewModel
         {
@@ -45,22 +85,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Height = 480;
             Padding = new Thickness(16);
 
-            tab = new TabControl(screen)
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Content = tab;
-
             var stackPanel = new StackPanel(screen)
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
                 Orientation = Orientation.Vertical
             };
-            //Content = stackPanel;
-            tab.Items.Add(stackPanel);
-            tab.SelectedIndex = 0;
+            Content = stackPanel;
 
             var title = new TextBlock(screen)
             {
@@ -77,64 +108,22 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var loadButton = CreateMainMenuButton(Strings.LoadFileButton);
-            loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
-            stackPanel.Children.Add(loadButton);
-
-            changeModeButton = CreateMainMenuButton(Strings.LightModeButton);
-            changeModeButton.Click += new RoutedEventHandler(OnChangeModeButtonClick);
-            stackPanel.Children.Add(changeModeButton);
-
-            lodWindowButton = CreateMainMenuButton(Strings.ShowLodWindowButton);
-            lodWindowButton.Click += new RoutedEventHandler(OnLodWindowButtonClick);
-            stackPanel.Children.Add(lodWindowButton);
-
-            var exitButton = CreateMainMenuButton(Strings.ExitButton);
-            exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
-            stackPanel.Children.Add(exitButton);
-
-            var closeButton = CreateMainMenuButton(Strings.CloseButton);
-            closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
-            stackPanel.Children.Add(closeButton);
-
-            var tabTestButton = CreateMainMenuButton("To tab #1");
-            tabTestButton.Click += (Control s, ref RoutedEventContext c) =>
+            tab = new TabControl(screen)
             {
-                tab.SelectedIndex = 1;
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                SelectedIndex = mainMenuIndex
             };
-            stackPanel.Children.Add(tabTestButton);
+            stackPanel.Children.Add(tab);
 
-            {
-                var stackPanel1 = new StackPanel(screen)
-                {
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Orientation = Orientation.Vertical
-                };
-                tab.Items.Add(stackPanel1);
+            var mainMenuPanel = CreateMainMenuPanel();
+            tab.Items.Add(mainMenuPanel);
 
-                var title1 = new TextBlock(screen)
-                {
-                    Text = "Tab #1",
-                    Padding = new Thickness(4),
-                    ForegroundColor = Color.Yellow,
-                    BackgroundColor = Color.Black,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    TextHorizontalAlignment = HorizontalAlignment.Left,
-                    ShadowOffset = new Vector2(2)
-                };
-                stackPanel1.Children.Add(title1);
+            var modeMenuPanel = CreateModeMenuPanel();
+            tab.Items.Add(modeMenuPanel);
 
-                var separator1 = ControlUtil.CreateDefaultSeparator(screen);
-                stackPanel1.Children.Add(separator1);
-
-                var tabTest1Button = CreateMainMenuButton("To tab #0");
-                tabTest1Button.Click += (Control s, ref RoutedEventContext c) =>
-                {
-                    tab.SelectedIndex = 0;
-                };
-                stackPanel1.Children.Add(tabTest1Button);
-            }
+            var lodMenuPanel = CreateLodMenuPanel();
+            tab.Items.Add(lodMenuPanel);
 
             openAnimation = new FloatLerpAnimation
             {
@@ -163,7 +152,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Animations.Add(closeAnimation);
 
             // デフォルト フォーカス。
-            closeButton.Focus();
+            loadButton.Focus();
         }
 
         public override void Show()
@@ -206,8 +195,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnOpenStorageDialogClosed(object sender, EventArgs e)
         {
-            var openStorageViewModel = ViewModel.OpenStorageViewModel;
-            if (string.IsNullOrEmpty(openStorageViewModel.SelectedFileName)) return;
+            if (string.IsNullOrEmpty(ViewModel.OpenStorageViewModel.SelectedFileName)) return;
 
             Close();
 
@@ -215,39 +203,41 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             ViewModel.LoadBlockMeshFromStorage();
         }
 
-        void OnChangeModeButtonClick(Control sender, ref RoutedEventContext context)
+        void OnModeButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (ViewModel.BlockMeshViewModel.ViewMode == ViewMode.Camera)
-            {
-                if (lightWindow == null)
-                {
-                    lightWindow = new LightWindow(Screen)
-                    {
-                        DataContext = ViewModel.BlockMeshViewModel
-                    };
-                }
-                lightWindow.Show();
+            tab.SelectedIndex = modeMenuIndex;
 
-                (changeModeButton.Content as TextBlock).Text = Strings.CameraModeButton;
+            switch (ViewModel.BlockMeshViewModel.Mode)
+            {
+                case Mode.Camera:
+                    cameraModeButton.Focus();
+                    break;
+                case Mode.DirectionalLight0:
+                    light0ModeButton.Focus();
+                    break;
+                case Mode.DirectionalLight1:
+                    light1ModeButton.Focus();
+                    break;
+                case Mode.DirectionalLight2:
+                    light2ModeButton.Focus();
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        void OnLodButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            tab.SelectedIndex = lodMenuIndex;
+
+            if (lodWindow != null && lodWindow.Visible)
+            {
+                showLodButton.Focus();
             }
             else
             {
-                if (lightWindow != null) lightWindow.Close();
-
-                (changeModeButton.Content as TextBlock).Text = Strings.LightModeButton;
+                hideLodButton.Focus();
             }
-
-            Close();
-        }
-
-        void OnLodWindowButtonClick(Control sender, ref RoutedEventContext context)
-        {
-            ViewModel.LodWindowVisible = !ViewModel.LodWindowVisible;
-
-            var buttonText = (ViewModel.LodWindowVisible) ? Strings.CloseLodWindowButton : Strings.ShowLodWindowButton;
-            (lodWindowButton.Content as TextBlock).Text = buttonText;
-
-            Close();
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)
@@ -264,7 +254,145 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Close();
         }
 
-        Button CreateMainMenuButton(String text)
+        Control CreateMainMenuPanel()
+        {
+            var stackPanel = new StackPanel(Screen)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                Orientation = Orientation.Vertical
+            };
+
+            loadButton = CreateMenuButton(Strings.LoadButton);
+            loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
+            stackPanel.Children.Add(loadButton);
+
+            modeButton = CreateMenuButton(Strings.ModeButton);
+            modeButton.Click += new RoutedEventHandler(OnModeButtonClick);
+            stackPanel.Children.Add(modeButton);
+
+            lodButton = CreateMenuButton(Strings.LodButton);
+            lodButton.Click += new RoutedEventHandler(OnLodButtonClick);
+            stackPanel.Children.Add(lodButton);
+
+            var exitButton = CreateMenuButton(Strings.ExitButton);
+            exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
+            stackPanel.Children.Add(exitButton);
+
+            var closeButton = CreateMenuButton(Strings.CloseButton);
+            closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
+            stackPanel.Children.Add(closeButton);
+
+            return stackPanel;
+        }
+
+        Control CreateModeMenuPanel()
+        {
+            var stackPanel = new StackPanel(Screen)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                Orientation = Orientation.Vertical
+            };
+
+            var subTitle = new TextBlock(Screen)
+            {
+                Text = Strings.ModeMenuTitle,
+                Padding = new Thickness(4),
+                ForegroundColor = Color.LightGreen,
+                BackgroundColor = Color.Black,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                TextHorizontalAlignment = HorizontalAlignment.Left,
+                ShadowOffset = new Vector2(2)
+            };
+            stackPanel.Children.Add(subTitle);
+
+            cameraModeButton = CreateMenuButton(Strings.CameraModeButton);
+            cameraModeButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ChangeMode(Mode.Camera);
+            };
+            stackPanel.Children.Add(cameraModeButton);
+
+            light0ModeButton = CreateMenuButton(Strings.Light0ModeButton);
+            light0ModeButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ChangeMode(Mode.DirectionalLight0);
+            };
+            stackPanel.Children.Add(light0ModeButton);
+
+            light1ModeButton = CreateMenuButton(Strings.Light1ModeButton);
+            light1ModeButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ChangeMode(Mode.DirectionalLight1);
+            };
+            stackPanel.Children.Add(light1ModeButton);
+
+            light2ModeButton = CreateMenuButton(Strings.Light2ModeButton);
+            light2ModeButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ChangeMode(Mode.DirectionalLight2);
+            };
+            stackPanel.Children.Add(light2ModeButton);
+
+            var backButton = CreateMenuButton(Strings.BackButton);
+            backButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                tab.SelectedIndex = mainMenuIndex;
+                modeButton.Focus();
+            };
+            stackPanel.Children.Add(backButton);
+
+            return stackPanel;
+        }
+
+        Control CreateLodMenuPanel()
+        {
+            var stackPanel = new StackPanel(Screen)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                Orientation = Orientation.Vertical
+            };
+
+            var subTitle = new TextBlock(Screen)
+            {
+                Text = Strings.LodMenuTitle,
+                Padding = new Thickness(4),
+                ForegroundColor = Color.LightGreen,
+                BackgroundColor = Color.Black,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                TextHorizontalAlignment = HorizontalAlignment.Left,
+                ShadowOffset = new Vector2(2)
+            };
+            stackPanel.Children.Add(subTitle);
+
+            showLodButton = CreateMenuButton(Strings.ShowButton);
+            showLodButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ChangeLodWindowVisibility(true);
+            };
+            stackPanel.Children.Add(showLodButton);
+
+            hideLodButton = CreateMenuButton(Strings.HideButton);
+            hideLodButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ChangeLodWindowVisibility(false);
+            };
+            stackPanel.Children.Add(hideLodButton);
+
+            var backButton = CreateMenuButton(Strings.BackButton);
+            backButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                tab.SelectedIndex = mainMenuIndex;
+                lodButton.Focus();
+            };
+            stackPanel.Children.Add(backButton);
+
+            return stackPanel;
+        }
+
+        Button CreateMenuButton(String text)
         {
             float buttonHeight = 32;
 
@@ -289,6 +417,37 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             ControlUtil.SetDefaultBehavior(button);
 
             return button;
+        }
+
+        void ChangeMode(Mode mode)
+        {
+            ViewModel.BlockMeshViewModel.Mode = mode;
+            tab.SelectedIndex = mainMenuIndex;
+            modeButton.Focus();
+            Close();
+        }
+
+        void ChangeLodWindowVisibility(bool show)
+        {
+            if (show)
+            {
+                if (lodWindow == null)
+                {
+                    lodWindow = new LodWindow(Screen)
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Bottom
+                    };
+                }
+                lodWindow.Show();
+            }
+            else
+            {
+                if (lodWindow != null && lodWindow.Visible) lodWindow.Close();
+            }
+            tab.SelectedIndex = mainMenuIndex;
+            lodButton.Focus();
+            Close();
         }
     }
 }

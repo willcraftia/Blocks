@@ -149,7 +149,7 @@
     <Compile Include="ViewModels\LightViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OpenStorageViewModel.cs" />
-    <Compile Include="ViewModels\ViewMode.cs" />
+    <Compile Include="ViewModels\Mode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

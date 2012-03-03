@@ -6,7 +6,7 @@ using System;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 {
-    public enum ViewMode
+    public enum Mode
     {
         Camera,
         DirectionalLight0,
