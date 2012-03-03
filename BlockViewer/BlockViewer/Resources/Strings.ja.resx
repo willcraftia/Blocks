@@ -147,29 +147,14 @@
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
   </data>
-  <data name="Light0Button" xml:space="preserve">
-    <value>ライト #0</value>
-  </data>
   <data name="Light0ModeButton" xml:space="preserve">
     <value>ライト #0</value>
-  </data>
-  <data name="Light1Button" xml:space="preserve">
-    <value>ライト #1</value>
   </data>
   <data name="Light1ModeButton" xml:space="preserve">
     <value>ライト #1</value>
   </data>
-  <data name="Light2Button" xml:space="preserve">
-    <value>ライト #2</value>
-  </data>
   <data name="Light2ModeButton" xml:space="preserve">
     <value>ライト #2</value>
-  </data>
-  <data name="LightModeButton" xml:space="preserve">
-    <value>ライト モード</value>
-  </data>
-  <data name="LightModeTitle" xml:space="preserve">
-    <value>ライト モード</value>
   </data>
   <data name="LoadButton" xml:space="preserve">
     <value>ロード</value>

@@ -24,11 +24,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
         ChaseView camera;
 
         /// <summary>
-        /// 現在の Directional Light。
-        /// </summary>
-        LightViewModel currentLight;
-
-        /// <summary>
         /// Projection。
         /// Projection は通常カメラと Directional Light で共通。
         /// </summary>
@@ -52,17 +47,22 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
         public bool GridVisible { get; set; }
 
         /// <summary>
-        /// Directional Light 0。
+        /// 選択されている Directional Light を取得します。
+        /// </summary>
+        public LightViewModel SelectedLightViewModel { get; private set; }
+
+        /// <summary>
+        /// Directional Light 0 を取得します。
         /// </summary>
         public LightViewModel Light0ViewModel { get; private set; }
 
         /// <summary>
-        /// Directional Light 1。
+        /// Directional Light 1 を取得します。
         /// </summary>
         public LightViewModel Light1ViewModel { get; private set; }
 
         /// <summary>
-        /// Directional Light 2。
+        /// Directional Light 2 を取得します。
         /// </summary>
         public LightViewModel Light2ViewModel { get; private set; }
 
@@ -81,16 +81,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                         currentView = camera;
                         break;
                     case Mode.DirectionalLight0:
-                        currentLight = Light0ViewModel;
-                        currentView = currentLight.View;
+                        SelectedLightViewModel = Light0ViewModel;
+                        currentView = SelectedLightViewModel.View;
                         break;
                     case Mode.DirectionalLight1:
-                        currentLight = Light1ViewModel;
-                        currentView = currentLight.View;
+                        SelectedLightViewModel = Light1ViewModel;
+                        currentView = SelectedLightViewModel.View;
                         break;
                     case Mode.DirectionalLight2:
-                        currentLight = Light2ViewModel;
-                        currentView = currentLight.View;
+                        SelectedLightViewModel = Light2ViewModel;
+                        currentView = SelectedLightViewModel.View;
                         break;
                     default:
                         throw new InvalidOperationException();

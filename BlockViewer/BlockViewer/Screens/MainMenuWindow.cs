@@ -60,6 +60,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         OpenStorageDialog openStorageDialog;
 
+        LightWindow lightWindow;
+
         LodWindow lodWindow;
 
         #endregion
@@ -422,6 +424,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         void ChangeMode(Mode mode)
         {
             ViewModel.BlockMeshViewModel.Mode = mode;
+
+            if (Mode.Camera == mode)
+            {
+                if (lightWindow != null && lightWindow.Visible) lightWindow.Close();
+            }
+            else
+            {
+                if (lightWindow == null)
+                {
+                    lightWindow = new LightWindow(Screen)
+                    {
+                        DataContext = ViewModel.BlockMeshViewModel
+                    };
+                }
+                lightWindow.Show();
+            }
+
             tab.SelectedIndex = mainMenuIndex;
             modeButton.Focus();
             Close();

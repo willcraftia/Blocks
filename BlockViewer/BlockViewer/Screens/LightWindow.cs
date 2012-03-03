@@ -15,23 +15,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class LightWindow : Window
     {
-        Button light0Button;
+        TextBlock titleTextBlock;
 
-        Button light1Button;
+        ColorButton diffuseColorButton;
         
-        Button light2Button;
-
-        ColorButton diffuse0Button;
-        
-        ColorButton diffuse1Button;
-        
-        ColorButton diffuse2Button;
-
-        ColorButton specular0Button;
-
-        ColorButton specular1Button;
-        
-        ColorButton specular2Button;
+        ColorButton specularColorButton;
 
         BlockMeshViewModel ViewModel
         {
@@ -41,7 +29,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public LightWindow(Screen screen)
             : base(screen)
         {
-            Width = 200;
             ShadowOffset = new Vector2(4);
             Padding = new Thickness(16);
             HorizontalAlignment = HorizontalAlignment.Left;
@@ -54,9 +41,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var title = new TextBlock(screen)
+            titleTextBlock = new TextBlock(screen)
             {
-                Text = Strings.LightModeTitle,
                 Padding = new Thickness(4),
                 ForegroundColor = Color.Yellow,
                 BackgroundColor = Color.Black,
@@ -64,132 +50,99 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 TextHorizontalAlignment = HorizontalAlignment.Left,
                 ShadowOffset = new Vector2(2)
             };
-            stackPanel.Children.Add(title);
+            stackPanel.Children.Add(titleTextBlock);
 
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var light0Panel = new StackPanel(screen)
+            var diffuseColorPanel = new StackPanel(screen)
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            stackPanel.Children.Add(light0Panel);
+            stackPanel.Children.Add(diffuseColorPanel);
+
+            var diffuseColorTextBlock = new TextBlock(screen)
             {
-                light0Button = ControlUtil.CreateDefaultMenuButton(screen, Strings.Light0Button);
-                light0Button.GotFocus += (Control s, ref RoutedEventContext c) =>
-                {
-                    ViewModel.Mode = Mode.DirectionalLight0;
-                };
-                light0Panel.Children.Add(light0Button);
+                Text = "Diffuse",
+                Width = 120,
+                Padding = new Thickness(4),
+                ForegroundColor = Color.White,
+                BackgroundColor = Color.Black,
+                TextHorizontalAlignment = HorizontalAlignment.Left,
+                ShadowOffset = new Vector2(2)
+            };
+            diffuseColorPanel.Children.Add(diffuseColorTextBlock);
 
-                diffuse0Button = new ColorButton(screen)
-                {
-                    Width = 32,
-                    Height = 32,
-                    Margin = new Thickness(2)
-                };
-                light0Panel.Children.Add(diffuse0Button);
+            diffuseColorButton = new ColorButton(screen)
+            {
+                Width = 30,
+                Height = 30,
+                Margin = new Thickness(2)
+            };
+            diffuseColorPanel.Children.Add(diffuseColorButton);
 
-                specular0Button = new ColorButton(screen)
-                {
-                    Width = 32,
-                    Height = 32,
-                    Margin = new Thickness(2)
-                };
-                light0Panel.Children.Add(specular0Button);
-            }
-
-            var light1Panel = new StackPanel(screen)
+            var specularColorPanel = new StackPanel(screen)
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            stackPanel.Children.Add(light1Panel);
+            stackPanel.Children.Add(specularColorPanel);
+
+            var specularColorTextBlock = new TextBlock(screen)
             {
-                light1Button = ControlUtil.CreateDefaultMenuButton(screen, Strings.Light1Button);
-                light1Button.GotFocus += (Control s, ref RoutedEventContext c) =>
-                {
-                    ViewModel.Mode = Mode.DirectionalLight1;
-                };
-                light1Panel.Children.Add(light1Button);
-
-                diffuse1Button = new ColorButton(screen)
-                {
-                    Width = 32,
-                    Height = 32,
-                    Margin = new Thickness(2)
-                };
-                light1Panel.Children.Add(diffuse1Button);
-
-                specular1Button = new ColorButton(screen)
-                {
-                    Width = 32,
-                    Height = 32,
-                    Margin = new Thickness(2)
-                };
-                light1Panel.Children.Add(specular1Button);
-            }
-
-            var light2Panel = new StackPanel(screen)
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                Text = "Specular",
+                Width = 120,
+                Padding = new Thickness(4),
+                ForegroundColor = Color.White,
+                BackgroundColor = Color.Black,
+                TextHorizontalAlignment = HorizontalAlignment.Left,
+                ShadowOffset = new Vector2(2)
             };
-            stackPanel.Children.Add(light2Panel);
+            specularColorPanel.Children.Add(specularColorTextBlock);
+
+            specularColorButton = new ColorButton(screen)
             {
-                light2Button = ControlUtil.CreateDefaultMenuButton(screen, Strings.Light2Button);
-                light2Button.GotFocus += (Control s, ref RoutedEventContext c) =>
-                {
-                    ViewModel.Mode = Mode.DirectionalLight2;
-                };
-                light2Panel.Children.Add(light2Button);
-
-                diffuse2Button = new ColorButton(screen)
-                {
-                    Width = 32,
-                    Height = 32,
-                    Margin = new Thickness(2)
-                };
-                light2Panel.Children.Add(diffuse2Button);
-
-                specular2Button = new ColorButton(screen)
-                {
-                    Width = 32,
-                    Height = 32,
-                    Margin = new Thickness(2)
-                };
-                light2Panel.Children.Add(specular2Button);
-            }
+                Width = 30,
+                Height = 30,
+                Margin = new Thickness(2)
+            };
+            specularColorPanel.Children.Add(specularColorButton);
         }
 
         public override void Update(GameTime gameTime)
         {
-            UpdateLightColorButtons(ViewModel.Light0ViewModel, diffuse0Button, specular0Button);
-            UpdateLightColorButtons(ViewModel.Light1ViewModel, diffuse1Button, specular1Button);
-            UpdateLightColorButtons(ViewModel.Light2ViewModel, diffuse2Button, specular2Button);
-
             base.Update(gameTime);
-        }
-
-        void UpdateLightColorButtons(LightViewModel lightViewModel, ColorButton diffuseButton, ColorButton specularButton)
-        {
-            var diffuse = lightViewModel.DiffuseColor;
-            diffuseButton.ForegroundColor = new Color(diffuse.X, diffuse.Y, diffuse.Z);
-
-            var specular = lightViewModel.SpecularColor;
-            specularButton.ForegroundColor = new Color(specular.X, specular.Y, specular.Z);
         }
 
         public override void Show()
         {
-            light0Button.Focus();
+            var lightViewModel = ViewModel.SelectedLightViewModel;
+
+            if (lightViewModel == ViewModel.Light0ViewModel)
+            {
+                titleTextBlock.Text = "Light #0";
+            }
+            else if (lightViewModel == ViewModel.Light1ViewModel)
+            {
+                titleTextBlock.Text = "Light #1";
+            }
+            else if (lightViewModel == ViewModel.Light2ViewModel)
+            {
+                titleTextBlock.Text = "Light #2";
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+
+            var diffuse = lightViewModel.DiffuseColor;
+            diffuseColorButton.ForegroundColor = new Color(diffuse.X, diffuse.Y, diffuse.Z);
+
+            var specular = lightViewModel.SpecularColor;
+            specularColorButton.ForegroundColor = new Color(specular.X, specular.Y, specular.Z);
+
+            diffuseColorButton.Focus();
 
             base.Show();
-        }
-
-        public override void Close()
-        {
-            ViewModel.Mode = Mode.Camera;
-
-            base.Close();
         }
     }
 }
