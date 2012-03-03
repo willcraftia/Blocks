@@ -1,23 +1,21 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
-    /// <summary>
-    /// Control のコンテナとして振る舞う Control です。
-    /// </summary>
-    public class Panel : Control
+    public class Selector : Control
     {
         #region InternalControlCollection
 
         class InternalControlCollection : ControlCollection
         {
-            Panel parent;
+            Selector parent;
 
-            internal InternalControlCollection(Panel parent)
+            internal InternalControlCollection(Selector parent)
                 : base(parent)
             {
                 this.parent = parent;
@@ -50,31 +48,48 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         #endregion
 
-        public ControlCollection Children { get; private set; }
+        int selectedIndex = -1;
 
-        /// <summary>
-        /// Children のサイズを返します。
-        /// </summary>
+        public ControlCollection Items { get; private set; }
+
         protected override int ChildrenCount
         {
-            get { return Children.Count; }
+            get { return Items.Count == 0 ? 0 : 1; }
         }
 
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
-        /// <param name="screen">Screen。</param>
-        protected Panel(Screen screen)
+        public int SelectedIndex
+        {
+            get { return selectedIndex; }
+            set
+            {
+                if (value < -1) throw new ArgumentOutOfRangeException();
+                if (selectedIndex == value) return;
+
+                selectedIndex = value;
+            }
+        }
+
+        public Control SelectedItem
+        {
+            get
+            {
+                if (selectedIndex == -1 || Items.Count == 0) return null;
+                return selectedIndex < Items.Count ? Items[selectedIndex] : Items[Items.Count - 1];
+            }
+        }
+
+        protected Selector(Screen screen)
             : base(screen)
         {
-            Children = new InternalControlCollection(this);
+            Items = new InternalControlCollection(this);
         }
 
         protected override Control GetChild(int index)
         {
-            if (index < 0 || ChildrenCount <= index)
+            if (index != 0 || selectedIndex == -1 || Items.Count == 0)
                 throw new ArgumentOutOfRangeException("index");
-            return Children[index];
+
+            return SelectedItem;
         }
 
         internal void AddChildInternal(Control child)

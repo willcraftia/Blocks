@@ -18,6 +18,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class MainMenuWindow : Window
     {
+        TabControl tab;
+
         Button changeModeButton;
 
         Button lodWindowButton;
@@ -25,8 +27,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         OpenStorageDialog openStorageDialog;
 
         LightWindow lightWindow;
-
-        Texture2D backgroundTexture;
 
         FloatLerpAnimation openAnimation;
 
@@ -45,13 +45,22 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Height = 480;
             Padding = new Thickness(16);
 
+            tab = new TabControl(screen)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Content = tab;
+
             var stackPanel = new StackPanel(screen)
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 Orientation = Orientation.Vertical
             };
-            Content = stackPanel;
+            //Content = stackPanel;
+            tab.Items.Add(stackPanel);
+            tab.SelectedIndex = 0;
 
             var title = new TextBlock(screen)
             {
@@ -88,7 +97,44 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
             stackPanel.Children.Add(closeButton);
 
-            backgroundTexture = screen.Content.Load<Texture2D>("UI/MainMenuWindow");
+            var tabTestButton = CreateMainMenuButton("To tab #1");
+            tabTestButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                tab.SelectedIndex = 1;
+            };
+            stackPanel.Children.Add(tabTestButton);
+
+            {
+                var stackPanel1 = new StackPanel(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Orientation = Orientation.Vertical
+                };
+                tab.Items.Add(stackPanel1);
+
+                var title1 = new TextBlock(screen)
+                {
+                    Text = "Tab #1",
+                    Padding = new Thickness(4),
+                    ForegroundColor = Color.Yellow,
+                    BackgroundColor = Color.Black,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    ShadowOffset = new Vector2(2)
+                };
+                stackPanel1.Children.Add(title1);
+
+                var separator1 = ControlUtil.CreateDefaultSeparator(screen);
+                stackPanel1.Children.Add(separator1);
+
+                var tabTest1Button = CreateMainMenuButton("To tab #0");
+                tabTest1Button.Click += (Control s, ref RoutedEventContext c) =>
+                {
+                    tab.SelectedIndex = 0;
+                };
+                stackPanel1.Children.Add(tabTest1Button);
+            }
 
             openAnimation = new FloatLerpAnimation
             {
