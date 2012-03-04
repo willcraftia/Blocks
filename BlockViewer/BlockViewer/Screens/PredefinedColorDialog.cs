@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework;
@@ -13,7 +14,7 @@ using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class ColorDialog : OverlayDialogBase
+    public sealed class PredefinedColorDialog : OverlayDialogBase
     {
         const int columnCount = 5;
 
@@ -31,9 +32,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         FloatLerpAnimation closeAnimation;
 
-        public ColorDialog(Screen screen)
+        /// <summary>
+        /// 選択対象とする PredefinedColor のリストを取得します。
+        /// デフォルトでは PredefinedColor.PredefinedColors に含まれる
+        /// PredefinedColor が設定されています。
+        /// 選択させたくない PredefinedColor がある場合、
+        /// それらをこのリストから削除するか、
+        /// リスト内の要素を全て削除した後に必要な PredefinedColor のみを追加します。
+        /// </summary>
+        public List<PredefinedColor> PredefinedColors { get; private set; }
+
+        public PredefinedColorDialog(Screen screen)
             : base(screen)
         {
+            PredefinedColors = new List<PredefinedColor>();
+            PredefinedColors.AddRange(PredefinedColor.PredefinedColors);
+            PredefinedColors.Sort((x, y) => x.Name.CompareTo(y.Name));
+
             // 開く際に openAnimation で Width を設定するので 0 で初期化します。
             Width = 0;
             ShadowOffset = new Vector2(4);
@@ -90,18 +105,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var vColorPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Center
             };
             stackPanel.Children.Add(vColorPanel);
 
             colorButtons = new ColorButton[columnCount * rowCount];
             for (int i = 0; i < rowCount; i++)
             {
-                var hColorPanel = new StackPanel(screen)
-                {
-                    HorizontalAlignment = HorizontalAlignment.Stretch
-                };
+                var hColorPanel = new StackPanel(screen);
                 vColorPanel.Children.Add(hColorPanel);
 
                 for (int j = i * rowCount; j < (i + 1) * rowCount; j++)
@@ -119,11 +130,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
+            var sortByName = ControlUtil.CreateDefaultDialogButton(screen, "Sort by Name");
+            sortByName.Click += new RoutedEventHandler(OnSortByNameClick);
+            stackPanel.Children.Add(sortByName);
+
+            var sortByColor = ControlUtil.CreateDefaultDialogButton(screen, "Sort by Color");
+            sortByColor.Click += new RoutedEventHandler(OnSortByColorClick);
+            stackPanel.Children.Add(sortByColor);
+
             cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelButton);
             cancelButton.Click += (Control s, ref RoutedEventContext c) => Close();
             stackPanel.Children.Add(cancelButton);
 
-            const float windowWidth = 320;
+            const float windowWidth = 280;
 
             openAnimation = new FloatLerpAnimation
             {
@@ -164,12 +183,39 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeAnimation.Enabled = true;
         }
 
+        void OnSortByNameClick(Control sender, ref RoutedEventContext context)
+        {
+            PredefinedColors.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            ReloadPage();
+        }
+
+        void OnSortByColorClick(Control sender, ref RoutedEventContext context)
+        {
+            PredefinedColors.Sort(SortPredefinedColorByColor);
+
+            ReloadPage();
+        }
+
+        int SortPredefinedColorByColor(PredefinedColor x, PredefinedColor y)
+        {
+            var xColor = x.Color;
+            var yColor = y.Color;
+
+            if (xColor.R != yColor.R) return xColor.R.CompareTo(yColor.R);
+            if (xColor.G != yColor.G) return xColor.G.CompareTo(yColor.G);
+            if (xColor.B != yColor.B) return xColor.B.CompareTo(yColor.B);
+            if (xColor.A != yColor.A) return xColor.A.CompareTo(yColor.A);
+
+            return 0;
+        }
+
         void BackPage()
         {
             currentPageIndex--;
             // 先頭を越えるならば末尾のページを設定します。
             if (currentPageIndex < 0)
-                currentPageIndex = PredefinedColor.PredefinedColors.Count / colorButtons.Length;
+                currentPageIndex = PredefinedColors.Count / colorButtons.Length;
 
             ReloadPage();
         }
@@ -178,8 +224,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             currentPageIndex++;
             // 末尾を越えるならば先頭のページを設定します。
-            if (PredefinedColor.PredefinedColors.Count / colorButtons.Length < currentPageIndex)
+            if (PredefinedColors.Count / colorButtons.Length < currentPageIndex)
                 currentPageIndex = 0;
+
+            ReloadPage();
+        }
+
+        void Sort(IComparer<PredefinedColor> comparer)
+        {
+            PredefinedColors.Sort(comparer);
 
             ReloadPage();
         }
@@ -192,9 +245,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 var colorButton = colorButtons[i];
 
                 int colorIndex = currentPageIndex * colorButtons.Length + i;
-                if (colorIndex < PredefinedColor.PredefinedColors.Count)
+                if (colorIndex < PredefinedColors.Count)
                 {
-                    var predefinedColor = PredefinedColor.PredefinedColors[colorIndex];
+                    var predefinedColor = PredefinedColors[colorIndex];
                     colorButton.ForegroundColor = predefinedColor.Color;
                     colorButton.Enabled = true;
                 }
@@ -217,7 +270,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
 
             var currentPageNo = currentPageIndex + 1;
-            var lastPageNo = PredefinedColor.PredefinedColors.Count / colorButtons.Length + 1;
+            var lastPageNo = PredefinedColors.Count / colorButtons.Length + 1;
 
             pageTextBlock.Text = currentPageNo + "/" + lastPageNo;
         }

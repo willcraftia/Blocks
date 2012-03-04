@@ -20,7 +20,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         
         ColorButton specularColorButton;
 
-        ColorDialog colorDialog;
+        PredefinedColorDialog predefinedColorDialog;
 
         BlockMeshViewModel ViewModel
         {
@@ -112,11 +112,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnDiffuseColorButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (colorDialog == null)
+            if (predefinedColorDialog == null)
             {
-                colorDialog = new ColorDialog(Screen);
+                predefinedColorDialog = new PredefinedColorDialog(Screen);
+                // A 値をライト色で用いることはできないため、選択範囲から除外しておきます。
+                predefinedColorDialog.PredefinedColors.RemoveAll((p) => p.Color.A != 255);
             }
-            colorDialog.Show();
+            predefinedColorDialog.Show();
         }
 
         public override void Update(GameTime gameTime)

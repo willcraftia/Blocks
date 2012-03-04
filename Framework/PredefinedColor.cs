@@ -15,37 +15,6 @@ namespace Willcraftia.Xna.Framework
     /// </summary>
     public sealed class PredefinedColor
     {
-        #region PredefinedColorComparer
-
-        /// <summary>
-        /// PropertyInfo を Name プロパティで比較する IComparer です。
-        /// </summary>
-        class PredefinedColorComparer : IComparer<PredefinedColor>
-        {
-            /// <summary>
-            /// シングルトン。
-            /// </summary>
-            public static PredefinedColorComparer Instance = new PredefinedColorComparer();
-
-            /// <summary>
-            /// シングルトンとするためにコンストラクタを非公開にします。
-            /// </summary>
-            PredefinedColorComparer() { }
-
-            /// <summary>
-            /// Name で比較します。
-            /// </summary>
-            /// <param name="x"></param>
-            /// <param name="y"></param>
-            /// <returns></returns>
-            public int Compare(PredefinedColor x, PredefinedColor y)
-            {
-                return x.Name.CompareTo(y.Name);
-            }
-        }
-
-        #endregion
-
         /// <summary>
         /// 全ての PredefinedColor を含むリスト。
         /// </summary>
@@ -84,7 +53,6 @@ namespace Willcraftia.Xna.Framework
                     predefinedColors.Add(predefinedColor);
                 }
             }
-            predefinedColors.Sort(PredefinedColorComparer.Instance);
             PredefinedColors = new ReadOnlyCollection<PredefinedColor>(predefinedColors);
         }
 
@@ -93,7 +61,7 @@ namespace Willcraftia.Xna.Framework
         /// </summary>
         /// <param name="name">名前。</param>
         /// <param name="color">Color。</param>
-        internal PredefinedColor(string name, Color color)
+        PredefinedColor(string name, Color color)
         {
             Name = name;
             Color = color;

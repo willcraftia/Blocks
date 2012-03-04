@@ -110,7 +110,6 @@
     <Compile Include="GameServiceContainerExtension.cs" />
     <Compile Include="Graphics\BackBuffer.cs" />
     <Compile Include="Graphics\ColoredQuadrangleMaker.cs" />
-    <Compile Include="Graphics\ColorHelper.cs" />
     <Compile Include="Graphics\ColoredCubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\CubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\DefaultSpriteSheetSource.cs" />
