@@ -1448,7 +1448,7 @@ namespace Willcraftia.Xna.Framework.UI
                 {
                     var testBounds = new Rect(child.PointToScreen(Vector2.Zero), child.RenderSize);
 
-                    var distance = MeasureDirectionalDistance(direction, ref baseBounds, ref testBounds);
+                    var distance = MeasureDistanceSquared(direction, ref baseBounds, ref testBounds);
 
                     // MEMO
                     // 面倒なので少し雑に判定します。
@@ -1480,17 +1480,19 @@ namespace Willcraftia.Xna.Framework.UI
             return candidate;
         }
 
-        float MeasureDirectionalDistance(FocusNavigationDirection direction, ref Rect baseBounds, ref Rect testBounds)
+        float MeasureDistanceSquared(FocusNavigationDirection direction, ref Rect baseBounds, ref Rect testBounds)
         {
             //
             // MEMO:
             //
             // Nuclex.UserInterface.Screen の判定ロジックを応用してます。
-            // 先頭や末尾に到達した場合の循環をサポートしているので、全く等いわけではないです。
+            // Nuclex とは異なり、先頭や末尾に到達した場合の循環を前提にしています。
+            // また、Nuclex では Control が格子状に隣接した状態が考慮されていないため、
+            // それを修正しています。
             //
 
             //
-            // TODO:
+            // MEMO:
             //
             // Nuclex 方式の挙動は、恐らく WPF の挙動に等しいですが、
             // この挙動には問題があり、必ずしも人が期待するフォーカス移動先が決定されるとは限りません。
@@ -1501,81 +1503,80 @@ namespace Willcraftia.Xna.Framework.UI
             // WPF ならばタブ ナビゲーションで代替することもできますが、
             // ゲームパッド操作を考えるとこの代案にも無理があります。
             //
+            // この問題は、同サイズの Control が隣接するように工夫するなどで対応できます。
+            //
+
+            var basePosition = new Vector2();
+            var testPosition = new Vector2();
 
             if (direction == FocusNavigationDirection.Up || direction == FocusNavigationDirection.Down)
             {
-                float baseCenterX = baseBounds.X + baseBounds.Width * 0.5f;
+                basePosition.X = baseBounds.X + baseBounds.Width * 0.5f;
+                testPosition.X = Math.Min(Math.Max(basePosition.X, testBounds.Left), testBounds.Right);
+                testPosition.Y = testBounds.Y + testBounds.Height * 0.5f;
 
-                float testClosestX = Math.Min(Math.Max(baseCenterX, testBounds.Left), testBounds.Right);
-                float testClosestY = testBounds.Y + testBounds.Height * 0.5f;
+                bool leavesLeft = (testPosition.X < baseBounds.Left);
+                bool leavesRight = (baseBounds.Right < testPosition.X);
 
-                bool leavesLeft = (testClosestX < baseBounds.Left);
-                bool leavesRight = (baseBounds.Right < testClosestX);
-
-                float baseY;
                 if (direction == FocusNavigationDirection.Up)
                 {
-                    baseY = baseBounds.Top;
-                    if (baseY < testClosestY) return float.NaN;
+                    basePosition.Y = baseBounds.Top;
+                    if (basePosition.Y < testPosition.Y) return float.NaN;
                 }
                 else
                 {
-                    baseY = baseBounds.Bottom;
-                    if (testClosestY < baseY) return float.NaN;
+                    basePosition.Y = baseBounds.Bottom;
+                    if (testPosition.Y < basePosition.Y) return float.NaN;
                 }
 
-                float distanceY = Math.Abs(baseY - testClosestY);
-
+                float distanceY = Math.Abs(basePosition.Y - testPosition.Y);
                 if (leavesLeft)
                 {
-                    float distanceX = baseBounds.Left - testClosestX;
+                    float distanceX = baseBounds.Left - testPosition.X;
                     if (distanceY < distanceX) return float.NaN;
                 }
                 else if (leavesRight)
                 {
-                    float distanceX = testClosestX - baseBounds.Right;
+                    float distanceX = testPosition.X - baseBounds.Right;
                     if (distanceY < distanceX) return float.NaN;
                 }
-
-                return distanceY;
             }
             else
             {
-                float baseCenterY = baseBounds.Y + baseBounds.Height * 0.5f;
+                basePosition.Y = baseBounds.Y + baseBounds.Height * 0.5f;
+                testPosition.X = testBounds.X + testBounds.Width * 0.5f;
+                testPosition.Y = Math.Min(Math.Max(basePosition.Y, testBounds.Top), testBounds.Bottom);
 
-                float testClosestX = testBounds.X + testBounds.Width * 0.5f;
-                float testClosestY = Math.Min(Math.Max(baseCenterY, testBounds.Top), testBounds.Bottom);
+                bool leavesTop = (testPosition.Y < baseBounds.Top);
+                bool leavesBottom = (baseBounds.Bottom < testPosition.Y);
 
-                bool leavesTop = (testClosestY < baseBounds.Top);
-                bool leavesBottom = (baseBounds.Bottom < testClosestY);
-
-                float baseX;
                 if (direction == FocusNavigationDirection.Left)
                 {
-                    baseX = baseBounds.Left;
-                    if (baseX < testClosestX) return float.NaN;
+                    basePosition.X = baseBounds.Left;
+                    if (basePosition.X < testPosition.X) return float.NaN;
                 }
                 else
                 {
-                    baseX = baseBounds.Right;
-                    if (testClosestX < baseX) return float.NaN;
+                    basePosition.X = baseBounds.Right;
+                    if (testPosition.X < basePosition.X) return float.NaN;
                 }
 
-                float distanceX = Math.Abs(baseX - testClosestX);
-
+                float distanceX = Math.Abs(basePosition.X - testPosition.X);
                 if (leavesTop)
                 {
-                    float distanceY = baseBounds.Top - testClosestY;
+                    float distanceY = baseBounds.Top - testPosition.Y;
                     if (distanceX < distanceY) return float.NaN;
                 }
                 else if (leavesBottom)
                 {
-                    float distanceY = testClosestY - baseBounds.Bottom;
+                    float distanceY = testPosition.Y - baseBounds.Bottom;
                     if (distanceX < distanceY) return float.NaN;
                 }
-
-                return distanceX;
             }
+
+            float distanceSquared;
+            Vector2.DistanceSquared(ref basePosition, ref testPosition, out distanceSquared);
+            return distanceSquared;
         }
 
         /// <summary>
