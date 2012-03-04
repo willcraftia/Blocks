@@ -64,8 +64,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var diffuseColorTextBlock = new TextBlock(screen)
             {
-                Text = "Diffuse",
-                Width = 120,
+                Text = Strings.DiffuseColorLabel,
+                Width = 140,
                 Padding = new Thickness(4),
                 ForegroundColor = Color.White,
                 BackgroundColor = Color.Black,
@@ -91,8 +91,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             var specularColorTextBlock = new TextBlock(screen)
             {
-                Text = "Specular",
-                Width = 120,
+                Text = Strings.SpecularColorLabel,
+                Width = 140,
                 Padding = new Thickness(4),
                 ForegroundColor = Color.White,
                 BackgroundColor = Color.Black,
@@ -121,26 +121,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             predefinedColorDialog.Show();
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
         public override void Show()
         {
             var lightViewModel = ViewModel.SelectedLightViewModel;
 
             if (lightViewModel == ViewModel.Light0ViewModel)
             {
-                titleTextBlock.Text = "Light #0";
+                titleTextBlock.Text = Strings.Light0Title;
             }
             else if (lightViewModel == ViewModel.Light1ViewModel)
             {
-                titleTextBlock.Text = "Light #1";
+                titleTextBlock.Text = Strings.Light1Title;
             }
             else if (lightViewModel == ViewModel.Light2ViewModel)
             {
-                titleTextBlock.Text = "Light #2";
+                titleTextBlock.Text = Strings.Light2Title;
             }
             else
             {

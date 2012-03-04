@@ -106,6 +106,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Diffuse に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DiffuseColorLabel {
+            get {
+                return ResourceManager.GetString("DiffuseColorLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   English に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string EnButton {
@@ -169,6 +178,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Light #0 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light0Title {
+            get {
+                return ResourceManager.GetString("Light0Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Light #1 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Light1ModeButton {
@@ -178,11 +196,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Light #1 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light1Title {
+            get {
+                return ResourceManager.GetString("Light1Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Light #2 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Light2ModeButton {
             get {
                 return ResourceManager.GetString("Light2ModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Light #2 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Light2Title {
+            get {
+                return ResourceManager.GetString("Light2Title", resourceCulture);
             }
         }
         
@@ -300,6 +336,33 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string ShowButton {
             get {
                 return ResourceManager.GetString("ShowButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sort by Color に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SortByColorButton {
+            get {
+                return ResourceManager.GetString("SortByColorButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sort by Name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SortByNameButton {
+            get {
+                return ResourceManager.GetString("SortByNameButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specular に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SpecularColorLabel {
+            get {
+                return ResourceManager.GetString("SpecularColorLabel", resourceCulture);
             }
         }
         

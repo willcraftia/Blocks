@@ -132,6 +132,9 @@
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
   </data>
+  <data name="DiffuseColorLabel" xml:space="preserve">
+    <value>ディフューズ</value>
+  </data>
   <data name="EnButton" xml:space="preserve">
     <value>ENGLISH</value>
   </data>
@@ -150,10 +153,19 @@
   <data name="Light0ModeButton" xml:space="preserve">
     <value>ライト #0</value>
   </data>
+  <data name="Light0Title" xml:space="preserve">
+    <value>ライト #0</value>
+  </data>
   <data name="Light1ModeButton" xml:space="preserve">
     <value>ライト #1</value>
   </data>
+  <data name="Light1Title" xml:space="preserve">
+    <value>ライト #1</value>
+  </data>
   <data name="Light2ModeButton" xml:space="preserve">
+    <value>ライト #2</value>
+  </data>
+  <data name="Light2Title" xml:space="preserve">
     <value>ライト #2</value>
   </data>
   <data name="LoadButton" xml:space="preserve">
@@ -194,6 +206,15 @@
   </data>
   <data name="ShowButton" xml:space="preserve">
     <value>ひょうじする</value>
+  </data>
+  <data name="SortByColorButton" xml:space="preserve">
+    <value>いろ で ならべる</value>
+  </data>
+  <data name="SortByNameButton" xml:space="preserve">
+    <value>なまえ で ならべる</value>
+  </data>
+  <data name="SpecularColorLabel" xml:space="preserve">
+    <value>スペキュラー</value>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>はじめる</value>

@@ -130,13 +130,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var sortByName = ControlUtil.CreateDefaultDialogButton(screen, "Sort by Name");
-            sortByName.Click += new RoutedEventHandler(OnSortByNameClick);
-            stackPanel.Children.Add(sortByName);
+            var sortByNameButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.SortByNameButton);
+            sortByNameButton.Click += new RoutedEventHandler(OnSortByNameClick);
+            stackPanel.Children.Add(sortByNameButton);
 
-            var sortByColor = ControlUtil.CreateDefaultDialogButton(screen, "Sort by Color");
-            sortByColor.Click += new RoutedEventHandler(OnSortByColorClick);
-            stackPanel.Children.Add(sortByColor);
+            var sortByColorButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.SortByColorButton);
+            sortByColorButton.Click += new RoutedEventHandler(OnSortByColorClick);
+            stackPanel.Children.Add(sortByColorButton);
 
             cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelButton);
             cancelButton.Click += (Control s, ref RoutedEventContext c) => Close();
