@@ -238,6 +238,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             PredefinedColors.Sort((x, y) => x.Name.CompareTo(y.Name));
 
+            // ページをリセットします。
+            currentPageIndex = 0;
+
             ReloadPage();
         }
 
@@ -245,6 +248,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             PredefinedColors.Sort(SortPredefinedColorByColor);
             //PredefinedColors.Sort((x, y) => x.Color.PackedValue.CompareTo(y.Color.PackedValue));
+
+            // ページをリセットします。
+            currentPageIndex = 0;
 
             ReloadPage();
         }
@@ -278,13 +284,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // 末尾を越えるならば先頭のページを設定します。
             if (PredefinedColors.Count / colorButtons.Length < currentPageIndex)
                 currentPageIndex = 0;
-
-            ReloadPage();
-        }
-
-        void Sort(IComparer<PredefinedColor> comparer)
-        {
-            PredefinedColors.Sort(comparer);
 
             ReloadPage();
         }
