@@ -142,6 +142,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Grid View に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string GridViewModeButton {
+            get {
+                return ResourceManager.GetString("GridViewModeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Hide に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string HideButton {
@@ -219,6 +228,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string Light2Title {
             get {
                 return ResourceManager.GetString("Light2Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   List View に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ListViewModeButton {
+            get {
+                return ResourceManager.GetString("ListViewModeButton", resourceCulture);
             }
         }
         
