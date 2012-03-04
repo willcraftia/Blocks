@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
@@ -14,9 +15,11 @@ using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
+    public delegate void PredefinedColorSelected(PredefinedColor predefinedColor);
+
     public sealed class PredefinedColorDialog : OverlayDialogBase
     {
-        const int columnCount = 5;
+        const int columnCount = 10;
 
         const int rowCount = 5;
 
@@ -42,6 +45,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         /// </summary>
         public List<PredefinedColor> PredefinedColors { get; private set; }
 
+        /// <summary>
+        /// PredefinedColor が選択された時に呼び出されるメソッドを取得または設定します。
+        /// </summary>
+        public PredefinedColorSelected Selected { get; set; }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="screen"></param>
         public PredefinedColorDialog(Screen screen)
             : base(screen)
         {
@@ -115,7 +127,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 var hColorPanel = new StackPanel(screen);
                 vColorPanel.Children.Add(hColorPanel);
 
-                for (int j = i * rowCount; j < (i + 1) * rowCount; j++)
+                for (int j = i * columnCount; j < (i + 1) * columnCount; j++)
                 {
                     colorButtons[j] = new ColorButton(screen)
                     {
@@ -124,6 +136,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         Margin = new Thickness(2)
                     };
                     hColorPanel.Children.Add(colorButtons[j]);
+
+                    int mod = j % columnCount;
+                    if (mod == 0)
+                    {
+                        colorButtons[j].KeyDown += new RoutedEventHandler(OnLeftColorButtonKeyDown);
+                    }
+                    else if (mod == columnCount - 1)
+                    {
+                        colorButtons[j].KeyDown += new RoutedEventHandler(OnRightColorButtonKeyDown);
+                    }
+
+                    colorButtons[j].Click += new RoutedEventHandler(OnColorButtonClick);
                 }
             }
 
@@ -142,7 +166,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             cancelButton.Click += (Control s, ref RoutedEventContext c) => Close();
             stackPanel.Children.Add(cancelButton);
 
-            const float windowWidth = 280;
+            const float windowWidth = 400;
 
             openAnimation = new FloatLerpAnimation
             {
@@ -183,6 +207,33 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeAnimation.Enabled = true;
         }
 
+        void OnColorButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            var colorButton = sender as ColorButton;
+
+            if (Selected != null) Selected(colorButton.DataContext as PredefinedColor);
+
+            Close();
+        }
+
+        void OnLeftColorButtonKeyDown(Control sender, ref RoutedEventContext context)
+        {
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
+            {
+                BackPage();
+                context.Handled = true;
+            }
+        }
+
+        void OnRightColorButtonKeyDown(Control sender, ref RoutedEventContext context)
+        {
+            if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
+            {
+                ForwardPage();
+                context.Handled = true;
+            }
+        }
+
         void OnSortByNameClick(Control sender, ref RoutedEventContext context)
         {
             PredefinedColors.Sort((x, y) => x.Name.CompareTo(y.Name));
@@ -193,6 +244,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         void OnSortByColorClick(Control sender, ref RoutedEventContext context)
         {
             PredefinedColors.Sort(SortPredefinedColorByColor);
+            //PredefinedColors.Sort((x, y) => x.Color.PackedValue.CompareTo(y.Color.PackedValue));
 
             ReloadPage();
         }
@@ -248,6 +300,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 if (colorIndex < PredefinedColors.Count)
                 {
                     var predefinedColor = PredefinedColors[colorIndex];
+                    colorButton.DataContext = predefinedColor;
                     colorButton.ForegroundColor = predefinedColor.Color;
                     colorButton.Enabled = true;
                 }
@@ -264,6 +317,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         }
                     }
 
+                    colorButton.DataContext = null;
                     colorButton.ForegroundColor = Color.Transparent;
                     colorButton.Enabled = false;
                 }

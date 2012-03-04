@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
@@ -107,18 +108,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Height = 30,
                 Margin = new Thickness(2)
             };
+            specularColorButton.Click += new RoutedEventHandler(OnSpecularColorButtonClick);
             specularColorPanel.Children.Add(specularColorButton);
-        }
-
-        void OnDiffuseColorButtonClick(Control sender, ref RoutedEventContext context)
-        {
-            if (predefinedColorDialog == null)
-            {
-                predefinedColorDialog = new PredefinedColorDialog(Screen);
-                // A 値をライト色で用いることはできないため、選択範囲から除外しておきます。
-                predefinedColorDialog.PredefinedColors.RemoveAll((p) => p.Color.A != 255);
-            }
-            predefinedColorDialog.Show();
         }
 
         public override void Show()
@@ -151,6 +142,49 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             diffuseColorButton.Focus();
 
             base.Show();
+        }
+
+        void OnDiffuseColorButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            ShowPredefinedColorDialog(PredefinedColorSelectedForDiffuse);
+        }
+
+        void OnSpecularColorButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            ShowPredefinedColorDialog(PredefinedColorSelectedForSpecular);
+        }
+
+        void ShowPredefinedColorDialog(PredefinedColorSelected callback)
+        {
+            if (predefinedColorDialog == null)
+            {
+                predefinedColorDialog = new PredefinedColorDialog(Screen);
+                // A 値をライト色で用いることはできないため、選択範囲から除外しておきます。
+                predefinedColorDialog.PredefinedColors.RemoveAll((p) => p.Color.A != 255);
+            }
+            // コールバックを設定してから表示します。
+            predefinedColorDialog.Selected = callback;
+            predefinedColorDialog.Show();
+        }
+
+        void PredefinedColorSelectedForDiffuse(PredefinedColor predefinedColor)
+        {
+            var color = predefinedColor.Color;
+
+            // Diffuse ボタンに反映します。
+            diffuseColorButton.ForegroundColor = color;
+            // モデルに反映します。
+            ViewModel.SelectedLightViewModel.DiffuseColor = color.ToVector3();
+        }
+
+        void PredefinedColorSelectedForSpecular(PredefinedColor predefinedColor)
+        {
+            var color = predefinedColor.Color;
+
+            // Diffuse ボタンに反映します。
+            specularColorButton.ForegroundColor = color;
+            // モデルに反映します。
+            ViewModel.SelectedLightViewModel.SpecularColor = color.ToVector3();
         }
     }
 }
