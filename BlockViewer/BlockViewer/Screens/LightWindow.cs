@@ -4,7 +4,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
@@ -20,6 +19,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         ColorButton diffuseColorButton;
         
         ColorButton specularColorButton;
+
+        ColorDialog colorDialog;
 
         BlockMeshViewModel ViewModel
         {
@@ -79,6 +80,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Height = 30,
                 Margin = new Thickness(2)
             };
+            diffuseColorButton.Click += new RoutedEventHandler(OnDiffuseColorButtonClick);
             diffuseColorPanel.Children.Add(diffuseColorButton);
 
             var specularColorPanel = new StackPanel(screen)
@@ -106,6 +108,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Margin = new Thickness(2)
             };
             specularColorPanel.Children.Add(specularColorButton);
+        }
+
+        void OnDiffuseColorButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (colorDialog == null)
+            {
+                colorDialog = new ColorDialog(Screen);
+            }
+            colorDialog.Show();
         }
 
         public override void Update(GameTime gameTime)
