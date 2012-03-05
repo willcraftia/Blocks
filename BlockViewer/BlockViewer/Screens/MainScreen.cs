@@ -92,6 +92,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 FocusTexture = Content.Load<Texture2D>("UI/Focus"),
                 MouseOverTexture = Content.Load<Texture2D>("UI/MouseOver")
             };
+            source.LookAndFeelMap[typeof(Canvas)] = new CanvasLookAndFeel();
 
             LookAndFeelSource = source;
         }
@@ -102,6 +103,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             mainViewModel.StoreSampleBlockMesh();
 
             var canvas = new Canvas(this);
+            canvas.BackgroundColor = Color.CornflowerBlue;
             canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
             canvas.VerticalAlignment = VerticalAlignment.Stretch;
             Desktop.Content = canvas;

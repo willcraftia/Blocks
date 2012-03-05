@@ -53,6 +53,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             get { return DataContext as OpenStorageViewModel; }
         }
 
+        int PageCount
+        {
+            get
+            {
+                var pageCount = fileNames.Length / listSize;
+                if (fileNames.Length % listSize != 0) pageCount++;
+                return pageCount;
+            }
+        }
+
         public OpenStorageDialog(Screen screen)
             : base(screen)
         {
@@ -224,7 +234,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             currentPageIndex--;
             // 先頭を越えるならば末尾のページを設定します。
-            if (currentPageIndex < 0) currentPageIndex = fileNames.Length / listSize;
+            if (currentPageIndex < 0) currentPageIndex = PageCount - 1;
 
             ReloadPage();
         }
@@ -233,7 +243,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             currentPageIndex++;
             // 末尾を越えるならば先頭のページを設定します。
-            if (fileNames.Length / listSize < currentPageIndex) currentPageIndex = 0;
+            if (PageCount - 1 < currentPageIndex) currentPageIndex = 0;
 
             ReloadPage();
         }
@@ -332,9 +342,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
 
             var currentPageNo = currentPageIndex + 1;
-            var lastPageNo = fileNames.Length / listSize + 1;
-
-            pageTextBlock.Text = currentPageNo + "/" + lastPageNo;
+            pageTextBlock.Text = currentPageNo + "/" + PageCount;
         }
     }
 }

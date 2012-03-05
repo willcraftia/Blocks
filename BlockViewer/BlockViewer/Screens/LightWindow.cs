@@ -15,11 +15,51 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class LightWindow : Window
     {
+        #region LightColorButton
+
+        class LightColorButton : Button
+        {
+            public TextBlock NameTextBlock { get; private set; }
+
+            public Canvas ColorCanvas { get; private set; }
+
+            public LightColorButton(Screen screen)
+                : base(screen)
+            {
+                var stackPanel = new StackPanel(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(16, 0, 16, 0)
+                };
+                Content = stackPanel;
+
+                NameTextBlock = new TextBlock(screen)
+                {
+                    Width = 140,
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    ShadowOffset = new Vector2(2),
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                stackPanel.Children.Add(NameTextBlock);
+
+                ColorCanvas = new Canvas(screen)
+                {
+                    Width = 28,
+                    Height = 28,
+                    Margin = new Thickness(4)
+                };
+                stackPanel.Children.Add(ColorCanvas);
+            }
+        }
+
+        #endregion
+
         TextBlock titleTextBlock;
 
-        ColorButton diffuseColorButton;
-        
-        ColorButton specularColorButton;
+        LightColorButton diffuseColorButton;
+
+        LightColorButton specularColorButton;
 
         PredefinedColorDialog predefinedColorDialog;
 
@@ -57,59 +97,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
-            var diffuseColorPanel = new StackPanel(screen)
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            stackPanel.Children.Add(diffuseColorPanel);
-
-            var diffuseColorTextBlock = new TextBlock(screen)
-            {
-                Text = Strings.DiffuseColorLabel,
-                Width = 140,
-                Padding = new Thickness(4),
-                ForegroundColor = Color.White,
-                BackgroundColor = Color.Black,
-                TextHorizontalAlignment = HorizontalAlignment.Left,
-                ShadowOffset = new Vector2(2)
-            };
-            diffuseColorPanel.Children.Add(diffuseColorTextBlock);
-
-            diffuseColorButton = new ColorButton(screen)
-            {
-                Width = 30,
-                Height = 30,
-                Margin = new Thickness(2)
-            };
+            diffuseColorButton = new LightColorButton(screen);
+            diffuseColorButton.NameTextBlock.Text = Strings.DiffuseColorLabel;
             diffuseColorButton.Click += new RoutedEventHandler(OnDiffuseColorButtonClick);
-            diffuseColorPanel.Children.Add(diffuseColorButton);
+            stackPanel.Children.Add(diffuseColorButton);
 
-            var specularColorPanel = new StackPanel(screen)
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            stackPanel.Children.Add(specularColorPanel);
-
-            var specularColorTextBlock = new TextBlock(screen)
-            {
-                Text = Strings.SpecularColorLabel,
-                Width = 140,
-                Padding = new Thickness(4),
-                ForegroundColor = Color.White,
-                BackgroundColor = Color.Black,
-                TextHorizontalAlignment = HorizontalAlignment.Left,
-                ShadowOffset = new Vector2(2)
-            };
-            specularColorPanel.Children.Add(specularColorTextBlock);
-
-            specularColorButton = new ColorButton(screen)
-            {
-                Width = 30,
-                Height = 30,
-                Margin = new Thickness(2)
-            };
+            specularColorButton = new LightColorButton(screen);
+            specularColorButton.NameTextBlock.Text = Strings.SpecularColorLabel;
             specularColorButton.Click += new RoutedEventHandler(OnSpecularColorButtonClick);
-            specularColorPanel.Children.Add(specularColorButton);
+            stackPanel.Children.Add(specularColorButton);
         }
 
         public override void Show()
@@ -134,10 +130,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
 
             var diffuse = lightViewModel.DiffuseColor;
-            diffuseColorButton.ForegroundColor = new Color(diffuse.X, diffuse.Y, diffuse.Z);
+            diffuseColorButton.ColorCanvas.BackgroundColor = new Color(diffuse.X, diffuse.Y, diffuse.Z);
 
             var specular = lightViewModel.SpecularColor;
-            specularColorButton.ForegroundColor = new Color(specular.X, specular.Y, specular.Z);
+            specularColorButton.ColorCanvas.BackgroundColor = new Color(specular.X, specular.Y, specular.Z);
 
             diffuseColorButton.Focus();
 
@@ -172,7 +168,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var color = predefinedColor.Color;
 
             // Diffuse ボタンに反映します。
-            diffuseColorButton.ForegroundColor = color;
+            diffuseColorButton.ColorCanvas.BackgroundColor = color;
             // モデルに反映します。
             ViewModel.SelectedLightViewModel.DiffuseColor = color.ToVector3();
         }
@@ -182,7 +178,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var color = predefinedColor.Color;
 
             // Diffuse ボタンに反映します。
-            specularColorButton.ForegroundColor = color;
+            specularColorButton.ColorCanvas.BackgroundColor = color;
             // モデルに反映します。
             ViewModel.SelectedLightViewModel.SpecularColor = color.ToVector3();
         }
