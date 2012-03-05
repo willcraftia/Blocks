@@ -20,6 +20,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     {
         SelectLanguageDialog selectLanguageDialog;
 
+        Button changeLookAndFeelButton;
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -46,6 +48,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             selectLanguageButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
             stackPanel.Children.Add(selectLanguageButton);
 
+            changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
+            changeLookAndFeelButton.Click += new RoutedEventHandler(OnChangeLookAndFeelButtonClick);
+            stackPanel.Children.Add(changeLookAndFeelButton);
+
             var exitButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
@@ -69,6 +75,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 selectLanguageDialog = new SelectLanguageDialog(Screen);
 
             selectLanguageDialog.Show();
+        }
+
+        void OnChangeLookAndFeelButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            var startScreen = Screen as StartScreen;
+            if (startScreen.SelectedLookAndFeelSourceIndex == StartScreen.DefaultLookAndFeelIndex)
+            {
+                startScreen.SelectedLookAndFeelSourceIndex = StartScreen.DebugLookAndFeelIndex;
+                (changeLookAndFeelButton.Content as TextBlock).Text = "Look & Feel [Default]";
+            }
+            else
+            {
+                startScreen.SelectedLookAndFeelSourceIndex = StartScreen.DefaultLookAndFeelIndex;
+                (changeLookAndFeelButton.Content as TextBlock).Text = "Look & Feel [Debug]";
+            }
         }
 
         void OnExitButtonClick(Control sender, ref RoutedEventContext context)

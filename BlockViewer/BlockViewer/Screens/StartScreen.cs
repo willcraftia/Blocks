@@ -8,6 +8,7 @@ using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
+using Willcraftia.Xna.Framework.UI.Lafs.Debug;
 
 #endregion
 
@@ -15,7 +16,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class StartScreen : Screen
     {
+        public const int DefaultLookAndFeelIndex = 0;
+
+        public const int DebugLookAndFeelIndex = 1;
+
+        SelectableLookAndFeelSource selectableLookAndFeelSource = new SelectableLookAndFeelSource();
+
         DefaultSpriteSheetSource spriteSheetSource;
+
+        public int SelectedLookAndFeelSourceIndex
+        {
+            get { return selectableLookAndFeelSource.SelectedIndex; }
+            set { selectableLookAndFeelSource.SelectedIndex = value; }
+        }
 
         public StartScreen(Game game)
             : base(game)
@@ -46,6 +59,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void InitializeLookAndFeelSource()
         {
+            selectableLookAndFeelSource.Items.Add(CreateDefaultLookAndFeelSource());
+            selectableLookAndFeelSource.Items.Add(DebugLooAndFeelUtil.CreateLookAndFeelSource(Game));
+            selectableLookAndFeelSource.SelectedIndex = 0;
+
+            LookAndFeelSource = selectableLookAndFeelSource;
+        }
+
+        ILookAndFeelSource CreateDefaultLookAndFeelSource()
+        {
             var source = new DefaultLookAndFeelSource();
 
             source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
@@ -66,7 +88,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 MouseOverTexture = Content.Load<Texture2D>("UI/MouseOver")
             };
 
-            LookAndFeelSource = source;
+            return source;
         }
 
         void InitializeControls()

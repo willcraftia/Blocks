@@ -36,6 +36,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         Button lodButton;
 
+        Button changeLookAndFeelButton;
+
         #endregion
 
         #region Mode Menu
@@ -277,6 +279,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             lodButton.Click += new RoutedEventHandler(OnLodButtonClick);
             stackPanel.Children.Add(lodButton);
 
+            changeLookAndFeelButton = CreateMenuButton("Look & Feel [Debug]");
+            changeLookAndFeelButton.Click += new RoutedEventHandler(OnChangeLookAndFeelButtonClick);
+            stackPanel.Children.Add(changeLookAndFeelButton);
+
             var exitButton = CreateMenuButton(Strings.ExitButton);
             exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
             stackPanel.Children.Add(exitButton);
@@ -467,6 +473,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             tab.SelectedIndex = mainMenuIndex;
             lodButton.Focus();
             Close();
+        }
+
+        void OnChangeLookAndFeelButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            var startScreen = Screen as MainScreen;
+            if (startScreen.SelectedLookAndFeelSourceIndex == MainScreen.DefaultLookAndFeelIndex)
+            {
+                startScreen.SelectedLookAndFeelSourceIndex = MainScreen.DebugLookAndFeelIndex;
+                (changeLookAndFeelButton.Content as TextBlock).Text = "Look & Feel [Default]";
+            }
+            else
+            {
+                startScreen.SelectedLookAndFeelSourceIndex = MainScreen.DefaultLookAndFeelIndex;
+                (changeLookAndFeelButton.Content as TextBlock).Text = "Look & Feel [Debug]";
+            }
         }
     }
 }

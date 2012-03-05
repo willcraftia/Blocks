@@ -152,6 +152,7 @@
     <Compile Include="ScreenDefinition.cs" />
     <Compile Include="ScreenDefinitionCollection.cs" />
     <Compile Include="LoadingScreen.cs" />
+    <Compile Include="SelectableLookAndFeelSource.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Thickness.cs" />
     <Compile Include="VerticalAlignment.cs" />
