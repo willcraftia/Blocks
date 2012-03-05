@@ -224,17 +224,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             class ColorControl : Control
             {
-                Texture2D texture;
-
-                public ColorControl(Screen screen)
-                    : base(screen)
-                {
-                    texture = Texture2DHelper.CreateFillTexture(screen.GraphicsDevice);
-                }
+                public ColorControl(Screen screen) : base(screen) { }
 
                 public override void Draw(GameTime gameTime, IDrawContext drawContext)
                 {
-                    drawContext.DrawTexture(new Rect(RenderSize), texture, ForegroundColor);
+                    drawContext.DrawRectangle(new Rect(RenderSize), ForegroundColor);
                     base.Draw(gameTime, drawContext);
                 }
             }
