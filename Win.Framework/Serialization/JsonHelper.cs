@@ -7,7 +7,7 @@ using System.Text;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework.Serialization
+namespace Willcraftia.Xna.Win.Framework.Serialization
 {
     /// <summary>
     /// JSON に関するヘルパ メソッドを提供するクラスです。
@@ -37,7 +37,7 @@ namespace Willcraftia.Xna.Framework.Serialization
         {
             using (var stream = new MemoryStream())
             {
-                WriteObject<T>(graph, stream);
+                Serialize<T>(graph, stream);
                 return encoding.GetString(stream.ToArray());
             }
         }
@@ -51,10 +51,10 @@ namespace Willcraftia.Xna.Framework.Serialization
         /// <typeparam name="T">オブジェクトの型。</typeparam>
         /// <param name="graph">JSON として書き込むオブジェクト。</param>
         /// <param name="stream">JSON の書き込み先の Stream。</param>
-        public static void WriteObject<T>(T graph, Stream stream)
+        public static void Serialize<T>(T graph, Stream stream)
         {
-            var serializer = new DataContractJsonSerializer(typeof(T));
-            serializer.WriteObject(stream, graph);
+            var serializer = new JsonSerializer<T>();
+            serializer.Serialize(stream, graph);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Willcraftia.Xna.Framework.Serialization
             byte[] bytes = encoding.GetBytes(json);
             using (var stream = new MemoryStream(bytes))
             {
-                return ReadObject<T>(stream);
+                return Deserialize<T>(stream);
             }
         }
 
@@ -94,10 +94,10 @@ namespace Willcraftia.Xna.Framework.Serialization
         /// <typeparam name="T">オブジェクトの型。</typeparam>
         /// <param name="stream">JSON の読み込み元の Stream。</param>
         /// <returns>オブジェクト。</returns>
-        public static T ReadObject<T>(Stream stream)
+        public static T Deserialize<T>(Stream stream)
         {
-            var serializer = new DataContractJsonSerializer(typeof(T));
-            return (T) serializer.ReadObject(stream);
+            var serializer = new JsonSerializer<T>();
+            return (T) serializer.Deserialize(stream);
         }
     }
 }

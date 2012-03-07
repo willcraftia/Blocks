@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -126,9 +125,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         Texture2D fillTexture;
 
         /// <summary>
-        /// Block の JSON。
+        /// シリアライズされた Block。
         /// </summary>
-        string blockJson;
+        string blockData;
 
         /// <summary>
         /// インスタンシング用の Effect。
@@ -280,10 +279,15 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             drawMarker.BarIndex = 1;
             drawMarker.Color = Color.Yellow;
 
-            // テスト用にメモリ上で Block の JSON データを作ります。
+            // テスト用にメモリ上で Block データを作ります。
             //var block = CreateFullFilledBlock();
             var block = CreateOctahedronLikeBlock();
-            blockJson = JsonHelper.ToJson<Block>(block);
+            var serializer = new XmlSerializer<Block>();
+            using (var stream = new MemoryStream())
+            {
+                serializer.Serialize(stream, block);
+                blockData = Encoding.ASCII.GetString(stream.ToArray());
+            }
 
             UpdateStatusString();
 
@@ -543,14 +547,14 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。
 
             // 通常の BlockMesh をロードします。
-            using (var stream = blockJson.ToMemoryStream())
+            using (var stream = blockData.ToMemoryStream())
             {
                 mesh = meshManager.Load(stream);
                 foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
             }
 
             // インスタンシング用の BlockMesh をロードします。
-            using (var stream = blockJson.ToMemoryStream())
+            using (var stream = blockData.ToMemoryStream())
             {
                 instancedMesh = instancedMeshManager.Load(stream);
                 foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();

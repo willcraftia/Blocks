@@ -3,11 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.Serialization;
+using Willcraftia.Xna.Win.Framework.Serialization;
 
 #endregion
 
@@ -17,64 +17,59 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
     {
         static void Main(string[] args)
         {
-            var block = CreateSimpleBlock();
-            //var block = CreateOctahedronLikeBlock();
+            //var block = CreateSimpleBlock();
+            var block = CreateOctahedronLikeBlock();
 
-            SerializeAndDeserializeAsJson(block);
+            var xmlSerializer = new XmlSerializer<Block>();
+            var jsonSerializer = new JsonSerializer<Block>();
 
-            // XML は用いませんが、自分へのサンプル コードとして記述しています。
-            SerializeAndDeserializeAsXml(block);
+            // シリアライズとデシリアライズのテスト
+            SerializeAndDeserialize(xmlSerializer, block);
+            SerializeAndDeserialize(jsonSerializer, block);
+
+            // 他のアプリケーションで利用するためのデータの作成
+            Save(xmlSerializer, Path.Combine(Directory.GetCurrentDirectory(), "Block.xml"), block);
+            Save(jsonSerializer, Path.Combine(Directory.GetCurrentDirectory(), "Block.json"), block);
 
             Console.ReadLine();
         }
 
-        static void SaveAsJson(Block block)
-        {
-            var dir = Directory.GetCurrentDirectory();
-            var filePath = Path.Combine(dir, "Block.json");
-
-            var stream = new FileStream(filePath, FileMode.Create);
-            JsonHelper.WriteObject(block, stream);
-            stream.Close();
-        }
-
         /// <summary>
-        /// Block を JSON 記法でシリアライズし、それをデシリアライズします。
+        /// Block をシリアライズし、それをデシリアライズします。
         /// </summary>
+        /// <param name="serializer">ISerializer。</param>
         /// <param name="block">Block。</param>
-        static void SerializeAndDeserializeAsJson(Block block)
-        {
-            // シリアライズ
-            string json = JsonHelper.ToJson<Block>(block);
-            Console.WriteLine(json);
-            SaveAsJson(block);
-
-            // デシリアライズ
-            var deserialized = JsonHelper.FromJson<Block>(json);
-            Console.WriteLine(deserialized);
-        }
-
-        /// <summary>
-        /// Block を XML 形式でシリアライズし、それをデシリアライズします。
-        /// </summary>
-        /// <param name="block">Block。</param>
-        static void SerializeAndDeserializeAsXml(Block block)
+        static void SerializeAndDeserialize(ISerializer<Block> serializer, Block block)
         {
             using (var stream = new MemoryStream())
             {
-                var serializer = new XmlSerializer(typeof(Block));
-
                 // シリアライズ
                 serializer.Serialize(stream, block);
-                var xml = Encoding.UTF8.GetString(stream.ToArray());
-                Console.WriteLine(xml);
+                var serialized = Encoding.UTF8.GetString(stream.ToArray());
+                Console.WriteLine(serialized);
 
                 // デシリアライズ
                 stream.Seek(0, SeekOrigin.Begin);
-                var deserialized = serializer.Deserialize(stream) as Block;
+                var deserialized = serializer.Deserialize(stream);
                 Console.WriteLine(deserialized);
             }
         }
+
+        /// <summary>
+        /// Block を指定のパスで保存します。
+        /// </summary>
+        /// <param name="serializer"></param>
+        /// <param name="filePath"></param>
+        /// <param name="block"></param>
+        static void Save(ISerializer<Block> serializer, string filePath, Block block)
+        {
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                serializer.Serialize(stream, block);
+            }
+        }
+
+        #region Generate Test Data
 
         /// <summary>
         /// 簡単な Block を生成します。
@@ -170,5 +165,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
 
             return block;
         }
+
+        #endregion
     }
 }

@@ -12,19 +12,16 @@ namespace Willcraftia.Xna.Blocks.Serialization
     /// <summary>
     /// Block を表現するクラスです。
     /// </summary>
-    [DataContract]
     public sealed class Block
     {
         /// <summary>
         /// Material のリストを取得または設定します。
         /// </summary>
-        [DataMember]
         public List<Material> Materials { get; set; }
 
         /// <summary>
         /// Element のリストを取得または設定します。
         /// </summary>
-        [DataMember]
         public List<Element> Elements { get; set; }
 
         #region ToString

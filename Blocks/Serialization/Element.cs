@@ -15,13 +15,11 @@ namespace Willcraftia.Xna.Blocks.Serialization
         /// <summary>
         /// グリッド内での位置を取得または設定します。
         /// </summary>
-        [DataMember]
         public Position Position { get; set; }
 
         /// <summary>
         /// 参照する Material のインデックスを取得または設定します。
         /// </summary>
-        [DataMember]
         public int MaterialIndex { get; set; }
 
         #region ToString

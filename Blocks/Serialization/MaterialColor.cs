@@ -1,8 +1,8 @@
 ﻿#region Using
 
 using System;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
-using System.Runtime.Serialization;
 
 #endregion
 
@@ -11,28 +11,29 @@ namespace Willcraftia.Xna.Blocks.Serialization
     /// <summary>
     /// Material の色を表すための構造体です。
     /// </summary>
-    [DataContract]
     public struct MaterialColor
     {
         /// <summary>
         /// R 値。
         /// </summary>
+        [XmlIgnore]
         public byte R;
 
         /// <summary>
         /// G 値。
         /// </summary>
+        [XmlIgnore]
         public byte G;
 
         /// <summary>
         /// B 値。
         /// </summary>
+        [XmlIgnore]
         public byte B;
 
         /// <summary>
         /// パック値を取得または設定します。
         /// </summary>
-        [DataMember]
         public uint PackedValue
         {
             get { return (uint) B + (uint) (G << 8) + (uint) (R << 16); }

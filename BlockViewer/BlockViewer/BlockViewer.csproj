@@ -170,6 +170,10 @@
       <Project>{FA23868B-0454-4B81-B5AA-F270F987ECC7}</Project>
       <Name>Framework</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Win.Framework\Win.Framework.csproj">
+      <Project>{B7039E0C-621E-4A4C-B3EC-8D30D1ACD335}</Project>
+      <Name>Win.Framework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BlockViewerContent\BlockViewerContent.contentproj">
       <Name>BlockViewerContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

@@ -3,7 +3,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Json;
+using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Graphics;
 using Willcraftia.Xna.Blocks.Serialization;
 
@@ -16,15 +16,17 @@ namespace Willcraftia.Xna.Blocks.Content
     /// </summary>
     public sealed class BlockMeshManager : IDisposable
     {
+        static readonly XmlSerializer<Block> defaultSerializer = new XmlSerializer<Block>();
+
         /// <summary>
         /// ロードした BlockMesh のリスト。
         /// </summary>
         List<BlockMesh> meshes = new List<BlockMesh>();
 
         /// <summary>
-        /// JSON から Block を得るための DataContractJsonSerializer。
+        /// Stream から Block を得るための ISerializer。
         /// </summary>
-        DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Block));
+        ISerializer<Block> serializer;
 
         /// <summary>
         /// BlockMeshFactory。
@@ -33,12 +35,22 @@ namespace Willcraftia.Xna.Blocks.Content
 
         /// <summary>
         /// インスタンスを生成します。
+        /// Stream から Block を得るための ISerializer には XmlSerializer が設定されます。
         /// </summary>
         /// <param name="meshFactory">BlockMesh の生成を委譲する BlockMeshFactory。</param>
-        public BlockMeshManager(BlockMeshFactory meshFactory)
+        public BlockMeshManager(BlockMeshFactory meshFactory) : this(meshFactory, null) { }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="meshFactory">BlockMesh の生成を委譲する BlockMeshFactory。</param>
+        /// <param name="serializer">Stream から Block を得るための ISerializer。</param>
+        public BlockMeshManager(BlockMeshFactory meshFactory, ISerializer<Block> serializer)
         {
             if (meshFactory == null) throw new ArgumentNullException("meshFactory");
             this.meshFactory = meshFactory;
+
+            this.serializer = serializer ?? defaultSerializer;
         }
 
         /// <summary>
@@ -48,7 +60,7 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <returns>ロードされた BlockMesh。</returns>
         public BlockMesh Load(Stream stream)
         {
-            var block = serializer.ReadObject(stream) as Block;
+            var block = serializer.Deserialize(stream);
             var mesh = meshFactory.CreateBlockMesh(block);
             meshes.Add(mesh);
             return mesh;

@@ -21,31 +21,26 @@ namespace Willcraftia.Xna.Blocks.Serialization
     /// 
     /// これらの問題について深く検討したくないため、Material では透明度を管理しないものとしています。
     /// </remarks>
-    [DataContract]
     public sealed class Material
     {
         /// <summary>
         /// Diffuse 色。
         /// </summary>
-        [DataMember]
         public MaterialColor DiffuseColor { get; set; }
 
         /// <summary>
         /// Emissive 色。
         /// </summary>
-        [DataMember]
         public MaterialColor EmissiveColor { get; set; }
 
         /// <summary>
         /// Specular 色。
         /// </summary>
-        [DataMember]
         public MaterialColor SpecularColor { get; set; }
 
         /// <summary>
         /// Specular 係数。
         /// </summary>
-        [DataMember]
         public float SpecularPower { get; set; }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -11,25 +10,21 @@ namespace Willcraftia.Xna.Blocks.Serialization
     /// <summary>
     /// Block 内グリッドにおける BlockMesh の位置を表すための構造体です。
     /// </summary>
-    [DataContract]
     public struct Position : IEquatable<Position>
     {
         /// <summary>
         /// X 座標。
         /// </summary>
-        [DataMember]
         public int X;
 
         /// <summary>
         /// Y 座標。
         /// </summary>
-        [DataMember]
         public int Y;
 
         /// <summary>
         /// Z 座標。
         /// </summary>
-        [DataMember]
         public int Z;
 
         /// <summary>

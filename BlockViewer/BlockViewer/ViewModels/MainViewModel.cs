@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Storage;
@@ -80,15 +81,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
         // TODO: テスト用
         public void StoreSampleBlockMesh()
         {
-            // テスト用にメモリ上で Block の JSON データを作ります。
+            // テスト用にメモリ上で Block データを作ります。
             var block = CreateOctahedronLikeBlock();
-            var blockJson = JsonHelper.ToJson<Block>(block);
+            var serializer = new XmlSerializer<Block>();
+            string blockData;
+            using (var stream = new MemoryStream())
+            {
+                serializer.Serialize(stream, block);
+                blockData = Encoding.ASCII.GetString(stream.ToArray());
+            }
 
             var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), lodSize);
             meshManager = new BlockMeshManager(meshFactory);
 
             // BlockMesh をロードします。
-            using (var stream = blockJson.ToMemoryStream())
+            using (var stream = blockData.ToMemoryStream())
             {
                 LoadBlockMesh(stream);
             }
