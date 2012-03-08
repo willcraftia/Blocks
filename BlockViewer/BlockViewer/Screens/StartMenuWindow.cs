@@ -1,8 +1,10 @@
 ﻿#region Using
 
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -21,6 +23,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         SelectLanguageDialog selectLanguageDialog;
 
         Button changeLookAndFeelButton;
+
+        ConfirmationDialog confirmationDialog;
+
+        InformationDialog informationDialog;
 
         /// <summary>
         /// インスタンスを生成します。
@@ -47,6 +53,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var selectLanguageButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.SelectLanguageButton);
             selectLanguageButton.Click += OnLanguageSettingButtonClick;
             stackPanel.Children.Add(selectLanguageButton);
+
+            var installModelsButton = ControlUtil.CreateDefaultMenuButton(screen, "Install Demo Models");
+            installModelsButton.Click += OnInstallModelsButtonClick;
+            stackPanel.Children.Add(installModelsButton);
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
             changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
@@ -75,6 +85,86 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 selectLanguageDialog = new SelectLanguageDialog(Screen);
 
             selectLanguageDialog.Show();
+        }
+
+        void OnInstallModelsButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (confirmationDialog == null)
+            {
+                confirmationDialog = new ConfirmationDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        Text = "Are you sure you want to install demo models to your storage?",
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        ShadowOffset = new Vector2(2)
+                    }
+                };
+                confirmationDialog.Closed += OnConfirmationDialogClosed;
+            }
+
+            confirmationDialog.Show();
+
+            context.Handled = true;
+        }
+
+        void OnConfirmationDialogClosed(object sender, EventArgs e)
+        {
+            if (confirmationDialog.Result == MessageBoxResult.OK)
+            {
+                var showSelectorResult = StorageDevice.BeginShowSelector(null, null);
+                showSelectorResult.AsyncWaitHandle.WaitOne();
+                var storageDevice = StorageDevice.EndShowSelector(showSelectorResult);
+                showSelectorResult.AsyncWaitHandle.Close();
+
+                var openContainerResult = storageDevice.BeginOpenContainer("BlockViewer", null, null);
+                openContainerResult.AsyncWaitHandle.WaitOne();
+                var storageContainer = storageDevice.EndOpenContainer(openContainerResult);
+                openContainerResult.AsyncWaitHandle.Close();
+
+                InstallDemoModel(
+                    "Content/DemoModels/OctahedronLikeBlock.xml",
+                    "Model_OctahedronLikeBlock.xml",
+                    storageContainer);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    var destinationFileName = string.Format("Model_Dummy_{0:d2}.xml", i);
+                    InstallDemoModel(
+                        "Content/DemoModels/SimpleBlock.xml",
+                        destinationFileName,
+                        storageContainer);
+                }
+
+                if (informationDialog == null)
+                {
+                    informationDialog = new InformationDialog(Screen)
+                    {
+                        Message = new TextBlock(Screen)
+                        {
+                            Text = "Finished",
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            ForegroundColor = Color.White,
+                            BackgroundColor = Color.Black,
+                            ShadowOffset = new Vector2(2)
+                        }
+                    };
+                }
+                informationDialog.Show();
+            }
+        }
+
+        void InstallDemoModel(string sourceFileName, string destinationFileName, StorageContainer storageContainer)
+        {
+            using (var input = TitleContainer.OpenStream(sourceFileName))
+            {
+                using (var output = storageContainer.CreateFile(destinationFileName))
+                {
+                    input.CopyTo(output);
+                }
+            }
         }
 
         void OnChangeLookAndFeelButtonClick(Control sender, ref RoutedEventContext context)

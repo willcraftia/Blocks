@@ -20,7 +20,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public string[] GetFileNames()
         {
-            return storageContainer.GetFileNames();
+            return storageContainer.GetFileNames("Model_*.xml");
         }
     }
 }

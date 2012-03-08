@@ -108,7 +108,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             var storageDevice = StorageDevice.EndShowSelector(showSelectorResult);
             showSelectorResult.AsyncWaitHandle.Close();
 
-            var openContainerResult = storageDevice.BeginOpenContainer("BlockData", null, null);
+            var openContainerResult = storageDevice.BeginOpenContainer("BlockViewer", null, null);
             openContainerResult.AsyncWaitHandle.WaitOne();
             StorageContainer = storageDevice.EndOpenContainer(openContainerResult);
             openContainerResult.AsyncWaitHandle.Close();
