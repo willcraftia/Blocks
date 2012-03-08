@@ -106,6 +106,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Demo models have been installed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DemoModelsInstalledInformation {
+            get {
+                return ResourceManager.GetString("DemoModelsInstalledInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Diffuse に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string DiffuseColorLabel {
@@ -156,6 +165,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string HideButton {
             get {
                 return ResourceManager.GetString("HideButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Install Demo Models に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string InstallDemoModelsButton {
+            get {
+                return ResourceManager.GetString("InstallDemoModelsButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to install demo models to your storage? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string InstallDemoModelsConfirmation {
+            get {
+                return ResourceManager.GetString("InstallDemoModelsConfirmation", resourceCulture);
             }
         }
         

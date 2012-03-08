@@ -132,6 +132,9 @@
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
   </data>
+  <data name="DemoModelsInstalledInformation" xml:space="preserve">
+    <value>デモ モデル が インストール されました。</value>
+  </data>
   <data name="DiffuseColorLabel" xml:space="preserve">
     <value>ディフューズ</value>
   </data>
@@ -149,6 +152,12 @@
   </data>
   <data name="HideButton" xml:space="preserve">
     <value>ひょうじしない</value>
+  </data>
+  <data name="InstallDemoModelsButton" xml:space="preserve">
+    <value>デモ モデル を インストール</value>
+  </data>
+  <data name="InstallDemoModelsConfirmation" xml:space="preserve">
+    <value>ストレージ へ デモ モデル を インストール しても よろしいですか？</value>
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>

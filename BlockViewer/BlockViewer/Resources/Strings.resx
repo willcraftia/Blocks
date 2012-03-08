@@ -132,6 +132,9 @@
   <data name="DefaultButton" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="DemoModelsInstalledInformation" xml:space="preserve">
+    <value>Demo models have been installed.</value>
+  </data>
   <data name="DiffuseColorLabel" xml:space="preserve">
     <value>Diffuse</value>
   </data>
@@ -149,6 +152,12 @@
   </data>
   <data name="HideButton" xml:space="preserve">
     <value>Hide</value>
+  </data>
+  <data name="InstallDemoModelsButton" xml:space="preserve">
+    <value>Install Demo Models</value>
+  </data>
+  <data name="InstallDemoModelsConfirmation" xml:space="preserve">
+    <value>Are you sure you want to install demo models to your storage?</value>
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>

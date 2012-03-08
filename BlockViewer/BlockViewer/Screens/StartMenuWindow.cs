@@ -35,7 +35,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
-            Width = 240;
+            Width = 320;
             ShadowOffset = new Vector2(4);
             Padding = new Thickness(16);
 
@@ -54,9 +54,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             selectLanguageButton.Click += OnLanguageSettingButtonClick;
             stackPanel.Children.Add(selectLanguageButton);
 
-            var installModelsButton = ControlUtil.CreateDefaultMenuButton(screen, "Install Demo Models");
-            installModelsButton.Click += OnInstallModelsButtonClick;
-            stackPanel.Children.Add(installModelsButton);
+            var installDemoModelsButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.InstallDemoModelsButton);
+            installDemoModelsButton.Click += OnInstallModelsButtonClick;
+            stackPanel.Children.Add(installDemoModelsButton);
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
             changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
@@ -95,7 +95,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     Message = new TextBlock(Screen)
                     {
-                        Text = "Are you sure you want to install demo models to your storage?",
+                        Text = Strings.InstallDemoModelsConfirmation,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black,
@@ -144,7 +144,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     {
                         Message = new TextBlock(Screen)
                         {
-                            Text = "Finished",
+                            Text = Strings.DemoModelsInstalledInformation,
                             HorizontalAlignment = HorizontalAlignment.Left,
                             ForegroundColor = Color.White,
                             BackgroundColor = Color.Black,
