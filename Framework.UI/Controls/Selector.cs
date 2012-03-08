@@ -79,7 +79,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected override int ChildrenCount
         {
-            get { return Items.Count == 0 ? 0 : 1; }
+            get { return Items.Count; }
         }
 
         protected Selector(Screen screen)
@@ -90,10 +90,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected override Control GetChild(int index)
         {
-            if (index != 0 || selectedIndex == -1 || Items.Count == 0)
-                throw new ArgumentOutOfRangeException("index");
-
-            return SelectedItem;
+            return Items[index];
         }
 
         /// <summary>

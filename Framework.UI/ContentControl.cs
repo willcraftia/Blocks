@@ -19,9 +19,13 @@ namespace Willcraftia.Xna.Framework.UI
 
                 if (content != null) RemoveChild(content);
 
+                var oldContent = content;
+
                 content = value;
 
                 if (content != null) AddChild(content);
+
+                OnContentChanged(oldContent, content);
             }
         }
 
@@ -38,5 +42,7 @@ namespace Willcraftia.Xna.Framework.UI
 
             return content;
         }
+
+        protected virtual void OnContentChanged(Control oldContent, Control newContent) { }
     }
 }

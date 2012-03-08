@@ -70,8 +70,12 @@ namespace Willcraftia.Xna.Framework.UI
             if (!control.IsDescendantOf(owner))
                 throw new InvalidOperationException("control is not a descendant of the focus scope owner.");
 
+            // 論理フォーカスを持っていた Control を解除します。
+            if (FocusedControl != null) FocusedControl.LogicalFocused = false;
+
             // 論理フォーカスを設定します。
             FocusedControl = control;
+            FocusedControl.LogicalFocused = true;
 
             // Screen へフォーカス設定を依頼します。
             return owner.Screen.MoveFocusTo(FocusedControl);

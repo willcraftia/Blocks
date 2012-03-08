@@ -104,7 +104,6 @@
     <Compile Include="ContentControl.cs" />
     <Compile Include="Controls\Canvas.cs" />
     <Compile Include="Controls\Image.cs" />
-    <Compile Include="Controls\ListBox.cs" />
     <Compile Include="Controls\MessageBox.cs" />
     <Compile Include="Controls\MessageBoxButton.cs" />
     <Compile Include="Controls\MessageBoxResult.cs" />

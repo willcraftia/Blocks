@@ -9,9 +9,22 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 {
     public class TabControl : Selector
     {
+        protected override int ChildrenCount
+        {
+            get { return (SelectedIndex == -1 || Items.Count == 0) ? 0 : 1; }
+        }
+
         public TabControl(Screen screen)
             : base(screen)
         {
+        }
+
+        protected override Control GetChild(int index)
+        {
+            if (index != 0 || SelectedIndex == -1 || Items.Count == 0)
+                throw new ArgumentOutOfRangeException("index");
+
+            return SelectedItem;
         }
 
         protected override Size MeasureOverride(Size availableSize)
