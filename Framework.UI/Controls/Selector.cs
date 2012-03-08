@@ -54,11 +54,6 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         public ControlCollection Items { get; private set; }
 
-        protected override int ChildrenCount
-        {
-            get { return Items.Count == 0 ? 0 : 1; }
-        }
-
         public int SelectedIndex
         {
             get { return selectedIndex; }
@@ -80,6 +75,11 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 if (selectedIndex == -1 || Items.Count == 0) return null;
                 return selectedIndex < Items.Count ? Items[selectedIndex] : Items[Items.Count - 1];
             }
+        }
+
+        protected override int ChildrenCount
+        {
+            get { return Items.Count == 0 ? 0 : 1; }
         }
 
         protected Selector(Screen screen)

@@ -140,6 +140,7 @@ namespace Willcraftia.Xna.Framework.UI
 
         /// <summary>
         /// Screen インスタンスを初期化します。
+        /// 既定の実装では Screen.Initialize() メソッドを呼び出します。
         /// </summary>
         /// <remarks>
         /// このメソッドは、PopulateProperties メソッド呼び出しの後に呼び出されます。

@@ -138,6 +138,31 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Screen を初期化します。
+        /// IUIService.Show(Screen) の呼び出しまでに Initialize() が呼び出されていない場合、
+        /// そこで Initialize() が呼び出されます。
+        /// Initialize() では Screen で表示するコンテンツのロードを伴う可能性があるため、
+        /// ロード時間を考慮した制御を行いたい場合、その制御にて Initialize() を明示的に呼び出してから、
+        /// IUIService.Show(Screen) を呼び出します。
+        /// </summary>
+        /// <remarks>
+        /// このメソッドの呼び出しにより Initialized プロパティが true に設定されます。
+        /// </remarks>
+        public void Initialize()
+        {
+            if (Initialized) throw new InvalidOperationException("Screen is already initialized.");
+
+            BasicEffect = new BasicEffect(GraphicsDevice);
+
+            LoadContent();
+
+            // Screen のレイアウトを更新します。
+            root.UpdateLayout();
+
+            Initialized = true;
+        }
+
+        /// <summary>
         /// screenName が示す Screen の表示を要求します。
         /// </summary>
         /// <param name="screenName">表示する Screen の名前。</param>
@@ -235,26 +260,6 @@ namespace Willcraftia.Xna.Framework.UI
 
             // キーが離されたことを Control へ通知します。
             FocusedControl.ProcessKeyUp();
-        }
-
-        /// <summary>
-        /// Screen を初期化します。
-        /// </summary>
-        /// <remarks>
-        /// このメソッドの呼び出しにより Initialized プロパティが true に設定されます。
-        /// </remarks>
-        internal void Initialize()
-        {
-            if (Initialized) throw new InvalidOperationException("Screen is already initialized.");
-
-            BasicEffect = new BasicEffect(GraphicsDevice);
-
-            LoadContent();
-
-            // Screen のレイアウトを更新します。
-            root.UpdateLayout();
-
-            Initialized = true;
         }
 
         /// <summary>

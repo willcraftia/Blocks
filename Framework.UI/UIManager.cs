@@ -568,6 +568,9 @@ namespace Willcraftia.Xna.Framework.UI
         {
             if (screen == null) throw new ArgumentNullException("screen");
 
+            // 必要ならば初期化します。
+            if (!screen.Initialized) screen.Initialize();
+
             lock (nextScreenLock)
             {
                 this.nextScreen = screen;
@@ -599,9 +602,6 @@ namespace Willcraftia.Xna.Framework.UI
                     screen.MouseDevice = mouseDevice;
                     // KeyboardDevice をバインドします。
                     screen.KeyboardDevice = keyboardDevice;
-
-                    // 必要ならば初期化します。
-                    if (!screen.Initialized) screen.Initialize();
                 }
 
                 nextScreen = null;
