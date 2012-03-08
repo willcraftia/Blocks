@@ -104,22 +104,22 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         protected void RegisterOKButton(Button button)
         {
-            button.Click += new RoutedEventHandler(OnOKButtonClick);
+            button.Click += OnOKButtonClick;
         }
 
         protected void RegisterCancelButton(Button button)
         {
-            button.Click += new RoutedEventHandler(OnCancelButtonClick);
+            button.Click += OnCancelButtonClick;
         }
 
         protected void RegisterYesButton(Button button)
         {
-            button.Click += new RoutedEventHandler(OnYesButtonClick);
+            button.Click += OnYesButtonClick;
         }
 
         protected void RegisterNoButton(Button button)
         {
-            button.Click += new RoutedEventHandler(OnNoButtonClick);
+            button.Click += OnNoButtonClick;
         }
     }
 }

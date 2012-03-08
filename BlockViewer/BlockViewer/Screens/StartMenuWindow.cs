@@ -41,19 +41,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Content = stackPanel;
 
             var startButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.StartButton);
-            startButton.Click += new RoutedEventHandler(OnStartButtonClick);
+            startButton.Click += OnStartButtonClick;
             stackPanel.Children.Add(startButton);
 
             var selectLanguageButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.SelectLanguageButton);
-            selectLanguageButton.Click += new RoutedEventHandler(OnLanguageSettingButtonClick);
+            selectLanguageButton.Click += OnLanguageSettingButtonClick;
             stackPanel.Children.Add(selectLanguageButton);
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
-            changeLookAndFeelButton.Click += new RoutedEventHandler(OnChangeLookAndFeelButtonClick);
+            changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
             stackPanel.Children.Add(changeLookAndFeelButton);
 
             var exitButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.ExitButton);
-            exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
+            exitButton.Click += OnExitButtonClick;
             stackPanel.Children.Add(exitButton);
 
             // デフォルト フォーカス。

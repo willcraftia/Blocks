@@ -182,7 +182,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             overlay.Show();
 
-            Root.KeyDown += new RoutedEventHandler(OnKeyDown);
+            Root.KeyDown += OnKeyDown;
 
             // BlockMeshView にフォーカスを設定しておきます。
             blockMeshView.Focus();

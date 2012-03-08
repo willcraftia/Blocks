@@ -39,8 +39,8 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(newGameButton);
-                newGameButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
-                newGameButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                newGameButton.PreviewMouseEnter += OnButtonMouseEnter;
+                newGameButton.PreviewMouseLeave += OnButtonMouseLeave;
                 newGameButton.Focus();
 
                 var textBox = new TextBox(screen)
@@ -60,9 +60,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(switchScreenButton);
-                switchScreenButton.Click += new RoutedEventHandler(OnSwitchScreenButtonClick);
-                switchScreenButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
-                switchScreenButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                switchScreenButton.Click += OnSwitchScreenButtonClick;
+                switchScreenButton.PreviewMouseEnter += OnButtonMouseEnter;
+                switchScreenButton.PreviewMouseLeave += OnButtonMouseLeave;
 
                 var exitButton = new Button(screen)
                 {
@@ -75,9 +75,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 stackPanel.Children.Add(exitButton);
-                exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
-                exitButton.PreviewMouseEnter += new RoutedEventHandler(OnButtonMouseEnter);
-                exitButton.PreviewMouseLeave += new RoutedEventHandler(OnButtonMouseLeave);
+                exitButton.Click += OnExitButtonClick;
+                exitButton.PreviewMouseEnter += OnButtonMouseEnter;
+                exitButton.PreviewMouseLeave += OnButtonMouseLeave;
             }
 
             void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)

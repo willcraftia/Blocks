@@ -146,16 +146,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         int mod = j % columnCount;
                         if (mod == 0)
                         {
-                            itemButtons[j].KeyDown += new RoutedEventHandler(OnLeftColorButtonKeyDown);
+                            itemButtons[j].KeyDown += OnLeftColorButtonKeyDown;
                         }
                         else if (mod == columnCount - 1)
                         {
-                            itemButtons[j].KeyDown += new RoutedEventHandler(OnRightColorButtonKeyDown);
+                            itemButtons[j].KeyDown += OnRightColorButtonKeyDown;
                         }
 
-                        itemButtons[j].GotFocus += new RoutedEventHandler(OnItemButtonGotFocus);
-                        itemButtons[j].LostFocus += new RoutedEventHandler(OnItemButtonLostFocus);
-                        itemButtons[j].Click += new RoutedEventHandler(OnItemButtonClick);
+                        itemButtons[j].GotFocus += OnItemButtonGotFocus;
+                        itemButtons[j].LostFocus += OnItemButtonLostFocus;
+                        itemButtons[j].Click += OnItemButtonClick;
                     }
                 }
             }
@@ -380,8 +380,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 for (int i = 0; i < listSize; i++)
                 {
                     itemButtons[i] = new ItemButton(screen);
-                    itemButtons[i].KeyDown += new RoutedEventHandler(OnListItemButtonKeyDown);
-                    itemButtons[i].Click += new RoutedEventHandler(OnListItemButtonClick);
+                    itemButtons[i].KeyDown += OnListItemButtonKeyDown;
+                    itemButtons[i].Click += OnListItemButtonClick;
                     stackPanel.Children.Add(itemButtons[i]);
                 }
             }
@@ -544,15 +544,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             stackPanel.Children.Add(separator);
 
             viewModeButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.ListViewModeButton);
-            viewModeButton.Click += new RoutedEventHandler(OnViewModeButtonClick);
+            viewModeButton.Click += OnViewModeButtonClick;
             stackPanel.Children.Add(viewModeButton);
 
             var sortByNameButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.SortByNameButton);
-            sortByNameButton.Click += new RoutedEventHandler(OnSortByNameClick);
+            sortByNameButton.Click += OnSortByNameClick;
             stackPanel.Children.Add(sortByNameButton);
 
             var sortByColorButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.SortByColorButton);
-            sortByColorButton.Click += new RoutedEventHandler(OnSortByColorClick);
+            sortByColorButton.Click += OnSortByColorClick;
             stackPanel.Children.Add(sortByColorButton);
 
             cancelButton = ControlUtil.CreateDefaultDialogButton(screen, Strings.CancelButton);

@@ -59,11 +59,11 @@ namespace Willcraftia.Xna.Framework.UI
             {
                 if (owner == value) return;
 
-                if (owner != null) owner.Closed -= new EventHandler(OnOwnerClosed);
+                if (owner != null) owner.Closed -= OnOwnerClosed;
 
                 owner = value;
 
-                if (owner != null) owner.Closed += new EventHandler(OnOwnerClosed);
+                if (owner != null) owner.Closed += OnOwnerClosed;
             }
         }
 

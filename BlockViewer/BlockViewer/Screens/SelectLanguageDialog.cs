@@ -56,15 +56,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             stackPanel.Children.Add(separator);
 
             var jaButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.JaButton);
-            jaButton.Click += new RoutedEventHandler(OnJaButtonClick);
+            jaButton.Click += OnJaButtonClick;
             stackPanel.Children.Add(jaButton);
 
             var enButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.EnButton);
-            enButton.Click += new RoutedEventHandler(OnEnButtonClick);
+            enButton.Click += OnEnButtonClick;
             stackPanel.Children.Add(enButton);
 
             var defaultButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.DefaultButton);
-            defaultButton.Click += new RoutedEventHandler(OnDefaultButtonClick);
+            defaultButton.Click += OnDefaultButtonClick;
             stackPanel.Children.Add(defaultButton);
 
             var cancelButon = ControlUtil.CreateDefaultMenuButton(screen, Strings.CancelButton);

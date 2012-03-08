@@ -99,12 +99,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             diffuseColorButton = new LightColorButton(screen);
             diffuseColorButton.NameTextBlock.Text = Strings.DiffuseColorLabel;
-            diffuseColorButton.Click += new RoutedEventHandler(OnDiffuseColorButtonClick);
+            diffuseColorButton.Click += OnDiffuseColorButtonClick;
             stackPanel.Children.Add(diffuseColorButton);
 
             specularColorButton = new LightColorButton(screen);
             specularColorButton.NameTextBlock.Text = Strings.SpecularColorLabel;
-            specularColorButton.Click += new RoutedEventHandler(OnSpecularColorButtonClick);
+            specularColorButton.Click += OnSpecularColorButtonClick;
             stackPanel.Children.Add(specularColorButton);
         }
 

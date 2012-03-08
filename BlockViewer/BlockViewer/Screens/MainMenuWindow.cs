@@ -192,7 +192,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     DataContext = ViewModel.OpenStorageViewModel
                 };
-                openStorageDialog.Closed += new EventHandler(OnOpenStorageDialogClosed);
+                openStorageDialog.Closed += OnOpenStorageDialogClosed;
             }
             openStorageDialog.Show();
         }
@@ -268,27 +268,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
 
             loadButton = CreateMenuButton(Strings.LoadButton);
-            loadButton.Click += new RoutedEventHandler(OnLoadButtonClick);
+            loadButton.Click += OnLoadButtonClick;
             stackPanel.Children.Add(loadButton);
 
             modeButton = CreateMenuButton(Strings.ModeButton);
-            modeButton.Click += new RoutedEventHandler(OnModeButtonClick);
+            modeButton.Click += OnModeButtonClick;
             stackPanel.Children.Add(modeButton);
 
             lodButton = CreateMenuButton(Strings.LodButton);
-            lodButton.Click += new RoutedEventHandler(OnLodButtonClick);
+            lodButton.Click += OnLodButtonClick;
             stackPanel.Children.Add(lodButton);
 
             changeLookAndFeelButton = CreateMenuButton("Look & Feel [Debug]");
-            changeLookAndFeelButton.Click += new RoutedEventHandler(OnChangeLookAndFeelButtonClick);
+            changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
             stackPanel.Children.Add(changeLookAndFeelButton);
 
             var exitButton = CreateMenuButton(Strings.ExitButton);
-            exitButton.Click += new RoutedEventHandler(OnExitButtonClick);
+            exitButton.Click += OnExitButtonClick;
             stackPanel.Children.Add(exitButton);
 
             var closeButton = CreateMenuButton(Strings.CloseButton);
-            closeButton.Click += new RoutedEventHandler(OnCloseButtonClick);
+            closeButton.Click += OnCloseButtonClick;
             stackPanel.Children.Add(closeButton);
 
             return stackPanel;

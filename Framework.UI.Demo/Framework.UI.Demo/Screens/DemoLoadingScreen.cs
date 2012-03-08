@@ -49,7 +49,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         Duration = TimeSpan.FromSeconds(0.5d),
                         Enabled = true
                     };
-                    animation.Completed += new EventHandler(OnExitAnimationCompleted);
+                    animation.Completed += OnExitAnimationCompleted;
                     exitOverlay.Animations.Add(animation);
 
                     exitOverlay.Show();

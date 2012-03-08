@@ -141,8 +141,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 fileNameButtons[i].TextBlock.HorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.ShadowOffset = new Vector2(2);
-                fileNameButtons[i].Click += new RoutedEventHandler(OnFileNameButtonClick);
-                fileNameButtons[i].KeyDown += new RoutedEventHandler(OnFileNameButtonKeyDown);
+                fileNameButtons[i].Click += OnFileNameButtonClick;
+                fileNameButtons[i].KeyDown += OnFileNameButtonKeyDown;
                 fileNameListPanel.Children.Add(fileNameButtons[i]);
             }
 
@@ -263,7 +263,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         ShadowOffset = new Vector2(2)
                     }
                 };
-                confirmationDialog.Closed += new EventHandler(OnOpenFileConfirmationDialogClosed);
+                confirmationDialog.Closed += OnOpenFileConfirmationDialogClosed;
             }
 
             targetFileName = ((sender as Button).Content as TextBlock).Text;
