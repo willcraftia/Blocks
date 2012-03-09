@@ -71,7 +71,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 var stackPanel = new StackPanel(screen)
                 {
                     Orientation = Orientation.Vertical,
-                    HorizontalAlignment = HorizontalAlignment.Stretch
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch
                 };
                 Content = stackPanel;
 
@@ -306,7 +307,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 var stackPanel = new StackPanel(screen)
                 {
                     Orientation = Orientation.Vertical,
-                    HorizontalAlignment = HorizontalAlignment.Stretch
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch
                 };
                 Content = stackPanel;
 
@@ -500,13 +502,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             predefinedColorGrid = new PredefinedColorGrid(screen, this)
             {
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
             };
             tab.Items.Add(predefinedColorGrid);
 
             predefinedColorList = new PredefinedColorList(screen, this)
             {
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
             };
             tab.Items.Add(predefinedColorList);
 

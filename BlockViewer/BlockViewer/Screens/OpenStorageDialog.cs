@@ -125,7 +125,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 };
                 fileNameButtons[i].TextBlock.ForegroundColor = Color.White;
                 fileNameButtons[i].TextBlock.BackgroundColor = Color.Black;
-                fileNameButtons[i].TextBlock.FontStretch = new Vector2(0.8f);
                 fileNameButtons[i].TextBlock.HorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
                 fileNameButtons[i].TextBlock.ShadowOffset = new Vector2(2);
@@ -141,7 +140,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             cancelButton.Click += (Control s, ref RoutedEventContext c) => Close();
             stackPanel.Children.Add(cancelButton);
 
-            const float windowWidth = 320;
+            const float windowWidth = 480;
 
             openAnimation = new FloatLerpAnimation
             {
