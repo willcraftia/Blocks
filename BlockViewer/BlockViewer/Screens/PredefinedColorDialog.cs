@@ -57,21 +57,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             const int rowCount = 5;
 
+            Paging paging = new Paging(columnCount * rowCount);
+
             TextBlock pageTextBlock;
 
             ItemButton[] itemButtons = new ItemButton[columnCount * rowCount];
-
-            public int CurrentPageIndex { get; set; }
-
-            int PageCount
-            {
-                get
-                {
-                    var pageCount = owner.PredefinedColors.Count / itemButtons.Length;
-                    if (owner.PredefinedColors.Count % itemButtons.Length != 0) pageCount++;
-                    return pageCount;
-                }
-            }
 
             public PredefinedColorGrid(Screen screen, PredefinedColorDialog owner)
                 : base(screen)
@@ -160,14 +150,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 }
             }
 
+            public void ResetCurrentPageIndex()
+            {
+                paging.CurrentPageIndex = 0;
+            }
+
             public void ReloadPage()
             {
+                paging.ItemCount = owner.PredefinedColors.Count;
+
                 // 状態を初期化します。
                 for (int i = 0; i < itemButtons.Length; i++)
                 {
                     var itemButton = itemButtons[i];
 
-                    int colorIndex = CurrentPageIndex * itemButtons.Length + i;
+                    int colorIndex = paging.GetItemIndex(i);
                     if (colorIndex < owner.PredefinedColors.Count)
                     {
                         var predefinedColor = owner.PredefinedColors[colorIndex];
@@ -179,14 +176,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     {
                         // フォーカスが設定されていたボタンが未使用になった場合、
                         // 先頭のボタンにフォーカスを設定します。
-                        if (itemButton.Focused)
-                        {
-                            if (!itemButtons[0].Focus())
-                            {
-                                // 先頭のボタンに設定できない場合は Cancel ボタンに設定します。
-                                owner.cancelButton.Focus();
-                            }
-                        }
+                        if (itemButton.Focused) itemButtons[0].Focus();
 
                         itemButton.DataContext = null;
                         itemButton.Content.BackgroundColor = Color.Transparent;
@@ -194,8 +184,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     }
                 }
 
-                var currentPageNo = CurrentPageIndex + 1;
-                pageTextBlock.Text = currentPageNo + "/" + PageCount;
+                var currentPageNo = paging.CurrentPageIndex + 1;
+                pageTextBlock.Text = currentPageNo + "/" + paging.PageCount;
             }
 
             void OnItemButtonGotFocus(Control sender, ref RoutedEventContext context)
@@ -241,19 +231,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             void BackPage()
             {
-                CurrentPageIndex--;
-                // 先頭を越えるならば末尾のページを設定します。
-                if (CurrentPageIndex < 0) CurrentPageIndex = PageCount - 1;
-
+                paging.Back();
                 ReloadPage();
             }
 
             void ForwardPage()
             {
-                CurrentPageIndex++;
-                // 末尾を越えるならば先頭のページを設定します。
-                if (PageCount - 1 < CurrentPageIndex) CurrentPageIndex = 0;
-
+                paging.Forward();
                 ReloadPage();
             }
         }
@@ -304,25 +288,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             #endregion
 
-            const int listSize = 5;
+            Paging paging = new Paging(5);
 
             PredefinedColorDialog owner;
 
             TextBlock pageTextBlock;
 
-            ItemButton[] itemButtons = new ItemButton[listSize];
-
-            public int CurrentPageIndex { get; set; }
-
-            int PageCount
-            {
-                get
-                {
-                    var pageCount = owner.PredefinedColors.Count / listSize;
-                    if (owner.PredefinedColors.Count % listSize != 0) pageCount++;
-                    return pageCount;
-                }
-            }
+            ItemButton[] itemButtons = new ItemButton[5];
 
             public PredefinedColorList(Screen screen, PredefinedColorDialog owner)
                 : base(screen)
@@ -377,7 +349,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 forwardPageButton.Click += (Control s, ref RoutedEventContext c) => ForwardPage();
                 pageButtonPanel.Children.Add(forwardPageButton);
 
-                for (int i = 0; i < listSize; i++)
+                for (int i = 0; i < itemButtons.Length; i++)
                 {
                     itemButtons[i] = new ItemButton(screen);
                     itemButtons[i].KeyDown += OnListItemButtonKeyDown;
@@ -386,14 +358,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 }
             }
 
+            public void ResetCurrentPageIndex()
+            {
+                paging.CurrentPageIndex = 0;
+            }
+
             public void ReloadPage()
             {
+                paging.ItemCount = owner.PredefinedColors.Count;
+
                 // 状態を初期化します。
-                for (int i = 0; i < listSize; i++)
+                for (int i = 0; i < itemButtons.Length; i++)
                 {
                     var listItem = itemButtons[i];
 
-                    int colorIndex = CurrentPageIndex * listSize + i;
+                    int colorIndex = paging.GetItemIndex(i);
                     if (colorIndex < owner.PredefinedColors.Count)
                     {
                         var predefinedColor = owner.PredefinedColors[colorIndex];
@@ -422,8 +401,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     }
                 }
 
-                var currentPageNo = CurrentPageIndex + 1;
-                pageTextBlock.Text = currentPageNo + "/" + PageCount;
+                var currentPageNo = paging.CurrentPageIndex + 1;
+                pageTextBlock.Text = currentPageNo + "/" + paging.PageCount;
             }
 
             void OnListItemButtonClick(Control sender, ref RoutedEventContext context)
@@ -451,19 +430,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             void BackPage()
             {
-                CurrentPageIndex--;
-                // 先頭を越えるならば末尾のページを設定します。
-                if (CurrentPageIndex < 0) CurrentPageIndex = PageCount - 1;
-
+                paging.Back();
                 ReloadPage();
             }
 
             void ForwardPage()
             {
-                CurrentPageIndex++;
-                // 末尾を越えるならば先頭のページを設定します。
-                if (PageCount - 1 < CurrentPageIndex) CurrentPageIndex = 0;
-
+                paging.Forward();
                 ReloadPage();
             }
         }
@@ -621,9 +594,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             PredefinedColors.Sort((x, y) => x.Name.CompareTo(y.Name));
 
             // ページをリセットしてからリロードします。
-            predefinedColorGrid.CurrentPageIndex = 0;
+            predefinedColorGrid.ResetCurrentPageIndex();
             predefinedColorGrid.ReloadPage();
-            predefinedColorList.CurrentPageIndex = 0;
+            predefinedColorList.ResetCurrentPageIndex();
             predefinedColorList.ReloadPage();
         }
 
@@ -633,9 +606,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             //PredefinedColors.Sort((x, y) => x.Color.PackedValue.CompareTo(y.Color.PackedValue));
 
             // ページをリセットしてからリロードします。
-            predefinedColorGrid.CurrentPageIndex = 0;
+            predefinedColorGrid.ResetCurrentPageIndex();
             predefinedColorGrid.ReloadPage();
-            predefinedColorList.CurrentPageIndex = 0;
+            predefinedColorList.ResetCurrentPageIndex();
             predefinedColorList.ReloadPage();
         }
 

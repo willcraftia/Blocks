@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
+using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -25,16 +26,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         // 選択することを想定。
         //
 
-        const int listSize = 5;
-
-        int currentPageIndex;
-
-        // Show() 呼び出しのタイミングでファイルをキャッシュする前提。
-        string[] fileNames;
+        Paging paging = new Paging(5);
 
         TextBlock pageTextBlock;
 
-        TextButton[] fileNameButtons;
+        TextButton[] fileNameButtons = new TextButton[5];
 
         Button cancelButton;
 
@@ -48,19 +44,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         string targetFileName;
 
+        // Show() 呼び出しのタイミングでファイルをキャッシュする前提。
+        string[] fileNames;
+
         OpenStorageViewModel ViewModel
         {
             get { return DataContext as OpenStorageViewModel; }
-        }
-
-        int PageCount
-        {
-            get
-            {
-                var pageCount = fileNames.Length / listSize;
-                if (fileNames.Length % listSize != 0) pageCount++;
-                return pageCount;
-            }
         }
 
         public OpenStorageDialog(Screen screen)
@@ -126,8 +115,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(fileNameListPanel);
 
-            fileNameButtons = new TextButton[listSize];
-            for (int i = 0; i < listSize; i++)
+            for (int i = 0; i < fileNameButtons.Length; i++)
             {
                 fileNameButtons[i] = new TextButton(screen)
                 {
@@ -179,10 +167,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public override void Show()
         {
             ViewModel.SelectedFileName = null;
+
             fileNames = ViewModel.GetFileNames();
+            paging.ItemCount = fileNames.Length;
 
             // ファイルがない場合は、その旨を MessageBox で表示して終えます。
-            if (fileNames.Length == 0)
+            if (paging.ItemCount == 0)
             {
                 ShowNoFileErrorMessageBox();
                 return;
@@ -228,24 +218,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 ForwardPage();
                 context.Handled = true;
             }
-        }
-
-        void BackPage()
-        {
-            currentPageIndex--;
-            // 先頭を越えるならば末尾のページを設定します。
-            if (currentPageIndex < 0) currentPageIndex = PageCount - 1;
-
-            ReloadPage();
-        }
-
-        void ForwardPage()
-        {
-            currentPageIndex++;
-            // 末尾を越えるならば先頭のページを設定します。
-            if (PageCount - 1 < currentPageIndex) currentPageIndex = 0;
-
-            ReloadPage();
         }
 
         void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
@@ -305,22 +277,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             noFileErrorDialog.Show();
         }
 
+        void ForwardPage()
+        {
+            paging.Forward();
+            ReloadPage();
+        }
+
+        void BackPage()
+        {
+            paging.Back();
+            ReloadPage();
+        }
+
         void ReloadPage()
         {
-            // 状態を初期化します。
-            for (int i = 0; i < listSize; i++)
-            {
-                var fileNameButton = fileNameButtons[i];
-                fileNameButton.TextBlock.Text = string.Empty;
-                fileNameButton.Focusable = false;
-            }
-
             // ファイル名を設定します。
-            for (int i = 0; i < listSize; i++)
+            for (int i = 0; i < fileNameButtons.Length; i++)
             {
                 var fileNameButton = fileNameButtons[i];
 
-                int fileNameIndex = currentPageIndex * listSize + i;
+                var fileNameIndex = paging.GetItemIndex(i);
                 if (fileNameIndex < fileNames.Length)
                 {
                     fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
@@ -330,19 +306,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     // フォーカスが設定されていたボタンがファイルなしになった場合、
                     // フォーカスを先頭のボタンに設定することを試みます。
-                    if (fileNameButton.Focused)
-                    {
-                        if (!fileNameButtons[0].Focus())
-                        {
-                            // 先頭のボタンに設定できない場合は Cancel ボタンに設定します。
-                            cancelButton.Focus();
-                        }
-                    }
+                    if (fileNameButton.Focused) fileNameButtons[0].Focus();
+
+                    fileNameButton.TextBlock.Text = string.Empty;
+                    fileNameButton.Focusable = false;
                 }
             }
 
-            var currentPageNo = currentPageIndex + 1;
-            pageTextBlock.Text = currentPageNo + "/" + PageCount;
+            var currentPageNo = paging.CurrentPageIndex + 1;
+            pageTextBlock.Text = currentPageNo + "/" + paging.PageCount;
         }
     }
 }
