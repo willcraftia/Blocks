@@ -300,7 +300,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 if (fileNameIndex < fileNames.Length)
                 {
                     fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
-                    fileNameButton.Focusable = true;
+                    fileNameButton.Enabled = true;
+                    fileNameButton.Visible = true;
                 }
                 else
                 {
@@ -309,7 +310,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     if (fileNameButton.Focused) fileNameButtons[0].Focus();
 
                     fileNameButton.TextBlock.Text = string.Empty;
-                    fileNameButton.Focusable = false;
+                    fileNameButton.Enabled = false;
+                    fileNameButton.Visible = false;
                 }
             }
 

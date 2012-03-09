@@ -171,6 +171,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         itemButton.DataContext = predefinedColor;
                         itemButton.Content.BackgroundColor = predefinedColor.Color;
                         itemButton.Enabled = true;
+                        itemButton.Visible = true;
                     }
                     else
                     {
@@ -181,6 +182,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         itemButton.DataContext = null;
                         itemButton.Content.BackgroundColor = Color.Transparent;
                         itemButton.Enabled = false;
+                        itemButton.Visible = false;
                     }
                 }
 
@@ -380,24 +382,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         listItem.NameTextBlock.Text = predefinedColor.Name;
                         listItem.ColorCanvas.BackgroundColor = predefinedColor.Color;
                         listItem.Enabled = true;
+                        listItem.Visible = true;
                     }
                     else
                     {
                         // フォーカスが設定されていたボタンが未使用になった場合、
                         // 先頭のボタンにフォーカスを設定します。
-                        if (listItem.Focused)
-                        {
-                            if (!itemButtons[0].Focus())
-                            {
-                                // 先頭のボタンに設定できない場合は Cancel ボタンに設定します。
-                                owner.cancelButton.Focus();
-                            }
-                        }
+                        if (listItem.Focused) itemButtons[0].Focus();
 
                         listItem.DataContext = null;
                         listItem.NameTextBlock.Text = null;
                         listItem.ColorCanvas.BackgroundColor = Color.Transparent;
                         listItem.Enabled = false;
+                        listItem.Visible = false;
                     }
                 }
 

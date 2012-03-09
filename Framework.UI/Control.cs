@@ -1444,7 +1444,7 @@ namespace Willcraftia.Xna.Framework.UI
                 // 現在フォーカスが設定されている Control についての判定はスキップします。
                 if (child == Screen.FocusedControl) continue;
 
-                if (child.Focusable)
+                if (child.Focusable && child.Enabled && child.Visible)
                 {
                     var testBounds = new Rect(child.PointToScreen(Vector2.Zero), child.RenderSize);
 
