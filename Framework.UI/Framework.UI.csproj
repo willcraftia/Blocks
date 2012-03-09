@@ -127,6 +127,7 @@
     <Compile Include="Lafs\Debug\DebugLooAndFeelUtil.cs" />
     <Compile Include="Lafs\Debug\DebugTextBlockLookAndFeel.cs" />
     <Compile Include="Lafs\Debug\DebugWindowLookAndFeel.cs" />
+    <Compile Include="Lafs\ListBoxItemLookAndFeel.cs" />
     <Compile Include="Lafs\TextBlockLookAndFeel.cs" />
     <Compile Include="Lafs\TextureBackgroundLookAndFeel.cs" />
     <Compile Include="Lafs\WindowSpriteSheetTemplate.cs" />

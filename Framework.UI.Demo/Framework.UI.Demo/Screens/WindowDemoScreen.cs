@@ -8,7 +8,6 @@ using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
-using Willcraftia.Xna.Framework.UI.Demo.Lafs;
 
 #endregion
 
@@ -702,8 +701,17 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             };
             source.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
             source.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
-            source.LookAndFeelMap[typeof(Button)] = new MyButtonLookAndFeel();
-            source.LookAndFeelMap[typeof(ListBoxItem)] = new MyListBoxItemLookAndFeel();
+            source.LookAndFeelMap[typeof(Button)] = new ButtonLookAndFeel
+            {
+                FocusColor = Color.Navy * 0.5f,
+                MouseOverColor = Color.DarkGreen * 0.5f
+            };
+            source.LookAndFeelMap[typeof(ListBoxItem)] = new ListBoxItemLookAndFeel
+            {
+                FocusColor = Color.Navy * 0.5f,
+                MouseOverColor = Color.DarkGreen * 0.5f,
+                SelectionColor = Color.Orange * 0.5f
+            };
 
             return source;
         }
