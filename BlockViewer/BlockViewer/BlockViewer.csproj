@@ -139,8 +139,6 @@
     <Compile Include="Screens\ImageButton.cs" />
     <Compile Include="Screens\InformationDialog.cs" />
     <Compile Include="Screens\LightWindow.cs" />
-    <Compile Include="Screens\PagedListBox.cs" />
-    <Compile Include="Screens\PagedListBoxItem.cs" />
     <Compile Include="Screens\PredefinedColorDialog.cs" />
     <Compile Include="Screens\SelectLanguageDialog.cs" />
     <Compile Include="Screens\LodWindow.cs" />
