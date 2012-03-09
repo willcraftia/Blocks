@@ -59,14 +59,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         protected override void LoadContent()
         {
-            InitializeSpriteSheet();
+            InitializeSpriteSheetSource();
             InitializeLookAndFeelSource();
             InitializeControls();
 
             base.LoadContent();
         }
 
-        void InitializeSpriteSheet()
+        void InitializeSpriteSheetSource()
         {
             var windowTemplate = new WindowSpriteSheetTemplate(32, 32);
             var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));

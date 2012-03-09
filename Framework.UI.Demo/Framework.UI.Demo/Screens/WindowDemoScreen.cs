@@ -3,8 +3,12 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Framework.UI.Lafs;
+using Willcraftia.Xna.Framework.UI.Lafs.Debug;
+using Willcraftia.Xna.Framework.UI.Demo.Lafs;
 
 #endregion
 
@@ -25,8 +29,22 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 VerticalAlignment = VerticalAlignment.Top;
                 Margin = new Thickness(unit, unit, 0, 0);
                 BackgroundColor = Color.Red;
+                Padding = new Thickness(16);
 
-                var firstWindow_widthAnimation = new FloatLerpAnimation
+                Content = new TextBlock(screen)
+                {
+                    Text = "1st Window",
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    ShadowOffset = new Vector2(2),
+                    TextOutlineWidth = 1,
+                    FontStretch = new Vector2(1.5f),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                var repeatedWidthAnimation = new FloatLerpAnimation
                 {
                     Action = (current) => { Width = current; },
                     To = Width,
@@ -34,9 +52,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(2),
                     Enabled = true
                 };
-                Animations.Add(firstWindow_widthAnimation);
+                Animations.Add(repeatedWidthAnimation);
 
-                var firstWindow_HeightAnimation = new FloatLerpAnimation
+                var repeatedHeightAnimation = new FloatLerpAnimation
                 {
                     Action = (current) => { Height = current; },
                     To = Height,
@@ -44,7 +62,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(2),
                     Enabled = true
                 };
-                Animations.Add(firstWindow_HeightAnimation);
+                Animations.Add(repeatedHeightAnimation);
             }
         }
 
@@ -63,6 +81,20 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 VerticalAlignment = VerticalAlignment.Bottom;
                 Margin = new Thickness(0, 0, unit, unit);
                 BackgroundColor = Color.Green;
+                Padding = new Thickness(16);
+
+                Content = new TextBlock(screen)
+                {
+                    Text = "2nd Window",
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    ShadowOffset = new Vector2(2),
+                    TextOutlineWidth = 1,
+                    FontStretch = new Vector2(1.5f),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    TextHorizontalAlignment = HorizontalAlignment.Right
+                };
 
                 var opacityAnimation = new FloatLerpAnimation
                 {
@@ -83,8 +115,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         class ThirdWindow : Window
         {
-            FloatLerpAnimation rotateCubeAnimation;
-
             public ThirdWindow(Screen screen)
                 : base(screen)
             {
@@ -94,37 +124,244 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var stackPanel = new StackPanel(screen)
                 {
+                    Orientation = Orientation.Vertical,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
                     Margin = new Thickness(8)
                 };
                 Content = stackPanel;
 
-                var openNewDialogButton = new Button(screen)
+                var title = new TextBlock(screen)
                 {
-                    Margin = new Thickness(8),
+                    Text = "3rd window",
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    ShadowOffset = new Vector2(2),
+                    TextOutlineWidth = 1,
+                    FontStretch = new Vector2(1.5f)
+                };
+                stackPanel.Children.Add(title);
+
+                var changingLookAndFeelDemoButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Padding = new Thickness(8),
+
                     Content = new TextBlock(screen)
                     {
-                        Text = "Open new dialog",
-                        FontStretch = new Vector2(1.0f, 3.0f),
+                        Text = "Changing look & feel demo",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }
+                };
+                changingLookAndFeelDemoButton.Click += (Control s, ref RoutedEventContext c) =>
+                {
+                    (screen as WindowDemoScreen).SwitchLookAndFeelSource();
+                };
+                stackPanel.Children.Add(changingLookAndFeelDemoButton);
+
+                var overlayDialogDemoButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Overlay dialog demo",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }
+                };
+                overlayDialogDemoButton.Click += (Control sender, ref RoutedEventContext context) =>
+                {
+                    var dialog = new FirstOverlayDialog(Screen);
+                    dialog.Overlay.Opacity = 0.5f;
+                    dialog.Show();
+                };
+                stackPanel.Children.Add(overlayDialogDemoButton);
+
+                var drawing3DDemoButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Drawing 3D demo",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }
+                };
+                drawing3DDemoButton.Click += (Control s, ref RoutedEventContext c) =>
+                {
+                    var window = new CubeWindow(Screen);
+                    window.Show();
+                };
+                stackPanel.Children.Add(drawing3DDemoButton);
+
+                var listBoxDemoButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "ListBox demo",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }
+                };
+                listBoxDemoButton.Click += (Control s, ref RoutedEventContext c) =>
+                {
+                    var window = new ListBoxDemoWindow(screen);
+                    window.Show();
+                };
+                stackPanel.Children.Add(listBoxDemoButton);
+
+                var switchScreenButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Switch screen",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }
+                };
+                switchScreenButton.Click += OnSwitchScreenButtonClick;
+                stackPanel.Children.Add(switchScreenButton);
+
+                var exitButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Exit",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }
+                };
+                exitButton.Click += OnExitButtonClick;
+                stackPanel.Children.Add(exitButton);
+
+                var startWidthAnimation = new FloatLerpAnimation
+                {
+                    Action = (current) => { Width = current; },
+                    To = Width,
+                    Duration = TimeSpan.FromSeconds(0.3f),
+                    Enabled = true
+                };
+                Animations.Add(startWidthAnimation);
+
+                var startHeightAnimation = new FloatLerpAnimation
+                {
+                    Action = (current) => { Height = current; },
+                    To = Height,
+                    Duration = TimeSpan.FromSeconds(0.3f),
+                    Enabled = true
+                };
+                Animations.Add(startHeightAnimation);
+
+                overlayDialogDemoButton.Focus();
+            }
+
+            void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
+            {
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Show();
+
+                var opacityAnimation = new FloatLerpAnimation
+                {
+                    Action = (current) => { overlay.Opacity = current; },
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                opacityAnimation.Completed += (s, e) =>
+                {
+                    Screen.ShowScreen("MainMenuDemoScreen");
+                };
+                Animations.Add(opacityAnimation);
+            }
+
+            void OnExitButtonClick(Control sender, ref RoutedEventContext context)
+            {
+                var overlay = new Overlay(Screen)
+                {
+                    Opacity = 0,
+                    BackgroundColor = Color.Black
+                };
+                overlay.Show();
+
+                var opacityAnimation = new FloatLerpAnimation
+                {
+                    Action = (current) => { overlay.Opacity = current; },
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
+                Animations.Add(opacityAnimation);
+            }
+        }
+
+        #endregion
+
+        #region CubeWindow
+
+        class CubeWindow : Window
+        {
+            FloatLerpAnimation rotateCubeAnimation;
+
+            public CubeWindow(Screen screen)
+                : base(screen)
+            {
+                var stackPanel = new StackPanel(screen)
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(8)
+                };
+                Content = stackPanel;
+
+                var cubeControl = new CubeControl(screen)
+                {
+                    CubePrimitive = CreateCubePrimitive(),
+                    ForegroundColor = Color.White,
+                    Width = unit * 7,
+                    Height = unit * 7,
+                    CubeVisible = true
+                };
+                stackPanel.Children.Add(cubeControl);
+
+                var closeButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Close",
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black
                     }
                 };
-                stackPanel.Children.Add(openNewDialogButton);
-                openNewDialogButton.Click += OnOpenNewDialogButtonClick;
-                openNewDialogButton.PreviewMouseEnter += OnButtonMouseEnter;
-                openNewDialogButton.PreviewMouseLeave += OnButtonMouseLeave;
-                openNewDialogButton.Focus();
-
-                var cubeControl = new CubeControl(screen)
-                {
-                    Margin = new Thickness(8),
-                    CubePrimitive = CreateCubePrimitive(),
-                    ForegroundColor = Color.White,
-                    Width = unit * 7,
-                    Height = unit * 7
-                };
-                stackPanel.Children.Add(cubeControl);
+                closeButton.Click += (Control s, ref RoutedEventContext c) => Close();
+                stackPanel.Children.Add(closeButton);
 
                 rotateCubeAnimation = new FloatLerpAnimation
                 {
@@ -136,34 +373,9 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     Duration = TimeSpan.FromSeconds(4),
                     Repeat = Repeat.Forever
                 };
-                Animations.Add(rotateCubeAnimation);
                 cubeControl.MouseEnter += OnCubeControlMouseEnter;
                 cubeControl.MouseLeave += OnCubeControlMouseLeave;
-
-                var thirdWindow_widthAnimation = new FloatLerpAnimation
-                {
-                    Action = (current) => { Width = current; },
-                    To = Width,
-                    Duration = TimeSpan.FromSeconds(1),
-                    Enabled = true
-                };
-                Animations.Add(thirdWindow_widthAnimation);
-
-                var thirdWindow_heightAnimation = new FloatLerpAnimation
-                {
-                    Action = (current) => { Height = current; },
-                    To = Height,
-                    Duration = TimeSpan.FromSeconds(1),
-                    Enabled = true
-                };
-                thirdWindow_heightAnimation.Completed += (s, e) => cubeControl.CubeVisible = true;
-                Animations.Add(thirdWindow_heightAnimation);
-            }
-
-            void OnOpenNewDialogButtonClick(Control sender, ref RoutedEventContext context)
-            {
-                var firstDialog = new FirstDialog(Screen);
-                firstDialog.Show();
+                Animations.Add(rotateCubeAnimation);
             }
 
             void OnCubeControlMouseEnter(Control sender, ref RoutedEventContext context)
@@ -180,20 +392,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 cubeControl.Scale = 1;
 
                 rotateCubeAnimation.Enabled = false;
-            }
-
-            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.Yellow;
-                context.Handled = true;
-            }
-
-            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.White;
-                context.Handled = true;
             }
 
             /// <summary>
@@ -218,11 +416,11 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         #endregion
 
-        #region FirstDialog
+        #region FirstOverlayDialog
 
-        class FirstDialog : Window
+        class FirstOverlayDialog : OverlayDialogBase
         {
-            public FirstDialog(Screen screen)
+            public FirstOverlayDialog(Screen screen)
                 : base(screen)
             {
                 BackgroundColor = Color.Green;
@@ -235,32 +433,28 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 Content = stackPanel;
 
-                var openNewDialogButton = new Button(screen)
+                var stackedOverlayDialogDemoButton = new Button(screen)
                 {
-                    Margin = new Thickness(8),
                     Padding = new Thickness(8),
-                    Height = unit,
                     HorizontalAlignment = HorizontalAlignment.Left,
+
                     Content = new TextBlock(screen)
                     {
-                        Text = "Open new dialog",
+                        Text = "Stacked overlay dialog demo",
                         TextHorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black
                     }
                 };
-                stackPanel.Children.Add(openNewDialogButton);
-                openNewDialogButton.Click += OnOpenNewDialogButtonClick;
-                openNewDialogButton.PreviewMouseEnter += OnButtonMouseEnter;
-                openNewDialogButton.PreviewMouseLeave += OnButtonMouseLeave;
-                openNewDialogButton.Focus();
+                stackPanel.Children.Add(stackedOverlayDialogDemoButton);
+                stackedOverlayDialogDemoButton.Click += OnStackedOverlayDialogDemoButtonClick;
+                stackedOverlayDialogDemoButton.Focus();
 
                 var closeButton = new Button(screen)
                 {
-                    Margin = new Thickness(8),
                     Padding = new Thickness(8),
-                    Height = unit,
                     HorizontalAlignment = HorizontalAlignment.Left,
+
                     Content = new TextBlock(screen)
                     {
                         Text = "Close",
@@ -271,46 +465,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 };
                 stackPanel.Children.Add(closeButton);
                 closeButton.Click += OnCloseButtonClick;
-                closeButton.PreviewMouseEnter += OnButtonMouseEnter;
-                closeButton.PreviewMouseLeave += OnButtonMouseLeave;
-
-                var switchScreenButton = new Button(screen)
-                {
-                    Margin = new Thickness(8),
-                    Padding = new Thickness(8),
-                    Height = unit,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Content = new TextBlock(screen)
-                    {
-                        Text = "Switch Screen",
-                        TextHorizontalAlignment = HorizontalAlignment.Left,
-                        ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black
-                    }
-                };
-                stackPanel.Children.Add(switchScreenButton);
-                switchScreenButton.Click += OnSwitchScreenButtonClick;
-                switchScreenButton.PreviewMouseEnter += OnButtonMouseEnter;
-                switchScreenButton.PreviewMouseLeave += OnButtonMouseLeave;
-
-                var exitButton = new Button(screen)
-                {
-                    Margin = new Thickness(8),
-                    Padding = new Thickness(8),
-                    Height = unit,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Content = new TextBlock(screen)
-                    {
-                        Text = "Exit",
-                        TextHorizontalAlignment = HorizontalAlignment.Left,
-                        ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black
-                    }
-                };
-                stackPanel.Children.Add(exitButton);
-                exitButton.Click += OnExitButtonClick;
-                exitButton.PreviewMouseEnter += OnButtonMouseEnter;
-                exitButton.PreviewMouseLeave += OnButtonMouseLeave;
             }
 
             void OnCloseButtonClick(Control sender, ref RoutedEventContext context)
@@ -318,99 +472,31 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Close();
             }
 
-            void OnOpenNewDialogButtonClick(Control sender, ref RoutedEventContext context)
+            void OnStackedOverlayDialogDemoButtonClick(Control sender, ref RoutedEventContext context)
             {
-                var secondDialog = new SecondDialog(Screen);
-                secondDialog.Show();
-            }
-
-            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.Yellow;
-                context.Handled = true;
-            }
-
-            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.White;
-                context.Handled = true;
-            }
-
-            void OnExitButtonClick(Control sender, ref RoutedEventContext context)
-            {
-                var overlay = new Overlay(Screen)
-                {
-                    Opacity = 0,
-                    BackgroundColor = Color.Black
-                };
-                overlay.Show();
-
-                var opacityAnimation = new FloatLerpAnimation
-                {
-                    Action = (current) => { overlay.Opacity = current; },
-                    To = 1,
-                    Duration = TimeSpan.FromSeconds(0.5d),
-                    Enabled = true
-                };
-                opacityAnimation.Completed += (s, e) => Screen.Game.Exit();
-                Animations.Add(opacityAnimation);
-            }
-
-            void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
-            {
-                var overlay = new Overlay(Screen)
-                {
-                    Opacity = 0,
-                    BackgroundColor = Color.Black
-                };
-                overlay.Show();
-
-                var opacityAnimation = new FloatLerpAnimation
-                {
-                    Action = (current) => { overlay.Opacity = current; },
-                    To = 1,
-                    Duration = TimeSpan.FromSeconds(0.5d),
-                    Enabled = true
-                };
-                opacityAnimation.Completed += (s, e) =>
-                {
-                    var uiService = Screen.Game.Services.GetRequiredService<IUIService>();
-                    uiService.Show("MainMenuDemoScreen");
-                };
-                Animations.Add(opacityAnimation);
-            }
-
-            public override void Show()
-            {
-                var overlay = new Overlay(Screen)
-                {
-                    Opacity = 0.5f
-                };
-                overlay.Owner = this;
-                overlay.Show();
-
-                base.Show();
+                var dialog = new SecondOverlayDialog(Screen);
+                dialog.Overlay.Opacity = 0.5f;
+                dialog.Show();
             }
         }
 
         #endregion
 
-        #region SecondDialog
+        #region SecondOverlayDialog
 
-        class SecondDialog : Window
+        class SecondOverlayDialog : OverlayDialogBase
         {
-            public SecondDialog(Screen screen)
+            public SecondOverlayDialog(Screen screen)
                 : base(screen)
             {
                 BackgroundColor = Color.Brown;
+                Padding = new Thickness(16);
 
                 var closeButton = new Button(screen)
                 {
-                    Width = unit * 2,
-                    Height = unit,
-                    Margin = new Thickness(unit),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
                     Content = new TextBlock(screen)
                     {
                         Text = "Close",
@@ -420,42 +506,100 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     }
                 };
                 Content = closeButton;
-                closeButton.Click += OnCloseButtonClick;
-                closeButton.PreviewMouseEnter += OnButtonMouseEnter;
-                closeButton.PreviewMouseLeave += OnButtonMouseLeave;
+                closeButton.Click += (Control s, ref RoutedEventContext c) => Close();
                 closeButton.Focus();
             }
+        }
 
-            void OnCloseButtonClick(Control sender, ref RoutedEventContext context)
-            {
-                Close();
-            }
+        #endregion
 
-            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.Yellow;
-                context.Handled = true;
-            }
+        #region ListBoxDemoWindow
 
-            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
+        class ListBoxDemoWindow : Window
+        {
+            public ListBoxDemoWindow(Screen screen)
+                : base(screen)
             {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.White;
-                context.Handled = true;
-            }
+                Width = 240;
 
-            public override void Show()
-            {
-                var overlay = new Overlay(Screen)
+                var stackPanel = new StackPanel(screen)
                 {
-                    Opacity = 0.7f,
-                    BackgroundColor = Color.Black
+                    Orientation = Orientation.Vertical,
+                    Padding = new Thickness(16),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch
                 };
-                overlay.Owner = this;
-                overlay.Show();
+                Content = stackPanel;
 
-                base.Show();
+                var title = new TextBlock(screen)
+                {
+                    Text = "ListBox demo",
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    ShadowOffset = new Vector2(2),
+                    TextOutlineWidth = 1,
+                    FontStretch = new Vector2(1.5f)
+                };
+                stackPanel.Children.Add(title);
+
+                var selectedIndexLabel = new TextBlock(screen)
+                {
+                    Text = "SelectedIndex: -1",
+                    Padding = new Thickness(8),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    TextHorizontalAlignment = HorizontalAlignment.Left
+                };
+                stackPanel.Children.Add(selectedIndexLabel);
+
+                var listBox = new ListBox(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                };
+                listBox.SelectionChanged += (s, e) =>
+                {
+                    selectedIndexLabel.Text = string.Format("SelectedIndex: {0}", listBox.SelectedIndex);
+                };
+                stackPanel.Children.Add(listBox);
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var listBoxItem = new ListBoxItem(screen)
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        Padding = new Thickness(8),
+
+                        Content = new TextBlock(screen)
+                        {
+                            Text = string.Format("Item {0:d2}", i),
+                            HorizontalAlignment = HorizontalAlignment.Stretch,
+                            ForegroundColor = Color.White,
+                            BackgroundColor = Color.Black,
+                            TextHorizontalAlignment = HorizontalAlignment.Left
+                        }
+                    };
+                    listBox.Items.Add(listBoxItem);
+                }
+
+                var closeButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Close",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
+                    }
+                };
+                closeButton.Click += (Control s, ref RoutedEventContext c) => Close();
+                stackPanel.Children.Add(closeButton);
+
+                closeButton.Focus();
             }
         }
 
@@ -463,16 +607,81 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         const int unit = 32;
 
+        DefaultSpriteSheetSource spriteSheetSource;
+
+        SelectableLookAndFeelSource selectableLookAndFeelSource = new SelectableLookAndFeelSource();
+
         public WindowDemoScreen(Game game)
             : base(game)
         {
             Content.RootDirectory = "Content";
         }
 
+        internal void SwitchLookAndFeelSource()
+        {
+            if (selectableLookAndFeelSource.SelectedIndex == 0)
+            {
+                selectableLookAndFeelSource.SelectedIndex = 1;
+            }
+            else
+            {
+                selectableLookAndFeelSource.SelectedIndex = 0;
+            }
+        }
+
         protected override void LoadContent()
         {
             // 重いロードのテスト用にスリープさせてます。
             System.Threading.Thread.Sleep(2000);
+
+            InitializeSpriteSheetSource();
+            InitializeLookAndFeelSource();
+            InitializeControls();
+
+            base.LoadContent();
+        }
+
+        void InitializeSpriteSheetSource()
+        {
+            var windowTemplate = new WindowSpriteSheetTemplate(16, 16);
+            var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+            var windowTexture = Content.Load<Texture2D>("UI/Sprite/Window");
+            var windowShadowTexture = windowShadowConverter.Convert(windowTexture);
+
+            spriteSheetSource = new DefaultSpriteSheetSource();
+            spriteSheetSource.SpriteSheetMap["Window"] = new SpriteSheet(windowTemplate, windowTexture);
+            spriteSheetSource.SpriteSheetMap["WindowShadow"] = new SpriteSheet(windowTemplate, windowShadowTexture);
+        }
+
+        void InitializeLookAndFeelSource()
+        {
+            selectableLookAndFeelSource.Items.Add(CreateDefaultLookAndFeelSource());
+            selectableLookAndFeelSource.Items.Add(DebugLooAndFeelUtil.CreateLookAndFeelSource(Game));
+            selectableLookAndFeelSource.SelectedIndex = 0;
+
+            LookAndFeelSource = selectableLookAndFeelSource;
+        }
+
+        ILookAndFeelSource CreateDefaultLookAndFeelSource()
+        {
+            var source = new DefaultLookAndFeelSource();
+
+            source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
+            source.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
+            {
+                WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("Window"),
+                WindowShadowSpriteSheet = spriteSheetSource.GetSpriteSheet("WindowShadow")
+            };
+            source.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
+            source.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
+            source.LookAndFeelMap[typeof(Button)] = new MyButtonLookAndFeel();
+            source.LookAndFeelMap[typeof(ListBoxItem)] = new MyListBoxItemLookAndFeel();
+
+            return source;
+        }
+
+        void InitializeControls()
+        {
 
             var firstWindow = new FirstWindow(this);
             firstWindow.Show();
@@ -503,8 +712,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 thirdWindow.Activate();
             };
             startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
-
-            base.LoadContent();
         }
     }
 }

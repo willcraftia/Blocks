@@ -3,8 +3,12 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Framework.UI.Lafs;
+using Willcraftia.Xna.Framework.UI.Lafs.Debug;
+using Willcraftia.Xna.Framework.UI.Demo.Lafs;
 
 #endregion
 
@@ -23,35 +27,35 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
                 var stackPanel = new StackPanel(screen)
                 {
-                    Margin = new Thickness(8),
-                    Orientation = Orientation.Vertical
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(16)
                 };
                 Content = stackPanel;
 
-                var newGameButton = new Button(screen)
+                var changingLookAndFeelDemoButton = new Button(screen)
                 {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Padding = new Thickness(8),
+
                     Content = new TextBlock(screen)
                     {
-                        Text = "NEW GAME (DUMMY)",
+                        Text = "Changing look & feel demo",
                         ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black
+                        BackgroundColor = Color.Black,
+                        HorizontalAlignment = HorizontalAlignment.Left
                     }
                 };
-                stackPanel.Children.Add(newGameButton);
-                newGameButton.PreviewMouseEnter += OnButtonMouseEnter;
-                newGameButton.PreviewMouseLeave += OnButtonMouseLeave;
-                newGameButton.Focus();
-
-                var textBox = new TextBox(screen)
+                changingLookAndFeelDemoButton.Click += (Control s, ref RoutedEventContext c) =>
                 {
-                    Width = unit * 8
+                    (screen as MainMenuDemoScreen).SwitchLookAndFeelSource();
                 };
-                stackPanel.Children.Add(textBox);
+                stackPanel.Children.Add(changingLookAndFeelDemoButton);
 
                 var switchScreenButton = new Button(screen)
                 {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Padding = new Thickness(8),
+
                     Content = new TextBlock(screen)
                     {
                         Text = "SWITCH SCREEN",
@@ -59,14 +63,14 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         BackgroundColor = Color.Black
                     }
                 };
-                stackPanel.Children.Add(switchScreenButton);
                 switchScreenButton.Click += OnSwitchScreenButtonClick;
-                switchScreenButton.PreviewMouseEnter += OnButtonMouseEnter;
-                switchScreenButton.PreviewMouseLeave += OnButtonMouseLeave;
+                stackPanel.Children.Add(switchScreenButton);
 
                 var exitButton = new Button(screen)
                 {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Padding = new Thickness(8),
+
                     Content = new TextBlock(screen)
                     {
                         Text = "EXIT",
@@ -74,24 +78,10 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                         BackgroundColor = Color.Black
                     }
                 };
-                stackPanel.Children.Add(exitButton);
                 exitButton.Click += OnExitButtonClick;
-                exitButton.PreviewMouseEnter += OnButtonMouseEnter;
-                exitButton.PreviewMouseLeave += OnButtonMouseLeave;
-            }
+                stackPanel.Children.Add(exitButton);
 
-            void OnButtonMouseEnter(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.Yellow;
-                context.Handled = true;
-            }
-
-            void OnButtonMouseLeave(Control sender, ref RoutedEventContext context)
-            {
-                var button = sender as Button;
-                button.Content.ForegroundColor = Color.White;
-                context.Handled = true;
+                switchScreenButton.Focus();
             }
 
             void OnSwitchScreenButtonClick(Control sender, ref RoutedEventContext context)
@@ -135,13 +125,76 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         const int unit = 32;
 
+        DefaultSpriteSheetSource spriteSheetSource;
+
+        SelectableLookAndFeelSource selectableLookAndFeelSource = new SelectableLookAndFeelSource();
+
         public MainMenuDemoScreen(Game game)
             : base(game)
         {
             Content.RootDirectory = "Content";
         }
 
+        internal void SwitchLookAndFeelSource()
+        {
+            if (selectableLookAndFeelSource.SelectedIndex == 0)
+            {
+                selectableLookAndFeelSource.SelectedIndex = 1;
+            }
+            else
+            {
+                selectableLookAndFeelSource.SelectedIndex = 0;
+            }
+        }
+
         protected override void LoadContent()
+        {
+            InitializeSpriteSheetSource();
+            InitializeLookAndFeelSource();
+            InitializeControls();
+
+            base.LoadContent();
+        }
+
+        void InitializeSpriteSheetSource()
+        {
+            var windowTemplate = new WindowSpriteSheetTemplate(16, 16);
+            var windowShadowConverter = new DecoloringTexture2DConverter(new Color(0, 0, 0, 0.5f));
+            var windowTexture = Content.Load<Texture2D>("UI/Sprite/Window");
+            var windowShadowTexture = windowShadowConverter.Convert(windowTexture);
+
+            spriteSheetSource = new DefaultSpriteSheetSource();
+            spriteSheetSource.SpriteSheetMap["Window"] = new SpriteSheet(windowTemplate, windowTexture);
+            spriteSheetSource.SpriteSheetMap["WindowShadow"] = new SpriteSheet(windowTemplate, windowShadowTexture);
+        }
+
+        void InitializeLookAndFeelSource()
+        {
+            selectableLookAndFeelSource.Items.Add(CreateDefaultLookAndFeelSource());
+            selectableLookAndFeelSource.Items.Add(DebugLooAndFeelUtil.CreateLookAndFeelSource(Game));
+            selectableLookAndFeelSource.SelectedIndex = 0;
+
+            LookAndFeelSource = selectableLookAndFeelSource;
+        }
+
+        ILookAndFeelSource CreateDefaultLookAndFeelSource()
+        {
+            var source = new DefaultLookAndFeelSource();
+
+            source.LookAndFeelMap[typeof(Desktop)] = new DesktopLookAndFeel();
+            source.LookAndFeelMap[typeof(Window)] = new SpriteSheetWindowLookAndFeel
+            {
+                WindowSpriteSheet = spriteSheetSource.GetSpriteSheet("Window"),
+                WindowShadowSpriteSheet = spriteSheetSource.GetSpriteSheet("WindowShadow")
+            };
+            source.LookAndFeelMap[typeof(TextBlock)] = new TextBlockLookAndFeel();
+            source.LookAndFeelMap[typeof(Overlay)] = new OverlayLookAndFeel();
+            source.LookAndFeelMap[typeof(Button)] = new MyButtonLookAndFeel();
+
+            return source;
+        }
+
+        void InitializeControls()
         {
             var menuWindow = new MenuWindow(this);
             menuWindow.Show();
@@ -166,8 +219,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 menuWindow.Activate();
             };
             startEffectOverlay.Animations.Add(startEffectOverlay_opacityAnimation);
-
-            base.LoadContent();
         }
     }
 }

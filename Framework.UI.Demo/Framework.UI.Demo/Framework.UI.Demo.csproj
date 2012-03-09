@@ -107,6 +107,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lafs\MyButtonLookAndFeel.cs" />
+    <Compile Include="Lafs\MyListBoxItemLookAndFeel.cs" />
     <Compile Include="Screens\CubeControl.cs" />
     <Compile Include="Screens\DemoLoadingScreen.cs" />
     <Compile Include="Screens\MainMenuDemoScreen.cs" />
