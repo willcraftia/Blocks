@@ -28,6 +28,38 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         #endregion
 
         /// <summary>
+        /// ListBoxSelectionMode。
+        /// </summary>
+        ListBoxSelectionMode selectionMode = ListBoxSelectionMode.Single;
+
+        /// <summary>
+        /// ListBoxSelectionMode を取得または設定します。
+        /// デフォルトは ListBoxSelectionMode.Single です。
+        /// </summary>
+        public ListBoxSelectionMode SelectionMode
+        {
+            get { return selectionMode; }
+            set
+            {
+                if (selectionMode == value) return;
+
+                selectionMode = value;
+
+                // Single になったならば、複数選択のうち、最初の項目以外の選択を解除します。
+                if (selectionMode == ListBoxSelectionMode.Single && SelectedIndex != -1)
+                {
+                    for (int i = 0; i < Items.Count; i++)
+                    {
+                        if (i == SelectedIndex) continue;
+
+                        var item = Items[i] as ListBoxItem;
+                        if (item.IsSelected) item.IsSelected = false;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// インスタンスを生成します。
         /// </summary>
         /// <param name="screen">Screen。</param>
@@ -40,29 +72,84 @@ namespace Willcraftia.Xna.Framework.UI.Controls
 
         /// <summary>
         /// 項目が発生させた Selected イベントを受け取り、
-        /// 選択された項目のインデックスを SelectedIndex プロパティへ設定します。
-        /// 既存の選択項目が ListBoxItem の場合、
-        /// 選択解除のために、その IsSelected プロパティは false に設定されます。
+        /// SelectedIndex プロパティを更新します。
+        /// SelectionMode プロパティが Single の場合には、
+        /// それまで選択されていた項目の IsSelected プロパティは false に設定されます。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="context"></param>
         protected virtual void OnItemSelected(Control sender, ref RoutedEventContext context)
         {
-            var item = SelectedItem as ListBoxItem;
-            if (item != null) item.IsSelected = false;
+            if (selectionMode == ListBoxSelectionMode.Single)
+            {
+                var item = SelectedItem as ListBoxItem;
+                if (item != null) item.IsSelected = false;
+            }
 
-            SelectedIndex = Items.IndexOf(context.Source);
+            SelectedIndex = FindFirstSelectedIndex();
         }
 
         /// <summary>
         /// 項目が発生させた Unselected イベントを受け取り、
-        /// SelectedIndex プロパティを -1 に設定します。
+        /// SelectedIndex プロパティを更新します。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="context"></param>
         protected virtual void OnItemUnselected(Control sender, ref RoutedEventContext context)
         {
-            if (SelectedItem == context.Source) SelectedIndex = -1;
+            SelectedIndex = FindFirstSelectedIndex();
+        }
+
+        /// <summary>
+        /// item が ListBoxItem の場合、それをそのまま項目として追加します。
+        /// それ以外の場合、
+        /// Content プロパティに item を設定した ListBoxItem インスタンスを生成し、
+        /// それを項目として追加します。
+        /// </summary>
+        /// <param name="item"></param>
+        protected override void AddItem(Control item)
+        {
+            var target = item;
+
+            if (!(item is ListBoxItem))
+            {
+                target = new ListBoxItem(Screen)
+                {
+                    Content = item
+                };
+            }
+
+            base.AddItem(target);
+        }
+
+        /// <summary>
+        /// item が ListBoxItem の場合、それをそのまま項目から削除します。
+        /// それ以外の場合、
+        /// item に一致する Content プロパティを持つ ListBoxItem インスタンスを探し、
+        /// それを項目から削除します。
+        /// </summary>
+        /// <param name="item"></param>
+        protected override void RemoveItem(Control item)
+        {
+            var target = item;
+
+            if (!(item is ListBoxItem))
+            {
+                target = null;
+                foreach (ListBoxItem wrappedItem in Items)
+                {
+                    if (wrappedItem.Content == item)
+                    {
+                        target = wrappedItem;
+                        break;
+                    }
+                }
+
+                if (target == null)
+                    throw new InvalidOperationException("No wrapped item exists.");
+            }
+
+            base.RemoveItem(target);
         }
 
         /// <summary>
@@ -168,6 +255,22 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             }
 
             return controlSize;
+        }
+
+        /// <summary>
+        /// Items プロパティから選択されている最初の項目を探し、そのインデクスを返します。
+        /// </summary>
+        /// <returns></returns>
+        int FindFirstSelectedIndex()
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if ((Items[i] as ListBoxItem).IsSelected)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }

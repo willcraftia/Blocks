@@ -520,7 +520,7 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             public ListBoxDemoWindow(Screen screen)
                 : base(screen)
             {
-                Width = 240;
+                Width = 400;
 
                 var stackPanel = new StackPanel(screen)
                 {
@@ -583,6 +583,34 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                     };
                     listBox.Items.Add(listBoxItem);
                 }
+
+                var switchSelectionModeButton = new Button(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Padding = new Thickness(8),
+
+                    Content = new TextBlock(screen)
+                    {
+                        Text = "Enable the multiple selection mode",
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
+                    }
+                };
+                switchSelectionModeButton.Click += (Control s, ref RoutedEventContext c) =>
+                {
+                    var textBlock = switchSelectionModeButton.Content as TextBlock;
+                    if (listBox.SelectionMode == ListBoxSelectionMode.Single)
+                    {
+                        listBox.SelectionMode = ListBoxSelectionMode.Multiple;
+                        textBlock.Text = "Disable the multiple selection mode";
+                    }
+                    else
+                    {
+                        listBox.SelectionMode = ListBoxSelectionMode.Single;
+                        textBlock.Text = "Enable the multiple selection mode";
+                    }
+                };
+                stackPanel.Children.Add(switchSelectionModeButton);
 
                 var closeButton = new Button(screen)
                 {

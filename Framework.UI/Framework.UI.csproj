@@ -111,6 +111,7 @@
     <Compile Include="Controls\MessageBoxResult.cs" />
     <Compile Include="Controls\OverlayDialogBase.cs" />
     <Compile Include="Controls\Panel.cs" />
+    <Compile Include="Controls\ListBoxSelectionMode.cs" />
     <Compile Include="Controls\Selector.cs" />
     <Compile Include="Controls\TabControl.cs" />
     <Compile Include="Controls\TextBlock.cs" />

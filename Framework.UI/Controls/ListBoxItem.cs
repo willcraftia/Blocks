@@ -11,8 +11,8 @@ namespace Willcraftia.Xna.Framework.UI.Controls
     /// <summary>
     /// ListBox の項目として用いる Control です。
     /// ListBox には ListBoxItem 以外の Control を追加することもできますが、
-    /// その Control が Selected/Unselected イベントをサポートしていない場合、
-    /// ListBox での選択制御機能は働きません。
+    /// ListBox の Items プロパティへ ListBoxItem 以外の Control を追加しようとした場合、
+    /// ListBoxItem にラップされてから追加されます。
     /// </summary>
     public class ListBoxItem : ContentControl
     {
