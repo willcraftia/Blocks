@@ -1014,7 +1014,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnEnabledChanged()
         {
-            if (EnabledChanged != null) EnabledChanged(this, EventArgs.Empty);
+            EnabledChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -1023,7 +1023,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnVisibleChanged()
         {
-            if (VisibleChanged != null) VisibleChanged(this, EventArgs.Empty);
+            VisibleChanged(this, EventArgs.Empty);
         }
 
         /// <summary>

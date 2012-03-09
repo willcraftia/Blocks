@@ -66,7 +66,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnEnanbledChanged()
         {
-            if (EnanbledChanged != null) EnanbledChanged(this, EventArgs.Empty);
+            EnanbledChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnCompleted()
         {
-            if (Completed != null) Completed(this, EventArgs.Empty);
+            Completed(this, EventArgs.Empty);
         }
     }
 }

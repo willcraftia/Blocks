@@ -57,6 +57,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             GridBlockMeshEffect = new BasicEffect(GraphicsDevice);
             GridBlockMeshEffect.VertexColorEnabled = true;
 
+            var meshFactory = new BlockMeshFactory(graphicsDevice, new BasicBlockEffectFactory(graphicsDevice), lodSize);
+            meshManager = new BlockMeshManager(meshFactory);
+
             InitializeStorageContainer();
 
             BlockMeshViewModel = new BlockMeshViewModel(this)
@@ -65,6 +68,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 GridVisible = true
             };
             OpenStorageViewModel = new OpenStorageViewModel(StorageContainer);
+        }
+
+        public void LoadBlockMesh(Stream stream)
+        {
+            // 古い BlockMesh を破棄します。
+            if (BlockMesh != null) BlockMesh.Dispose();
+
+            // 新たにロードします。
+            BlockMesh = meshManager.Load(stream);
+            foreach (var effect in BlockMesh.Effects) effect.EnableDefaultLighting();
         }
 
         public void LoadBlockMeshFromStorage()
@@ -91,9 +104,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 blockData = Encoding.ASCII.GetString(stream.ToArray());
             }
 
-            var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), lodSize);
-            meshManager = new BlockMeshManager(meshFactory);
-
             // BlockMesh をロードします。
             using (var stream = blockData.ToMemoryStream())
             {
@@ -112,12 +122,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             openContainerResult.AsyncWaitHandle.WaitOne();
             StorageContainer = storageDevice.EndOpenContainer(openContainerResult);
             openContainerResult.AsyncWaitHandle.Close();
-        }
-
-        void LoadBlockMesh(Stream stream)
-        {
-            BlockMesh = meshManager.Load(stream);
-            foreach (var effect in BlockMesh.Effects) effect.EnableDefaultLighting();
         }
 
         /// <summary>

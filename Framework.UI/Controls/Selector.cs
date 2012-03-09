@@ -132,7 +132,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// </summary>
         protected virtual void OnSelectionChanged()
         {
-            if (SelectionChanged != null) SelectionChanged(this, EventArgs.Empty);
+            SelectionChanged(this, EventArgs.Empty);
         }
 
         /// <summary>

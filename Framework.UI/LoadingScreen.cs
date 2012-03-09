@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// <summary>
         /// 非同期 Screen ローディングが完了した場合に発生します。
         /// </summary>
-        public event EventHandler ScreenLoadCompleted;
+        public event EventHandler ScreenLoadCompleted = delegate { };
 
         /// <summary>
         /// 非同期 Screen ローディングの delegate。
@@ -70,7 +70,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnScreenLoadCompleted()
         {
-            if (ScreenLoadCompleted != null) ScreenLoadCompleted(this, EventArgs.Empty);
+            ScreenLoadCompleted(this, EventArgs.Empty);
         }
 
         /// <summary>

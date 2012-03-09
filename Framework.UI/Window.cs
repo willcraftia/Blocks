@@ -180,7 +180,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnClosing()
         {
-            if (Closing != null) Closing(this, EventArgs.Empty);
+            Closing(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnClosed()
         {
-            if (Closed != null) Closed(this, EventArgs.Empty);
+            Closed(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnActivated()
         {
-            if (Activated != null) Activated(this, EventArgs.Empty);
+            Activated(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         protected virtual void OnDeactivated()
         {
-            if (Deactivated != null) Deactivated(this, EventArgs.Empty);
+            Deactivated(this, EventArgs.Empty);
         }
 
         protected override void OnKeyDown(ref RoutedEventContext context)
