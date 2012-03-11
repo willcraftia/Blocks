@@ -15,6 +15,7 @@ using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
+using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
@@ -41,6 +42,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// </summary>
         UIManager uiManager;
 
+        public StorageModel StorageModel { get; private set; }
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -55,6 +58,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
             // デフォルトは OS の CultureInfo に従います。
             Strings.Culture = CultureInfo.CurrentCulture;
+
+            StorageModel = new StorageModel();
         }
 
         protected override void Initialize()

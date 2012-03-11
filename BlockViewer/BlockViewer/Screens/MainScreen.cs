@@ -14,6 +14,7 @@ using Willcraftia.Xna.Framework.UI.Lafs.Debug;
 using Willcraftia.Xna.Win.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;
+using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
@@ -31,7 +32,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         DefaultSpriteSheetSource spriteSheetSource;
 
-        MainViewModel mainViewModel;
+        Workspace workspace;
+
+        WorkspaceViewModel mainViewModel;
 
         ImageButton mainMenuButton;
 
@@ -52,8 +55,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             Content.RootDirectory = "Content";
 
+            workspace = new Workspace(game);
+
             // Data Context
-            mainViewModel = new MainViewModel(game.GraphicsDevice);
+            mainViewModel = new WorkspaceViewModel(workspace);
             DataContext = mainViewModel;
         }
 
@@ -64,6 +69,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             InitializeControls();
 
             base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            workspace.Dispose();
+
+            base.UnloadContent();
         }
 
         void InitializeSpriteSheetSource()
@@ -122,7 +134,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         void InitializeControls()
         {
             // TODO: テスト コード。
-            mainViewModel.StoreSampleBlockMesh();
+            //mainViewModel.StoreSampleBlockMesh();
 
             var canvas = new Canvas(this);
             canvas.BackgroundColor = Color.CornflowerBlue;
@@ -135,7 +147,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 Width = Desktop.Width,
                 Height = Desktop.Height,
                 Focusable = true,
-                DataContext = mainViewModel.BlockMeshViewModel
+                DataContext = mainViewModel.ViewerViewModel
             };
             canvas.Children.Add(blockMeshView);
 

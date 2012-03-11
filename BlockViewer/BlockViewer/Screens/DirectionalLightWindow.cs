@@ -13,7 +13,7 @@ using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
-    public sealed class LightWindow : Window
+    public sealed class DirectionalLightWindow : Window
     {
         #region LightColorButton
 
@@ -63,12 +63,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         PredefinedColorDialog predefinedColorDialog;
 
-        BlockMeshViewModel ViewModel
+        DirectionalLightViewModel ViewModel
         {
-            get { return DataContext as BlockMeshViewModel; }
+            get { return DataContext as DirectionalLightViewModel; }
         }
 
-        public LightWindow(Screen screen)
+        public DirectionalLightWindow(Screen screen)
             : base(screen)
         {
             ShadowOffset = new Vector2(4);
@@ -110,29 +110,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Show()
         {
-            var lightViewModel = ViewModel.SelectedLightViewModel;
-
-            if (lightViewModel == ViewModel.Light0ViewModel)
+            switch (ViewModel.Index)
             {
-                titleTextBlock.Text = Strings.Light0Title;
-            }
-            else if (lightViewModel == ViewModel.Light1ViewModel)
-            {
-                titleTextBlock.Text = Strings.Light1Title;
-            }
-            else if (lightViewModel == ViewModel.Light2ViewModel)
-            {
-                titleTextBlock.Text = Strings.Light2Title;
-            }
-            else
-            {
-                throw new InvalidOperationException();
+                case 0:
+                    titleTextBlock.Text = Strings.Light0Title;
+                    break;
+                case 1:
+                    titleTextBlock.Text = Strings.Light1Title;
+                    break;
+                case 2:
+                    titleTextBlock.Text = Strings.Light2Title;
+                    break;
+                default:
+                    throw new InvalidOperationException();
             }
 
-            var diffuse = lightViewModel.DiffuseColor;
+            var diffuse = ViewModel.DiffuseColor;
             diffuseColorButton.ColorCanvas.BackgroundColor = new Color(diffuse.X, diffuse.Y, diffuse.Z);
 
-            var specular = lightViewModel.SpecularColor;
+            var specular = ViewModel.SpecularColor;
             specularColorButton.ColorCanvas.BackgroundColor = new Color(specular.X, specular.Y, specular.Z);
 
             diffuseColorButton.Focus();
@@ -170,7 +166,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // Diffuse ボタンに反映します。
             diffuseColorButton.ColorCanvas.BackgroundColor = color;
             // モデルに反映します。
-            ViewModel.SelectedLightViewModel.DiffuseColor = color.ToVector3();
+            ViewModel.DiffuseColor = color.ToVector3();
         }
 
         void PredefinedColorSelectedForSpecular(PredefinedColor predefinedColor)
@@ -180,7 +176,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // Diffuse ボタンに反映します。
             specularColorButton.ColorCanvas.BackgroundColor = color;
             // モデルに反映します。
-            ViewModel.SelectedLightViewModel.SpecularColor = color.ToVector3();
+            ViewModel.SpecularColor = color.ToVector3();
         }
     }
 }

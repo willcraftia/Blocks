@@ -2,17 +2,22 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Cameras;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
+namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 {
-    public sealed class LightViewModel
+    public sealed class DirectionalLightModel
     {
-        public ChaseView View { get; set; }
-
         public bool Enabled { get; set; }
+
+        public Vector3 DiffuseColor { get; set; }
+
+        public Vector3 SpecularColor { get; set; }
+
+        public ChaseView View { get; private set; }
 
         public Vector3 Direction
         {
@@ -24,11 +29,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             }
         }
 
-        public Vector3 DiffuseColor { get; set; }
-
-        public Vector3 SpecularColor { get; set; }
-
-        public LightViewModel()
+        public DirectionalLightModel()
         {
             View = new ChaseView
             {

@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.Graphics;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
@@ -13,7 +14,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class LodWindow : Window
     {
-        Control[] controls = new Control[4];
+        WorkspaceViewModel WorkspaceViewModel
+        {
+            get { return DataContext as WorkspaceViewModel; }
+        }
 
         public LodWindow(Screen screen)
             : base(screen)
@@ -30,15 +34,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             Content = stackPanel;
 
-            var mainViewModel = DataContext as MainViewModel;
-            for (int i = 0; i < controls.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
-                controls[i] = CreateLodControl(mainViewModel, i);
-                stackPanel.Children.Add(controls[i]);
+                var lodControl = CreateLodControl(i);
+                stackPanel.Children.Add(lodControl);
             }
         }
 
-        Control CreateLodControl(MainViewModel mainViewModel, int levelOfDetail)
+        Control CreateLodControl(int levelOfDetail)
         {
             var stackPanel = new StackPanel(Screen)
             {
@@ -56,21 +59,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             stackPanel.Children.Add(textBlock);
 
-            var viewModel = new BlockMeshViewModel(mainViewModel)
-            {
-                LevelOfDetail = levelOfDetail
-            };
-            var BlockMeshView = new BlockMeshView(Screen)
+            var viewModel = WorkspaceViewModel.CreateLodViewerViewModel(levelOfDetail);
+
+            var meshView = new BlockMeshView(Screen)
             {
                 Width = 32 * 2,
                 Height = 32 * 2,
-
-                DataContext = new BlockMeshViewModel(mainViewModel)
-                {
-                    LevelOfDetail = levelOfDetail
-                }
+                DataContext = viewModel
             };
-            stackPanel.Children.Add(BlockMeshView);
+            stackPanel.Children.Add(meshView);
 
             return stackPanel;
         }

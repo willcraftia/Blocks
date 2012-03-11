@@ -17,16 +17,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         
         int mouseOffsetY;
 
-        BlockMeshViewModel ViewModel
+        ViewerViewModel ViewModel
         {
-            get { return DataContext as BlockMeshViewModel; }
+            get { return DataContext as ViewerViewModel; }
         }
 
         public BlockMeshView(Screen screen) : base(screen) { }
 
         protected override void OnMouseMove(ref RoutedEventContext context)
         {
-            if (!ViewModel.CameraMovable) return;
+            if (!ViewModel.ViewMovable) return;
 
             var mouseDevice = Screen.MouseDevice;
             var mouseState = mouseDevice.MouseState;
@@ -47,7 +47,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     X = Math.Sign(mouseState.Y - mouseOffsetY),
                     Y = Math.Sign(mouseState.X - mouseOffsetX)
                 };
-                ViewModel.MoveCamera(angleSign);
+                ViewModel.MoveView(angleSign);
 
                 mouseOffsetX = mouseState.X;
                 mouseOffsetY = mouseState.Y;
@@ -67,15 +67,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     using (var localClipping = drawContext.BeginNewClip(bounds))
                     {
-                        Draw3D(gameTime, drawContext);
+                        ViewModel.Draw();
                     }
                 }
             }
-        }
-
-        void Draw3D(GameTime gameTime, IDrawContext drawContext)
-        {
-            ViewModel.Draw();
         }
     }
 }

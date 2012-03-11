@@ -9,7 +9,7 @@ using Willcraftia.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Blocks.Graphics
 {
-    public sealed class GridBlockMesh
+    public sealed class GridBlockMesh : IDisposable
     {
         public GridPlane Top { get; private set; }
         public GridPlane Bottom { get; private set; }
@@ -17,6 +17,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public GridPlane South { get; private set; }
         public GridPlane West { get; private set; }
         public GridPlane East { get; private set; }
+
+        // MEMO
+        //
+        // BasicEffect.EnableDefaultLighting() が呼び出されると Normal0 が要求されるため、
+        // 他とは共有しない専用の BasicEffect を使用します。
+        //
+
+        public BasicEffect Effect { get; private set; }
 
         public bool TopVisible { get; set; }
         public bool BottomVisible { get; set; }
@@ -33,6 +41,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
             SouthVisible = true;
             WestVisible = true;
             EastVisible = true;
+
+            Effect = new BasicEffect(graphicsDevice);
+            Effect.VertexColorEnabled = true;
 
             InitializePlanes(graphicsDevice, gridSize, cellSize, color);
         }
@@ -54,6 +65,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
             if (0 < cameraPosition.X) EastVisible = false;
             if (cameraPosition.X < 0) WestVisible = false;
+        }
+
+        public void Draw()
+        {
+            Draw(Effect);
         }
 
         public void Draw(Effect effect)
@@ -89,5 +105,41 @@ namespace Willcraftia.Xna.Blocks.Graphics
             var eastTransform = Matrix.CreateTranslation(new Vector3(offset, 0, 0));
             East = GridPlane.CreatePlaneZY(graphicsDevice, gridSize, gridSize, cellSize, color, eastTransform);
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        bool disposed;
+
+        ~GridBlockMesh()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing)
+            {
+                Effect.Dispose();
+
+                Top.Dispose();
+                Bottom.Dispose();
+                North.Dispose();
+                South.Dispose();
+                West.Dispose();
+                East.Dispose();
+            }
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

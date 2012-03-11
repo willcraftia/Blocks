@@ -92,7 +92,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\AsyncBlockMeshLoader.cs" />
+    <Compile Include="Content\BlockMeshLoadRequest.cs" />
     <Compile Include="Content\BlockMeshManager.cs" />
+    <Compile Include="Content\IBlockMeshLoader.cs" />
     <Compile Include="Graphics\BasicBlockEffect.cs" />
     <Compile Include="Content\BasicBlockEffectFactory.cs" />
     <Compile Include="Graphics\GridBlockMesh.cs" />
@@ -113,6 +116,7 @@
     <Compile Include="Serialization\Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\Material.cs" />
+    <Compile Include="Storage\StorageBlockMeshLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">

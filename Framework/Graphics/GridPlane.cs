@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Willcraftia.Xna.Framework.Graphics
 {
-    public sealed class GridPlane
+    public sealed class GridPlane : IDisposable
     {
         /// <summary>
         /// GraphicsDevice。
@@ -204,5 +204,34 @@ namespace Willcraftia.Xna.Framework.Graphics
             VertexBuffer = new VertexBuffer(graphicsDevice, typeof(VertexPositionColor), vertices.Length, BufferUsage.None);
             VertexBuffer.SetData<VertexPositionColor>(vertices);
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        bool disposed;
+
+        ~GridPlane()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing)
+            {
+                if (VertexBuffer != null) VertexBuffer.Dispose();
+            }
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

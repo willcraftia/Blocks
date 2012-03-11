@@ -123,13 +123,15 @@ namespace Willcraftia.Xna.Framework
         }
 
         /// <summary>
-        /// ページ内でのインデックスから、項目全体でのインデックを取得します。
+        /// ページ内のインデックスから、項目全体でのインデックを取得します。
+        /// ページ内のインデックスが項目の範囲を越える場合には -1 を返します。
         /// </summary>
-        /// <param name="indexInPage">ページ内でのインデックス。</param>
+        /// <param name="indexInPage">ページ内のインデックス。</param>
         /// <returns>項目全体でのインデックス。</returns>
         public int GetItemIndex(int indexInPage)
         {
-            return currentPageIndex * ItemCountPerPage + indexInPage;
+            var index = currentPageIndex * ItemCountPerPage + indexInPage;
+            return (index < ItemCount) ? index : -1;
         }
 
         /// <summary>

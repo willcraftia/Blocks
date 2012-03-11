@@ -651,6 +651,9 @@ namespace Willcraftia.Xna.Framework.UI
 
         protected override void UnloadContent()
         {
+            if (nextScreen != null) nextScreen.Dispose();
+            if (screen != null) screen.Dispose();
+
             if (spriteBatch != null) spriteBatch.Dispose();
             if (fillTexture != null) fillTexture.Dispose();
             if (ScreenFactory != null && ScreenFactory.Initialized) ScreenFactory.Dispose();

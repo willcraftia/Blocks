@@ -167,7 +167,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             ViewModel.SelectedFileName = null;
 
-            fileNames = ViewModel.GetFileNames();
+            fileNames = ViewModel.GetBlockMeshFileNames();
             paging.ItemCount = fileNames.Length;
 
             // ファイルがない場合は、その旨を MessageBox で表示して終えます。
@@ -296,7 +296,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 var fileNameButton = fileNameButtons[i];
 
                 var fileNameIndex = paging.GetItemIndex(i);
-                if (fileNameIndex < fileNames.Length)
+                if (0 <= fileNameIndex)
                 {
                     fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
                     fileNameButton.Enabled = true;

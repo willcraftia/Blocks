@@ -4,9 +4,9 @@ using System;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
+namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 {
-    public enum Mode
+    public enum ViewMode
     {
         Camera,
         DirectionalLight0,

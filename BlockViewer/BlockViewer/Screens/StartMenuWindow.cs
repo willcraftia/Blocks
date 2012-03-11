@@ -9,6 +9,7 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
+using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
@@ -20,6 +21,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     /// </summary>
     public sealed class StartMenuWindow : Window
     {
+        StorageModel storageModel;
+
         SelectLanguageDialog selectLanguageDialog;
 
         Button changeLookAndFeelButton;
@@ -35,6 +38,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
+            storageModel = (screen.Game as BlockViewerGame).StorageModel;
+
             Width = 320;
             ShadowOffset = new Vector2(4);
             Padding = new Thickness(16);
@@ -70,8 +75,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             startButton.Focus();
         }
 
+        
+
+        void SelectStorageIfNeeded()
+        {
+            if (!storageModel.Selected) storageModel.SelectStorage();
+        }
+
         void OnStartButtonClick(Control sender, ref RoutedEventContext context)
         {
+            SelectStorageIfNeeded();
+
             var overlay = new FadeOverlay(Screen);
             overlay.OpacityAnimation.To = 1;
             overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(0.5d);
@@ -114,20 +128,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (confirmationDialog.Result == MessageBoxResult.OK)
             {
-                var showSelectorResult = StorageDevice.BeginShowSelector(null, null);
-                showSelectorResult.AsyncWaitHandle.WaitOne();
-                var storageDevice = StorageDevice.EndShowSelector(showSelectorResult);
-                showSelectorResult.AsyncWaitHandle.Close();
-
-                var openContainerResult = storageDevice.BeginOpenContainer("BlockViewer", null, null);
-                openContainerResult.AsyncWaitHandle.WaitOne();
-                var storageContainer = storageDevice.EndOpenContainer(openContainerResult);
-                openContainerResult.AsyncWaitHandle.Close();
+                SelectStorageIfNeeded();
 
                 InstallDemoModel(
                     "Content/DemoModels/OctahedronLikeBlock.xml",
                     "Model_OctahedronLikeBlock.xml",
-                    storageContainer);
+                    storageModel.Container);
 
                 for (int i = 0; i < 20; i++)
                 {
@@ -135,7 +141,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     InstallDemoModel(
                         "Content/DemoModels/SimpleBlock.xml",
                         destinationFileName,
-                        storageContainer);
+                        storageModel.Container);
                 }
 
                 if (informationDialog == null)

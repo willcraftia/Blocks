@@ -9,6 +9,7 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
@@ -62,7 +63,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         OpenStorageDialog openStorageDialog;
 
-        LightWindow lightWindow;
+        DirectionalLightWindow lightWindow;
 
         LodWindow lodWindow;
 
@@ -76,9 +77,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         #endregion
 
-        MainViewModel ViewModel
+        WorkspaceViewModel ViewModel
         {
-            get { return DataContext as MainViewModel; }
+            get { return DataContext as WorkspaceViewModel; }
         }
 
         public MainMenuWindow(Screen screen)
@@ -199,30 +200,31 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnOpenStorageDialogClosed(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(ViewModel.OpenStorageViewModel.SelectedFileName)) return;
+            var selectedFileName = ViewModel.OpenStorageViewModel.SelectedFileName;
+            if (string.IsNullOrEmpty(selectedFileName)) return;
 
             Close();
 
             // TODO: 少しでも負荷がかかると短い Animation が効果を表すことなく完了してしまう。
-            ViewModel.LoadBlockMeshFromStorage();
+            ViewModel.ViewerViewModel.LoadBlockMesh(selectedFileName);
         }
 
         void OnModeButtonClick(Control sender, ref RoutedEventContext context)
         {
             tab.SelectedIndex = modeMenuIndex;
 
-            switch (ViewModel.BlockMeshViewModel.Mode)
+            switch (ViewModel.ViewerViewModel.ViewMode)
             {
-                case Mode.Camera:
+                case ViewMode.Camera:
                     cameraModeButton.Focus();
                     break;
-                case Mode.DirectionalLight0:
+                case ViewMode.DirectionalLight0:
                     light0ModeButton.Focus();
                     break;
-                case Mode.DirectionalLight1:
+                case ViewMode.DirectionalLight1:
                     light1ModeButton.Focus();
                     break;
-                case Mode.DirectionalLight2:
+                case ViewMode.DirectionalLight2:
                     light2ModeButton.Focus();
                     break;
                 default:
@@ -318,28 +320,28 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             cameraModeButton = CreateMenuButton(Strings.CameraModeButton);
             cameraModeButton.Click += (Control s, ref RoutedEventContext c) =>
             {
-                ChangeMode(Mode.Camera);
+                ChangeMode(ViewMode.Camera);
             };
             stackPanel.Children.Add(cameraModeButton);
 
             light0ModeButton = CreateMenuButton(Strings.Light0ModeButton);
             light0ModeButton.Click += (Control s, ref RoutedEventContext c) =>
             {
-                ChangeMode(Mode.DirectionalLight0);
+                ChangeMode(ViewMode.DirectionalLight0);
             };
             stackPanel.Children.Add(light0ModeButton);
 
             light1ModeButton = CreateMenuButton(Strings.Light1ModeButton);
             light1ModeButton.Click += (Control s, ref RoutedEventContext c) =>
             {
-                ChangeMode(Mode.DirectionalLight1);
+                ChangeMode(ViewMode.DirectionalLight1);
             };
             stackPanel.Children.Add(light1ModeButton);
 
             light2ModeButton = CreateMenuButton(Strings.Light2ModeButton);
             light2ModeButton.Click += (Control s, ref RoutedEventContext c) =>
             {
-                ChangeMode(Mode.DirectionalLight2);
+                ChangeMode(ViewMode.DirectionalLight2);
             };
             stackPanel.Children.Add(light2ModeButton);
 
@@ -427,11 +429,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             return button;
         }
 
-        void ChangeMode(Mode mode)
+        void ChangeMode(ViewMode mode)
         {
-            ViewModel.BlockMeshViewModel.Mode = mode;
+            ViewModel.ViewerViewModel.ViewMode = mode;
 
-            if (Mode.Camera == mode)
+            if (ViewMode.Camera == mode)
             {
                 if (lightWindow != null && lightWindow.Visible) lightWindow.Close();
             }
@@ -439,9 +441,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 if (lightWindow == null)
                 {
-                    lightWindow = new LightWindow(Screen)
+
+                    lightWindow = new DirectionalLightWindow(Screen)
                     {
-                        DataContext = ViewModel.BlockMeshViewModel
+                        DataContext = ViewModel.ViewerViewModel.DirectionalLightViewModel
                     };
                 }
                 lightWindow.Show();
