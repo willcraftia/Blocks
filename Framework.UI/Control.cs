@@ -128,6 +128,11 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         public event EventHandler VisibleChanged = delegate { };
 
+        /// <summary>
+        /// DataContext プロパティが変更された時に発生します。
+        /// </summary>
+        public event EventHandler DataContextChanged = delegate { };
+
         #endregion
 
         #region Routing Event Handlers
@@ -584,7 +589,14 @@ namespace Willcraftia.Xna.Framework.UI
                 // Desktop にも DataContext が設定されていないならば、Screen に従います。
                 return (Parent != null) ? Parent.DataContext : Screen.DataContext;
             }
-            set { dataContext = value; }
+            set
+            {
+                if (dataContext == value) return;
+
+                dataContext = value;
+
+                OnDataContextChanged();
+            }
         }
 
         /// <summary>
@@ -1024,6 +1036,15 @@ namespace Willcraftia.Xna.Framework.UI
         protected virtual void OnVisibleChanged()
         {
             VisibleChanged(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// DataContext プロパティが変更された時に呼び出されます。
+        /// DataContextChanged イベントを発生させます。
+        /// </summary>
+        protected virtual void OnDataContextChanged()
+        {
+            DataContextChanged(this, EventArgs.Empty);
         }
 
         /// <summary>

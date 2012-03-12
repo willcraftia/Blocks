@@ -197,13 +197,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         protected internal virtual void Update(GameTime gameTime)
         {
+            // Control を更新します。
+            root.Update(gameTime);
             // Screen のレイアウトを更新します。
             root.UpdateLayout();
             // Control の前後関係が変化している可能性があるため、カーソル位置について再処理します。
             root.ProcessMouseMove();
-
-            // Control を更新します。
-            root.Update(gameTime);
         }
 
         /// <summary>

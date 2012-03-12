@@ -18,19 +18,40 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 {
     public sealed class OpenStorageDialog : OverlayDialogBase
     {
-        //
-        // MEMO
-        //
-        // XNA の StorageDevice を用いたファイル オープンを想定。
-        // セーブ ディレクトリ固定で、その中のセーブ データ一覧を表示し、
-        // 選択することを想定。
-        //
+        #region FileButton
 
-        Paging paging = new Paging(5);
+        class FileButton : Button
+        {
+            TextBlock fileNameTextBlock;
+
+            public FileButton(Screen screen)
+                : base(screen)
+            {
+                fileNameTextBlock = new TextBlock(screen)
+                {
+                    ForegroundColor = Color.White,
+                    BackgroundColor = Color.Black,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    TextHorizontalAlignment = HorizontalAlignment.Left,
+                    ShadowOffset = new Vector2(2)
+                };
+
+                Content = fileNameTextBlock;
+            }
+
+            public override void Update(GameTime gameTime)
+            {
+                fileNameTextBlock.Text = DataContext as string;
+
+                base.Update(gameTime);
+            }
+        }
+
+        #endregion
 
         TextBlock pageTextBlock;
 
-        TextButton[] fileNameButtons = new TextButton[5];
+        FileButton[] fileButtons = new FileButton[5];
 
         Button cancelButton;
 
@@ -39,13 +60,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         FloatLerpAnimation closeAnimation;
 
         ConfirmationDialog confirmationDialog;
-
-        ErrorDialog noFileErrorDialog;
-
-        string targetFileName;
-
-        // Show() 呼び出しのタイミングでファイルをキャッシュする前提。
-        string[] fileNames;
 
         OpenStorageViewModel ViewModel
         {
@@ -83,7 +97,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowLeft")
                 }
             };
-            backPageButton.Click += (Control s, ref RoutedEventContext c) => BackPage();
+            backPageButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ViewModel.BackPage();
+            };
             pageButtonPanel.Children.Add(backPageButton);
 
             pageTextBlock = new TextBlock(screen)
@@ -105,32 +122,30 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Texture = screen.Content.Load<Texture2D>("UI/ArrowRight")
                 }
             };
-            forwardPageButton.Click += (Control s, ref RoutedEventContext c) => ForwardPage();
+            forwardPageButton.Click += (Control s, ref RoutedEventContext c) =>
+            {
+                ViewModel.ForwardPage();
+            };
             pageButtonPanel.Children.Add(forwardPageButton);
 
-            var fileNameListPanel = new StackPanel(screen)
+            var fileListPanel = new StackPanel(screen)
             {
                 Orientation = Orientation.Vertical,
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            stackPanel.Children.Add(fileNameListPanel);
+            stackPanel.Children.Add(fileListPanel);
 
-            for (int i = 0; i < fileNameButtons.Length; i++)
+            for (int i = 0; i < fileButtons.Length; i++)
             {
-                fileNameButtons[i] = new TextButton(screen)
+                fileButtons[i] = new FileButton(screen)
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     Height = BlockViewerGame.SpriteSize,
                     Padding = new Thickness(4)
                 };
-                fileNameButtons[i].TextBlock.ForegroundColor = Color.White;
-                fileNameButtons[i].TextBlock.BackgroundColor = Color.Black;
-                fileNameButtons[i].TextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                fileNameButtons[i].TextBlock.TextHorizontalAlignment = HorizontalAlignment.Left;
-                fileNameButtons[i].TextBlock.ShadowOffset = new Vector2(2);
-                fileNameButtons[i].Click += OnFileNameButtonClick;
-                fileNameButtons[i].KeyDown += OnFileNameButtonKeyDown;
-                fileNameListPanel.Children.Add(fileNameButtons[i]);
+                fileButtons[i].Click += OnFileButtonClick;
+                fileButtons[i].KeyDown += OnFileNameButtonKeyDown;
+                fileListPanel.Children.Add(fileButtons[i]);
             }
 
             var separator = ControlUtil.CreateDefaultSeparator(screen);
@@ -165,19 +180,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Show()
         {
-            ViewModel.SelectedFileName = null;
-
-            fileNames = ViewModel.GetBlockMeshFileNames();
-            paging.ItemCount = fileNames.Length;
-
-            // ファイルがない場合は、その旨を MessageBox で表示して終えます。
-            if (paging.ItemCount == 0)
-            {
-                ShowNoFileErrorMessageBox();
-                return;
-            }
-
-            ReloadPage();
+            ViewModel.Initialize(fileButtons.Length);
 
             // 常に Cancel ボタンにフォーカスを設定します。
             cancelButton.Focus();
@@ -193,12 +196,49 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             closeAnimation.Enabled = true;
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            //
+            // MEMO
+            //
+            // ViewModel とのイベント駆動による通信を行わず、
+            // Update(GameTime) からの状態のポーリングを基本パターンとします。
+            //
+
+            for (int i = 0; i < fileButtons.Length; i++)
+            {
+                var fileButton = fileButtons[i];
+                var fileName = ViewModel.GetFileName(i);
+
+                fileButton.DataContext = fileName;
+
+                if (fileName != null)
+                {
+                    fileButton.Enabled = true;
+                    fileButton.Visible = true;
+                }
+                else
+                {
+                    // フォーカスが設定されていたボタンがファイルなしになった場合、
+                    // フォーカスを先頭のボタンに設定することを試みます。
+                    if (fileButton.Focused) fileButtons[0].Focus();
+
+                    fileButton.Enabled = false;
+                    fileButton.Visible = false;
+                }
+            }
+
+            var currentPageNo = ViewModel.CurrentPageIndex + 1;
+            pageTextBlock.Text = currentPageNo + "/" + ViewModel.PageCount;
+
+            base.Update(gameTime);
+        }
+
         protected override void OnKeyDown(ref RoutedEventContext context)
         {
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
                 Close();
-
                 context.Handled = true;
             }
 
@@ -209,17 +249,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
             {
-                BackPage();
+                ViewModel.BackPage();
                 context.Handled = true;
             }
             else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
             {
-                ForwardPage();
+                ViewModel.ForwardPage();
                 context.Handled = true;
             }
         }
 
-        void OnFileNameButtonClick(Control sender, ref RoutedEventContext context)
+        void OnFileButtonClick(Control sender, ref RoutedEventContext context)
         {
             if (confirmationDialog == null)
             {
@@ -237,7 +277,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 confirmationDialog.Closed += OnOpenFileConfirmationDialogClosed;
             }
 
-            targetFileName = ((sender as Button).Content as TextBlock).Text;
+            // 仮選択。
+            ViewModel.SelectedFileName = sender.DataContext as string;
 
             confirmationDialog.Show();
 
@@ -248,74 +289,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (confirmationDialog.Result == MessageBoxResult.OK)
             {
-                ViewModel.SelectedFileName = targetFileName;
                 Close();
             }
             else
             {
-                targetFileName = null;
+                // 仮選択をキャンセル。
+                ViewModel.SelectedFileName = null;
             }
-        }
-
-        void ShowNoFileErrorMessageBox()
-        {
-            if (noFileErrorDialog == null)
-            {
-                noFileErrorDialog = new ErrorDialog(Screen)
-                {
-                    Message = new TextBlock(Screen)
-                    {
-                        Text = Strings.NoFileError,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black,
-                        ShadowOffset = new Vector2(2)
-                    }
-                };
-            }
-            noFileErrorDialog.Show();
-        }
-
-        void ForwardPage()
-        {
-            paging.Forward();
-            ReloadPage();
-        }
-
-        void BackPage()
-        {
-            paging.Back();
-            ReloadPage();
-        }
-
-        void ReloadPage()
-        {
-            // ファイル名を設定します。
-            for (int i = 0; i < fileNameButtons.Length; i++)
-            {
-                var fileNameButton = fileNameButtons[i];
-
-                var fileNameIndex = paging.GetItemIndex(i);
-                if (0 <= fileNameIndex)
-                {
-                    fileNameButton.TextBlock.Text = fileNames[fileNameIndex];
-                    fileNameButton.Enabled = true;
-                    fileNameButton.Visible = true;
-                }
-                else
-                {
-                    // フォーカスが設定されていたボタンがファイルなしになった場合、
-                    // フォーカスを先頭のボタンに設定することを試みます。
-                    if (fileNameButton.Focused) fileNameButtons[0].Focus();
-
-                    fileNameButton.TextBlock.Text = string.Empty;
-                    fileNameButton.Enabled = false;
-                    fileNameButton.Visible = false;
-                }
-            }
-
-            var currentPageNo = paging.CurrentPageIndex + 1;
-            pageTextBlock.Text = currentPageNo + "/" + paging.PageCount;
         }
     }
 }

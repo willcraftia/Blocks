@@ -15,6 +15,11 @@ namespace Willcraftia.Xna.Framework
     public sealed class Paging
     {
         /// <summary>
+        /// 1 ページに含める項目数。
+        /// </summary>
+        int itemCountPerPage;
+        
+        /// <summary>
         /// 総項目数。
         /// </summary>
         int itemCount;
@@ -26,8 +31,22 @@ namespace Willcraftia.Xna.Framework
 
         /// <summary>
         /// 1 ページに含める項目数を取得します。
+        /// このプロパティ値が変更された場合、
+        /// CurrentPageIndex プロパティは 0 にリセットされます。
         /// </summary>
-        public int ItemCountPerPage { get; private set; }
+        public int ItemCountPerPage
+        {
+            get { return itemCountPerPage; }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException("value");
+                if (itemCountPerPage == value) return;
+
+                itemCountPerPage = value;
+
+                CurrentPageIndex = 0;
+            }
+        }
 
         /// <summary>
         /// 総項目数を取得または設定します。
@@ -113,12 +132,8 @@ namespace Willcraftia.Xna.Framework
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="itemCountPerPage">1 ページに含める項目数。</param>
-        public Paging(int itemCountPerPage)
+        public Paging()
         {
-            if (itemCountPerPage < 0) throw new ArgumentOutOfRangeException("itemCountPerPage");
-            ItemCountPerPage = itemCountPerPage;
-
             Cycled = true;
         }
 

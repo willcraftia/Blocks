@@ -207,9 +207,6 @@
   <data name="ModeMenuTitle" xml:space="preserve">
     <value>Mode</value>
   </data>
-  <data name="NoFileError" xml:space="preserve">
-    <value>No file exists in your storage.</value>
-  </data>
   <data name="OKButton" xml:space="preserve">
     <value>OK</value>
   </data>

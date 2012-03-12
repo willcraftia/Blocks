@@ -204,9 +204,6 @@
   <data name="ModeMenuTitle" xml:space="preserve">
     <value>モード</value>
   </data>
-  <data name="NoFileError" xml:space="preserve">
-    <value>ストレージ に ファイル が ありません。</value>
-  </data>
   <data name="OKButton" xml:space="preserve">
     <value>OK</value>
   </data>

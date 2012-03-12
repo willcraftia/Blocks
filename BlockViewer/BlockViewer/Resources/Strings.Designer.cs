@@ -331,15 +331,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   No file exists in your storage. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string NoFileError {
-            get {
-                return ResourceManager.GetString("NoFileError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   OK に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string OKButton {

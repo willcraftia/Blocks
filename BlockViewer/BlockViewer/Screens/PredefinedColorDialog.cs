@@ -57,7 +57,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             const int rowCount = 5;
 
-            Paging paging = new Paging(columnCount * rowCount);
+            Paging paging = new Paging();
 
             TextBlock pageTextBlock;
 
@@ -67,6 +67,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 : base(screen)
             {
                 this.owner = owner;
+
+                paging.ItemCountPerPage = columnCount * rowCount;
 
                 var stackPanel = new StackPanel(screen)
                 {
@@ -291,7 +293,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             #endregion
 
-            Paging paging = new Paging(5);
+            Paging paging = new Paging();
 
             PredefinedColorDialog owner;
 
@@ -303,6 +305,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 : base(screen)
             {
                 this.owner = owner;
+
+                paging.ItemCountPerPage = 5;
 
                 var stackPanel = new StackPanel(screen)
                 {

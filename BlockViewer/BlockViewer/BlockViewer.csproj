@@ -154,10 +154,10 @@
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
+    <Compile Include="ViewModels\OpenStorageViewModel.cs" />
     <Compile Include="ViewModels\ViewerViewModel.cs" />
     <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
     <Compile Include="ViewModels\WorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\OpenStorageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
