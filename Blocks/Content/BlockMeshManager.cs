@@ -56,7 +56,7 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <summary>
         /// BlockMesh をロードします。
         /// </summary>
-        /// <param name="resource">Block の JSON を提供する Stream。</param>
+        /// <param name="resource">Block を提供する Stream。</param>
         /// <returns>ロードされた BlockMesh。</returns>
         public BlockMesh Load(Stream stream)
         {
