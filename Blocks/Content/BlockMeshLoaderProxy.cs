@@ -6,7 +6,7 @@ using Willcraftia.Xna.Blocks.Graphics;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.BlockViewer.Models
+namespace Willcraftia.Xna.Blocks.Content
 {
     public sealed class BlockMeshLoaderProxy : IBlockMeshLoader
     {
