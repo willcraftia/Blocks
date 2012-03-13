@@ -18,6 +18,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         BlockMeshManager blockMeshManager;
 
+        BlockMeshLoaderProxy blockMeshLoaderProxy = new BlockMeshLoaderProxy();
+
         public Game Game { get; private set; }
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -37,15 +39,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             GraphicsDevice = game.GraphicsDevice;
 
-            StorageModel = (game as BlockViewerGame).StorageModel;
-            StorageModel.ContainerChanged += new EventHandler(OnStorageModelContainerChanged);
-
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 4);
 
+            StorageModel = (game as BlockViewerGame).StorageModel;
+            StorageModel.ContainerChanged += new EventHandler(OnStorageModelContainerChanged);
             if (StorageModel.Selected) InitializeBlockMeshLoader();
 
-            // TODO: blockMeshManager == null の場合あり
-            Viewer = new Viewer(this, blockMeshManager);
+            // BlockMeshManager は StorageContainer の選択状態により構築・再構築されるため、
+            // Proxy を Viewer に設定します。
+            Viewer = new Viewer(this, blockMeshLoaderProxy);
 
             Preview = new Preview(this);
 
@@ -63,6 +65,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             if (blockMeshManager != null) blockMeshManager.Dispose();
             blockMeshManager = new BlockMeshManager(blockMeshLoader);
+
+            // Proxy の実体を更新します。
+            blockMeshLoaderProxy.Subject = blockMeshManager;
         }
 
         #region IDisposable

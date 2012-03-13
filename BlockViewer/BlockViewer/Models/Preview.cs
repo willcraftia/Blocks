@@ -17,7 +17,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         BlockMeshManager blockMeshManager;
 
-        AsyncBlockMeshLoader asyncBlockMeshLoader;
+        BlockMeshLoaderProxy blockMeshLoaderProxy = new BlockMeshLoaderProxy();
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
@@ -30,16 +30,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             GraphicsDevice = workspace.GraphicsDevice;
 
+            blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 1);
+
             StorageModel = workspace.StorageModel;
             StorageModel.ContainerChanged += new EventHandler(OnStorageModelContainerChanged);
-
-            blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 1);
+            if (StorageModel.Selected) InitializeBlockMeshLoader();
         }
 
         public Viewer CreateViewer()
         {
-            // TODO
-            return new Viewer(workspace, null);
+            // BlockMeshManager は StorageContainer の選択状態により構築・再構築されるため、
+            // Proxy を Viewer に設定します。
+            return new Viewer(workspace, blockMeshLoaderProxy);
         }
 
         void OnStorageModelContainerChanged(object sender, EventArgs e)
@@ -54,8 +56,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             if (blockMeshManager != null) blockMeshManager.Dispose();
             blockMeshManager = new BlockMeshManager(blockMeshLoader);
 
-            if (asyncBlockMeshLoader != null) asyncBlockMeshLoader.Stop();
-            asyncBlockMeshLoader = new AsyncBlockMeshLoader(blockMeshManager, 50);
+            // Proxy の実体を更新します。
+            blockMeshLoaderProxy.Subject = blockMeshManager;
         }
 
         #region IDisposable
@@ -76,10 +78,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         void Dispose(bool disposing)
         {
             if (disposed) return;
-
-            // AsyncBlockMeshLoader の Thread を終了させます。
-            // Dipose() とデストラクタのいずれからでも終了させます。
-            if (asyncBlockMeshLoader != null) asyncBlockMeshLoader.Stop();
 
             if (disposing)
             {
