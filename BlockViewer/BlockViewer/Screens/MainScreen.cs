@@ -11,7 +11,6 @@ using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
-using Willcraftia.Xna.Win.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
@@ -60,6 +59,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // Data Context
             mainViewModel = new WorkspaceViewModel(workspace);
             DataContext = mainViewModel;
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            workspace.Update(gameTime);
+
+            base.Update(gameTime);
         }
 
         protected override void LoadContent()

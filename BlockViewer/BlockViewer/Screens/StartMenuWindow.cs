@@ -131,17 +131,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 SelectStorageIfNeeded();
 
                 InstallDemoModel(
-                    "Content/DemoModels/OctahedronLikeBlock.xml",
-                    "Model_OctahedronLikeBlock.xml",
+                    "Content/DemoModels/SimpleBlock.xml",
+                    "Model_SimpleBlock.xml",
                     storageModel.Container);
+                //InstallDemoModel(
+                //    "Content/DemoModels/OctahedronLikeBlock.xml",
+                //    "Model_OctahedronLikeBlock.xml",
+                //    storageModel.Container);
 
                 for (int i = 0; i < 20; i++)
                 {
                     var destinationFileName = string.Format("Model_Dummy_{0:d2}.xml", i);
                     InstallDemoModel(
-                        "Content/DemoModels/SimpleBlock.xml",
+                        "Content/DemoModels/OctahedronLikeBlock.xml",
                         destinationFileName,
                         storageModel.Container);
+                    //InstallDemoModel(
+                    //    "Content/DemoModels/SimpleBlock.xml",
+                    //    destinationFileName,
+                    //    storageModel.Container);
                 }
 
                 if (informationDialog == null)

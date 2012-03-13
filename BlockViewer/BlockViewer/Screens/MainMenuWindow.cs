@@ -61,9 +61,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         #endregion
 
-        OpenStorageDialog openStorageDialog;
+        //OpenStorageDialog openStorageDialog;
 
-        DirectionalLightWindow lightWindow;
+        DirectionalLightWindow directionalLightWindow;
 
         LodWindow lodWindow;
 
@@ -185,29 +185,51 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
         }
 
+        LoadBlockMeshDialog loadBlockMeshDialog;
+
         void OnLoadButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (openStorageDialog == null)
+            //if (openStorageDialog == null)
+            //{
+            //    openStorageDialog = new OpenStorageDialog(Screen)
+            //    {
+            //        DataContext = ViewModel.OpenStorageViewModel
+            //    };
+            //    openStorageDialog.Closed += OnOpenStorageDialogClosed;
+            //}
+            //openStorageDialog.Show();
+
+            if (loadBlockMeshDialog == null)
             {
-                openStorageDialog = new OpenStorageDialog(Screen)
+                loadBlockMeshDialog = new LoadBlockMeshDialog(Screen)
                 {
-                    DataContext = ViewModel.OpenStorageViewModel
+                    DataContext = ViewModel.LoadBlockMeshViewModel
                 };
-                openStorageDialog.Closed += OnOpenStorageDialogClosed;
+                loadBlockMeshDialog.Closed += new EventHandler(OnLoadBlockMeshDialogClosed);
             }
-            openStorageDialog.Show();
+            loadBlockMeshDialog.Show();
         }
 
-        void OnOpenStorageDialogClosed(object sender, EventArgs e)
+        void OnLoadBlockMeshDialogClosed(object sender, EventArgs e)
         {
-            var selectedFileName = ViewModel.OpenStorageViewModel.SelectedFileName;
+            var selectedFileName = ViewModel.LoadBlockMeshViewModel.SelectedFileName;
             if (string.IsNullOrEmpty(selectedFileName)) return;
 
             Close();
 
-            // TODO: 少しでも負荷がかかると短い Animation が効果を表すことなく完了してしまう。
-            ViewModel.ViewerViewModel.LoadBlockMesh(selectedFileName);
+            ViewModel.ViewerViewModel.MeshName = selectedFileName;
+            //ViewModel.ViewerViewModel.LoadBlockMesh(selectedFileName);
         }
+
+        //void OnOpenStorageDialogClosed(object sender, EventArgs e)
+        //{
+        //    var selectedFileName = ViewModel.OpenStorageViewModel.SelectedFileName;
+        //    if (string.IsNullOrEmpty(selectedFileName)) return;
+
+        //    Close();
+
+        //    ViewModel.ViewerViewModel.LoadBlockMesh(selectedFileName);
+        //}
 
         void OnModeButtonClick(Control sender, ref RoutedEventContext context)
         {
@@ -435,19 +457,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             if (ViewMode.Camera == mode)
             {
-                if (lightWindow != null && lightWindow.Visible) lightWindow.Close();
+                if (directionalLightWindow != null && directionalLightWindow.Visible) directionalLightWindow.Close();
             }
             else
             {
-                if (lightWindow == null)
+                if (directionalLightWindow == null)
                 {
 
-                    lightWindow = new DirectionalLightWindow(Screen)
+                    directionalLightWindow = new DirectionalLightWindow(Screen)
                     {
                         DataContext = ViewModel.ViewerViewModel.DirectionalLightViewModel
                     };
                 }
-                lightWindow.Show();
+                directionalLightWindow.Show();
             }
 
             tab.SelectedIndex = mainMenuIndex;

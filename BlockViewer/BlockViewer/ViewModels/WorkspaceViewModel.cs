@@ -22,7 +22,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public ViewerViewModel ViewerViewModel { get; private set; }
 
-        public OpenStorageViewModel OpenStorageViewModel { get; private set; }
+        //public OpenStorageViewModel OpenStorageViewModel { get; private set; }
+
+        public LoadBlockMeshViewModel LoadBlockMeshViewModel { get; private set; }
 
         public WorkspaceViewModel(Workspace workspace)
         {
@@ -35,7 +37,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 GridVisible = true
             };
 
-            OpenStorageViewModel = new OpenStorageViewModel(workspace.StorageModel);
+            //OpenStorageViewModel = new OpenStorageViewModel(workspace.StorageModel);
+            LoadBlockMeshViewModel = new LoadBlockMeshViewModel(workspace.Preview);
         }
 
         public ViewerViewModel CreateLodViewerViewModel(int levelOfDetail)

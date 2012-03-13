@@ -8,16 +8,17 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Cameras;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Graphics;
+using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 {
-    public sealed class Viewer
+    public sealed class Viewer : IDisposable
     {
         Workspace workspace;
 
-        IBlockMeshLoader blockMeshLoader;
+        BlockMeshFactory blockMeshFactory;
 
         GraphicsDevice graphicsDevice;
 
@@ -25,9 +26,46 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         readonly object loadSyncRoot = new object();
 
+        string meshName;
+
+        Block block;
+
         BlockMesh mesh;
 
-        public string MeshName { get; private set; }
+        public string MeshName
+        {
+            get
+            {
+                lock (loadSyncRoot)
+                {
+                    return meshName;
+                }
+            }
+            set
+            {
+                lock (loadSyncRoot)
+                {
+                    if (meshName == value) return;
+
+                    meshName = value;
+
+                    if (meshName != null)
+                    {
+                        if (mesh != null)
+                        {
+                            mesh.Dispose();
+                            mesh = null;
+                        }
+
+                        var blockLoader = workspace.StorageModel.BlockLoader;
+                        if (blockLoader != null)
+                        {
+                            BlockLoadTask.Start(blockLoader, meshName, BlockLoadTaskCallback);
+                        }
+                    }
+                }
+            }
+        }
 
         public ChaseView CurrentView { get; private set; }
 
@@ -78,12 +116,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public int LevelOfDetail { get; set; }
 
-        public Viewer(Workspace workspace, IBlockMeshLoader blockMeshLoader)
+        public Viewer(Workspace workspace, BlockMeshFactory blockMeshFactory)
         {
             if (workspace == null) throw new ArgumentNullException("workspace");
-            if (blockMeshLoader == null) throw new ArgumentNullException("blockMeshLoader");
+            if (blockMeshFactory == null) throw new ArgumentNullException("blockMeshFactory");
             this.workspace = workspace;
-            this.blockMeshLoader = blockMeshLoader;
+            this.blockMeshFactory = blockMeshFactory;
 
             graphicsDevice = workspace.GraphicsDevice;
 
@@ -115,24 +153,31 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             CameraMoveScale = 0.05f;
         }
 
-        public void LoadBlockMesh(string name)
-        {
-            MeshName = name;
-            mesh = null;
-
-            BlockMeshLoadTask.Start(blockMeshLoader, name, BlockMeshLoadTaskCallback);
-        }
-
-        void BlockMeshLoadTaskCallback(string name, BlockMesh result)
+        public void Update(GameTime gameTime)
         {
             lock (loadSyncRoot)
             {
-                if (MeshName == name)
+                if (block != null)
                 {
-                    mesh = result;
-
+                    // Block から BlockMesh を生成します。
+                    mesh = blockMeshFactory.CreateBlockMesh(block);
                     // デフォルト ライティングを有効にしておきます。
                     foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
+
+                    block = null;
+                }
+            }
+        }
+
+        void BlockLoadTaskCallback(string name, Block result)
+        {
+            Thread.Sleep(1000);
+
+            lock (loadSyncRoot)
+            {
+                if (meshName == name)
+                {
+                    block = result;
                 }
             }
         }
@@ -188,19 +233,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         void DrawBlockMesh()
         {
-            BlockMesh currentMesh = null;
-            lock (loadSyncRoot)
-            {
-                currentMesh = mesh;
-            }
+            if (mesh == null) return;
 
-            currentMesh = mesh;
+            mesh.LevelOfDetail = LevelOfDetail;
 
-            if (currentMesh == null) return;
-
-            currentMesh.LevelOfDetail = LevelOfDetail;
-
-            foreach (var effect in currentMesh.Effects)
+            foreach (var effect in mesh.Effects)
             {
                 effect.View = CurrentView.Matrix;
                 effect.Projection = Projection.Matrix;
@@ -208,7 +245,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                 SetDirectionalLights(effect);
             }
 
-            currentMesh.Draw();
+            mesh.Draw();
         }
 
         void SetDirectionalLights(IBlockEffect effect)
@@ -231,5 +268,34 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                 light.SpecularColor = model.SpecularColor;
             }
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        bool disposed;
+
+        ~Viewer()
+        {
+            Dispose(false);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing)
+            {
+                if (mesh != null) mesh.Dispose();
+            }
+
+            disposed = true;
+        }
+
+        #endregion
     }
 }

@@ -3,26 +3,26 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Willcraftia.Xna.Blocks.Graphics;
+using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
 namespace Willcraftia.Xna.Blocks.Content
 {
-    public sealed class BlockMeshLoadTaskQueue
+    public sealed class BlockLoadTaskQueue
     {
         readonly object syncRoot = new object();
 
         bool busy;
 
-        Queue<BlockMeshLoadTask> queue;
+        Queue<BlockLoadTask> queue;
 
-        public BlockMeshLoadTaskQueue(int queueSize)
+        public BlockLoadTaskQueue(int queueSize)
         {
-            queue = new Queue<BlockMeshLoadTask>(queueSize);
+            queue = new Queue<BlockLoadTask>(queueSize);
         }
 
-        public void Enqueue(BlockMeshLoadTask task)
+        public void Enqueue(BlockLoadTask task)
         {
             lock (syncRoot)
             {
@@ -38,12 +38,12 @@ namespace Willcraftia.Xna.Blocks.Content
             }
         }
 
-        public void Enqueue(IBlockMeshLoader loader, string name, BlockMeshLoadTaskCallback callback)
+        public void Enqueue(IBlockLoader loader, string name, BlockLoadTaskCallback callback)
         {
             if (loader == null) throw new ArgumentNullException("loader");
             if (name == null) throw new ArgumentNullException("name");
 
-            var task = new BlockMeshLoadTask
+            var task = new BlockLoadTask
             {
                 Loader = loader,
                 Name = name,
@@ -55,8 +55,8 @@ namespace Willcraftia.Xna.Blocks.Content
 
         void WaitCallback(object state)
         {
-            var task = (BlockMeshLoadTask) state;
-            task.LoadBlockMesh();
+            var task = (BlockLoadTask) state;
+            task.LoadBlock();
 
             NextAction();
         }

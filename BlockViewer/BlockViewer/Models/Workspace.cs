@@ -16,10 +16,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
     {
         BlockMeshFactory blockMeshFactory;
 
-        BlockMeshManager blockMeshManager;
-
-        BlockMeshLoaderProxy blockMeshLoaderProxy = new BlockMeshLoaderProxy();
-
         public Game Game { get; private set; }
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -42,32 +38,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 4);
 
             StorageModel = (game as BlockViewerGame).StorageModel;
-            StorageModel.ContainerChanged += new EventHandler(OnStorageModelContainerChanged);
-            if (StorageModel.Selected) InitializeBlockMeshLoader();
 
-            // BlockMeshManager は StorageContainer の選択状態により構築・再構築されるため、
-            // Proxy を Viewer に設定します。
-            Viewer = new Viewer(this, blockMeshLoaderProxy);
+            Viewer = new Viewer(this, blockMeshFactory);
 
             Preview = new Preview(this);
 
             GridBlockMesh = new GridBlockMesh(GraphicsDevice, 16, 0.1f, Color.White);
         }
 
-        void OnStorageModelContainerChanged(object sender, EventArgs e)
+        public void Update(GameTime gameTime)
         {
-            InitializeBlockMeshLoader();
-        }
-
-        void InitializeBlockMeshLoader()
-        {
-            var blockMeshLoader = new DefaultBlockMeshLoader(StorageModel.BlockLoader, blockMeshFactory);
-
-            if (blockMeshManager != null) blockMeshManager.Dispose();
-            blockMeshManager = new BlockMeshManager(blockMeshLoader);
-
-            // Proxy の実体を更新します。
-            blockMeshLoaderProxy.Subject = blockMeshManager;
+            Viewer.Update(gameTime);
+            Preview.Update(gameTime);
         }
 
         #region IDisposable
@@ -91,7 +73,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             if (disposing)
             {
-                if (blockMeshManager != null) blockMeshManager.Dispose();
+                Viewer.Dispose();
                 Preview.Dispose();
                 GridBlockMesh.Dispose();
             }

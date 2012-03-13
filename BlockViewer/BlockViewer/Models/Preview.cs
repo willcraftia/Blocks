@@ -1,6 +1,8 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Storage;
@@ -15,9 +17,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         BlockMeshFactory blockMeshFactory;
 
-        BlockMeshManager blockMeshManager;
-
-        BlockMeshLoaderProxy blockMeshLoaderProxy = new BlockMeshLoaderProxy();
+        List<Viewer> viewers = new List<Viewer>();
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
@@ -33,31 +33,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 1);
 
             StorageModel = workspace.StorageModel;
-            StorageModel.ContainerChanged += new EventHandler(OnStorageModelContainerChanged);
-            if (StorageModel.Selected) InitializeBlockMeshLoader();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            foreach (var viewer in viewers) viewer.Update(gameTime);
         }
 
         public Viewer CreateViewer()
         {
-            // BlockMeshManager は StorageContainer の選択状態により構築・再構築されるため、
-            // Proxy を Viewer に設定します。
-            return new Viewer(workspace, blockMeshLoaderProxy);
-        }
-
-        void OnStorageModelContainerChanged(object sender, EventArgs e)
-        {
-            InitializeBlockMeshLoader();
-        }
-
-        void InitializeBlockMeshLoader()
-        {
-            var blockMeshLoader = new DefaultBlockMeshLoader(StorageModel.BlockLoader, blockMeshFactory);
-
-            if (blockMeshManager != null) blockMeshManager.Dispose();
-            blockMeshManager = new BlockMeshManager(blockMeshLoader);
-
-            // Proxy の実体を更新します。
-            blockMeshLoaderProxy.Subject = blockMeshManager;
+            var viewer = new Viewer(workspace, blockMeshFactory);
+            viewers.Add(viewer);
+            return viewer;
         }
 
         #region IDisposable
@@ -81,7 +68,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             if (disposing)
             {
-                if (blockMeshManager != null) blockMeshManager.Dispose();
+                foreach (var viewer in viewers) viewer.Dispose();
             }
 
             disposed = true;
