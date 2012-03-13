@@ -16,8 +16,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
     /// </summary>
     public sealed class DemoLoadingScreen : LoadingScreen
     {
-        bool screenLoadCompleted;
-
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -30,31 +28,23 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
 
         protected override void Update(GameTime gameTime)
         {
-            // Screen ローディングの完了で新たな Control を追加しますが、
-            // Control はスレッドセーフではない問題があります。
-            // このため、非同期処理では screenLoadCompleted フラグを立て、
-            // 同期処理となる Update で Control の追加を行います。
-            // Control をスレッドセーフしない理由は、それによる負荷とデッドロックの問題を考慮した結果です。
-            // また、非同期な Control の追加や削除の頻度は極めて少なく、
-            // Screen ローディングでのみ必要とするであろうと考えています。
-            lock (this)
+            // LoadedScreen プロパティが null ではなければ、
+            // 非同期な Screen のロードが完了しています。
+            if (LoadedScreen != null)
             {
-                if (screenLoadCompleted)
+                var exitOverlay = new Overlay(this);
+
+                var animation = new FloatLerpAnimation
                 {
-                    var exitOverlay = new Overlay(this);
+                    Action = (current) => { exitOverlay.Opacity = current; },
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(0.5d),
+                    Enabled = true
+                };
+                animation.Completed += OnExitAnimationCompleted;
+                exitOverlay.Animations.Add(animation);
 
-                    var animation = new FloatLerpAnimation
-                    {
-                        Action = (current) => { exitOverlay.Opacity = current; },
-                        To = 1,
-                        Duration = TimeSpan.FromSeconds(0.5d),
-                        Enabled = true
-                    };
-                    animation.Completed += OnExitAnimationCompleted;
-                    exitOverlay.Animations.Add(animation);
-
-                    exitOverlay.Show();
-                }
+                exitOverlay.Show();
             }
 
             base.Update(gameTime);
@@ -114,15 +104,6 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
                 Padding = new Thickness(8)
             };
             Desktop.Content = nowLoadingTextBlock;
-
-            // フラグだけを立てます。
-            ScreenLoadCompleted += (s, e) =>
-            {
-                lock (this)
-                {
-                    screenLoadCompleted = true;
-                }
-            };
 
             screenOverlay.Show();
         }

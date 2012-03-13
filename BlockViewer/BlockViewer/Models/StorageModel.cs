@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework.Storage;
+using Willcraftia.Xna.Blocks.Storage;
 
 #endregion
 
@@ -18,6 +19,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public StorageContainer Container { get; private set; }
 
+        public StorageBlockLoader BlockLoader { get; private set; }
+
         public void SelectStorage()
         {
             StorageContainer oldContainer = Container;
@@ -32,7 +35,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             Container = storageDevice.EndOpenContainer(openContainerResult);
             openContainerResult.AsyncWaitHandle.Close();
 
-            if (oldContainer != Container) ContainerChanged(this, EventArgs.Empty);
+            if (oldContainer != Container)
+            {
+                BlockLoader = new StorageBlockLoader(Container, null);
+
+                ContainerChanged(this, EventArgs.Empty);
+            }
         }
 
         public string[] GetBlockMeshFileNames()

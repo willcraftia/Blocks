@@ -532,33 +532,49 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             return block;
         }
 
+        class StringBlockLoader : BlockLoaderBase
+        {
+            string blockString;
+
+            public StringBlockLoader(string blockString)
+                : base(null)
+            {
+                if (blockString == null) throw new ArgumentNullException("blockString");
+
+                this.blockString = blockString;
+            }
+
+            protected override Stream OpenStream(string name)
+            {
+                return blockString.ToMemoryStream();
+            }
+        }
+
         /// <summary>
         /// BlockMesh をロードします。
         /// </summary>
         void LoadBlockMesh()
         {
+            var blockLoader = new StringBlockLoader(blockData);
+
             var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), lodSize);
-            meshManager = new BlockMeshManager(meshFactory);
+            var meshLoader = new DefaultBlockMeshLoader(blockLoader, meshFactory);
+            meshManager = new BlockMeshManager(meshLoader);
 
             instancingEffect = Content.Load<Effect>("Effects/Instancing");
             var instancedMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect), lodSize);
-            instancedMeshManager = new BlockMeshManager(instancedMeshFactory);
+            var instancedMeshLoader = new DefaultBlockMeshLoader(blockLoader, instancedMeshFactory);
+            instancedMeshManager = new BlockMeshManager(instancedMeshLoader);
 
             // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。
 
             // 通常の BlockMesh をロードします。
-            using (var stream = blockData.ToMemoryStream())
-            {
-                mesh = meshManager.Load(stream);
-                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
-            }
+            mesh = meshManager.LoadBlockMesh("Dummy");
+            foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
 
             // インスタンシング用の BlockMesh をロードします。
-            using (var stream = blockData.ToMemoryStream())
-            {
-                instancedMesh = instancedMeshManager.Load(stream);
-                foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
-            }
+            instancedMesh = instancedMeshManager.LoadBlockMesh("Dummy");
+            foreach (var effect in instancedMesh.Effects) effect.EnableDefaultLighting();
         }
 
         /// <summary>

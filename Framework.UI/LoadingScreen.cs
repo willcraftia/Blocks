@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -13,28 +14,27 @@ namespace Willcraftia.Xna.Framework.UI
     public class LoadingScreen : Screen, IScreenFactoryAware
     {
         /// <summary>
-        /// 非同期 Screen ローディングが完了した場合に発生します。
+        /// ロードされた Screen。
         /// </summary>
-        public event EventHandler ScreenLoadCompleted = delegate { };
-
-        /// <summary>
-        /// 非同期 Screen ローディングの delegate。
-        /// </summary>
-        /// <returns>ロードが完了した次 Screen。</returns>
-        delegate Screen LoadScreenAsyncCaller();
-
-        /// <summary>
-        /// Screen の非同期呼び出し。
-        /// </summary>
-        LoadScreenAsyncCaller loadScreenAsyncCaller;
+        Screen loadedScreen;
 
         // I/F
         public IScreenFactory ScreenFactory { get; set; }
 
         /// <summary>
         /// ロードされた Screen を取得します。
+        /// まだロードされていない場合には null を返します。
         /// </summary>
-        public Screen LoadedScreen { get; private set; }
+        public Screen LoadedScreen
+        {
+            get
+            {
+                lock (this)
+                {
+                    return loadedScreen;
+                }
+            }
+        }
 
         /// <summary>
         /// ロードする Screan の名前を取得または設定します。
@@ -47,16 +47,29 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="game"></param>
         public LoadingScreen(Game game) : base(game) { }
 
+        /// <summary>
+        /// Screen の非同期ロードを開始します。
+        /// </summary>
         protected override void LoadContent()
         {
+            //
+            // MEMO
+            //
+            // Delegate の BeginInvoke(...) は、
+            // .NET Compact Framework ではサポートされていません。
+            // .NET Compact Framework for Xbox 360 はそのサブセットであるため、
+            // 同様にサポートされていません。
+            //
+
             // 非同期 Screen ローディングを開始します。
-            LoadScreenAsync();
+            ThreadPool.QueueUserWorkItem(LoadScreenWaitCallback);
 
             base.LoadContent();
         }
 
         /// <summary>
         /// LoadedScreenName プロパティが示す Screen をロードします。
+        /// このメソッドは非同期に呼び出されます。
         /// </summary>
         /// <returns>ロードされた Screen。</returns>
         protected virtual Screen LoadScreen()
@@ -64,32 +77,14 @@ namespace Willcraftia.Xna.Framework.UI
             return ScreenFactory.CreateScreen(LoadedScreenName);
         }
 
-        /// <summary>
-        /// 非同期 Screen ローディングが完了した場合に呼び出されます。
-        /// ScreenLoadCompleted イベントを発生させます。
-        /// </summary>
-        protected virtual void OnScreenLoadCompleted()
+        void LoadScreenWaitCallback(object state)
         {
-            ScreenLoadCompleted(this, EventArgs.Empty);
-        }
+            var screen = LoadScreen();
 
-        /// <summary>
-        /// 非同期 Screen ローディングを開始します。
-        /// </summary>
-        void LoadScreenAsync()
-        {
-            loadScreenAsyncCaller = new LoadScreenAsyncCaller(LoadScreen);
-            loadScreenAsyncCaller.BeginInvoke(LoadScreenAsyncCallerCallback, null);
-        }
-
-        /// <summary>
-        /// 非同期 Screen ローディングの完了を受け取るコールバック メソッドです。
-        /// </summary>
-        /// <param name="result"></param>
-        void LoadScreenAsyncCallerCallback(IAsyncResult result)
-        {
-            LoadedScreen = loadScreenAsyncCaller.EndInvoke(result);
-            OnScreenLoadCompleted();
+            lock (this)
+            {
+                loadedScreen = screen;
+            }
         }
     }
 }

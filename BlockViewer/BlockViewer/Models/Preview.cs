@@ -17,8 +17,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         BlockMeshManager blockMeshManager;
 
-        StorageBlockMeshLoader storageBlockMeshLoader;
-
         AsyncBlockMeshLoader asyncBlockMeshLoader;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -36,7 +34,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             StorageModel.ContainerChanged += new EventHandler(OnStorageModelContainerChanged);
 
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 1);
-            blockMeshManager = new BlockMeshManager(blockMeshFactory);
         }
 
         public Viewer CreateViewer()
@@ -46,10 +43,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         void OnStorageModelContainerChanged(object sender, EventArgs e)
         {
-            storageBlockMeshLoader = new StorageBlockMeshLoader(blockMeshManager, StorageModel.Container);
+            InitializeBlockMeshLoader();
+        }
+
+        void InitializeBlockMeshLoader()
+        {
+            var blockMeshLoader = new DefaultBlockMeshLoader(StorageModel.BlockLoader, blockMeshFactory);
+
+            if (blockMeshManager != null) blockMeshManager.Dispose();
+            blockMeshManager = new BlockMeshManager(blockMeshLoader);
 
             if (asyncBlockMeshLoader != null) asyncBlockMeshLoader.Stop();
-            asyncBlockMeshLoader = new AsyncBlockMeshLoader(storageBlockMeshLoader, 1);
+            asyncBlockMeshLoader = new AsyncBlockMeshLoader(blockMeshManager, 50);
         }
 
         #region IDisposable
@@ -77,7 +82,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             if (disposing)
             {
-                blockMeshManager.Dispose();
+                if (blockMeshManager != null) blockMeshManager.Dispose();
             }
 
             disposed = true;

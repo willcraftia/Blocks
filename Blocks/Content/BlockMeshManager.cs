@@ -1,22 +1,24 @@
 ﻿#region Using
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Graphics;
-using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
 namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
-    /// BlockMesh の生成と破棄を管理するクラスです。
+    /// ロードした BlockMesh の管理をともなう IBlockMeshLoader の実装クラスです。
+    /// このクラスからロードした BlockMesh は、
+    /// Unload(BlockMesh) あるいは Unload() の呼び出しで破棄する必要があります。
     /// </summary>
-    public sealed class BlockMeshManager : IDisposable
+    public sealed class BlockMeshManager : IBlockMeshLoader, IDisposable
     {
-        static readonly XmlSerializer<Block> defaultSerializer = new XmlSerializer<Block>();
+        /// <summary>
+        /// BlockMesh をロードする IBlockMeshLoader。
+        /// </summary>
+        IBlockMeshLoader blockMeshLoader;
 
         /// <summary>
         /// ロードした BlockMesh のリスト。
@@ -24,44 +26,34 @@ namespace Willcraftia.Xna.Blocks.Content
         List<BlockMesh> meshes = new List<BlockMesh>();
 
         /// <summary>
-        /// Stream から Block を得るための ISerializer。
+        /// 管理している BlockMesh の数を返します。
         /// </summary>
-        ISerializer<Block> serializer;
-
-        /// <summary>
-        /// BlockMeshFactory。
-        /// </summary>
-        BlockMeshFactory meshFactory;
-
-        /// <summary>
-        /// インスタンスを生成します。
-        /// Stream から Block を得るための ISerializer には XmlSerializer が設定されます。
-        /// </summary>
-        /// <param name="meshFactory">BlockMesh の生成を委譲する BlockMeshFactory。</param>
-        public BlockMeshManager(BlockMeshFactory meshFactory) : this(meshFactory, null) { }
-
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
-        /// <param name="meshFactory">BlockMesh の生成を委譲する BlockMeshFactory。</param>
-        /// <param name="serializer">Stream から Block を得るための ISerializer。</param>
-        public BlockMeshManager(BlockMeshFactory meshFactory, ISerializer<Block> serializer)
+        public int BlockMeshCount
         {
-            if (meshFactory == null) throw new ArgumentNullException("meshFactory");
-            this.meshFactory = meshFactory;
-
-            this.serializer = serializer ?? defaultSerializer;
+            get { return meshes.Count; }
         }
 
         /// <summary>
-        /// BlockMesh をロードします。
+        /// インスタンスを生成します。
         /// </summary>
-        /// <param name="resource">Block を提供する Stream。</param>
-        /// <returns>ロードされた BlockMesh。</returns>
-        public BlockMesh Load(Stream stream)
+        /// <param name="blockMeshLoader">
+        /// BlockMesh をロードする IBlockMeshLoader。
+        /// </param>
+        public BlockMeshManager(IBlockMeshLoader blockMeshLoader)
         {
-            var block = serializer.Deserialize(stream);
-            var mesh = meshFactory.CreateBlockMesh(block);
+            if (blockMeshLoader == null) throw new ArgumentNullException("blockMeshLoader");
+            this.blockMeshLoader = blockMeshLoader;
+        }
+
+        /// <summary>
+        /// name が示す BlockMesh をロードします。
+        /// ロードした BlockMesh は BlockMeshManager の管理下に置かれます。
+        /// </summary>
+        /// <param name="name">BlockMesh を示す名前。</param>
+        /// <returns>ロードされた BlockMesh。</returns>
+        public BlockMesh LoadBlockMesh(string name)
+        {
+            var mesh = blockMeshLoader.LoadBlockMesh(name);
             meshes.Add(mesh);
             return mesh;
         }
@@ -72,7 +64,8 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="mesh">アンロードする BlockMesh。</param>
         public void Unload(BlockMesh mesh)
         {
-            if (!meshes.Remove(mesh)) throw new InvalidOperationException("BlockMesh is managed by another BlockMeshManager.");
+            if (!meshes.Remove(mesh))
+                throw new InvalidOperationException("The specified BlockMesh is not managed.");
             mesh.Dispose();
         }
 
