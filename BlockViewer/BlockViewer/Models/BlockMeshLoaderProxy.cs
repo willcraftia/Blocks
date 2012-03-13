@@ -32,8 +32,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public BlockMesh LoadBlockMesh(string name)
         {
-            if (subject == null) throw new InvalidOperationException("subject is null.");
-            return subject.LoadBlockMesh(name);
+            lock (this)
+            {
+                if (subject == null) throw new InvalidOperationException("subject is null.");
+                return subject.LoadBlockMesh(name);
+            }
         }
     }
 }
