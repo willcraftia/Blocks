@@ -38,7 +38,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public Viewer CreateViewer()
         {
-            return new Viewer(workspace, asyncBlockMeshLoader);
+            // TODO
+            return new Viewer(workspace, null);
         }
 
         void OnStorageModelContainerChanged(object sender, EventArgs e)

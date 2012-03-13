@@ -93,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\AsyncBlockMeshLoader.cs" />
+    <Compile Include="Content\BlockMeshLoadTask.cs" />
+    <Compile Include="Content\BlockMeshLoadTaskQueue.cs" />
     <Compile Include="Serialization\BlockLoaderBase.cs" />
     <Compile Include="Content\DefaultBlockMeshLoader.cs" />
     <Compile Include="Content\BlockMeshLoadRequest.cs" />

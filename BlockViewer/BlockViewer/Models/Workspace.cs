@@ -18,8 +18,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         BlockMeshManager blockMeshManager;
 
-        AsyncBlockMeshLoader asyncBlockMeshLoader;
-
         public Game Game { get; private set; }
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -46,7 +44,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             if (StorageModel.Selected) InitializeBlockMeshLoader();
 
-            Viewer = new Viewer(this, asyncBlockMeshLoader);
+            // TODO: blockMeshManager == null の場合あり
+            Viewer = new Viewer(this, blockMeshManager);
 
             Preview = new Preview(this);
 
@@ -64,9 +63,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             if (blockMeshManager != null) blockMeshManager.Dispose();
             blockMeshManager = new BlockMeshManager(blockMeshLoader);
-
-            if (asyncBlockMeshLoader != null) asyncBlockMeshLoader.Stop();
-            asyncBlockMeshLoader = new AsyncBlockMeshLoader(blockMeshManager, 1);
         }
 
         #region IDisposable
@@ -87,10 +83,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         void Dispose(bool disposing)
         {
             if (disposed) return;
-
-            // AsyncBlockMeshLoader の Thread を終了させます。
-            // Dipose() とデストラクタのいずれからでも終了させます。
-            if (asyncBlockMeshLoader != null) asyncBlockMeshLoader.Stop();
 
             if (disposing)
             {

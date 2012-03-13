@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework;
@@ -16,7 +17,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
     {
         Workspace workspace;
 
-        AsyncBlockMeshLoader asyncBlockMeshLoader;
+        IBlockMeshLoader blockMeshLoader;
 
         GraphicsDevice graphicsDevice;
 
@@ -77,12 +78,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public int LevelOfDetail { get; set; }
 
-        public Viewer(Workspace workspace, AsyncBlockMeshLoader asyncBlockMeshLoader)
+        public Viewer(Workspace workspace, IBlockMeshLoader blockMeshLoader)
         {
             if (workspace == null) throw new ArgumentNullException("workspace");
-            if (asyncBlockMeshLoader == null) throw new ArgumentNullException("asyncBlockMeshLoader");
+            if (blockMeshLoader == null) throw new ArgumentNullException("blockMeshLoader");
             this.workspace = workspace;
-            this.asyncBlockMeshLoader = asyncBlockMeshLoader;
+            this.blockMeshLoader = blockMeshLoader;
 
             graphicsDevice = workspace.GraphicsDevice;
 
@@ -116,27 +117,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public void LoadBlockMesh(string name)
         {
-            lock (loadSyncRoot)
-            {
-                MeshName = name;
-                mesh = null;
-            }
+            MeshName = name;
+            mesh = null;
 
-            var request = new BlockMeshLoadRequest
-            {
-                Name = name,
-                Callback = AsyncBlockMeshLoaderCallback
-            };
-            asyncBlockMeshLoader.Load(request);
+            BlockMeshLoadTask.Start(blockMeshLoader, name, BlockMeshLoadTaskCallback);
         }
 
-        void AsyncBlockMeshLoaderCallback(string name, BlockMesh blockMesh)
+        void BlockMeshLoadTaskCallback(string name, BlockMesh result)
         {
             lock (loadSyncRoot)
             {
                 if (MeshName == name)
                 {
-                    mesh = blockMesh;
+                    mesh = result;
 
                     // デフォルト ライティングを有効にしておきます。
                     foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
@@ -200,6 +193,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             {
                 currentMesh = mesh;
             }
+
+            currentMesh = mesh;
 
             if (currentMesh == null) return;
 
