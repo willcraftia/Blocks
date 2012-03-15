@@ -15,6 +15,7 @@ using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
+using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
@@ -41,6 +42,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// UI を管理する UIManager。
         /// </summary>
         UIManager uiManager;
+
+        AsyncBlockMeshLoadManager asyncBlockMeshLoadManager;
 
         public StorageModel StorageModel { get; private set; }
 
@@ -69,6 +72,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             uiManager.ScreenFactory = CreateScreenFactory();
             Components.Add(uiManager);
 
+            asyncBlockMeshLoadManager = new AsyncBlockMeshLoadManager(this);
+
             // マウス カーソルを可視にします。
             IsMouseVisible = true;
 
@@ -79,10 +84,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         {
             // StartScreen の表示から開始します。
             uiManager.Show(Screens.ScreenNames.Start);
+
+            asyncBlockMeshLoadManager.Enabled = true;
         }
 
         protected override void UnloadContent()
         {
+            asyncBlockMeshLoadManager.Enabled = false;
         }
 
         protected override void Update(GameTime gameTime)
@@ -90,11 +98,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             base.Update(gameTime);
         }
 
+        protected override bool BeginDraw()
+        {
+            asyncBlockMeshLoadManager.Suspend();
+
+            return base.BeginDraw();
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             base.Draw(gameTime);
+        }
+
+        protected override void EndDraw()
+        {
+            base.EndDraw();
+
+            asyncBlockMeshLoadManager.Resume();
         }
 
         /// <summary>

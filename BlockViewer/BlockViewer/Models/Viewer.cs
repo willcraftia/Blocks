@@ -155,29 +155,31 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public void Update(GameTime gameTime)
         {
-            lock (loadSyncRoot)
-            {
-                if (block != null)
-                {
-                    // Block から BlockMesh を生成します。
-                    mesh = blockMeshFactory.CreateBlockMesh(block);
-                    // デフォルト ライティングを有効にしておきます。
-                    foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
-
-                    block = null;
-                }
-            }
         }
 
         void BlockLoadTaskCallback(string name, Block result)
         {
-            Thread.Sleep(1000);
-
             lock (loadSyncRoot)
             {
                 if (meshName == name)
                 {
                     block = result;
+
+                    var service = workspace.Game.Services.GetRequiredService<IAsyncBlockMeshLoadService>();
+                    service.Load(blockMeshFactory, name, result, BlockMeshLoadQueueCallback);
+                }
+            }
+        }
+
+        public void BlockMeshLoadQueueCallback(string name, BlockMesh mesh)
+        {
+            lock (loadSyncRoot)
+            {
+                if (meshName == name)
+                {
+                    this.mesh = mesh;
+                    // デフォルト ライティングを有効にしておきます。
+                    foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
                 }
             }
         }
