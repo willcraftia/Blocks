@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Graphics;
@@ -18,9 +17,10 @@ namespace Willcraftia.Xna.Blocks.Content
     using SurfaceVertexSource = VertexSource<VertexPositionNormal, ushort>;
 
     /// <summary>
-    /// 永続化用データ表現の Block から 3D モデル描画のための BlockMesh を生成するクラスです。
+    /// 永続化用データ表現の Block から、
+    /// BlockMesh の頂点情報を保持する InterBlockMesh を生成するクラスです。
     /// </summary>
-    public sealed class BlockMeshFactory
+    public sealed class InterBlockMeshFactory
     {
         #region ResolvedElement
 
@@ -227,145 +227,83 @@ namespace Willcraftia.Xna.Blocks.Content
         #endregion
 
         /// <summary>
-        /// GraphicsDevice を取得します。
+        /// 生成する InterBlockMesh で扱う LOD のサイズを取得します。
         /// </summary>
-        public GraphicsDevice GraphicsDevice { get; private set; }
-
-        /// <summary>
-        /// IBlockEffectFactory を取得します。
-        /// </summary>
-        public IBlockEffectFactory BlockEffectFactory { get; private set; }
-
         public int LODSize { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="graphicsDevice">GraphicsDevice。</param>
-        /// <param name="blockEffectFactory">IBlockEffectFactory。</param>
         /// <param name="lodSize">LOD のサイズ。</param>
-        public BlockMeshFactory(GraphicsDevice graphicsDevice, IBlockEffectFactory blockEffectFactory, int lodSize)
+        public InterBlockMeshFactory(int lodSize)
         {
-            if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice");
-            if (blockEffectFactory == null) throw new ArgumentNullException("blockEffectFactory");
             if (lodSize < 1 || InterBlock.MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
-            GraphicsDevice = graphicsDevice;
-            BlockEffectFactory = blockEffectFactory;
             LODSize = lodSize;
         }
 
-        public BlockMesh Create(InterBlockMesh interMesh)
-        {
-            var mesh = new BlockMesh(interMesh.LevelOfDetailSize);
-
-            var effects = new IBlockEffect[interMesh.Effects.Count];
-            for (int i = 0; i < effects.Length; i++)
-            {
-                effects[i] = Create(interMesh.Effects[i]);
-            }
-            mesh.SetEffectArray(effects);
-
-            for (int lod = 0; lod < interMesh.LevelOfDetailSize; lod++)
-            {
-                interMesh.LevelOfDetail = lod;
-
-                var meshParts = new BlockMeshPart[interMesh.MeshParts.Count];
-                for (int i = 0; i < interMesh.MeshParts.Count; i++)
-                {
-                    var interMeshPart = interMesh.MeshParts[i];
-
-                    meshParts[i] = Create(interMeshPart);
-                    meshParts[i].Effect = effects[interMeshPart.EffectIndex];
-                }
-                mesh.SetLODMeshPartArray(lod, meshParts);
-            }
-
-            return mesh;
-        }
-
-        IBlockEffect Create(InterBlockEffect interEffect)
-        {
-            // IBlockEffect の生成を IBlockEffectFactory へ委譲します。
-            var effect = BlockEffectFactory.CreateBlockEffect();
-
-            effect.DiffuseColor = interEffect.DiffuseColor;
-            effect.EmissiveColor = interEffect.EmissiveColor;
-            effect.SpecularColor = interEffect.SpecularColor;
-            effect.SpecularPower = interEffect.SpecularPower;
-
-            return effect;
-        }
-
-        BlockMeshPart Create(InterBlockMeshPart interMeshPart)
-        {
-            var vertices = interMeshPart.Vertices.ToArray();
-            var indices = interMeshPart.Indices.ToArray();
-            return BlockMeshPart.Create(GraphicsDevice, vertices, indices);
-        }
-
         /// <summary>
-        /// BlockMesh を生成します。
+        /// InterBlockMesh を生成します。
         /// </summary>
         /// <param name="block">Block。</param>
         /// <param name="lodSize">LOD のサイズ。</param>
-        /// <returns>生成された BlockMesh の配列。</returns>
-        public BlockMesh CreateBlockMesh(Block block)
+        /// <returns>生成された InterBlockMesh。</returns>
+        public InterBlockMesh Create(Block block)
         {
             // 中間データを作成します。
             var interBlocks = InterBlock.CreateInterBlock(block, LODSize);
 
-            // 中間データから BlockMesh を作成します。
-            return CreateBlockMesh(interBlocks);
+            // 中間データから InterBlockMesh を作成します。
+            return CreateInterBlockMesh(interBlocks);
         }
 
         /// <summary>
-        /// BlockMesh を生成します。
+        /// InterBlockMesh を生成します。
         /// </summary>
         /// <param name="lodBlocks">各 LOD の InterBlock を要素とした配列。</param>
         /// <returns>生成された BlockMesh。</returns>
-        BlockMesh CreateBlockMesh(InterBlock[] lodBlocks)
+        InterBlockMesh CreateInterBlockMesh(InterBlock[] lodBlocks)
         {
-            // BlockMesh を生成します。
-            var mesh = new BlockMesh(lodBlocks.Length);
+            // InterBlockMesh を生成します。
+            var mesh = new InterBlockMesh(lodBlocks.Length);
 
-            // IBlockEffect を生成して登録します。
+            // InterBlockEffect を生成して登録します。
             // LOD 間で Material は共有しているので、最大 LOD の Material から生成します。
-            var effects = new IBlockEffect[lodBlocks[0].Materials.Count];
+            var effects = new InterBlockEffect[lodBlocks[0].Materials.Count];
             for (int i = 0; i < effects.Length; i++)
             {
-                effects[i] = CreateBlockEffect(lodBlocks[0].Materials[i]);
+                effects[i] = CreateInterBlockEffect(lodBlocks[0].Materials[i]);
             }
             mesh.SetEffectArray(effects);
 
-            // 各 LOD ごとに BlockMeshPart を生成して BlockMesh へ設定します。
+            // 各 LOD ごとに InterBlockMeshPart を生成して InterBlockMesh へ設定します。
             for (int lod = 0; lod < lodBlocks.Length; lod++)
             {
                 // Element を分類します。
                 var elementClassifier = ElementClassifier.Classify(lodBlocks[lod].Elements);
 
                 // Parts が空となる LOD の場合は、上位 LOD で十分に頂点数が少ないとみなし、
-                // 上位の BlockMesh を設定します。
-                // なお、最大 LOD の BlockMesh が空ではないことを仮定します。
+                // 上位の InterBlockMesh を設定します。
+                // なお、最大 LOD の InterBlockMeshPart が空ではないことを仮定します。
                 if (elementClassifier.Parts.Count == 0)
                 {
                     mesh.InheritLODMeshParts(lod);
                     continue;
                 }
 
-                // BlocklMeshPart を生成して登録します。
+                // InterBlockMeshPart を生成して登録します。
                 var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(lodBlocks[lod].ElementSize);
 
-                var meshParts = new BlockMeshPart[elementClassifier.Parts.Count];
+                var meshParts = new InterBlockMeshPart[elementClassifier.Parts.Count];
                 for (int i = 0; i < meshParts.Length; i++)
                 {
                     var part = elementClassifier.Parts[i];
-                    // BlocklMeshPart を生成します。
+                    // InterBlockMeshPart を生成します。
                     meshParts[i] = CreateBlockMeshPart(part, cubeSurfaceVertexSource, lodBlocks[lod].ElementSize);
-                    // IBlockEffect への参照を設定します。
-                    meshParts[i].Effect = mesh.Effects[part.MaterialIndex];
+                    // 参照する Effect のインデックスを設定します。
+                    meshParts[i].EffectIndex = part.MaterialIndex;
                 }
 
-                // 生成した BlockMeshPart を指定の LOD で BlockMesh へ設定します。
+                // 生成した InterBlockMeshPart を指定の LOD で InterBlockMesh へ設定します。
                 mesh.SetLODMeshPartArray(lod, meshParts);
             }
 
@@ -373,35 +311,31 @@ namespace Willcraftia.Xna.Blocks.Content
         }
 
         /// <summary>
-        /// 指定の Material が持つ情報を設定した IBlockEffect を生成します。
+        /// 指定の Material が持つ情報を設定した InterBlockEffect を生成します。
         /// </summary>
         /// <param name="material">Material。</param>
-        /// <returns>生成された IBlockEffect。</returns>
-        IBlockEffect CreateBlockEffect(Material material)
+        /// <returns>生成された InterBlockEffect。</returns>
+        InterBlockEffect CreateInterBlockEffect(Material material)
         {
-            // IBlockEffect の生成を IBlockEffectFactory へ委譲します。
-            var effect = BlockEffectFactory.CreateBlockEffect();
-
-            // Material を設定します。
-            effect.DiffuseColor = material.DiffuseColor.ToColor().ToVector3();
-            effect.EmissiveColor = material.EmissiveColor.ToColor().ToVector3();
-            effect.SpecularColor = material.SpecularColor.ToColor().ToVector3();
-            effect.SpecularPower = material.SpecularPower;
-
-            return effect;
+            return new InterBlockEffect
+            {
+                DiffuseColor = material.DiffuseColor.ToColor().ToVector3(),
+                EmissiveColor = material.EmissiveColor.ToColor().ToVector3(),
+                SpecularColor = material.SpecularColor.ToColor().ToVector3(),
+                SpecularPower = material.SpecularPower
+            };
         }
 
         /// <summary>
-        /// BlockMeshPart を生成します。
+        /// InterBlockMeshPart を生成します。
         /// </summary>
         /// <param name="part">Part。</param>
         /// <param name="cubeSurfaceVertexSource">立方体の面の頂点データを提供する VertexSource。</param>
         /// <param name="elementSize">Element のサイズ。</param>
-        /// <returns>生成された BlockMeshPart。</returns>
-        BlockMeshPart CreateBlockMeshPart(Part part, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementSize)
+        /// <returns>生成された InterBlockMeshPart。</returns>
+        InterBlockMeshPart CreateBlockMeshPart(Part part, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementSize)
         {
-            // BlockMeshPart 用 VertexSource に頂点データを詰めていきます。
-            var meshPartVertexSource = new MeshPartVertexSource();
+            var meshPart = new InterBlockMeshPart();
 
             // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
             // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
@@ -423,35 +357,33 @@ namespace Willcraftia.Xna.Blocks.Content
                 for (int surfaceIndex = 0; surfaceIndex < 6; surfaceIndex++)
                 {
                     if (resolvedElement.SurfaceVisible[surfaceIndex])
-                    {
-                        AddSurfaceVertices(meshPartVertexSource, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTranslation);
-                    }
+                        AddSurfaceVertices(meshPart, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTranslation);
                 }
             }
 
-            return BlockMeshPart.Create(GraphicsDevice, meshPartVertexSource.Vertices.ToArray(), meshPartVertexSource.Indices.ToArray());
+            return meshPart;
         }
 
         /// <summary>
-        /// 面の頂点データを BlockMeshPart の頂点データへ設定します。
+        /// 面の頂点データを InterBlockMeshPart の頂点データへ設定します。
         /// </summary>
-        /// <param name="meshPartVertexSource">BlockMeshPart の頂点データを提供する VertexSource。</param>
+        /// <param name="meshPart">InterBlockMeshPart。</param>
         /// <param name="surfaceVertexSource">面の頂点データを提供する VertexSource。</param>
         /// <param name="transform">設定前に適用する変換行列。</param>
-        void AddSurfaceVertices(MeshPartVertexSource meshPartVertexSource, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
+        void AddSurfaceVertices(InterBlockMeshPart meshPart, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
         {
-            var startIndex = meshPartVertexSource.Vertices.Count;
+            var startIndex = meshPart.VertexSource.Vertices.Count;
             var vertexSource = surfaceVertexSource;
             foreach (var index in vertexSource.Indices)
             {
-                meshPartVertexSource.Indices.Add((ushort) (startIndex + index));
+                meshPart.VertexSource.Indices.Add((ushort) (startIndex + index));
             }
             for (int i = 0; i < vertexSource.Vertices.Count; i++)
             {
                 var cubeVertex = vertexSource.Vertices[i];
                 Vector3 transformedVertexPosition;
                 Vector3.Transform(ref cubeVertex.Position, ref transform, out transformedVertexPosition);
-                meshPartVertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
+                meshPart.VertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
             }
         }
     }

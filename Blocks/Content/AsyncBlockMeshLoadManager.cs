@@ -84,8 +84,6 @@ namespace Willcraftia.Xna.Blocks.Content
             {
                 queue.Enqueue(task);
             }
-
-            //beginEvent.Set();
         }
 
         public void Resume()
