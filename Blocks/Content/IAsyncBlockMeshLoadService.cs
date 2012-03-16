@@ -12,6 +12,6 @@ namespace Willcraftia.Xna.Blocks.Content
 
     public interface IAsyncBlockMeshLoadService
     {
-        void Load(BlockMeshFactory factory, string name, Block block, AsyncBlockMeshLoadCallback callback);
+        void Load(BlockMeshFactory factory, string name, InterBlockMesh interMesh, AsyncBlockMeshLoadCallback callback);
     }
 }

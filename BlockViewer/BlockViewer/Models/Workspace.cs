@@ -14,6 +14,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 {
     public sealed class Workspace : IDisposable
     {
+        InterBlockMeshFactory interBlockMeshFactory;
+
         BlockMeshFactory blockMeshFactory;
 
         public Game Game { get; private set; }
@@ -35,11 +37,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             GraphicsDevice = game.GraphicsDevice;
 
+            interBlockMeshFactory = new InterBlockMeshFactory(4);
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), 4);
 
             StorageModel = (game as BlockViewerGame).StorageModel;
 
-            Viewer = new Viewer(this, blockMeshFactory);
+            Viewer = new Viewer(this, interBlockMeshFactory, blockMeshFactory);
 
             Preview = new Preview(this);
 

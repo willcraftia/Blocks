@@ -19,7 +19,7 @@ namespace Willcraftia.Xna.Blocks.Content
 
             public string Name;
 
-            public Block Block;
+            public InterBlockMesh InterMesh;
 
             public AsyncBlockMeshLoadCallback Callback;
         }
@@ -68,7 +68,7 @@ namespace Willcraftia.Xna.Blocks.Content
             game.Services.AddService(typeof(IAsyncBlockMeshLoadService), this);
         }
 
-        public void Load(BlockMeshFactory factory, string name, Block block, AsyncBlockMeshLoadCallback callback)
+        public void Load(BlockMeshFactory factory, string name, InterBlockMesh interMesh, AsyncBlockMeshLoadCallback callback)
         {
             if (exit) return;
 
@@ -76,7 +76,7 @@ namespace Willcraftia.Xna.Blocks.Content
             {
                 Factory = factory,
                 Name = name,
-                Block = block,
+                InterMesh = interMesh,
                 Callback = callback
             };
 
@@ -123,7 +123,7 @@ namespace Willcraftia.Xna.Blocks.Content
                     if (0 < queue.Count)
                     {
                         var task = queue.Dequeue();
-                        var mesh = task.Factory.CreateBlockMesh(task.Block);
+                        var mesh = task.Factory.Create(task.InterMesh);
                         task.Callback(task.Name, mesh);
                     }
                     else
@@ -133,8 +133,6 @@ namespace Willcraftia.Xna.Blocks.Content
                 }
 
                 suspendEvent.Set();
-
-                Thread.Sleep(1000);
             }
         }
     }
