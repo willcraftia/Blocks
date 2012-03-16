@@ -62,6 +62,11 @@ namespace Willcraftia.Xna.Blocks.Content
         // キューとしては効率が悪いですが、取り消し要求を考慮してリストで管理します。
         List<Task> tasks;
 
+        public InterBlockMeshLoadQueue()
+            : this(maxThreadCount)
+        {
+        }
+
         public InterBlockMeshLoadQueue(int threadCount)
         {
             if (threadCount < 1 || maxThreadCount < threadCount) throw new ArgumentOutOfRangeException("threadCount");
@@ -87,6 +92,13 @@ namespace Willcraftia.Xna.Blocks.Content
             tasks.Add(task);
         }
 
+        //
+        // MEMO
+        //
+        // threadCount = 2 でも、自分の環境ではほぼ取り消しのタイミングがない。
+        // threadCount = 1 では主に発生。
+        //
+
         public bool Cancel(string name)
         {
             for (int i = 0; i < tasks.Count; i++)
@@ -110,15 +122,13 @@ namespace Willcraftia.Xna.Blocks.Content
 
             lock (syncRoot)
             {
-                if (threadUseCount < maxThreadCount)
+                if (threadUseCount < threadCount)
                 {
                     var task = tasks[0];
                     tasks.RemoveAt(0);
 
                     threadUseCount++;
                     ThreadPool.QueueUserWorkItem(WaitCallback, task);
-
-                    Console.WriteLine("threadUseCount++: " + threadUseCount);
                 }
             }
         }
@@ -135,8 +145,6 @@ namespace Willcraftia.Xna.Blocks.Content
             lock (syncRoot)
             {
                 threadUseCount--;
-
-                Console.WriteLine("threadUseCount--: " + threadUseCount);
             }
         }
     }

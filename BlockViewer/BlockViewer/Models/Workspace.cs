@@ -42,7 +42,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             interBlockMeshFactory = new InterBlockMeshFactory(4);
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
-            interBlockMeshLoadQueue = new InterBlockMeshLoadQueue(5);
+            interBlockMeshLoadQueue = new InterBlockMeshLoadQueue();
 
             StorageModel = (game as BlockViewerGame).StorageModel;
 
@@ -65,6 +65,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             //asyncInterBlockMeshLoader.Load(StorageModel.BlockLoader, factory, name, callback);
             interBlockMeshLoadQueue.Load(StorageModel.BlockLoader, factory, name, callback);
+        }
+
+        public void CancelLoadInterBlockMeshAsync(string name)
+        {
+            var result = interBlockMeshLoadQueue.Cancel(name);
+            Console.WriteLine("Cancel result: " + result);
         }
 
         public void LoadBlockMeshAsync(string name, InterBlockMesh interBlockMesh, AsyncBlockMeshLoadCallback callback)
