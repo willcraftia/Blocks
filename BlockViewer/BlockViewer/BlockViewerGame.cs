@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
@@ -45,6 +46,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         AsyncBlockMeshLoadManager asyncBlockMeshLoadManager;
 
+        /// <summary>
+        /// TimeRuler。
+        /// </summary>
+        TimeRuler timeRuler;
+
+        /// <summary>
+        /// Update メソッドを計測するための TimeRulerMarker。
+        /// </summary>
+        TimeRulerMarker updateMarker;
+
+        /// <summary>
+        /// Draw メソッドを計測するための TimeRulerMarker。
+        /// </summary>
+        TimeRulerMarker drawMarker;
+
         public StorageModel StorageModel { get; private set; }
 
         /// <summary>
@@ -74,6 +90,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
             asyncBlockMeshLoadManager = new AsyncBlockMeshLoadManager(this);
 
+            var fpsCounter = new FpsCounter(this);
+            fpsCounter.Content.RootDirectory = "Content";
+            fpsCounter.HorizontalAlignment = DebugHorizontalAlignment.Right;
+            fpsCounter.SampleSpan = TimeSpan.FromSeconds(2);
+            Components.Add(fpsCounter);
+
+            timeRuler = new TimeRuler(this);
+            Components.Add(timeRuler);
+
+            updateMarker = timeRuler.CreateMarker();
+            updateMarker.Name = "Draw";
+            updateMarker.BarIndex = 0;
+            updateMarker.Color = Color.Cyan;
+
+            drawMarker = timeRuler.CreateMarker();
+            drawMarker.Name = "Draw";
+            drawMarker.BarIndex = 1;
+            drawMarker.Color = Color.Yellow;
+
             // マウス カーソルを可視にします。
             IsMouseVisible = true;
 
@@ -95,7 +130,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         protected override void Update(GameTime gameTime)
         {
+            timeRuler.StartFrame();
+            updateMarker.Begin();
+
             base.Update(gameTime);
+
+            updateMarker.End();
         }
 
         protected override bool BeginDraw()
@@ -107,9 +147,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         protected override void Draw(GameTime gameTime)
         {
+            drawMarker.Begin();
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             base.Draw(gameTime);
+
+            drawMarker.End();
         }
 
         protected override void EndDraw()
