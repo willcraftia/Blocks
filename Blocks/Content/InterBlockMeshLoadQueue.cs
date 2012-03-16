@@ -117,6 +117,8 @@ namespace Willcraftia.Xna.Blocks.Content
 
                     threadUseCount++;
                     ThreadPool.QueueUserWorkItem(WaitCallback, task);
+
+                    Console.WriteLine("threadUseCount++: " + threadUseCount);
                 }
             }
         }
@@ -133,6 +135,8 @@ namespace Willcraftia.Xna.Blocks.Content
             lock (syncRoot)
             {
                 threadUseCount--;
+
+                Console.WriteLine("threadUseCount--: " + threadUseCount);
             }
         }
     }

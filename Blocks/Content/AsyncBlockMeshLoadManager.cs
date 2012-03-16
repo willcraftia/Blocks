@@ -139,23 +139,24 @@ namespace Willcraftia.Xna.Blocks.Content
                     }
                 }
 
+                Task task;
                 lock (queueLock)
                 {
-                    if (0 < queue.Count)
-                    {
-                        var task = queue.Dequeue();
-                        var mesh = task.Factory.Create(task.InterMesh);
-                        task.Callback(task.Name, mesh);
-                    }
-                    else
+                    if (queue.Count == 0)
                     {
                         // キューが空の場合は自発的に Suspend 状態なります。
                         lock (suspendLock)
                         {
                             suspended = true;
                         }
+                        continue;
                     }
+
+                    task = queue.Dequeue();
                 }
+
+                var mesh = task.Factory.Create(task.InterMesh);
+                task.Callback(task.Name, mesh);
             }
         }
     }
