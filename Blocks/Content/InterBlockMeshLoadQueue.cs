@@ -53,7 +53,7 @@ namespace Willcraftia.Xna.Blocks.Content
 
         const int maxThreadCount = 5;
 
-        readonly object synRoot = new object();
+        readonly object syncRoot = new object();
 
         int threadCount;
 
@@ -108,7 +108,7 @@ namespace Willcraftia.Xna.Blocks.Content
             // シンプルに処理するために、
             // 1 つの Task だけを取り出して Thread を割り当てます。
 
-            lock (synRoot)
+            lock (syncRoot)
             {
                 if (threadUseCount < maxThreadCount)
                 {
@@ -130,7 +130,7 @@ namespace Willcraftia.Xna.Blocks.Content
             var task = (Task) state;
             task.Execute();
 
-            lock (synRoot)
+            lock (syncRoot)
             {
                 threadUseCount--;
             }
