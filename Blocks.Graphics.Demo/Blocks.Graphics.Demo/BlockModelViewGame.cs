@@ -557,13 +557,14 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             var blockLoader = new StringBlockLoader(blockData);
 
-            var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice), lodSize);
-            var meshLoader = new DefaultBlockMeshLoader(blockLoader, meshFactory);
+            var interMeshFactory = new InterBlockMeshFactory(lodSize);
+            var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
+            var meshLoader = new DefaultBlockMeshLoader(blockLoader, interMeshFactory, meshFactory);
             meshManager = new BlockMeshManager(meshLoader);
 
             instancingEffect = Content.Load<Effect>("Effects/Instancing");
-            var instancedMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect), lodSize);
-            var instancedMeshLoader = new DefaultBlockMeshLoader(blockLoader, instancedMeshFactory);
+            var instancedMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect));
+            var instancedMeshLoader = new DefaultBlockMeshLoader(blockLoader, interMeshFactory, instancedMeshFactory);
             instancedMeshManager = new BlockMeshManager(instancedMeshLoader);
 
             // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。

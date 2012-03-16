@@ -20,8 +20,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         InterBlockMeshFactory interBlockMeshFactory;
 
-        BlockMeshFactory blockMeshFactory;
-
         GraphicsDevice graphicsDevice;
 
         ViewMode viewMode;
@@ -57,11 +55,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                             mesh = null;
                         }
 
-                        var blockLoader = workspace.StorageModel.BlockLoader;
-                        if (blockLoader != null)
-                        {
-                            InterBlockMeshLoadTask.Start(blockLoader, interBlockMeshFactory, meshName, InterBlockMeshLoadTaskCallback);
-                        }
+                        workspace.LoadInterBlockMeshAsync(interBlockMeshFactory, meshName, InterBlockMeshLoadTaskCallback);
+                    }
+                    else
+                    {
+                        mesh = null;
                     }
                 }
             }
@@ -116,14 +114,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public int LevelOfDetail { get; set; }
 
-        public Viewer(Workspace workspace, InterBlockMeshFactory interBlockMeshFactory, BlockMeshFactory blockMeshFactory)
+        public Viewer(Workspace workspace, InterBlockMeshFactory interBlockMeshFactory)
         {
             if (workspace == null) throw new ArgumentNullException("workspace");
             if (interBlockMeshFactory == null) throw new ArgumentNullException("interBlockMeshFactory");
-            if (blockMeshFactory == null) throw new ArgumentNullException("blockMeshFactory");
             this.workspace = workspace;
             this.interBlockMeshFactory = interBlockMeshFactory;
-            this.blockMeshFactory = blockMeshFactory;
 
             graphicsDevice = workspace.GraphicsDevice;
 
@@ -155,19 +151,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             CameraMoveScale = 0.05f;
         }
 
-        public void Update(GameTime gameTime)
-        {
-        }
-
         void InterBlockMeshLoadTaskCallback(string name, InterBlockMesh result)
         {
             lock (loadSyncRoot)
             {
                 if (meshName == name)
-                {
-                    var service = workspace.Game.Services.GetRequiredService<IAsyncBlockMeshLoadService>();
-                    service.Load(blockMeshFactory, name, result, BlockMeshLoadQueueCallback);
-                }
+                    workspace.LoadBlockMeshAsync(name, result, BlockMeshLoadQueueCallback);
             }
         }
 

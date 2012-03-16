@@ -92,14 +92,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content\BlockLoadTask.cs" />
     <Compile Include="Content\AsyncBlockMeshLoadManager.cs" />
-    <Compile Include="Content\BlockLoadTaskQueue.cs" />
-    <Compile Include="Content\BlockMeshLoadQueue.cs" />
     <Compile Include="Content\InterBlockMesh.cs" />
     <Compile Include="Content\IAsyncBlockMeshLoadService.cs" />
     <Compile Include="Content\InterBlockMeshFactory.cs" />
-    <Compile Include="Content\InterBlockMeshLoadTask.cs" />
+    <Compile Include="Content\InterBlockMeshLoadQueue.cs" />
     <Compile Include="Content\InterBlockMeshPart.cs" />
     <Compile Include="Content\InterBlockEffect.cs" />
     <Compile Include="Serialization\BlockLoaderBase.cs" />

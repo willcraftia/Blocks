@@ -26,6 +26,8 @@ namespace Willcraftia.Xna.Blocks.Content
 
         readonly object queueLock = new object();
 
+        readonly object suspendLock = new object();
+
         Queue<Task> queue;
 
         ManualResetEvent beginEvent;
@@ -37,6 +39,8 @@ namespace Willcraftia.Xna.Blocks.Content
         Thread thread;
 
         bool enabled;
+
+        bool suspended;
 
         public bool Enabled
         {
@@ -88,12 +92,21 @@ namespace Willcraftia.Xna.Blocks.Content
 
         public void Resume()
         {
+            lock (suspendLock)
+            {
+                suspended = false;
+            }
+
+            suspendEvent.Reset();
             beginEvent.Set();
         }
 
         public void Suspend()
         {
-            beginEvent.Reset();
+            lock (suspendLock)
+            {
+                suspended = true;
+            }
 
             suspendEvent.WaitOne();
         }
@@ -116,7 +129,15 @@ namespace Willcraftia.Xna.Blocks.Content
         {
             while (beginEvent.WaitOne() && !exit)
             {
-                suspendEvent.Reset();
+                lock (suspendLock)
+                {
+                    if (suspended)
+                    {
+                        beginEvent.Reset();
+                        suspendEvent.Set();
+                        continue;
+                    }
+                }
 
                 lock (queueLock)
                 {
@@ -128,11 +149,13 @@ namespace Willcraftia.Xna.Blocks.Content
                     }
                     else
                     {
-                        beginEvent.Reset();
+                        // キューが空の場合は自発的に Suspend 状態なります。
+                        lock (suspendLock)
+                        {
+                            suspended = true;
+                        }
                     }
                 }
-
-                suspendEvent.Set();
             }
         }
     }
