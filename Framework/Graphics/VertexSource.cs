@@ -61,5 +61,14 @@ namespace Willcraftia.Xna.Framework.Graphics
         {
             Indices.Add(index);
         }
+
+        /// <summary>
+        /// 頂点およびインデックスを初期化します。
+        /// </summary>
+        public void Clear()
+        {
+            Vertices.Clear();
+            Indices.Clear();
+        }
     }
 }

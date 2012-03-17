@@ -45,9 +45,9 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <returns>生成された BlockMesh。</returns>
         public BlockMesh Create(InterBlockMesh interMesh)
         {
-            var mesh = new BlockMesh(interMesh.LevelOfDetailSize);
+            var mesh = new BlockMesh(interMesh.MeshParts.Length);
 
-            var effects = new IBlockEffect[interMesh.Effects.Count];
+            var effects = new IBlockEffect[interMesh.Effects.Length];
             for (int i = 0; i < effects.Length; i++)
             {
                 // IBlockEffect の生成を IBlockEffectFactory へ委譲します。
@@ -63,14 +63,14 @@ namespace Willcraftia.Xna.Blocks.Content
             }
             mesh.SetEffectArray(effects);
 
-            for (int lod = 0; lod < interMesh.LevelOfDetailSize; lod++)
+            for (int lod = 0; lod < interMesh.MeshParts.Length; lod++)
             {
-                interMesh.LevelOfDetail = lod;
+                var interMeshParts = interMesh.MeshParts[lod];
 
-                var meshParts = new BlockMeshPart[interMesh.MeshParts.Count];
-                for (int i = 0; i < interMesh.MeshParts.Count; i++)
+                var meshParts = new BlockMeshPart[interMeshParts.Length];
+                for (int i = 0; i < interMeshParts.Length; i++)
                 {
-                    var interMeshPart = interMesh.MeshParts[i];
+                    var interMeshPart = interMeshParts[i];
 
                     meshParts[i] = BlockMeshPart.Create(GraphicsDevice, interMeshPart.Vertices, interMeshPart.Indices);
                     meshParts[i].Effect = effects[interMeshPart.EffectIndex];

@@ -55,9 +55,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public IBlockEffect Effect { get; internal set; }
 
         /// <summary>
-        /// インスタンスを生成します (内部処理用)。
+        /// インスタンスを生成します。
         /// </summary>
-        internal BlockMeshPart(GraphicsDevice graphicsDevice)
+        public BlockMeshPart(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
         }

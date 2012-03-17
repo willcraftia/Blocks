@@ -14,23 +14,23 @@ namespace Willcraftia.Xna.Blocks.Content
     public sealed class InterBlockEffect
     {
         /// <summary>
-        /// Diffuse 色を取得します。
+        /// Diffuse 色。
         /// </summary>
-        public Vector3 DiffuseColor { get; internal set; }
+        public Vector3 DiffuseColor;
 
         /// <summary>
-        /// Emissive 色を取得します。
+        /// Emissive 色。
         /// </summary>
-        public Vector3 EmissiveColor { get; internal set; }
+        public Vector3 EmissiveColor;
 
         /// <summary>
-        /// Specular 色を取得します。
+        /// Specular 色。
         /// </summary>
-        public Vector3 SpecularColor { get; internal set; }
+        public Vector3 SpecularColor;
 
         /// <summary>
-        /// Specular 係数を取得します。
+        /// Specular 係数。
         /// </summary>
-        public float SpecularPower { get; internal set; }
+        public float SpecularPower;
     }
 }

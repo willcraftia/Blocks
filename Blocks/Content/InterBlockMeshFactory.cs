@@ -264,79 +264,73 @@ namespace Willcraftia.Xna.Blocks.Content
         InterBlockMesh CreateInterBlockMesh(InterBlock[] lodBlocks)
         {
             // InterBlockMesh を生成します。
-            var mesh = new InterBlockMesh(lodBlocks.Length);
-
-            // InterBlockEffect を生成して登録します。
-            // LOD 間で Material は共有しているので、最大 LOD の Material から生成します。
-            var effects = new InterBlockEffect[lodBlocks[0].Materials.Count];
-            for (int i = 0; i < effects.Length; i++)
+            var mesh = new InterBlockMesh
             {
-                effects[i] = CreateInterBlockEffect(lodBlocks[0].Materials[i]);
-            }
-            mesh.SetEffectArray(effects);
+                MeshParts = new InterBlockMeshPart[lodBlocks.Length][]
+            };
 
-            // 各 LOD ごとに InterBlockMeshPart を生成して InterBlockMesh へ設定します。
+            // InterBlockEffect を生成します。
+            // LOD 間で Material は共有しているので、最大 LOD の Material から生成します。
+            mesh.Effects = new InterBlockEffect[lodBlocks[0].Materials.Count];
+            for (int i = 0; i < mesh.Effects.Length; i++)
+            {
+                var block = lodBlocks[0];
+
+                mesh.Effects[i] = new InterBlockEffect
+                {
+                    DiffuseColor = block.Materials[i].DiffuseColor.ToColor().ToVector3(),
+                    EmissiveColor = block.Materials[i].EmissiveColor.ToColor().ToVector3(),
+                    SpecularColor = block.Materials[i].SpecularColor.ToColor().ToVector3(),
+                    SpecularPower = block.Materials[i].SpecularPower
+                };
+            }
+
+            var meshPartVS = new VertexSource<VertexPositionNormal, ushort>();
+
+            // 各 LOD ごとに InterBlockMeshPart を生成します。
             for (int lod = 0; lod < lodBlocks.Length; lod++)
             {
-                // Element を分類します。
-                var elementClassifier = ElementClassifier.Classify(lodBlocks[lod].Elements);
+                var block = lodBlocks[lod];
 
-                // Parts が空となる LOD の場合は、上位 LOD で十分に頂点数が少ないとみなし、
-                // 上位の InterBlockMesh を設定します。
-                // なお、最大 LOD の InterBlockMeshPart が空ではないことを仮定します。
-                if (elementClassifier.Parts.Count == 0)
-                {
-                    mesh.InheritLODMeshParts(lod);
-                    continue;
-                }
+                // Element を分類します。
+                var elementClassifier = ElementClassifier.Classify(block.Elements);
+
+                var cubeSurfaceVS = new CubeSurfaceVertexSource(block.ElementSize);
+
+                mesh.MeshParts[lod] = new InterBlockMeshPart[elementClassifier.Parts.Count];
 
                 // InterBlockMeshPart を生成して登録します。
-                var cubeSurfaceVertexSource = new CubeSurfaceVertexSource(lodBlocks[lod].ElementSize);
-
-                var meshParts = new InterBlockMeshPart[elementClassifier.Parts.Count];
-                for (int i = 0; i < meshParts.Length; i++)
+                for (int i = 0; i < mesh.MeshParts[lod].Length; i++)
                 {
                     var part = elementClassifier.Parts[i];
-                    // InterBlockMeshPart を生成します。
-                    meshParts[i] = CreateBlockMeshPart(part, cubeSurfaceVertexSource, lodBlocks[lod].ElementSize);
-                    // 参照する Effect のインデックスを設定します。
-                    meshParts[i].EffectIndex = part.MaterialIndex;
-                }
 
-                // 生成した InterBlockMeshPart を指定の LOD で InterBlockMesh へ設定します。
-                mesh.SetLODMeshPartArray(lod, meshParts);
+                    // 頂点データを作成します。
+                    meshPartVS.Clear();
+                    MakeMeshPartVertexSource(meshPartVS, part, cubeSurfaceVS, block.ElementSize);
+
+                    // InterBlockMeshPart を生成します。
+                    mesh.MeshParts[lod][i] = new InterBlockMeshPart
+                    {
+                        EffectIndex = part.MaterialIndex,
+                        Vertices = meshPartVS.Vertices.ToArray(),
+                        Indices = meshPartVS.Indices.ToArray()
+                    };
+                }
             }
 
             return mesh;
         }
 
         /// <summary>
-        /// 指定の Material が持つ情報を設定した InterBlockEffect を生成します。
+        /// InterBlockMeshPart のための VertexSource を作成します。
         /// </summary>
-        /// <param name="material">Material。</param>
-        /// <returns>生成された InterBlockEffect。</returns>
-        InterBlockEffect CreateInterBlockEffect(Material material)
-        {
-            return new InterBlockEffect
-            {
-                DiffuseColor = material.DiffuseColor.ToColor().ToVector3(),
-                EmissiveColor = material.EmissiveColor.ToColor().ToVector3(),
-                SpecularColor = material.SpecularColor.ToColor().ToVector3(),
-                SpecularPower = material.SpecularPower
-            };
-        }
-
-        /// <summary>
-        /// InterBlockMeshPart を生成します。
-        /// </summary>
+        /// <param name="meshPartVS">InterBlockMeshPart のための VertexSource。</param>
         /// <param name="part">Part。</param>
-        /// <param name="cubeSurfaceVertexSource">立方体の面の頂点データを提供する VertexSource。</param>
+        /// <param name="cubeSurfaceVS">立方体の面の頂点データを提供する VertexSource。</param>
         /// <param name="elementSize">Element のサイズ。</param>
-        /// <returns>生成された InterBlockMeshPart。</returns>
-        InterBlockMeshPart CreateBlockMeshPart(Part part, CubeSurfaceVertexSource cubeSurfaceVertexSource, float elementSize)
+        void MakeMeshPartVertexSource(
+            MeshPartVertexSource meshPartVS, Part part, CubeSurfaceVertexSource cubeSurfaceVS, float elementSize)
         {
-            var meshPart = new InterBlockMeshPart();
-
             // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
             // 立方体の最小位置を原点とするための移動行列を作成し、立方体の頂点データの変換に利用します。
             Matrix elementOriginTranslation = Matrix.CreateTranslation(new Vector3(elementSize * 0.5f));
@@ -357,36 +351,40 @@ namespace Willcraftia.Xna.Blocks.Content
                 for (int surfaceIndex = 0; surfaceIndex < 6; surfaceIndex++)
                 {
                     if (resolvedElement.SurfaceVisible[surfaceIndex])
-                        AddSurfaceVertices(meshPart, cubeSurfaceVertexSource.Surfaces[surfaceIndex], ref finalTranslation);
+                        AddSurfaceVertices(
+                            meshPartVS,
+                            cubeSurfaceVS.Surfaces[surfaceIndex],
+                            ref finalTranslation);
                 }
             }
-
-            // 頂点とインデックスを変更不能に設定します。
-            meshPart.Freeze();
-
-            return meshPart;
         }
 
         /// <summary>
         /// 面の頂点データを InterBlockMeshPart の頂点データへ設定します。
         /// </summary>
-        /// <param name="meshPart">InterBlockMeshPart。</param>
-        /// <param name="surfaceVertexSource">面の頂点データを提供する VertexSource。</param>
-        /// <param name="transform">設定前に適用する変換行列。</param>
-        void AddSurfaceVertices(InterBlockMeshPart meshPart, SurfaceVertexSource surfaceVertexSource, ref Matrix transform)
+        /// <param name="meshPartVS">
+        /// InterBlockMeshPart の頂点データを保持する VertexSource。
+        /// </param>
+        /// <param name="surfaceVS">
+        /// 面の頂点データを提供する VertexSource。
+        /// </param>
+        /// <param name="transform">
+        /// 頂点の設定前に適用する変換行列。
+        /// </param>
+        void AddSurfaceVertices(MeshPartVertexSource meshPartVS, SurfaceVertexSource surfaceVS, ref Matrix transform)
         {
-            var startIndex = meshPart.VertexSource.Vertices.Count;
-            var vertexSource = surfaceVertexSource;
+            var startIndex = meshPartVS.Vertices.Count;
+            var vertexSource = surfaceVS;
             foreach (var index in vertexSource.Indices)
             {
-                meshPart.VertexSource.Indices.Add((ushort) (startIndex + index));
+                meshPartVS.Indices.Add((ushort) (startIndex + index));
             }
             for (int i = 0; i < vertexSource.Vertices.Count; i++)
             {
                 var cubeVertex = vertexSource.Vertices[i];
                 Vector3 transformedVertexPosition;
                 Vector3.Transform(ref cubeVertex.Position, ref transform, out transformedVertexPosition);
-                meshPart.VertexSource.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
+                meshPartVS.Vertices.Add(new VertexPositionNormal(transformedVertexPosition, cubeVertex.Normal));
             }
         }
     }
