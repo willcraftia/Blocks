@@ -44,8 +44,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// </summary>
         UIManager uiManager;
 
-        AsyncBlockMeshLoadManager asyncBlockMeshLoadManager;
-
         /// <summary>
         /// TimeRuler。
         /// </summary>
@@ -88,8 +86,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             uiManager.ScreenFactory = CreateScreenFactory();
             Components.Add(uiManager);
 
-            asyncBlockMeshLoadManager = new AsyncBlockMeshLoadManager(this);
-
             var fpsCounter = new FpsCounter(this);
             fpsCounter.Content.RootDirectory = "Content";
             fpsCounter.HorizontalAlignment = DebugHorizontalAlignment.Right;
@@ -100,7 +96,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             Components.Add(timeRuler);
 
             updateMarker = timeRuler.CreateMarker();
-            updateMarker.Name = "Draw";
+            updateMarker.Name = "Update";
             updateMarker.BarIndex = 0;
             updateMarker.Color = Color.Cyan;
 
@@ -119,13 +115,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         {
             // StartScreen の表示から開始します。
             uiManager.Show(Screens.ScreenNames.Start);
-
-            asyncBlockMeshLoadManager.Enabled = true;
         }
 
         protected override void UnloadContent()
         {
-            asyncBlockMeshLoadManager.Enabled = false;
         }
 
         protected override void Update(GameTime gameTime)
@@ -138,13 +131,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             updateMarker.End();
         }
 
-        protected override bool BeginDraw()
-        {
-            asyncBlockMeshLoadManager.Suspend();
-
-            return base.BeginDraw();
-        }
-
         protected override void Draw(GameTime gameTime)
         {
             drawMarker.Begin();
@@ -154,13 +140,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             base.Draw(gameTime);
 
             drawMarker.End();
-        }
-
-        protected override void EndDraw()
-        {
-            base.EndDraw();
-
-            asyncBlockMeshLoadManager.Resume();
         }
 
         /// <summary>

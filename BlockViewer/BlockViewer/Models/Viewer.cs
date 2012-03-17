@@ -161,20 +161,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             lock (loadSyncRoot)
             {
                 if (meshName == name)
-                    workspace.LoadBlockMeshAsync(name, result, BlockMeshLoadQueueCallback);
+                    workspace.LoadBlockMesh(name, result, BlockMeshLoadQueueItemCallback);
             }
         }
 
-        public void BlockMeshLoadQueueCallback(string name, BlockMesh mesh)
+        public void BlockMeshLoadQueueItemCallback(string name, BlockMesh mesh)
         {
-            lock (loadSyncRoot)
+            // MEMO:
+            // UpdateQueue からのコールバックは Game Thread からなので、
+            // ここでは lock しなくて良いです。
+
+            if (meshName == name)
             {
-                if (meshName == name)
-                {
-                    this.mesh = mesh;
-                    // デフォルト ライティングを有効にしておきます。
-                    foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
-                }
+                this.mesh = mesh;
+                // デフォルト ライティングを有効にしておきます。
+                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
             }
         }
 

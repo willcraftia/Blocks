@@ -21,6 +21,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         InterBlockMeshLoadQueue interBlockMeshLoadQueue;
 
+        UpdateQueue updateQueue;
+
         public Game Game { get; private set; }
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -44,6 +46,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
             interBlockMeshLoadQueue = new InterBlockMeshLoadQueue();
 
+            updateQueue = new UpdateQueue(50);
+
             StorageModel = (game as BlockViewerGame).StorageModel;
 
             Viewer = new Viewer(this, interBlockMeshFactory);
@@ -56,6 +60,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         public void Update(GameTime gameTime)
         {
             interBlockMeshLoadQueue.Update();
+
+            updateQueue.Update(gameTime);
         }
 
         public void LoadInterBlockMeshAsync(InterBlockMeshFactory factory, string name, InterBlockMeshLoadQueueCallback callback)
@@ -63,20 +69,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             if (StorageModel.BlockLoader == null)
                 throw new InvalidOperationException("No block loader exists.");
 
-            //asyncInterBlockMeshLoader.Load(StorageModel.BlockLoader, factory, name, callback);
             interBlockMeshLoadQueue.Load(StorageModel.BlockLoader, factory, name, callback);
         }
 
         public void CancelLoadInterBlockMeshAsync(string name)
         {
-            var result = interBlockMeshLoadQueue.Cancel(name);
-            Console.WriteLine("Cancel result: " + result);
+            interBlockMeshLoadQueue.Cancel(name);
         }
 
-        public void LoadBlockMeshAsync(string name, InterBlockMesh interBlockMesh, AsyncBlockMeshLoadCallback callback)
+        public void LoadBlockMesh(string name, InterBlockMesh interBlockMesh, BlockMeshLoadQueueItemCallback callback)
         {
-            var service = Game.Services.GetRequiredService<IAsyncBlockMeshLoadService>();
-            service.Load(blockMeshFactory, name, interBlockMesh, callback);
+            var item = new BlockMeshLoadQueueItem
+            {
+                BlockMeshFactory = blockMeshFactory,
+                Name = name,
+                InterBlockMesh = interBlockMesh,
+                Callback = callback,
+
+                Duration = TimeSpan.FromMilliseconds(1000)
+            };
+            updateQueue.Enqueue(item);
         }
 
         #region IDisposable
