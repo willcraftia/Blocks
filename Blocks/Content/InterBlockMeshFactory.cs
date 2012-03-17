@@ -264,10 +264,7 @@ namespace Willcraftia.Xna.Blocks.Content
         InterBlockMesh CreateInterBlockMesh(InterBlock[] lodBlocks)
         {
             // InterBlockMesh を生成します。
-            var mesh = new InterBlockMesh
-            {
-                MeshParts = new InterBlockMeshPart[lodBlocks.Length][]
-            };
+            var mesh = new InterBlockMesh();
 
             // InterBlockEffect を生成します。
             // LOD 間で Material は共有しているので、最大 LOD の Material から生成します。
@@ -285,10 +282,23 @@ namespace Willcraftia.Xna.Blocks.Content
                 };
             }
 
+            // 実際に必要となる LOD 数をもとめます。
+            int actualLodSize = 0;
+            for (int lod = 0; lod < lodBlocks.Length; lod++)
+            {
+                // 要素数 0 の InterBlock は、それ以上粒度を荒くできなかったことを表します。
+                if (lodBlocks[lod].Elements.Count == 0) break;
+
+                actualLodSize++;
+            }
+
+            // 実際の LOD 数の分だけ InterBlockMeshPart 領域を確保します。
+            mesh.MeshParts = new InterBlockMeshPart[actualLodSize][];
+
             var meshPartVS = new VertexSource<VertexPositionNormal, ushort>();
 
-            // 各 LOD ごとに InterBlockMeshPart を生成します。
-            for (int lod = 0; lod < lodBlocks.Length; lod++)
+            // LOD ごとに InterBlockMeshPart を生成します。
+            for (int lod = 0; lod < actualLodSize; lod++)
             {
                 var block = lodBlocks[lod];
 

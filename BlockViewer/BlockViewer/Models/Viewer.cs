@@ -232,6 +232,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         {
             if (mesh == null) return;
 
+            // LOD が無効な場合は描画しません。
+            if (mesh.LevelOfDetailSize <= LevelOfDetail) return;
+
             mesh.LevelOfDetail = LevelOfDetail;
 
             foreach (var effect in mesh.Effects)

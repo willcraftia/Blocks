@@ -33,14 +33,34 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
         /// <summary>
         /// BlockMeshPart のリストを取得します。
+        /// LevelOfDetail プロパティの値が LevelOfDetailSize プロパティの値を越える場合、
+        /// 最も荒い LOD の BlockMeshPart が返されます。
         /// </summary>
         public ReadOnlyCollection<BlockMeshPart> MeshParts
         {
-            get { return lodMeshParts[LevelOfDetail]; }
+            get
+            {
+                if (LevelOfDetail < lodMeshParts.Length)
+                {
+                    return lodMeshParts[LevelOfDetail];
+                }
+                else
+                {
+                    return lodMeshParts[lodMeshParts.Length - 1];
+                }
+            }
         }
 
         /// <summary>
-        /// 利用する LOD レベルを取得または設定します。
+        /// 利用できる LOD 数を取得します。
+        /// </summary>
+        public int LevelOfDetailSize
+        {
+            get { return lodMeshParts.Length; }
+        }
+
+        /// <summary>
+        /// 利用する LOD を取得または設定します。
         /// </summary>
         public int LevelOfDetail { get; set; }
 
@@ -77,17 +97,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
         internal void SetLODMeshPartArray(int lod, BlockMeshPart[] meshParts)
         {
             lodMeshParts[lod] = new ReadOnlyCollection<BlockMeshPart>(meshParts);
-        }
-
-        /// <summary>
-        /// 指定の LOD の BlockMeshPart リストに上位と同じ物を設定します。
-        /// </summary>
-        /// <param name="lod">LOD。</param>
-        internal void InheritLODMeshParts(int lod)
-        {
-            if (lod == 0) throw new ArgumentOutOfRangeException("lod");
-
-            lodMeshParts[lod] = lodMeshParts[lod - 1];
         }
 
         #region IDisposable
