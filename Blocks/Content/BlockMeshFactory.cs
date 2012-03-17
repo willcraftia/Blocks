@@ -50,7 +50,16 @@ namespace Willcraftia.Xna.Blocks.Content
             var effects = new IBlockEffect[interMesh.Effects.Count];
             for (int i = 0; i < effects.Length; i++)
             {
-                effects[i] = Create(interMesh.Effects[i]);
+                // IBlockEffect の生成を IBlockEffectFactory へ委譲します。
+                var effect = BlockEffectFactory.CreateBlockEffect();
+
+                var interEffect = interMesh.Effects[i];
+                effect.DiffuseColor = interEffect.DiffuseColor;
+                effect.EmissiveColor = interEffect.EmissiveColor;
+                effect.SpecularColor = interEffect.SpecularColor;
+                effect.SpecularPower = interEffect.SpecularPower;
+
+                effects[i] = effect;
             }
             mesh.SetEffectArray(effects);
 
@@ -63,43 +72,13 @@ namespace Willcraftia.Xna.Blocks.Content
                 {
                     var interMeshPart = interMesh.MeshParts[i];
 
-                    meshParts[i] = Create(interMeshPart);
+                    meshParts[i] = BlockMeshPart.Create(GraphicsDevice, interMeshPart.Vertices, interMeshPart.Indices);
                     meshParts[i].Effect = effects[interMeshPart.EffectIndex];
                 }
                 mesh.SetLODMeshPartArray(lod, meshParts);
             }
 
             return mesh;
-        }
-
-        /// <summary>
-        /// InterBlockEffect のエフェクト情報をもとに IBlockEffect を生成します。
-        /// </summary>
-        /// <param name="interEffect">エフェクト情報を提供する InterBlockEffect。</param>
-        /// <returns>生成された IBlockEffect。</returns>
-        IBlockEffect Create(InterBlockEffect interEffect)
-        {
-            // IBlockEffect の生成を IBlockEffectFactory へ委譲します。
-            var effect = BlockEffectFactory.CreateBlockEffect();
-
-            effect.DiffuseColor = interEffect.DiffuseColor;
-            effect.EmissiveColor = interEffect.EmissiveColor;
-            effect.SpecularColor = interEffect.SpecularColor;
-            effect.SpecularPower = interEffect.SpecularPower;
-
-            return effect;
-        }
-
-        /// <summary>
-        /// InterBlockMeshPart の頂点情報をもとに BlockMeshPart を生成します。
-        /// </summary>
-        /// <param name="interMeshPart">頂点情報を提供する InterBlockMeshPart。</param>
-        /// <returns>生成された BlockMeshPart。</returns>
-        BlockMeshPart Create(InterBlockMeshPart interMeshPart)
-        {
-            var vertices = interMeshPart.Vertices.ToArray();
-            var indices = interMeshPart.Indices.ToArray();
-            return BlockMeshPart.Create(GraphicsDevice, vertices, indices);
         }
     }
 }

@@ -21,14 +21,23 @@ namespace Willcraftia.Xna.Blocks.Content
         VertexSource<VertexPositionNormal, ushort> vertexSource;
 
         /// <summary>
-        /// VertexSource.Vertices を読み取り専用として公開するためのコレクション。
+        /// 頂点の配列。
         /// </summary>
-        ReadOnlyCollection<VertexPositionNormal> vertices;
+        VertexPositionNormal[] vertices;
 
         /// <summary>
-        /// VertexSource.indices を読み取り専用として公開するためのコレクション。
+        /// インデックスの配列。
         /// </summary>
-        ReadOnlyCollection<ushort> indices;
+        ushort[] indices;
+
+        /// <summary>
+        /// VertexSource プロパティによる頂点とインデックスの編集が可能かどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (VertexSource プロパティによる頂点とインデックスの編集が不能である場合)、
+        /// false (それ以外の場合)。
+        /// </value>
+        public bool Frozen { get; private set; }
 
         /// <summary>
         /// 参照する InterBlockEffect のインデックスを取得または設定します。
@@ -36,27 +45,46 @@ namespace Willcraftia.Xna.Blocks.Content
         public int EffectIndex { get; set; }
 
         /// <summary>
-        /// 頂点リストを取得します。
+        /// 頂点の配列を取得します。
+        /// このプロパティは、Frozen プロパティが true になるまで無効です。
         /// </summary>
-        public ReadOnlyCollection<VertexPositionNormal> Vertices
+        public VertexPositionNormal[] Vertices
         {
-            get { return vertices; }
+            get
+            {
+                if (!Frozen) throw new InvalidOperationException("This instance is not frozen.");
+                return vertices;
+            }
         }
 
         /// <summary>
-        /// インデックス リストを取得します。
+        /// インデックスの配列を取得します。
+        /// このプロパティは、Frozen プロパティが true になるまで無効です。
         /// </summary>
-        public ReadOnlyCollection<ushort> Indices
+        public ushort[] Indices
         {
-            get { return indices; }
+            get
+            {
+                if (!Frozen) throw new InvalidOperationException("This instance is not frozen.");
+                return indices;
+            }
         }
 
         /// <summary>
         /// 頂点とインデックスを管理する VertexSource を取得します。
+        /// このプロパティは、Frozen プロパティが true になるまで有効です。
         /// </summary>
+        /// <remarks>
+        /// このプロパティへの参照を呼び出し元で保持して編集を続けたとしても、
+        /// その編集による頂点とインデックスは Vertices および Indices プロパティに反映されません。
+        /// </remarks>
         internal VertexSource<VertexPositionNormal, ushort> VertexSource
         {
-            get { return vertexSource; }
+            get
+            {
+                if (Frozen) throw new InvalidOperationException("This instance is frozen.");
+                return vertexSource;
+            }
         }
 
         /// <summary>
@@ -65,8 +93,26 @@ namespace Willcraftia.Xna.Blocks.Content
         public InterBlockMeshPart()
         {
             vertexSource = new VertexSource<VertexPositionNormal, ushort>();
-            vertices = new ReadOnlyCollection<VertexPositionNormal>(VertexSource.Vertices);
-            indices = new ReadOnlyCollection<ushort>(VertexSource.Indices);
+        }
+
+        /// <summary>
+        /// 頂点とインデックスを変更不能に設定します。
+        /// このメソッドの呼び出しにより、Frozen プロパティが true になります。
+        /// </summary>
+        internal void Freeze()
+        {
+            // 配列に変換します。
+            vertices = vertexSource.Vertices.ToArray();
+            indices = vertexSource.Indices.ToArray();
+
+            // 外部で参照している可能性もあるので念のためクリアします。
+            vertexSource.Vertices.Clear();
+            vertexSource.Indices.Clear();
+            
+            // 参照を切り離します。
+            vertexSource = null;
+
+            Frozen = true;
         }
     }
 }

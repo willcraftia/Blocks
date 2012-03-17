@@ -122,11 +122,11 @@ namespace Willcraftia.Xna.Blocks.Graphics
             where TIndex : struct
         {
             // 頂点バッファを初期化します。
-            VertexBuffer = new VertexBuffer(graphicsDevice, typeof(TVertex), vertices.Length, BufferUsage.None);
+            VertexBuffer = new VertexBuffer(graphicsDevice, typeof(TVertex), vertices.Length, BufferUsage.WriteOnly);
             VertexBuffer.SetData(vertices);
 
             // インデックス バッファを初期化します。
-            IndexBuffer = new IndexBuffer(graphicsDevice, typeof(TIndex), indices.Length, BufferUsage.None);
+            IndexBuffer = new IndexBuffer(graphicsDevice, typeof(TIndex), indices.Length, BufferUsage.WriteOnly);
             IndexBuffer.SetData(indices);
 
             VertexOffset = 0;

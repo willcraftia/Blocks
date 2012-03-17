@@ -361,6 +361,9 @@ namespace Willcraftia.Xna.Blocks.Content
                 }
             }
 
+            // 頂点とインデックスを変更不能に設定します。
+            meshPart.Freeze();
+
             return meshPart;
         }
 
