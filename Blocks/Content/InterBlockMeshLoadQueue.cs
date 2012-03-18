@@ -9,6 +9,13 @@ using Willcraftia.Xna.Blocks.Serialization;
 
 namespace Willcraftia.Xna.Blocks.Content
 {
+    //
+    // TODO
+    //
+    // ThreadPool では WaitCallback の引数が object であることから、
+    // 内部で boxing が行われているはず。
+    //
+
     public delegate void InterBlockMeshLoadQueueCallback(string name, InterBlockMesh result);
 
     public sealed class InterBlockMeshLoadQueue
