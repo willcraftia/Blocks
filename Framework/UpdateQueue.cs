@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework;
 
 namespace Willcraftia.Xna.Framework
 {
+    //
+    // TODO
+    //
+    // 構造体を設定する時にボクシングが発生するのでダメ。
+    //
+
     public sealed class UpdateQueue
     {
         List<IUpdateQueueItem> items;

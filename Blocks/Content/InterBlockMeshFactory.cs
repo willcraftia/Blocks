@@ -292,8 +292,8 @@ namespace Willcraftia.Xna.Blocks.Content
                 actualLodSize++;
             }
 
-            // 実際の LOD 数の分だけ InterBlockMeshPart 領域を確保します。
-            mesh.MeshParts = new InterBlockMeshPart[actualLodSize][];
+            // 実際の LOD 数の分だけ InterBlockMeshLod 領域を確保します。
+            mesh.MeshLods = new InterBlockMeshLod[actualLodSize];
 
             var meshPartVS = new VertexSource<VertexPositionNormal, ushort>();
 
@@ -307,10 +307,15 @@ namespace Willcraftia.Xna.Blocks.Content
 
                 var cubeSurfaceVS = new CubeSurfaceVertexSource(block.ElementSize);
 
-                mesh.MeshParts[lod] = new InterBlockMeshPart[elementClassifier.Parts.Count];
+                int meshPartCount = elementClassifier.Parts.Count;
+                var meshLod = new InterBlockMeshLod
+                {
+                    MeshParts = new InterBlockMeshPart[meshPartCount]
+                };
+                mesh.MeshLods[lod] = meshLod;
 
                 // InterBlockMeshPart を生成して登録します。
-                for (int i = 0; i < mesh.MeshParts[lod].Length; i++)
+                for (int i = 0; i < meshPartCount; i++)
                 {
                     var part = elementClassifier.Parts[i];
 
@@ -319,7 +324,7 @@ namespace Willcraftia.Xna.Blocks.Content
                     MakeMeshPartVertexSource(meshPartVS, part, cubeSurfaceVS, block.ElementSize);
 
                     // InterBlockMeshPart を生成します。
-                    mesh.MeshParts[lod][i] = new InterBlockMeshPart
+                    meshLod.MeshParts[i] = new InterBlockMeshPart
                     {
                         EffectIndex = part.MaterialIndex,
                         Vertices = meshPartVS.Vertices.ToArray(),

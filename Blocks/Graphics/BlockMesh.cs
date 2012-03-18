@@ -14,49 +14,35 @@ namespace Willcraftia.Xna.Blocks.Graphics
     public sealed class BlockMesh : IDisposable
     {
         /// <summary>
-        /// IBlockEffect のリスト。
+        /// 全ての BlockMeshLod のロードが完了した時に発生します。
         /// </summary>
-        ReadOnlyCollection<IBlockEffect> effects;
+        public event EventHandler Loaded = delegate { };
 
-        /// <summary>
-        /// LOD ごとの BlockMeshPart のリスト。
-        /// </summary>
-        ReadOnlyCollection<BlockMeshPart>[] lodMeshParts;
+        bool allMeshEffectsLoaded;
 
-        /// <summary>
-        /// IBlockEffect のリストを取得します。
-        /// </summary>
-        public ReadOnlyCollection<IBlockEffect> Effects
+        bool allMeshLodsLoaded;
+
+        public bool IsLoaded
         {
-            get { return effects; }
+            get { return allMeshEffectsLoaded && allMeshLodsLoaded; }
         }
 
         /// <summary>
-        /// BlockMeshPart のリストを取得します。
-        /// LevelOfDetail プロパティの値が LevelOfDetailSize プロパティの値を越える場合、
-        /// 最も荒い LOD の BlockMeshPart が返されます。
+        /// BlockMeshEffect のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<BlockMeshPart> MeshParts
-        {
-            get
-            {
-                if (LevelOfDetail < lodMeshParts.Length)
-                {
-                    return lodMeshParts[LevelOfDetail];
-                }
-                else
-                {
-                    return lodMeshParts[lodMeshParts.Length - 1];
-                }
-            }
-        }
+        public ReadOnlyCollection<BlockMeshEffect> MeshEffects { get; private set; }
+
+        /// <summary>
+        /// LodBlockMesh のリストを取得します。
+        /// </summary>
+        public ReadOnlyCollection<BlockMeshLod> MeshLods { get; private set; }
 
         /// <summary>
         /// 利用できる LOD 数を取得します。
         /// </summary>
-        public int LevelOfDetailSize
+        public int LevelOfDetailCount
         {
-            get { return lodMeshParts.Length; }
+            get { return MeshLods.Count; }
         }
 
         /// <summary>
@@ -65,38 +51,87 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public int LevelOfDetail { get; set; }
 
         /// <summary>
-        /// インスタンスを生成します (内部処理用)。
+        /// LevelOfDetail プロパティが示す BlockMeshLod を取得します。
+        /// LevelOfDetail プロパティの値が LevelOfDetailSize プロパティの値を越える場合、
+        /// 最も荒い LOD の BlockMeshLod が返されます。
         /// </summary>
-        internal BlockMesh(int lodSize)
+        public BlockMeshLod BlockMeshLod
         {
-            lodMeshParts = new ReadOnlyCollection<BlockMeshPart>[lodSize];
+            get
+            {
+                var targetLod = LevelOfDetail;
+                if (LevelOfDetailCount <= LevelOfDetail) targetLod = MeshLods.Count - 1;
+
+                return MeshLods[targetLod];
+            }
         }
+
+        /// <summary>
+        /// BlockMeshLod プロパティの BlockMeshPart のリストを取得します。
+        /// </summary>
+        public ReadOnlyCollection<BlockMeshPart> MeshParts
+        {
+            get { return BlockMeshLod.MeshParts; }
+        }
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        internal BlockMesh() { }
 
         /// <summary>
         /// 描画します。
         /// </summary>
         public void Draw()
         {
+            if (!BlockMeshLod.IsLoaded)
+                throw new InvalidOperationException("The selected BlockMeshLod is not loaded.");
+
             foreach (var meshPart in MeshParts) meshPart.Draw();
         }
 
-        /// <summary>
-        /// IBlockEffect 配列を設定します。
-        /// </summary>
-        /// <param name="effects">IBlockEffect 配列。</param>
-        internal void SetEffectArray(IBlockEffect[] effects)
+        internal void AllocateMeshEffects(int count)
         {
-            this.effects = new ReadOnlyCollection<IBlockEffect>(effects);
+            var array = new BlockMeshEffect[count];
+            for (int i = 0; i < count; i++)
+            {
+                array[i] = new BlockMeshEffect();
+                array[i].Loaded += new EventHandler(OnBlockMeshEffectLoaded);
+            }
+            MeshEffects = new ReadOnlyCollection<BlockMeshEffect>(array);
         }
 
-        /// <summary>
-        /// 指定の LOD の BlockMeshPart 配列を設定します。
-        /// </summary>
-        /// <param name="lod">LOD。</param>
-        /// <param name="meshParts">BlockMeshPart 配列。</param>
-        internal void SetLODMeshPartArray(int lod, BlockMeshPart[] meshParts)
+        internal void AllocateMeshLods(int count)
         {
-            lodMeshParts[lod] = new ReadOnlyCollection<BlockMeshPart>(meshParts);
+            var array = new BlockMeshLod[count];
+            for (int i = 0; i < count; i++)
+            {
+                array[i] = new BlockMeshLod(i);
+                array[i].Loaded += OnMeshLodLoaded;
+            }
+            MeshLods = new ReadOnlyCollection<BlockMeshLod>(array);
+        }
+
+        void OnBlockMeshEffectLoaded(object sender, EventArgs e)
+        {
+            foreach (var meshEffect in MeshEffects)
+            {
+                if (!meshEffect.IsLoaded) return;
+            }
+
+            allMeshEffectsLoaded = true;
+            if (IsLoaded) Loaded(this, EventArgs.Empty);
+        }
+
+        void OnMeshLodLoaded(object sender, EventArgs e)
+        {
+            foreach (var meshLod in MeshLods)
+            {
+                if (!meshLod.IsLoaded) return;
+            }
+
+            allMeshLodsLoaded = true;
+            if (IsLoaded) Loaded(this, EventArgs.Empty);
         }
 
         #region IDisposable
@@ -120,16 +155,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
             if (disposing)
             {
-                if (effects != null)
+                if (MeshEffects != null)
                 {
-                    foreach (var effect in effects) effect.Dispose();
+                    foreach (var effect in MeshEffects) effect.Dispose();
                 }
-                if (lodMeshParts != null)
+
+                if (MeshLods != null)
                 {
-                    foreach (var meshParts in lodMeshParts)
-                    {
-                        foreach (var meshPart in meshParts) meshPart.Dispose();
-                    }
+                    foreach (var meshLod in MeshLods) meshLod.Dispose();
                 }
             }
 

@@ -174,8 +174,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             if (meshName == name)
             {
                 this.mesh = mesh;
+
                 // デフォルト ライティングを有効にしておきます。
-                foreach (var effect in mesh.Effects) effect.EnableDefaultLighting();
+                foreach (var meshEffect in mesh.MeshEffects)
+                    meshEffect.Effect.EnableDefaultLighting();
             }
         }
 
@@ -233,16 +235,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             if (mesh == null) return;
 
             // LOD が無効な場合は描画しません。
-            if (mesh.LevelOfDetailSize <= LevelOfDetail) return;
+            if (mesh.LevelOfDetailCount <= LevelOfDetail) return;
 
             mesh.LevelOfDetail = LevelOfDetail;
 
-            foreach (var effect in mesh.Effects)
+            foreach (var meshEffect in mesh.MeshEffects)
             {
-                effect.View = CurrentView.Matrix;
-                effect.Projection = Projection.Matrix;
+                meshEffect.Effect.View = CurrentView.Matrix;
+                meshEffect.Effect.Projection = Projection.Matrix;
 
-                SetDirectionalLights(effect);
+                SetDirectionalLights(meshEffect.Effect);
             }
 
             mesh.Draw();

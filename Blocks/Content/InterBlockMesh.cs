@@ -20,8 +20,8 @@ namespace Willcraftia.Xna.Blocks.Content
         public InterBlockEffect[] Effects;
 
         /// <summary>
-        /// InterBlockMeshPart の配列。
+        /// InterBlockMeshLod の配列。
         /// </summary>
-        public InterBlockMeshPart[][] MeshParts;
+        public InterBlockMeshLod[] MeshLods;
     }
 }
