@@ -41,6 +41,17 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public bool IndexBufferLoaded { get; private set; }
 
         /// <summary>
+        /// VertexBuffer および IndexBuffer のロードが完了しているかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (VertexBuffer および IndexBuffer のロードが完了している場合)、false (それ以外の場合)。
+        /// </value>
+        public bool IsLoaded
+        {
+            get { return VertexBufferLoaded && IndexBufferLoaded; }
+        }
+
+        /// <summary>
         /// VertexBuffer を取得します。
         /// VertexBufferLoaded プロパティが false の場合、
         /// このプロパティは null です。
@@ -78,17 +89,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// 参照する BlockMeshEffect を取得します。
         /// </summary>
         public BlockMeshEffect MeshEffect { get; internal set; }
-
-        /// <summary>
-        /// VertexBuffer および IndexBuffer のロードが完了しているかどうかを示す値を取得します。
-        /// </summary>
-        /// <value>
-        /// true (VertexBuffer および IndexBuffer のロードが完了している場合)、false (それ以外の場合)。
-        /// </value>
-        public bool IsLoaded
-        {
-            get { return VertexBufferLoaded && IndexBufferLoaded; }
-        }
 
         /// <summary>
         /// インスタンスを生成します。

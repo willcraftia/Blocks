@@ -6,6 +6,9 @@ using System;
 
 namespace Willcraftia.Xna.Blocks.Content
 {
+    /// <summary>
+    /// LOD ごとの InterBlockMeshPart を管理するクラスです。
+    /// </summary>
     public sealed class InterBlockMeshLod
     {
         /// <summary>

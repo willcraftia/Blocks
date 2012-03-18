@@ -17,11 +17,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
     {
         InterBlockMeshFactory interBlockMeshFactory;
 
-        BlockMeshFactory blockMeshFactory;
-
         InterBlockMeshLoadQueue interBlockMeshLoadQueue;
 
-        UpdateQueue updateQueue;
+        BasicBlockEffectFactory basicBlockEffectFactory;
+
+        PhasedBlockMeshFactory phasedBlockMeshFactory;
 
         public Game Game { get; private set; }
 
@@ -43,10 +43,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             GraphicsDevice = game.GraphicsDevice;
 
             interBlockMeshFactory = new InterBlockMeshFactory(4);
-            blockMeshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
+            basicBlockEffectFactory = new BasicBlockEffectFactory(GraphicsDevice);
             interBlockMeshLoadQueue = new InterBlockMeshLoadQueue();
-
-            updateQueue = new UpdateQueue(50);
+            phasedBlockMeshFactory = new PhasedBlockMeshFactory(100);
 
             StorageModel = (game as BlockViewerGame).StorageModel;
 
@@ -60,8 +59,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         public void Update(GameTime gameTime)
         {
             interBlockMeshLoadQueue.Update();
-
-            updateQueue.Update(gameTime);
+            phasedBlockMeshFactory.Update(gameTime);
         }
 
         public void LoadInterBlockMeshAsync(InterBlockMeshFactory factory, string name, InterBlockMeshLoadQueueCallback callback)
@@ -77,18 +75,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             interBlockMeshLoadQueue.Cancel(name);
         }
 
-        public void LoadBlockMesh(string name, InterBlockMesh interBlockMesh, BlockMeshLoadQueueItemCallback callback)
+        public BlockMesh LoadBlockMesh(InterBlockMesh interBlockMesh)
         {
-            var item = new BlockMeshLoadQueueItem
-            {
-                BlockMeshFactory = blockMeshFactory,
-                Name = name,
-                InterBlockMesh = interBlockMesh,
-                Callback = callback,
-
-                Duration = TimeSpan.FromMilliseconds(1000)
-            };
-            updateQueue.Enqueue(item);
+            return phasedBlockMeshFactory.LoadBlockMesh(GraphicsDevice, interBlockMesh, basicBlockEffectFactory);
         }
 
         #region IDisposable

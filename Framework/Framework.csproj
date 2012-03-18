@@ -101,8 +101,6 @@
     <Compile Include="Cameras\PerspectiveFov.cs" />
     <Compile Include="Cameras\ProjectionBase.cs" />
     <Compile Include="Cameras\ViewBase.cs" />
-    <Compile Include="UpdateQueue.cs" />
-    <Compile Include="IUpdateQueueItem.cs" />
     <Compile Include="Paging.cs" />
     <Compile Include="PredefinedColor.cs" />
     <Compile Include="Projection.cs" />

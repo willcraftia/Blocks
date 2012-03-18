@@ -18,13 +18,33 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         public event EventHandler Loaded = delegate { };
 
-        bool allMeshEffectsLoaded;
+        /// <summary>
+        /// MeshEffects プロパティの全ての要素がロード済みであるかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (MeshEffects プロパティの全ての要素がロード済みである場合)、
+        /// false (それ以外の場合)。
+        /// </value>
+        public bool AllMeshEffectsLoaded { get; private set; }
 
-        bool allMeshLodsLoaded;
+        /// <summary>
+        /// MeshLods プロパティの全ての要素がロード済みであるかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (MeshEffects プロパティの全ての要素がロード済みである場合)、
+        /// false (それ以外の場合)。
+        /// </value>
+        public bool AllMeshLodsLoaded { get; private set; }
 
+        /// <summary>
+        /// ロードが完了しているかどうかを示す値を取得します。
+        /// </summary>
+        /// <value>
+        /// true (ロードが完了している場合)、false (それ以外の場合)。
+        /// </value>
         public bool IsLoaded
         {
-            get { return allMeshEffectsLoaded && allMeshLodsLoaded; }
+            get { return AllMeshEffectsLoaded && AllMeshLodsLoaded; }
         }
 
         /// <summary>
@@ -55,7 +75,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// LevelOfDetail プロパティの値が LevelOfDetailSize プロパティの値を越える場合、
         /// 最も荒い LOD の BlockMeshLod が返されます。
         /// </summary>
-        public BlockMeshLod BlockMeshLod
+        public BlockMeshLod MeshLod
         {
             get
             {
@@ -71,7 +91,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         public ReadOnlyCollection<BlockMeshPart> MeshParts
         {
-            get { return BlockMeshLod.MeshParts; }
+            get { return MeshLod.MeshParts; }
         }
 
         /// <summary>
@@ -84,10 +104,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         public void Draw()
         {
-            if (!BlockMeshLod.IsLoaded)
-                throw new InvalidOperationException("The selected BlockMeshLod is not loaded.");
-
-            foreach (var meshPart in MeshParts) meshPart.Draw();
+            MeshLod.Draw();
         }
 
         internal void AllocateMeshEffects(int count)
@@ -119,7 +136,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 if (!meshEffect.IsLoaded) return;
             }
 
-            allMeshEffectsLoaded = true;
+            AllMeshEffectsLoaded = true;
             if (IsLoaded) Loaded(this, EventArgs.Empty);
         }
 
@@ -130,7 +147,7 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 if (!meshLod.IsLoaded) return;
             }
 
-            allMeshLodsLoaded = true;
+            AllMeshLodsLoaded = true;
             if (IsLoaded) Loaded(this, EventArgs.Empty);
         }
 

@@ -161,8 +161,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             lock (loadSyncRoot)
             {
                 if (meshName == name)
-                    workspace.LoadBlockMesh(name, result, BlockMeshLoadQueueItemCallback);
+                {
+                    mesh = workspace.LoadBlockMesh(result);
+
+                    foreach (var meshEffect in mesh.MeshEffects)
+                    {
+                        meshEffect.Loaded += OnMeshEffectLoaded;
+                    }
+
+                    //workspace.LoadBlockMesh(name, result, BlockMeshLoadQueueItemCallback);
+                }
             }
+        }
+
+        void OnMeshEffectLoaded(object sender, EventArgs e)
+        {
+            var meshEffect = sender as BlockMeshEffect;
+            meshEffect.Effect.EnableDefaultLighting();
         }
 
         public void BlockMeshLoadQueueItemCallback(string name, BlockMesh mesh)
@@ -234,8 +249,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         {
             if (mesh == null) return;
 
+            // MeshEffect のロードが完了していないならば描画しません。
+            if (!mesh.AllMeshEffectsLoaded) return;
+
             // LOD が無効な場合は描画しません。
             if (mesh.LevelOfDetailCount <= LevelOfDetail) return;
+
+            // 描画したい LOD の BlockMeshLod のロードが完了してないならば描画しません。
+            if (!mesh.MeshLods[LevelOfDetail].IsLoaded) return;
 
             mesh.LevelOfDetail = LevelOfDetail;
 
