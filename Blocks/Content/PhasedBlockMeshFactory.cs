@@ -93,7 +93,7 @@ namespace Willcraftia.Xna.Blocks.Content
         {
             for (int i = 0; i < blockMesh.MeshEffects.Count; i++)
             {
-                EnqueueLoadMeshEffect(interBlockMesh, blockMesh, i, blockEffectFactory, TimeSpan.FromMilliseconds(50));
+                EnqueueLoadMeshEffect(interBlockMesh, blockMesh, i, blockEffectFactory, TimeSpan.FromMilliseconds(100));
             }
 
             // 最も荒い LOD からキューに入れます。
