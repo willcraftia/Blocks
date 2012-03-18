@@ -95,7 +95,9 @@ namespace Willcraftia.Xna.Blocks.Content
             {
                 EnqueueLoadMeshEffect(interBlockMesh, blockMesh, i, blockEffectFactory, TimeSpan.FromMilliseconds(50));
             }
-            for (int lod = 0; lod < blockMesh.MeshLods.Count; lod++)
+
+            // 最も荒い LOD からキューに入れます。
+            for (int lod = blockMesh.MeshLods.Count - 1; 0 <= lod; lod--)
             {
                 for (int i = 0; i < blockMesh.MeshLods[lod].MeshParts.Count; i++)
                 {

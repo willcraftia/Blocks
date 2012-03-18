@@ -30,7 +30,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             GraphicsDevice = workspace.GraphicsDevice;
 
-            interBlockMeshFactory = new InterBlockMeshFactory(1);
+            interBlockMeshFactory = new InterBlockMeshFactory(4);
 
             StorageModel = workspace.StorageModel;
         }

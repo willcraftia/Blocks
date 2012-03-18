@@ -168,8 +168,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                     {
                         meshEffect.Loaded += OnMeshEffectLoaded;
                     }
-
-                    //workspace.LoadBlockMesh(name, result, BlockMeshLoadQueueItemCallback);
                 }
             }
         }
@@ -178,22 +176,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         {
             var meshEffect = sender as BlockMeshEffect;
             meshEffect.Effect.EnableDefaultLighting();
-        }
-
-        public void BlockMeshLoadQueueItemCallback(string name, BlockMesh mesh)
-        {
-            // MEMO:
-            // UpdateQueue からのコールバックは Game Thread からなので、
-            // ここでは lock しなくて良いです。
-
-            if (meshName == name)
-            {
-                this.mesh = mesh;
-
-                // デフォルト ライティングを有効にしておきます。
-                foreach (var meshEffect in mesh.MeshEffects)
-                    meshEffect.Effect.EnableDefaultLighting();
-            }
         }
 
         public void MoveView(Vector2 angleSign)
@@ -255,10 +237,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             // LOD が無効な場合は描画しません。
             if (mesh.LevelOfDetailCount <= LevelOfDetail) return;
 
-            // 描画したい LOD の BlockMeshLod のロードが完了してないならば描画しません。
-            if (!mesh.MeshLods[LevelOfDetail].IsLoaded) return;
+            // 指定の BlockMeshLod がロード済みではないならば、
+            // より荒いロード済みの LOD を探します。
+            int targetLod = LevelOfDetail;
+            while (targetLod < mesh.LevelOfDetailCount && !mesh.MeshLods[targetLod].IsLoaded)
+            {
+                targetLod++;
+            }
 
-            mesh.LevelOfDetail = LevelOfDetail;
+            // 描画に使える BlockMeshLod がまだ無いならば描画しません。
+            if (mesh.LevelOfDetailCount == targetLod || !mesh.MeshLods[targetLod].IsLoaded)
+                return;
+
+            mesh.LevelOfDetail = targetLod;
 
             foreach (var meshEffect in mesh.MeshEffects)
             {
