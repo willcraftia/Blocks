@@ -86,9 +86,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
         public int PrimitiveCount { get; private set; }
 
         /// <summary>
-        /// 参照する BlockMeshEffect を取得します。
+        /// BlockMeshMaterial を取得します。
         /// </summary>
-        public BlockMeshEffect MeshEffect { get; internal set; }
+        public BlockMeshMaterial MeshMaterial { get; internal set; }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -126,17 +126,21 @@ namespace Willcraftia.Xna.Blocks.Graphics
         }
 
         /// <summary>
-        /// この BlockMeshPart が参照する BlockMeshEffect で描画します。
+        /// 指定された IBlockEffect で描画します。
         /// </summary>
-        public void Draw()
+        public void Draw(IBlockEffect effect)
         {
             if (!IsLoaded) throw new InvalidOperationException("BlockMeshPart is not loaded.");
-            if (!MeshEffect.IsLoaded) throw new InvalidOperationException("The effect referenced is not loaded.");
 
             graphicsDevice.SetVertexBuffer(VertexBuffer, VertexOffset);
             graphicsDevice.Indices = IndexBuffer;
 
-            MeshEffect.Effect.Pass.Apply();
+            effect.DiffuseColor = MeshMaterial.DiffuseColor;
+            effect.EmissiveColor = MeshMaterial.EmissiveColor;
+            effect.SpecularColor = MeshMaterial.SpecularColor;
+            effect.SpecularPower = MeshMaterial.SpecularPower;
+
+            effect.Pass.Apply();
             graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, NumVertices, StartIndex, PrimitiveCount);
         }
 

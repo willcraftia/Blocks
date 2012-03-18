@@ -227,18 +227,19 @@ namespace Willcraftia.Xna.Blocks.Content
         #endregion
 
         /// <summary>
-        /// 生成する InterBlockMesh で扱う LOD のサイズを取得します。
+        /// 生成する InterBlockMesh で扱う LOD の数を取得します。
         /// </summary>
-        public int LODSize { get; private set; }
+        public int LodCount { get; private set; }
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="lodSize">LOD のサイズ。</param>
-        public InterBlockMeshFactory(int lodSize)
+        /// <param name="lodCount">LOD の数。</param>
+        public InterBlockMeshFactory(int lodCount)
         {
-            if (lodSize < 1 || InterBlock.MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
-            LODSize = lodSize;
+            if (lodCount < 1 || InterBlock.MaxLodCount < lodCount)
+                throw new ArgumentOutOfRangeException("lodCount");
+            LodCount = lodCount;
         }
 
         /// <summary>
@@ -250,7 +251,7 @@ namespace Willcraftia.Xna.Blocks.Content
         public InterBlockMesh Create(Block block)
         {
             // 中間データを作成します。
-            var interBlocks = InterBlock.CreateInterBlock(block, LODSize);
+            var interBlocks = InterBlock.CreateInterBlock(block, LodCount);
 
             // 中間データから InterBlockMesh を作成します。
             return CreateInterBlockMesh(interBlocks);
@@ -268,12 +269,12 @@ namespace Willcraftia.Xna.Blocks.Content
 
             // InterBlockEffect を生成します。
             // LOD 間で Material は共有しているので、最大 LOD の Material から生成します。
-            mesh.Effects = new InterBlockEffect[lodBlocks[0].Materials.Count];
-            for (int i = 0; i < mesh.Effects.Length; i++)
+            mesh.MeshMaterials = new BlockMeshMaterial[lodBlocks[0].Materials.Count];
+            for (int i = 0; i < mesh.MeshMaterials.Length; i++)
             {
                 var block = lodBlocks[0];
 
-                mesh.Effects[i] = new InterBlockEffect
+                mesh.MeshMaterials[i] = new BlockMeshMaterial
                 {
                     DiffuseColor = block.Materials[i].DiffuseColor.ToColor().ToVector3(),
                     EmissiveColor = block.Materials[i].EmissiveColor.ToColor().ToVector3(),
@@ -283,22 +284,22 @@ namespace Willcraftia.Xna.Blocks.Content
             }
 
             // 実際に必要となる LOD 数をもとめます。
-            int actualLodSize = 0;
+            int actualLodCount = 0;
             for (int lod = 0; lod < lodBlocks.Length; lod++)
             {
                 // 要素数 0 の InterBlock は、それ以上粒度を荒くできなかったことを表します。
                 if (lodBlocks[lod].Elements.Count == 0) break;
 
-                actualLodSize++;
+                actualLodCount++;
             }
 
             // 実際の LOD 数の分だけ InterBlockMeshLod 領域を確保します。
-            mesh.MeshLods = new InterBlockMeshLod[actualLodSize];
+            mesh.MeshLods = new InterBlockMeshLod[actualLodCount];
 
             var meshPartVS = new VertexSource<VertexPositionNormal, ushort>();
 
             // LOD ごとに InterBlockMeshPart を生成します。
-            for (int lod = 0; lod < actualLodSize; lod++)
+            for (int lod = 0; lod < actualLodCount; lod++)
             {
                 var block = lodBlocks[lod];
 
@@ -326,7 +327,7 @@ namespace Willcraftia.Xna.Blocks.Content
                     // InterBlockMeshPart を生成します。
                     meshLod.MeshParts[i] = new InterBlockMeshPart
                     {
-                        EffectIndex = part.MaterialIndex,
+                        MeshMaterialIndex = part.MaterialIndex,
                         Vertices = meshPartVS.Vertices.ToArray(),
                         Indices = meshPartVS.Indices.ToArray()
                     };

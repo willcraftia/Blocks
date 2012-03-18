@@ -53,9 +53,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
             LevelOfDetail = levelOfDetail;
         }
 
-        public void Draw()
+        public void Draw(IBlockEffect effect)
         {
-            foreach (var meshPart in MeshParts) meshPart.Draw();
+            foreach (var meshPart in MeshParts) meshPart.Draw(effect);
         }
 
         internal void AllocateMeshParts(GraphicsDevice graphicsDevice, int count)

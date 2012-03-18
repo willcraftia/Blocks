@@ -130,24 +130,14 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         string blockData;
 
         /// <summary>
-        /// インスタンシング用の Effect。
-        /// </summary>
-        Effect instancingEffect;
-
-        /// <summary>
-        /// 通常の Mesh を管理する BlockMeshManager。
+        /// BlockMeshManager。
         /// </summary>
         BlockMeshManager meshManager;
 
         /// <summary>
-        /// インスタンシング用の Mesh を管理する BlockMeshManager。
-        /// </summary>
-        BlockMeshManager instancedMeshManager;
-
-        /// <summary>
         /// LOD サイズ。
         /// </summary>
-        int lodSize = 4;
+        int lodCount = 4;
 
         /// <summary>
         /// 通常の Mesh。
@@ -155,9 +145,14 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         BlockMesh mesh;
 
         /// <summary>
-        /// インスタンシング用の Effect が設定された Mesh。
+        /// 通常の IBlockEffect。
         /// </summary>
-        BlockMesh instancedMesh;
+        IBlockEffect blockEffect;
+
+        /// <summary>
+        /// インスタンシング用の IBlockEffect。
+        /// </summary>
+        IBlockEffect instancingBlockEffect;
 
         /// <summary>
         /// LOD を切り替える距離 (の二乗) の配列。
@@ -557,27 +552,23 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             var blockLoader = new StringBlockLoader(blockData);
 
-            var interMeshFactory = new InterBlockMeshFactory(lodSize);
-            var meshFactory = new BlockMeshFactory(GraphicsDevice, new BasicBlockEffectFactory(GraphicsDevice));
+            var interMeshFactory = new InterBlockMeshFactory(lodCount);
+            var meshFactory = new BlockMeshFactory(GraphicsDevice);
             var meshLoader = new DefaultBlockMeshLoader(blockLoader, interMeshFactory, meshFactory);
             meshManager = new BlockMeshManager(meshLoader);
 
-            instancingEffect = Content.Load<Effect>("Effects/Instancing");
-            var instancedMeshFactory = new BlockMeshFactory(GraphicsDevice, new InstancingBlockEffectFactory(instancingEffect));
-            var instancedMeshLoader = new DefaultBlockMeshLoader(blockLoader, interMeshFactory, instancedMeshFactory);
-            instancedMeshManager = new BlockMeshManager(instancedMeshLoader);
+            // 通常の IBlockEffect をロードします。
+            blockEffect = new BasicBlockEffect(GraphicsDevice);
+            blockEffect.EnableDefaultLighting();
+
+            // インスタンシング用の IBlockEffect をロードします。
+            var instancingEffect = Content.Load<Effect>("Effects/Instancing");
+            instancingBlockEffect = new InstancingBlockEffect(instancingEffect);
+            instancingBlockEffect.EnableDefaultLighting();
 
             // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。
-
-            // 通常の BlockMesh をロードします。
+            // BlockMesh をロードします。
             mesh = meshManager.LoadBlockMesh("Dummy");
-            foreach (var meshEffect in mesh.MeshEffects)
-                meshEffect.Effect.EnableDefaultLighting();
-
-            // インスタンシング用の BlockMesh をロードします。
-            instancedMesh = instancedMeshManager.LoadBlockMesh("Dummy");
-            foreach (var meshEffect in instancedMesh.MeshEffects)
-                meshEffect.Effect.EnableDefaultLighting();
         }
 
         /// <summary>
@@ -585,9 +576,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void UnloadBlockMesh()
         {
-            if (instancingEffect != null) instancingEffect.Dispose();
+            if (blockEffect != null) blockEffect.Dispose();
+            if (instancingBlockEffect != null) instancingBlockEffect.Dispose();
             if (meshManager != null) meshManager.Unload();
-            if (instancedMeshManager != null) instancedMeshManager.Unload();
         }
 
         /// <summary>
@@ -599,8 +590,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             gameObjects.Count = InitialGameObjectCount;
             for (int i = 0; i < gameObjects.Count; ++i) gameObjects.Items[i].Initialize(ramdom);
 
-            lodGameObjects = new GameObjectCollection[lodSize];
-            for (int lod = 0; lod < lodSize; lod++)
+            lodGameObjects = new GameObjectCollection[lodCount];
+            for (int lod = 0; lod < lodCount; lod++)
             {
                 lodGameObjects[lod] = new GameObjectCollection();
                 lodGameObjects[lod].Items = new GameObject[MaxGameObjectCount];
@@ -615,7 +606,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void UpdateGameObjects(float dt)
         {
-            for (int lod = 0; lod < lodSize; lod++) lodGameObjects[lod].Count = 0;
+            for (int lod = 0; lod < lodCount; lod++) lodGameObjects[lod].Count = 0;
 
             // 全オブジェクトを更新する
             // ゲームオブジェクトのライフ時間によって、ゲームオブジェクトを
@@ -628,7 +619,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
                     float distanceSquared;
                     Vector3.DistanceSquared(ref cameraPosition, ref gameObjects.Items[i].Position, out distanceSquared);
-                    for (int lod = 0; lod < lodSize; lod++)
+                    for (int lod = 0; lod < lodCount; lod++)
                     {
                         if (distanceSquared < lodDistanceSquareds[lod])
                         {
@@ -697,11 +688,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsWithoutOptimization()
         {
-            foreach (var meshEffect in mesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            blockEffect.View = view;
+            blockEffect.Projection = projection;
 
             mesh.LevelOfDetail = 0;
 
@@ -712,10 +700,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     Matrix.CreateFromAxisAngle(gameObjects.Items[i].RotateAxis, gameObjects.Items[i].Rotation);
                 world.Translation = gameObjects.Items[i].Position;
 
-                foreach (var meshEffect in mesh.MeshEffects)
-                    meshEffect.Effect.World = world;
+                blockEffect.World = world;
 
-                mesh.Draw();
+                mesh.Draw(blockEffect);
             }
         }
 
@@ -724,13 +711,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsLodWithoutOptimization()
         {
-            foreach (var meshEffect in mesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            blockEffect.View = view;
+            blockEffect.Projection = projection;
 
-            for (int lod = 0; lod < lodSize; lod++)
+            for (int lod = 0; lod < lodCount; lod++)
             {
                 mesh.LevelOfDetail = lod;
 
@@ -742,10 +726,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                     world.Translation = gameObject.Position;
 
-                    foreach (var meshEffect in mesh.MeshEffects)
-                        meshEffect.Effect.World = world;
+                    blockEffect.World = world;
 
-                    mesh.Draw();
+                    mesh.Draw(blockEffect);
                 }
             }
         }
@@ -755,11 +738,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsWithBatch()
         {
-            foreach (var meshEffect in mesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            blockEffect.View = view;
+            blockEffect.Projection = projection;
 
             mesh.LevelOfDetail = 0;
 
@@ -775,9 +755,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                         Matrix.CreateFromAxisAngle(gameObjects.Items[i].RotateAxis, gameObjects.Items[i].Rotation);
                     world.Translation = gameObjects.Items[i].Position;
 
-                    var effect = meshPart.MeshEffect.Effect;
-                    effect.World = world;
-                    effect.Pass.Apply();
+                    blockEffect.DiffuseColor = meshPart.MeshMaterial.DiffuseColor;
+                    blockEffect.EmissiveColor = meshPart.MeshMaterial.EmissiveColor;
+                    blockEffect.SpecularColor = meshPart.MeshMaterial.SpecularColor;
+                    blockEffect.SpecularPower = meshPart.MeshMaterial.SpecularPower;
+                    blockEffect.World = world;
+                    blockEffect.Pass.Apply();
 
                     GraphicsDevice.DrawIndexedPrimitives(
                         PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount);
@@ -790,13 +773,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsLodWithBatch()
         {
-            foreach (var meshEffect in mesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            blockEffect.View = view;
+            blockEffect.Projection = projection;
 
-            for (int lod = 0; lod < lodSize; lod++)
+            for (int lod = 0; lod < lodCount; lod++)
             {
                 mesh.LevelOfDetail = lod;
 
@@ -813,9 +793,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                             Matrix.CreateFromAxisAngle(gameObject.RotateAxis, gameObject.Rotation);
                         world.Translation = gameObject.Position;
 
-                        var effect = meshPart.MeshEffect.Effect;
-                        effect.World = world;
-                        effect.Pass.Apply();
+                        blockEffect.DiffuseColor = meshPart.MeshMaterial.DiffuseColor;
+                        blockEffect.EmissiveColor = meshPart.MeshMaterial.EmissiveColor;
+                        blockEffect.SpecularColor = meshPart.MeshMaterial.SpecularColor;
+                        blockEffect.SpecularPower = meshPart.MeshMaterial.SpecularPower;
+                        blockEffect.World = world;
+                        blockEffect.Pass.Apply();
 
                         GraphicsDevice.DrawIndexedPrimitives(
                             PrimitiveType.TriangleList, 0, 0, meshPart.NumVertices, meshPart.StartIndex, meshPart.PrimitiveCount);
@@ -829,11 +812,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsWithHardwareInstancing()
         {
-            foreach (var meshEffect in instancedMesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            instancingBlockEffect.View = view;
+            instancingBlockEffect.Projection = projection;
 
             // インスタンス情報を一旦コピー
             for (int i = 0; i < gameObjects.Count; ++i)
@@ -847,10 +827,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // インスタンス用の頂点バッファへ書き込む
             int offset = instanceVertexBuffer.SetData(objectInstances, 0, gameObjects.Count);
 
-            instancedMesh.LevelOfDetail = 0;
+            mesh.LevelOfDetail = 0;
 
             // ゲームオブジェクトを描画
-            foreach (var meshPart in instancedMesh.MeshParts)
+            foreach (var meshPart in mesh.MeshParts)
             {
                 vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                 vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
@@ -858,7 +838,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                 GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                meshPart.MeshEffect.Effect.Pass.Apply();
+                instancingBlockEffect.DiffuseColor = meshPart.MeshMaterial.DiffuseColor;
+                instancingBlockEffect.EmissiveColor = meshPart.MeshMaterial.EmissiveColor;
+                instancingBlockEffect.SpecularColor = meshPart.MeshMaterial.SpecularColor;
+                instancingBlockEffect.SpecularPower = meshPart.MeshMaterial.SpecularPower;
+
+                instancingBlockEffect.Pass.Apply();
 
                 GraphicsDevice.DrawInstancedPrimitives(
                     PrimitiveType.TriangleList, 0, 0,
@@ -871,13 +856,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsLodWithHardwareInstancing()
         {
-            foreach (var meshEffect in instancedMesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            instancingBlockEffect.View = view;
+            instancingBlockEffect.Projection = projection;
 
-            for (int lod = 0; lod < lodSize; lod++)
+            for (int lod = 0; lod < lodCount; lod++)
             {
                 if (lodGameObjects[lod].Count == 0) continue;
 
@@ -894,10 +876,10 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 // インスタンス用の頂点バッファへ書き込む
                 int offset = instanceVertexBuffer.SetData(objectInstances, 0, lodGameObjects[lod].Count);
 
-                instancedMesh.LevelOfDetail = lod;
+                mesh.LevelOfDetail = lod;
 
                 // ゲームオブジェクトを描画
-                foreach (var meshPart in instancedMesh.MeshParts)
+                foreach (var meshPart in mesh.MeshParts)
                 {
                     vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                     vertexBufferBindings[1] = new VertexBufferBinding(instanceVertexBuffer.VertexBuffer, offset, 1);
@@ -905,7 +887,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                     GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                    meshPart.MeshEffect.Effect.Pass.Apply();
+                    instancingBlockEffect.DiffuseColor = meshPart.MeshMaterial.DiffuseColor;
+                    instancingBlockEffect.EmissiveColor = meshPart.MeshMaterial.EmissiveColor;
+                    instancingBlockEffect.SpecularColor = meshPart.MeshMaterial.SpecularColor;
+                    instancingBlockEffect.SpecularPower = meshPart.MeshMaterial.SpecularPower;
+
+                    instancingBlockEffect.Pass.Apply();
 
                     GraphicsDevice.DrawInstancedPrimitives(
                         PrimitiveType.TriangleList, 0, 0,
@@ -919,19 +906,16 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsWithDirectMapping()
         {
-            foreach (var meshEffect in instancedMesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            instancingBlockEffect.View = view;
+            instancingBlockEffect.Projection = projection;
 
             //　インスタンスをそのまま頂点バッファへコピー
             int offset = directMappingVertexBuffer.SetData(gameObjects.Items, 0, gameObjects.Count);
 
-            instancedMesh.LevelOfDetail = 0;
+            mesh.LevelOfDetail = 0;
 
             // ゲームオブジェクトを描画
-            foreach (var meshPart in instancedMesh.MeshParts)
+            foreach (var meshPart in mesh.MeshParts)
             {
                 vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                 vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
@@ -939,7 +923,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                 GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                 GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                meshPart.MeshEffect.Effect.Pass.Apply();
+                instancingBlockEffect.DiffuseColor = meshPart.MeshMaterial.DiffuseColor;
+                instancingBlockEffect.EmissiveColor = meshPart.MeshMaterial.EmissiveColor;
+                instancingBlockEffect.SpecularColor = meshPart.MeshMaterial.SpecularColor;
+                instancingBlockEffect.SpecularPower = meshPart.MeshMaterial.SpecularPower;
+
+                instancingBlockEffect.Pass.Apply();
 
                 GraphicsDevice.DrawInstancedPrimitives(
                     PrimitiveType.TriangleList, 0, 0,
@@ -952,23 +941,20 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// </summary>
         void DrawGameObjectsLodWithDirectMapping()
         {
-            foreach (var meshEffect in instancedMesh.MeshEffects)
-            {
-                meshEffect.Effect.View = view;
-                meshEffect.Effect.Projection = projection;
-            }
+            instancingBlockEffect.View = view;
+            instancingBlockEffect.Projection = projection;
 
-            for (int lod = 0; lod < lodSize; lod++)
+            for (int lod = 0; lod < lodCount; lod++)
             {
                 if (lodGameObjects[lod].Count == 0) continue;
 
                 //　インスタンスをそのまま頂点バッファへコピー
                 int offset = directMappingVertexBuffer.SetData(lodGameObjects[lod].Items, 0, lodGameObjects[lod].Count);
 
-                instancedMesh.LevelOfDetail = lod;
+                mesh.LevelOfDetail = lod;
 
                 // ゲームオブジェクトを描画
-                foreach (var meshPart in instancedMesh.MeshParts)
+                foreach (var meshPart in mesh.MeshParts)
                 {
                     vertexBufferBindings[0] = new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset);
                     vertexBufferBindings[1] = new VertexBufferBinding(directMappingVertexBuffer.VertexBuffer, offset, 1);
@@ -976,7 +962,12 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
                     GraphicsDevice.SetVertexBuffers(vertexBufferBindings);
                     GraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                    meshPart.MeshEffect.Effect.Pass.Apply();
+                    instancingBlockEffect.DiffuseColor = meshPart.MeshMaterial.DiffuseColor;
+                    instancingBlockEffect.EmissiveColor = meshPart.MeshMaterial.EmissiveColor;
+                    instancingBlockEffect.SpecularColor = meshPart.MeshMaterial.SpecularColor;
+                    instancingBlockEffect.SpecularPower = meshPart.MeshMaterial.SpecularPower;
+
+                    instancingBlockEffect.Pass.Apply();
 
                     GraphicsDevice.DrawInstancedPrimitives(
                         PrimitiveType.TriangleList, 0, 0,

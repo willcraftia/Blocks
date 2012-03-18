@@ -1,8 +1,7 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using Willcraftia.Xna.Blocks.Graphics;
 
 #endregion
 
@@ -15,9 +14,9 @@ namespace Willcraftia.Xna.Blocks.Content
     public sealed class InterBlockMesh
     {
         /// <summary>
-        /// InterBlockEffect の配列。
+        /// BlockMeshMaterial の配列。
         /// </summary>
-        public InterBlockEffect[] Effects;
+        public BlockMeshMaterial[] MeshMaterials;
 
         /// <summary>
         /// InterBlockMeshLod の配列。

@@ -16,9 +16,9 @@ namespace Willcraftia.Xna.Blocks.Content
     public sealed class InterBlockMeshPart
     {
         /// <summary>
-        /// 参照する InterBlockEffect のインデックス。
+        /// 参照する MeshMaterial のインデックス。
         /// </summary>
-        public int EffectIndex;
+        public int MeshMaterialIndex;
 
         /// <summary>
         /// 頂点の配列。

@@ -163,19 +163,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                 if (meshName == name)
                 {
                     mesh = workspace.LoadBlockMesh(result);
-
-                    foreach (var meshEffect in mesh.MeshEffects)
-                    {
-                        meshEffect.Loaded += OnMeshEffectLoaded;
-                    }
                 }
             }
-        }
-
-        void OnMeshEffectLoaded(object sender, EventArgs e)
-        {
-            var meshEffect = sender as BlockMeshEffect;
-            meshEffect.Effect.EnableDefaultLighting();
         }
 
         public void MoveView(Vector2 angleSign)
@@ -231,9 +220,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         {
             if (mesh == null) return;
 
-            // MeshEffect のロードが完了していないならば描画しません。
-            if (!mesh.AllMeshEffectsLoaded) return;
-
             // LOD が無効な場合は描画しません。
             if (mesh.LevelOfDetailCount <= LevelOfDetail) return;
 
@@ -251,15 +237,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             mesh.LevelOfDetail = targetLod;
 
-            foreach (var meshEffect in mesh.MeshEffects)
-            {
-                meshEffect.Effect.View = CurrentView.Matrix;
-                meshEffect.Effect.Projection = Projection.Matrix;
+            var effect = workspace.BasicBlockEffect;
 
-                SetDirectionalLights(meshEffect.Effect);
-            }
+            effect.View = CurrentView.Matrix;
+            effect.Projection = Projection.Matrix;
+            SetDirectionalLights(effect);
 
-            mesh.Draw();
+            mesh.Draw(effect);
         }
 
         void SetDirectionalLights(IBlockEffect effect)

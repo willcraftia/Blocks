@@ -14,27 +14,9 @@ namespace Willcraftia.Xna.Blocks.Graphics
     public sealed class BlockMesh : IDisposable
     {
         /// <summary>
-        /// 全ての BlockMeshLod のロードが完了した時に発生します。
+        /// ロードが完了した時に発生します。
         /// </summary>
         public event EventHandler Loaded = delegate { };
-
-        /// <summary>
-        /// MeshEffects プロパティの全ての要素がロード済みであるかどうかを示す値を取得します。
-        /// </summary>
-        /// <value>
-        /// true (MeshEffects プロパティの全ての要素がロード済みである場合)、
-        /// false (それ以外の場合)。
-        /// </value>
-        public bool AllMeshEffectsLoaded { get; private set; }
-
-        /// <summary>
-        /// MeshLods プロパティの全ての要素がロード済みであるかどうかを示す値を取得します。
-        /// </summary>
-        /// <value>
-        /// true (MeshEffects プロパティの全ての要素がロード済みである場合)、
-        /// false (それ以外の場合)。
-        /// </value>
-        public bool AllMeshLodsLoaded { get; private set; }
 
         /// <summary>
         /// ロードが完了しているかどうかを示す値を取得します。
@@ -42,15 +24,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// <value>
         /// true (ロードが完了している場合)、false (それ以外の場合)。
         /// </value>
-        public bool IsLoaded
-        {
-            get { return AllMeshEffectsLoaded && AllMeshLodsLoaded; }
-        }
+        public bool IsLoaded { get; private set; }
 
         /// <summary>
-        /// BlockMeshEffect のリストを取得します。
+        /// BlockMeshMaterial のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<BlockMeshEffect> MeshEffects { get; private set; }
+        public ReadOnlyCollection<BlockMeshMaterial> MeshMaterials { get; private set; }
 
         /// <summary>
         /// LodBlockMesh のリストを取得します。
@@ -99,23 +78,14 @@ namespace Willcraftia.Xna.Blocks.Graphics
         /// </summary>
         internal BlockMesh() { }
 
-        /// <summary>
-        /// 描画します。
-        /// </summary>
-        public void Draw()
+        public void Draw(IBlockEffect effect)
         {
-            MeshLod.Draw();
+            MeshLod.Draw(effect);
         }
 
-        internal void AllocateMeshEffects(int count)
+        internal void SetMeshMaterials(BlockMeshMaterial[] meshMaterials)
         {
-            var array = new BlockMeshEffect[count];
-            for (int i = 0; i < count; i++)
-            {
-                array[i] = new BlockMeshEffect();
-                array[i].Loaded += new EventHandler(OnBlockMeshEffectLoaded);
-            }
-            MeshEffects = new ReadOnlyCollection<BlockMeshEffect>(array);
+            MeshMaterials = new ReadOnlyCollection<BlockMeshMaterial>(meshMaterials);
         }
 
         internal void AllocateMeshLods(int count)
@@ -129,17 +99,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
             MeshLods = new ReadOnlyCollection<BlockMeshLod>(array);
         }
 
-        void OnBlockMeshEffectLoaded(object sender, EventArgs e)
-        {
-            foreach (var meshEffect in MeshEffects)
-            {
-                if (!meshEffect.IsLoaded) return;
-            }
-
-            AllMeshEffectsLoaded = true;
-            if (IsLoaded) Loaded(this, EventArgs.Empty);
-        }
-
         void OnMeshLodLoaded(object sender, EventArgs e)
         {
             foreach (var meshLod in MeshLods)
@@ -147,8 +106,8 @@ namespace Willcraftia.Xna.Blocks.Graphics
                 if (!meshLod.IsLoaded) return;
             }
 
-            AllMeshLodsLoaded = true;
-            if (IsLoaded) Loaded(this, EventArgs.Empty);
+            IsLoaded = true;
+            Loaded(this, EventArgs.Empty);
         }
 
         #region IDisposable
@@ -172,11 +131,6 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
             if (disposing)
             {
-                if (MeshEffects != null)
-                {
-                    foreach (var effect in MeshEffects) effect.Dispose();
-                }
-
                 if (MeshLods != null)
                 {
                     foreach (var meshLod in MeshLods) meshLod.Dispose();

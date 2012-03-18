@@ -100,16 +100,14 @@
     <Compile Include="Content\InterBlockMeshLoadQueue.cs" />
     <Compile Include="Content\InterBlockMeshLod.cs" />
     <Compile Include="Content\InterBlockMeshPart.cs" />
-    <Compile Include="Content\InterBlockEffect.cs" />
-    <Compile Include="Graphics\BlockMeshEffect.cs" />
     <Compile Include="Graphics\BlockMeshLod.cs" />
+    <Compile Include="Graphics\BlockMeshMaterial.cs" />
     <Compile Include="Serialization\BlockLoaderBase.cs" />
     <Compile Include="Content\DefaultBlockMeshLoader.cs" />
     <Compile Include="Content\BlockMeshManager.cs" />
     <Compile Include="Serialization\IBlockLoader.cs" />
     <Compile Include="Content\IBlockMeshLoader.cs" />
     <Compile Include="Graphics\BasicBlockEffect.cs" />
-    <Compile Include="Content\BasicBlockEffectFactory.cs" />
     <Compile Include="Graphics\GridBlockMesh.cs" />
     <Compile Include="Graphics\IBlockEffect.cs" />
     <Compile Include="Graphics\BlockMesh.cs" />
@@ -117,9 +115,7 @@
     <Compile Include="Graphics\BlockMeshPart.cs" />
     <Compile Include="Graphics\CubeSurfaces.cs" />
     <Compile Include="Graphics\CubeSurfaceVertexSource.cs" />
-    <Compile Include="Content\IBlockEffectFactory.cs" />
     <Compile Include="Graphics\InstancingBlockEffect.cs" />
-    <Compile Include="Content\InstancingBlockEffectFactory.cs" />
     <Compile Include="Content\InterBlock.cs" />
     <Compile Include="Content\InterElementCollection.cs" />
     <Compile Include="Serialization\Block.cs" />

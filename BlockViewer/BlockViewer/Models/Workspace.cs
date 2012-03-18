@@ -19,8 +19,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         InterBlockMeshLoadQueue interBlockMeshLoadQueue;
 
-        BasicBlockEffectFactory basicBlockEffectFactory;
-
         PhasedBlockMeshFactory phasedBlockMeshFactory;
 
         public Game Game { get; private set; }
@@ -35,6 +33,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public GridBlockMesh GridBlockMesh { get; private set; }
 
+        public BasicBlockEffect BasicBlockEffect { get; private set; }
+
         public Workspace(Game game)
         {
             if (game == null) throw new ArgumentNullException("game");
@@ -43,7 +43,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             GraphicsDevice = game.GraphicsDevice;
 
             interBlockMeshFactory = new InterBlockMeshFactory(4);
-            basicBlockEffectFactory = new BasicBlockEffectFactory(GraphicsDevice);
             interBlockMeshLoadQueue = new InterBlockMeshLoadQueue();
             phasedBlockMeshFactory = new PhasedBlockMeshFactory(100);
 
@@ -54,6 +53,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             Preview = new Preview(this);
 
             GridBlockMesh = new GridBlockMesh(GraphicsDevice, 16, 0.1f, Color.White);
+
+            BasicBlockEffect = new BasicBlockEffect(GraphicsDevice);
+            BasicBlockEffect.EnableDefaultLighting();
         }
 
         public void Update(GameTime gameTime)
@@ -77,7 +79,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public BlockMesh LoadBlockMesh(InterBlockMesh interBlockMesh)
         {
-            return phasedBlockMeshFactory.LoadBlockMesh(GraphicsDevice, interBlockMesh, basicBlockEffectFactory);
+            return phasedBlockMeshFactory.LoadBlockMesh(GraphicsDevice, interBlockMesh);
         }
 
         #region IDisposable
@@ -104,6 +106,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                 Viewer.Dispose();
                 Preview.Dispose();
                 GridBlockMesh.Dispose();
+                BasicBlockEffect.Dispose();
             }
 
             disposed = true;

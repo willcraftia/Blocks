@@ -17,17 +17,17 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <summary>
         /// 最大 LOD のグリッド サイズ。
         /// </summary>
-        public const int MaxDetailLevelGridSize = 16;
+        public const int MaxLodGridSize = 16;
 
         /// <summary>
         /// 最大 LOD の Element サイズ。
         /// </summary>
-        public const float MaxDefailLevelElementSize = 0.1f;
+        public const float MaxLodElementSize = 0.1f;
 
         /// <summary>
-        /// 最大の LOD サイズ。
+        /// 最大の LOD の数。
         /// </summary>
-        public const int MaxDetailLevelSize = 4;
+        public const int MaxLodCount = 4;
 
         /// <summary>
         /// グリッド サイズを取得します。
@@ -58,19 +58,20 @@ namespace Willcraftia.Xna.Blocks.Content
         /// 指定された数の LOD でそれぞれの LOD を持つ InterBlock の配列を生成します。
         /// </summary>
         /// <param name="block">Block。</param>
-        /// <param name="lodSize">LOD のサイズ。</param>
+        /// <param name="lodCount">LOD の数。</param>
         /// <returns>生成された InterBlock の配列。</returns>
-        public static InterBlock[] CreateInterBlock(Block block, int lodSize)
+        public static InterBlock[] CreateInterBlock(Block block, int lodCount)
         {
-            if (lodSize < 1 || MaxDetailLevelSize < lodSize) throw new ArgumentOutOfRangeException("lodSize");
+            if (lodCount < 1 || MaxLodCount < lodCount)
+                throw new ArgumentOutOfRangeException("lodCount");
 
-            var interBlocks = new InterBlock[lodSize];
+            var interBlocks = new InterBlock[lodCount];
 
             // インデックス 0 は常に最大 LOD です。
             interBlocks[0] = CreateMaxDetailLevelInterBlock(block);
 
             // 要求された分の下位 LOD を生成します。
-            for (int i = 1; i < lodSize; i++) interBlocks[i] = CreateLowDetailLevelInterBlock(interBlocks[i - 1]);
+            for (int i = 1; i < lodCount; i++) interBlocks[i] = CreateLowDetailLevelInterBlock(interBlocks[i - 1]);
 
             return interBlocks;
         }
@@ -85,7 +86,7 @@ namespace Willcraftia.Xna.Blocks.Content
             var interBlock = new InterBlock();
 
             // 最大 LOD として作成します。
-            interBlock.GridSize = MaxDetailLevelGridSize;
+            interBlock.GridSize = MaxLodGridSize;
 
             // Block の Material をそのままコピーします。
             interBlock.Materials = new List<Material>(block.Materials.Count);
@@ -96,7 +97,7 @@ namespace Willcraftia.Xna.Blocks.Content
             foreach (var element in block.Elements) interBlock.Elements.Add(element);
 
             // 最大 LOD の Element サイズを設定します。
-            interBlock.ElementSize = MaxDefailLevelElementSize;
+            interBlock.ElementSize = MaxLodElementSize;
 
             return interBlock;
         }

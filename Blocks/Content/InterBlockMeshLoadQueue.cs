@@ -76,7 +76,8 @@ namespace Willcraftia.Xna.Blocks.Content
 
         public InterBlockMeshLoadQueue(int threadCount)
         {
-            if (threadCount < 1 || maxThreadCount < threadCount) throw new ArgumentOutOfRangeException("threadCount");
+            if (threadCount < 1 || maxThreadCount < threadCount)
+                throw new ArgumentOutOfRangeException("threadCount");
             this.threadCount = threadCount;
 
             tasks = new List<Task>();

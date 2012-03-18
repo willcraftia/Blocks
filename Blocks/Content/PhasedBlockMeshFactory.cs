@@ -12,23 +12,11 @@ namespace Willcraftia.Xna.Blocks.Content
 {
     public sealed class PhasedBlockMeshFactory
     {
-        enum LoadType
-        {
-            MeshEffect,
-            MeshPart
-        }
-
         struct Item
         {
-            public LoadType LoadType;
-
             public InterBlockMesh InterBlockMesh;
 
             public BlockMesh BlockMesh;
-
-            public int MeshEffectIndex;
-
-            public IBlockEffectFactory BlockEffectFactory;
 
             public int LevelOfDetail;
 
@@ -58,13 +46,12 @@ namespace Willcraftia.Xna.Blocks.Content
             queue = new Queue<Item>(initialCapacity);
         }
 
-        public BlockMesh LoadBlockMesh(GraphicsDevice graphicsDevice, InterBlockMesh interBlockMesh, IBlockEffectFactory blockEffectFactory)
+        public BlockMesh LoadBlockMesh(GraphicsDevice graphicsDevice, InterBlockMesh interBlockMesh)
         {
-            var effectCount = interBlockMesh.Effects.Length;
             var lodCount = interBlockMesh.MeshLods.Length;
 
             var blockMesh = new BlockMesh();
-            blockMesh.AllocateMeshEffects(effectCount);
+            blockMesh.SetMeshMaterials(interBlockMesh.MeshMaterials);
             blockMesh.AllocateMeshLods(lodCount);
 
             for (int lod = 0; lod < lodCount; lod++)
@@ -80,50 +67,24 @@ namespace Willcraftia.Xna.Blocks.Content
                     var interMeshPart = interMeshLod.MeshParts[i];
                     var meshPart = meshLod.MeshParts[i];
 
-                    meshPart.MeshEffect = blockMesh.MeshEffects[interMeshPart.EffectIndex];
+                    meshPart.MeshMaterial = blockMesh.MeshMaterials[interMeshPart.MeshMaterialIndex];
                 }
             }
 
-            Enqueue(interBlockMesh, blockMesh, blockEffectFactory);
+            Enqueue(interBlockMesh, blockMesh);
 
             return blockMesh;
         }
 
-        void Enqueue(InterBlockMesh interBlockMesh, BlockMesh blockMesh, IBlockEffectFactory blockEffectFactory)
+        void Enqueue(InterBlockMesh interBlockMesh, BlockMesh blockMesh)
         {
-            for (int i = 0; i < blockMesh.MeshEffects.Count; i++)
-            {
-                EnqueueLoadMeshEffect(interBlockMesh, blockMesh, i, blockEffectFactory, TimeSpan.FromMilliseconds(100));
-            }
-
-            // 最も荒い LOD からキューに入れます。
+            // 最も荒い LOD から BlockMeshPart のロード要求をキューに入れます。
             for (int lod = blockMesh.MeshLods.Count - 1; 0 <= lod; lod--)
             {
                 for (int i = 0; i < blockMesh.MeshLods[lod].MeshParts.Count; i++)
                 {
-                    EnqueueLoadMeshPart(interBlockMesh, blockMesh, lod, i, TimeSpan.FromMilliseconds(50));
+                    EnqueueLoadMeshPart(interBlockMesh, blockMesh, lod, i, TimeSpan.FromMilliseconds(0));
                 }
-            }
-        }
-
-        void EnqueueLoadMeshEffect(InterBlockMesh interBlockMesh, BlockMesh blockMesh, int effectIndex, IBlockEffectFactory blockEffectFactory, TimeSpan duration)
-        {
-            lock (this)
-            {
-                if (queue.Count == MaxCapacity)
-                    throw new InvalidOperationException("This queue is full.");
-
-                var item = new Item
-                {
-                    LoadType = LoadType.MeshEffect,
-                    InterBlockMesh = interBlockMesh,
-                    BlockMesh = blockMesh,
-                    MeshEffectIndex = effectIndex,
-                    BlockEffectFactory = blockEffectFactory,
-                    Duration = duration
-                };
-
-                queue.Enqueue(item);
             }
         }
 
@@ -136,7 +97,6 @@ namespace Willcraftia.Xna.Blocks.Content
 
                 var item = new Item
                 {
-                    LoadType = LoadType.MeshPart,
                     InterBlockMesh = interBlockMesh,
                     BlockMesh = blockMesh,
                     LevelOfDetail = levelOfDetail,
@@ -153,11 +113,11 @@ namespace Willcraftia.Xna.Blocks.Content
             var time = gameTime.TotalGameTime;
             if (time < lastUpdateTime + delay) return;
 
-            //if (gameTime.IsRunningSlowly)
-            //{
-            //    delay += TimeSpan.FromMilliseconds(100);
-            //    return;
-            //}
+            if (gameTime.IsRunningSlowly)
+            {
+                delay += TimeSpan.FromMilliseconds(100);
+                return;
+            }
 
             Item item;
 
@@ -175,35 +135,6 @@ namespace Willcraftia.Xna.Blocks.Content
         }
 
         void Load(ref Item item)
-        {
-            switch (item.LoadType)
-            {
-                case LoadType.MeshEffect:
-                    LoadMeshEffect(ref item);
-                    break;
-                case LoadType.MeshPart:
-                    LoadMeshPart(ref item);
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
-
-        void LoadMeshEffect(ref Item item)
-        {
-            var interEffect = item.InterBlockMesh.Effects[item.MeshEffectIndex];
-            var effect = item.BlockEffectFactory.CreateBlockEffect();
-
-            effect.DiffuseColor = interEffect.DiffuseColor;
-            effect.EmissiveColor = interEffect.EmissiveColor;
-            effect.SpecularColor = interEffect.SpecularColor;
-            effect.SpecularPower = interEffect.SpecularPower;
-
-            var meshEffect = item.BlockMesh.MeshEffects[item.MeshEffectIndex];
-            meshEffect.PopulateEffect(effect);
-        }
-
-        void LoadMeshPart(ref Item item)
         {
             var meshPart = item.BlockMesh.MeshLods[item.LevelOfDetail].MeshParts[item.MeshPartIndex];
             var interMeshPart = item.InterBlockMesh.MeshLods[item.LevelOfDetail].MeshParts[item.MeshPartIndex];

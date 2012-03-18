@@ -5,13 +5,9 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.Content
+namespace Willcraftia.Xna.Blocks.Graphics
 {
-    /// <summary>
-    /// BlockMesh のエフェクト情報を管理するクラスです。
-    /// このクラスは、CPU 上で情報を管理します。
-    /// </summary>
-    public sealed class InterBlockEffect
+    public sealed class BlockMeshMaterial
     {
         /// <summary>
         /// Diffuse 色。
