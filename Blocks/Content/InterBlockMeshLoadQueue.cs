@@ -15,6 +15,9 @@ namespace Willcraftia.Xna.Blocks.Content
     {
         #region Task
 
+        /// <summary>
+        /// Block のロードから InterBlockMesh の生成までの処理を表す構造体です。
+        /// </summary>
         struct Task
         {
             /// <summary>
