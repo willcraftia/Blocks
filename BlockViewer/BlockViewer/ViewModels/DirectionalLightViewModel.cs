@@ -24,6 +24,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             }
         }
 
+        public bool Enabled
+        {
+            get { return Model.Enabled; }
+            set { Model.Enabled = value; }
+        }
+
         public Vector3 DiffuseColor
         {
             get { return Model.DiffuseColor; }

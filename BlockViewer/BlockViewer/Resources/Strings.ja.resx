@@ -231,4 +231,10 @@
   <data name="StartButton" xml:space="preserve">
     <value>はじめる</value>
   </data>
+  <data name="TurnOffLightButton" xml:space="preserve">
+    <value>ライト を けす</value>
+  </data>
+  <data name="TurnOnLightButton" xml:space="preserve">
+    <value>ライト を つける</value>
+  </data>
 </root>

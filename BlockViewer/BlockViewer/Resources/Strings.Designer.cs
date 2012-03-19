@@ -410,5 +410,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
                 return ResourceManager.GetString("StartButton", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Turn off a light に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TurnOffLightButton {
+            get {
+                return ResourceManager.GetString("TurnOffLightButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Turn on a light に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TurnOnLightButton {
+            get {
+                return ResourceManager.GetString("TurnOnLightButton", resourceCulture);
+            }
+        }
     }
 }

@@ -57,6 +57,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         TextBlock titleTextBlock;
 
+        Button switchLightButton;
+
         LightColorButton diffuseColorButton;
 
         LightColorButton specularColorButton;
@@ -97,6 +99,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var separator = ControlUtil.CreateDefaultSeparator(screen);
             stackPanel.Children.Add(separator);
 
+            switchLightButton = ControlUtil.CreateDefaultDialogButton(screen, "");
+            switchLightButton.Padding = new Thickness(16, 0, 16, 0);
+            switchLightButton.Click += OnSwitchLightButtonClick;
+            stackPanel.Children.Add(switchLightButton);
+
             diffuseColorButton = new LightColorButton(screen);
             diffuseColorButton.NameTextBlock.Text = Strings.DiffuseColorLabel;
             diffuseColorButton.Click += OnDiffuseColorButtonClick;
@@ -125,15 +132,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     throw new InvalidOperationException();
             }
 
+            UpdateSwitchLightButtonText();
+
             var diffuse = ViewModel.DiffuseColor;
             diffuseColorButton.ColorCanvas.BackgroundColor = new Color(diffuse.X, diffuse.Y, diffuse.Z);
 
             var specular = ViewModel.SpecularColor;
             specularColorButton.ColorCanvas.BackgroundColor = new Color(specular.X, specular.Y, specular.Z);
 
-            diffuseColorButton.Focus();
+            switchLightButton.Focus();
 
             base.Show();
+        }
+
+        void OnSwitchLightButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            ViewModel.Enabled = !ViewModel.Enabled;
+
+            UpdateSwitchLightButtonText();
         }
 
         void OnDiffuseColorButtonClick(Control sender, ref RoutedEventContext context)
@@ -144,6 +160,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         void OnSpecularColorButtonClick(Control sender, ref RoutedEventContext context)
         {
             ShowPredefinedColorDialog(PredefinedColorSelectedForSpecular);
+        }
+
+        void UpdateSwitchLightButtonText()
+        {
+            var text = ViewModel.Enabled ? Strings.TurnOffLightButton : Strings.TurnOnLightButton;
+            (switchLightButton.Content as TextBlock).Text = text;
         }
 
         void ShowPredefinedColorDialog(PredefinedColorSelected callback)
