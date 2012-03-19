@@ -131,8 +131,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 SelectStorageIfNeeded();
 
                 InstallDemoModel(
-                    "Content/DemoModels/SimpleBlock.xml",
-                    "Model_SimpleBlock.xml",
+                    "Content/DemoMeshes/SimpleBlock.mesh.xml",
+                    "SimpleBlock.mesh.xml",
                     storageModel.Container);
                 //InstallDemoModel(
                 //    "Content/DemoModels/OctahedronLikeBlock.xml",
@@ -141,9 +141,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
                 for (int i = 0; i < 20; i++)
                 {
-                    var destinationFileName = string.Format("Model_Dummy_{0:d2}.xml", i);
+                    var destinationFileName = string.Format("Dummy_{0:d2}.mesh.xml", i);
                     InstallDemoModel(
-                        "Content/DemoModels/OctahedronLikeBlock.xml",
+                        "Content/DemoMeshes/OctahedronLikeBlock.mesh.xml",
                         destinationFileName,
                         storageModel.Container);
                     //InstallDemoModel(

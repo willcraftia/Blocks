@@ -122,14 +122,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DemoModels\OctahedronLikeBlock.xml">
-      <Name>OctahedronLikeBlock</Name>
+    <None Include="DemoMeshes\OctahedronLikeBlock.mesh.xml">
+      <Name>OctahedronLikeBlock.mesh</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="DemoModels\SimpleBlock.xml">
-      <Name>SimpleBlock</Name>
+    <None Include="DemoMeshes\SimpleBlock.mesh.xml">
+      <Name>SimpleBlock.mesh</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

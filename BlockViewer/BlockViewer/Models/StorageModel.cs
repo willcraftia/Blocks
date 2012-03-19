@@ -47,7 +47,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         {
             EnsureContainer();
 
-            return Container.GetFileNames("Model_*.xml");
+            return Container.GetFileNames("*.mesh.xml");
         }
 
         void EnsureContainer()
