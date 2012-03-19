@@ -15,11 +15,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 {
     public sealed class Workspace : IDisposable
     {
-        InterBlockMeshFactory interBlockMeshFactory;
-
         InterBlockMeshLoadQueue interBlockMeshLoadQueue;
 
-        PhasedBlockMeshFactory phasedBlockMeshFactory;
+        BlockMeshLoadQueue blockMeshLoadQueue;
 
         public Game Game { get; private set; }
 
@@ -42,13 +40,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             GraphicsDevice = game.GraphicsDevice;
 
-            interBlockMeshFactory = new InterBlockMeshFactory(4);
             interBlockMeshLoadQueue = new InterBlockMeshLoadQueue();
-            phasedBlockMeshFactory = new PhasedBlockMeshFactory(100);
+            blockMeshLoadQueue = new BlockMeshLoadQueue(100);
 
             StorageModel = (game as BlockViewerGame).StorageModel;
 
-            Viewer = new Viewer(this, interBlockMeshFactory);
+            Viewer = new Viewer(this);
 
             Preview = new Preview(this);
 
@@ -61,15 +58,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
         public void Update(GameTime gameTime)
         {
             interBlockMeshLoadQueue.Update();
-            phasedBlockMeshFactory.Update(gameTime);
+            blockMeshLoadQueue.Update(gameTime);
         }
 
-        public void LoadInterBlockMeshAsync(InterBlockMeshFactory factory, string name, InterBlockMeshLoadQueueCallback callback)
+        public void LoadInterBlockMeshAsync(string name, int lodCount, InterBlockMeshLoadQueueCallback callback)
         {
             if (StorageModel.BlockLoader == null)
                 throw new InvalidOperationException("No block loader exists.");
 
-            interBlockMeshLoadQueue.Load(StorageModel.BlockLoader, factory, name, callback);
+            interBlockMeshLoadQueue.Load(StorageModel.BlockLoader, name, lodCount, callback);
         }
 
         public void CancelLoadInterBlockMeshAsync(string name)
@@ -79,7 +76,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public BlockMesh LoadBlockMesh(InterBlockMesh interBlockMesh)
         {
-            return phasedBlockMeshFactory.LoadBlockMesh(GraphicsDevice, interBlockMesh);
+            return blockMeshLoadQueue.Load(GraphicsDevice, interBlockMesh);
         }
 
         #region IDisposable

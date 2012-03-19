@@ -18,8 +18,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
     {
         Workspace workspace;
 
-        InterBlockMeshFactory interBlockMeshFactory;
-
         GraphicsDevice graphicsDevice;
 
         ViewMode viewMode;
@@ -60,7 +58,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                             mesh = null;
                         }
 
-                        workspace.LoadInterBlockMeshAsync(interBlockMeshFactory, meshName, InterBlockMeshLoadTaskCallback);
+                        workspace.LoadInterBlockMeshAsync(meshName, 4, InterBlockMeshLoadTaskCallback);
                     }
                     else
                     {
@@ -119,12 +117,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public int LevelOfDetail { get; set; }
 
-        public Viewer(Workspace workspace, InterBlockMeshFactory interBlockMeshFactory)
+        public Viewer(Workspace workspace)
         {
             if (workspace == null) throw new ArgumentNullException("workspace");
-            if (interBlockMeshFactory == null) throw new ArgumentNullException("interBlockMeshFactory");
             this.workspace = workspace;
-            this.interBlockMeshFactory = interBlockMeshFactory;
 
             graphicsDevice = workspace.GraphicsDevice;
 

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Willcraftia.Xna.Blocks.Graphics;
+using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
@@ -10,15 +11,21 @@ namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
     /// ロードした BlockMesh の管理をともなう IBlockMeshLoader の実装クラスです。
+    /// このクラスは、Block のロードから BlockMesh の生成までを一括で行う場合に用います。
     /// このクラスからロードした BlockMesh は、
     /// Unload(BlockMesh) あるいは Unload() の呼び出しで破棄する必要があります。
     /// </summary>
-    public sealed class BlockMeshManager : IBlockMeshLoader, IDisposable
+    public sealed class BlockMeshManager : IDisposable
     {
         /// <summary>
-        /// BlockMesh をロードする IBlockMeshLoader。
+        /// Block をロードするための IBlockLoader。
         /// </summary>
-        IBlockMeshLoader blockMeshLoader;
+        IBlockLoader blockLoader;
+
+        /// <summary>
+        /// 取得した Block から BlockMesh を生成するための BlockMeshFactory。
+        /// </summary>
+        BlockMeshFactory blockMeshFactory;
 
         /// <summary>
         /// ロードした BlockMesh のリスト。
@@ -36,13 +43,18 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        /// <param name="blockMeshLoader">
-        /// BlockMesh をロードする IBlockMeshLoader。
+        /// <param name="blockLoader">
+        /// Block をロードするための IBlockLoader。
         /// </param>
-        public BlockMeshManager(IBlockMeshLoader blockMeshLoader)
+        /// <param name="blockMeshFactory">
+        /// 取得した Block から BlockMesh を生成するための BlockMeshFactory。
+        /// </param>
+        public BlockMeshManager(IBlockLoader blockLoader, BlockMeshFactory blockMeshFactory)
         {
-            if (blockMeshLoader == null) throw new ArgumentNullException("blockMeshLoader");
-            this.blockMeshLoader = blockMeshLoader;
+            if (blockLoader == null) throw new ArgumentNullException("blockLoader");
+            if (blockMeshFactory == null) throw new ArgumentNullException("blockMeshFactory");
+            this.blockLoader = blockLoader;
+            this.blockMeshFactory = blockMeshFactory;
         }
 
         /// <summary>
@@ -50,10 +62,14 @@ namespace Willcraftia.Xna.Blocks.Content
         /// ロードした BlockMesh は BlockMeshManager の管理下に置かれます。
         /// </summary>
         /// <param name="name">BlockMesh を示す名前。</param>
+        /// <param name="lodCount">LOD の数。</param>
         /// <returns>ロードされた BlockMesh。</returns>
-        public BlockMesh LoadBlockMesh(string name)
+        public BlockMesh Load(string name, int lodCount)
         {
-            var mesh = blockMeshLoader.LoadBlockMesh(name);
+            var block = blockLoader.LoadBlock(name);
+            var interMesh = InterBlockMeshFactory.InterBlockMesh(block, lodCount);
+            var mesh = blockMeshFactory.Create(interMesh);
+
             meshes.Add(mesh);
             return mesh;
         }

@@ -20,7 +20,7 @@ namespace Willcraftia.Xna.Blocks.Content
     /// 永続化用データ表現の Block から、
     /// BlockMesh の頂点情報を保持する InterBlockMesh を生成するクラスです。
     /// </summary>
-    public sealed class InterBlockMeshFactory
+    internal static class InterBlockMeshFactory
     {
         #region ResolvedElement
 
@@ -227,19 +227,21 @@ namespace Willcraftia.Xna.Blocks.Content
         #endregion
 
         /// <summary>
-        /// 生成する InterBlockMesh で扱う LOD の数を取得します。
+        /// Block の要素サイズをキーとし、対する CubeSurfaceVertexSource を値とするマップ。
         /// </summary>
-        public int LodCount { get; private set; }
+        static Dictionary<float, CubeSurfaceVertexSource> cubeSurfaceVertexSourceMap;
 
         /// <summary>
-        /// インスタンスを生成します。
+        /// クラスを初期化します。
         /// </summary>
-        /// <param name="lodCount">LOD の数。</param>
-        public InterBlockMeshFactory(int lodCount)
+        static InterBlockMeshFactory()
         {
-            if (lodCount < 1 || InterBlock.MaxLodCount < lodCount)
-                throw new ArgumentOutOfRangeException("lodCount");
-            LodCount = lodCount;
+            cubeSurfaceVertexSourceMap = new Dictionary<float, CubeSurfaceVertexSource>(4);
+
+            RegisterCubeSurfaceVertexSource(InterBlock.MaxLodElementSize);
+            RegisterCubeSurfaceVertexSource(InterBlock.MaxLodElementSize * 2);
+            RegisterCubeSurfaceVertexSource(InterBlock.MaxLodElementSize * 2 * 2);
+            RegisterCubeSurfaceVertexSource(InterBlock.MaxLodElementSize * 2 * 2 * 2);
         }
 
         /// <summary>
@@ -248,13 +250,26 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="block">Block。</param>
         /// <param name="lodSize">LOD のサイズ。</param>
         /// <returns>生成された InterBlockMesh。</returns>
-        public InterBlockMesh Create(Block block)
+        public static InterBlockMesh InterBlockMesh(Block block, int lodCount)
         {
+            if (block == null) throw new ArgumentNullException("block");
+            if (lodCount < 1 || InterBlock.MaxLodCount < lodCount)
+                throw new ArgumentOutOfRangeException("lodCount");
+
             // 中間データを作成します。
-            var interBlocks = InterBlock.CreateInterBlock(block, LodCount);
+            var interBlocks = InterBlock.CreateInterBlock(block, lodCount);
 
             // 中間データから InterBlockMesh を作成します。
-            return CreateInterBlockMesh(interBlocks);
+            return Create(interBlocks);
+        }
+
+        /// <summary>
+        /// 指定の Block の要素サイズについての CubeSurfaceVertexSource を生成して登録します。
+        /// </summary>
+        /// <param name="elementSize"></param>
+        static void RegisterCubeSurfaceVertexSource(float elementSize)
+        {
+            cubeSurfaceVertexSourceMap[elementSize] = new CubeSurfaceVertexSource(elementSize);
         }
 
         /// <summary>
@@ -262,7 +277,7 @@ namespace Willcraftia.Xna.Blocks.Content
         /// </summary>
         /// <param name="lodBlocks">各 LOD の InterBlock を要素とした配列。</param>
         /// <returns>生成された BlockMesh。</returns>
-        InterBlockMesh CreateInterBlockMesh(InterBlock[] lodBlocks)
+        static InterBlockMesh Create(InterBlock[] lodBlocks)
         {
             // InterBlockMesh を生成します。
             var mesh = new InterBlockMesh();
@@ -306,7 +321,7 @@ namespace Willcraftia.Xna.Blocks.Content
                 // Element を分類します。
                 var elementClassifier = ElementClassifier.Classify(block.Elements);
 
-                var cubeSurfaceVS = new CubeSurfaceVertexSource(block.ElementSize);
+                var cubeSurfaceVS = cubeSurfaceVertexSourceMap[block.ElementSize];
 
                 int meshPartCount = elementClassifier.Parts.Count;
                 var meshLod = new InterBlockMeshLod
@@ -344,7 +359,7 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="part">Part。</param>
         /// <param name="cubeSurfaceVS">立方体の面の頂点データを提供する VertexSource。</param>
         /// <param name="elementSize">Element のサイズ。</param>
-        void MakeMeshPartVertexSource(
+        static void MakeMeshPartVertexSource(
             MeshPartVertexSource meshPartVS, Part part, CubeSurfaceVertexSource cubeSurfaceVS, float elementSize)
         {
             // Block は最小位置を原点とするモデルであり、一方、立方体の VertexSource は立方体の中心が原点にあるため、
@@ -387,7 +402,7 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="transform">
         /// 頂点の設定前に適用する変換行列。
         /// </param>
-        void AddSurfaceVertices(MeshPartVertexSource meshPartVS, SurfaceVertexSource surfaceVS, ref Matrix transform)
+        static void AddSurfaceVertices(MeshPartVertexSource meshPartVS, SurfaceVertexSource surfaceVS, ref Matrix transform)
         {
             var startIndex = meshPartVS.Vertices.Count;
             var vertexSource = surfaceVS;

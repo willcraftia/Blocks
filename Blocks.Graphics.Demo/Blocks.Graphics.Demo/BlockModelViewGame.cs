@@ -552,10 +552,8 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         {
             var blockLoader = new StringBlockLoader(blockData);
 
-            var interMeshFactory = new InterBlockMeshFactory(lodCount);
             var meshFactory = new BlockMeshFactory(GraphicsDevice);
-            var meshLoader = new DefaultBlockMeshLoader(blockLoader, interMeshFactory, meshFactory);
-            meshManager = new BlockMeshManager(meshLoader);
+            meshManager = new BlockMeshManager(blockLoader, meshFactory);
 
             // 通常の IBlockEffect をロードします。
             blockEffect = new BasicBlockEffect(GraphicsDevice);
@@ -568,7 +566,7 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
 
             // 実際のアプリケーションではファイルの Block から BlockMesh をロードします。
             // BlockMesh をロードします。
-            mesh = meshManager.LoadBlockMesh("Dummy");
+            mesh = meshManager.Load("Dummy", lodCount);
         }
 
         /// <summary>

@@ -9,16 +9,25 @@ using Willcraftia.Xna.Blocks.Serialization;
 
 namespace Willcraftia.Xna.Blocks.Content
 {
+    /// <summary>
+    /// InterBlockMesh のロード完了で呼び出されるコールバック メソッドを定義します。
+    /// </summary>
+    /// <param name="name">ロードされた Block の名前。</param>
+    /// <param name="result">ロードされた InterBlockMesh。</param>
     public delegate void InterBlockMeshLoadQueueCallback(string name, InterBlockMesh result);
 
+    /// <summary>
+    /// InterBlockMesh のロード要求をキューで管理し、
+    /// それらに Thread を割り当てて並列処理するクラスです。
+    /// </summary>
     public sealed class InterBlockMeshLoadQueue
     {
-        #region Task
+        #region Item
 
         /// <summary>
         /// Block のロードから InterBlockMesh の生成までの処理を表す構造体です。
         /// </summary>
-        struct Task
+        struct Item
         {
             /// <summary>
             /// Block のロードに使用する IBlockLoader。
@@ -26,14 +35,14 @@ namespace Willcraftia.Xna.Blocks.Content
             public IBlockLoader Loader;
 
             /// <summary>
-            /// InterBlockMesh の生成に使用する InterBlockMeshFactory。
-            /// </summary>
-            public InterBlockMeshFactory Factory;
-
-            /// <summary>
             /// ロードする Block の名前。
             /// </summary>
             public string Name;
+
+            /// <summary>
+            /// 生成する LOD の数。
+            /// </summary>
+            public int LodCount;
 
             /// <summary>
             /// InterBlockMesh のロード完了で呼び出されるコールバック メソッド。
@@ -47,19 +56,19 @@ namespace Willcraftia.Xna.Blocks.Content
             public void Execute()
             {
                 var block = Loader.LoadBlock(Name);
-                var interBlockMesh = Factory.Create(block);
+                var interBlockMesh = InterBlockMeshFactory.InterBlockMesh(block, LodCount);
                 Callback(Name, interBlockMesh);
             }
         }
 
         #endregion
 
-        #region TaskInThread
+        #region ItemInThread
 
         /// <summary>
-        /// Thread で処理する Task を管理するクラスです。
+        /// Thread で処理する Item を管理するクラスです。
         /// </summary>
-        class TaskInThread
+        class ItemInThread
         {
             /// <summary>
             /// true (Thread に割り当てられている場合)、false (それ以外の場合)。
@@ -67,9 +76,9 @@ namespace Willcraftia.Xna.Blocks.Content
             public bool Busy;
 
             /// <summary>
-            /// Thread で処理する Task。
+            /// Thread で処理する Item。
             /// </summary>
-            public Task Task;
+            public Item Item;
         }
 
         #endregion
@@ -90,23 +99,20 @@ namespace Willcraftia.Xna.Blocks.Content
         int threadCount;
 
         /// <summary>
-        /// Task のリスト。
+        /// Item のリスト。
         /// キューとしては効率が悪いですが、取り消し要求を考慮してリストで管理します。
         /// </summary>
-        List<Task> tasks;
+        List<Item> queue;
 
         /// <summary>
-        /// Thread に割り当てる TaskInThread の配列。
+        /// Thread に割り当てる ItemInThread の配列。
         /// </summary>
-        TaskInThread[] taskInThreads;
+        ItemInThread[] itemInThreads;
 
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
-        public InterBlockMeshLoadQueue()
-            : this(maxThreadCount)
-        {
-        }
+        public InterBlockMeshLoadQueue() : this(maxThreadCount) { }
 
         /// <summary>
         /// インスタンスを生成します。
@@ -118,27 +124,33 @@ namespace Willcraftia.Xna.Blocks.Content
                 throw new ArgumentOutOfRangeException("threadCount");
             this.threadCount = threadCount;
 
-            tasks = new List<Task>();
-            taskInThreads = new TaskInThread[threadCount];
-            for (int i = 0; i < threadCount; i++) taskInThreads[i] = new TaskInThread();
+            queue = new List<Item>();
+            itemInThreads = new ItemInThread[threadCount];
+            for (int i = 0; i < threadCount; i++) itemInThreads[i] = new ItemInThread();
         }
 
-        public void Load(IBlockLoader loader, InterBlockMeshFactory factory, string name, InterBlockMeshLoadQueueCallback callback)
+        /// <summary>
+        /// InterBlockMesh のロード要求をキューへ追加します。
+        /// </summary>
+        /// <param name="loader">Block のロードに使用する IBlockLoader。</param>
+        /// <param name="name">ロードする Block の名前。</param>
+        /// <param name="lodCount">生成する LOD の数。</param>
+        /// <param name="callback">InterBlockMesh のロード完了で呼び出されるコールバック メソッド。</param>
+        public void Load(IBlockLoader loader, string name, int lodCount, InterBlockMeshLoadQueueCallback callback)
         {
             if (loader == null) throw new ArgumentNullException("loader");
-            if (factory == null) throw new ArgumentNullException("factory");
             if (name == null) throw new ArgumentNullException("name");
             if (callback == null) throw new ArgumentNullException("callback");
 
-            var task = new Task
+            var item = new Item
             {
                 Loader = loader,
-                Factory = factory,
                 Name = name,
+                LodCount = lodCount,
                 Callback = callback
             };
 
-            tasks.Add(task);
+            queue.Add(item);
         }
 
         //
@@ -148,13 +160,19 @@ namespace Willcraftia.Xna.Blocks.Content
         // threadCount = 1 では主に発生。
         //
 
+        /// <summary>
+        /// 指定の名前についての InterBlockMesh のロード要求を取り消します。
+        /// ただし、取り消しの対象は、またキューに存在するロード要求のみです。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool Cancel(string name)
         {
-            for (int i = 0; i < tasks.Count; i++)
+            for (int i = 0; i < queue.Count; i++)
             {
-                if (tasks[i].Name == name)
+                if (queue[i].Name == name)
                 {
-                    tasks.RemoveAt(i);
+                    queue.RemoveAt(i);
                     return true;
                 }
             }
@@ -162,33 +180,36 @@ namespace Willcraftia.Xna.Blocks.Content
             return false;
         }
 
+        /// <summary>
+        /// InterBlockMesh のロード要求をキューから取り出し、
+        /// Thread を割り当てて実行します。
+        /// Thread の割り当ては、コンストラクタで指定された threadCount を上限とします。
+        /// また、メソッドの呼び出しごとに割り当てられる Thread は 1 つです。
+        /// </summary>
         public void Update()
         {
-            if (tasks.Count == 0) return;
+            if (queue.Count == 0) return;
 
-            // シンプルに処理するために、
-            // 1 つの Task だけを取り出して Thread を割り当てます。
+            var item = queue[0];
+            queue.RemoveAt(0);
 
-            var task = tasks[0];
-            tasks.RemoveAt(0);
-
-            TaskInThread taskInThread = null;
+            ItemInThread itemInThread = null;
             lock (syncRoot)
             {
                 for (int i = 0; i < threadCount; i++)
                 {
-                    if (!taskInThreads[i].Busy)
+                    if (!itemInThreads[i].Busy)
                     {
-                        taskInThread = taskInThreads[i];
-                        taskInThread.Busy = true;
-                        taskInThread.Task = task;
+                        itemInThread = itemInThreads[i];
+                        itemInThread.Busy = true;
+                        itemInThread.Item = item;
                         break;
                     }
                 }
             }
 
-            if (taskInThread == null) return;
-            ThreadPool.QueueUserWorkItem(WaitCallback, taskInThread);
+            if (itemInThread == null) return;
+            ThreadPool.QueueUserWorkItem(WaitCallback, itemInThread);
         }
 
         /// <summary>
@@ -197,12 +218,12 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="state">Task。</param>
         void WaitCallback(object state)
         {
-            var taskInThread = (TaskInThread) state;
-            taskInThread.Task.Execute();
+            var itemInThread = (ItemInThread) state;
+            itemInThread.Item.Execute();
 
             lock (syncRoot)
             {
-                taskInThread.Busy = false;
+                itemInThread.Busy = false;
             }
         }
     }

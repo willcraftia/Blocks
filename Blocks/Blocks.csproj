@@ -92,10 +92,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content\AsyncBlockMeshLoadManager.cs" />
-    <Compile Include="Content\PhasedBlockMeshFactory.cs" />
+    <Compile Include="Content\BlockMeshLoadQueue.cs" />
     <Compile Include="Content\InterBlockMesh.cs" />
-    <Compile Include="Content\IAsyncBlockMeshLoadService.cs" />
     <Compile Include="Content\InterBlockMeshFactory.cs" />
     <Compile Include="Content\InterBlockMeshLoadQueue.cs" />
     <Compile Include="Content\InterBlockMeshLod.cs" />
@@ -103,10 +101,8 @@
     <Compile Include="Graphics\BlockMeshLod.cs" />
     <Compile Include="Graphics\BlockMeshMaterial.cs" />
     <Compile Include="Serialization\BlockLoaderBase.cs" />
-    <Compile Include="Content\DefaultBlockMeshLoader.cs" />
     <Compile Include="Content\BlockMeshManager.cs" />
     <Compile Include="Serialization\IBlockLoader.cs" />
-    <Compile Include="Content\IBlockMeshLoader.cs" />
     <Compile Include="Graphics\BasicBlockEffect.cs" />
     <Compile Include="Graphics\GridBlockMesh.cs" />
     <Compile Include="Graphics\IBlockEffect.cs" />

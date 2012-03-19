@@ -15,8 +15,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
     {
         Workspace workspace;
 
-        InterBlockMeshFactory interBlockMeshFactory;
-
         List<Viewer> viewers = new List<Viewer>();
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -30,14 +28,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
             GraphicsDevice = workspace.GraphicsDevice;
 
-            interBlockMeshFactory = new InterBlockMeshFactory(4);
-
             StorageModel = workspace.StorageModel;
         }
 
         public Viewer CreateViewer()
         {
-            var viewer = new Viewer(workspace, interBlockMeshFactory);
+            var viewer = new Viewer(workspace);
             viewers.Add(viewer);
             return viewer;
         }
