@@ -79,6 +79,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             return blockMeshLoadQueue.Load(GraphicsDevice, interBlockMesh);
         }
 
+        public void CancelLoadBlockMesh(BlockMesh blockMesh)
+        {
+            blockMeshLoadQueue.Cancel(blockMesh);
+        }
+
         #region IDisposable
 
         public void Dispose()

@@ -43,9 +43,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                 {
                     if (meshName == value) return;
 
-                    if (meshName != null && mesh == null)
+                    if (meshName != null)
                     {
-                        workspace.CancelLoadInterBlockMeshAsync(meshName);
+                        if (mesh == null)
+                        {
+                            workspace.CancelLoadInterBlockMeshAsync(meshName);
+                        }
+                        else
+                        {
+                            workspace.CancelLoadBlockMesh(mesh);
+                        }
                     }
 
                     meshName = value;

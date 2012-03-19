@@ -41,8 +41,6 @@ namespace Willcraftia.Xna.Blocks.Content
             /// このロード要求で対象とする BlockMeshPart のインデックス。
             /// </summary>
             public int MeshPartIndex;
-
-            public bool Canceled;
         }
 
         #endregion
@@ -50,7 +48,7 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <summary>
         /// Item のキュー。
         /// </summary>
-        Queue<Item> queue;
+        List<Item> queue;
 
         /// <summary>
         /// 次の Item を処理するまでの待機時間。
@@ -85,7 +83,7 @@ namespace Willcraftia.Xna.Blocks.Content
         public BlockMeshLoadQueue(int initialCapacity, int maxCapacity)
         {
             MaxCapacity = maxCapacity;
-            queue = new Queue<Item>(initialCapacity);
+            queue = new List<Item>(initialCapacity);
         }
 
         /// <summary>
@@ -105,6 +103,11 @@ namespace Willcraftia.Xna.Blocks.Content
 
             // 分割ロード対応の BlockMesh を要求元へ返します。
             return blockMesh;
+        }
+
+        public void Cancel(BlockMesh blockMesh)
+        {
+            queue.RemoveAll((i) => i.BlockMesh == blockMesh);
         }
 
         /// <summary>
@@ -177,7 +180,7 @@ namespace Willcraftia.Xna.Blocks.Content
                     MeshPartIndex = meshPartIndex
                 };
 
-                queue.Enqueue(item);
+                queue.Add(item);
             }
         }
 
@@ -203,7 +206,8 @@ namespace Willcraftia.Xna.Blocks.Content
             {
                 if (queue.Count == 0) return;
 
-                item = queue.Dequeue();
+                item = queue[0];
+                queue.RemoveAt(0);
             }
 
             // ロード要求を処理します。
