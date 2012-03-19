@@ -33,13 +33,14 @@ namespace Willcraftia.Xna.Blocks.Content
             public BlockMesh BlockMesh;
 
             /// <summary>
-            /// このロード要求で対象とする
+            /// このロード要求で対象とする LOD。
             /// </summary>
             public int LevelOfDetail;
 
+            /// <summary>
+            /// このロード要求で対象とする BlockMeshPart のインデックス。
+            /// </summary>
             public int MeshPartIndex;
-
-            public TimeSpan Duration;
 
             public bool Canceled;
         }
@@ -99,12 +100,8 @@ namespace Willcraftia.Xna.Blocks.Content
             var blockMesh = CreatePhasedBlockMesh(graphicsDevice, interBlockMesh);
 
             // ロード要求をキューに追加します。
-            Enqueue(interBlockMesh, blockMesh);
-            //var coarsestLod = blockMesh.MeshLods.Count - 1;
-            //for (int i = 0; i < blockMesh.MeshLods[coarsestLod].MeshParts.Count; i++)
-            //{
-            //    Enqueue(interBlockMesh, blockMesh, coarsestLod, i, TimeSpan.FromMilliseconds(0));
-            //}
+            var coarsestLod = blockMesh.MeshLods.Count - 1;
+            Enqueue(interBlockMesh, blockMesh, coarsestLod);
 
             // 分割ロード対応の BlockMesh を要求元へ返します。
             return blockMesh;
@@ -145,23 +142,27 @@ namespace Willcraftia.Xna.Blocks.Content
         }
 
         /// <summary>
-        /// 分割ロード要求をキューへ追加します。
+        /// 指定の LOD についての分割ロード要求をキューへ追加します。
         /// </summary>
         /// <param name="interBlockMesh">BlockMesh のロード元となる InterBlockMesh。</param>
         /// <param name="blockMesh">分割ロード対応の BlockMesh。</param>
-        void Enqueue(InterBlockMesh interBlockMesh, BlockMesh blockMesh)
+        /// <param name="levelOfDetail">対象とする LOD。</param>
+        void Enqueue(InterBlockMesh interBlockMesh, BlockMesh blockMesh, int levelOfDetail)
         {
-            // 最も粗い LOD から BlockMeshPart のロード要求をキューに入れます。
-            for (int lod = blockMesh.MeshLods.Count - 1; 0 <= lod; lod--)
+            for (int i = 0; i < blockMesh.MeshLods[levelOfDetail].MeshParts.Count; i++)
             {
-                for (int i = 0; i < blockMesh.MeshLods[lod].MeshParts.Count; i++)
-                {
-                    Enqueue(interBlockMesh, blockMesh, lod, i, TimeSpan.FromMilliseconds(0));
-                }
+                Enqueue(interBlockMesh, blockMesh, levelOfDetail, i);
             }
         }
 
-        void Enqueue(InterBlockMesh interBlockMesh, BlockMesh blockMesh, int levelOfDetail, int meshPartIndex, TimeSpan duration)
+        /// <summary>
+        /// 指定の BlockMeshPart のロード要求をキューへ追加します。
+        /// </summary>
+        /// <param name="interBlockMesh">BlockMesh のロード元となる InterBlockMesh。</param>
+        /// <param name="blockMesh">分割ロード対応の BlockMesh。</param>
+        /// <param name="levelOfDetail">対象とする LOD。</param>
+        /// <param name="meshPartIndex">対象とする BlockMeshPart のインデックス。</param>
+        void Enqueue(InterBlockMesh interBlockMesh, BlockMesh blockMesh, int levelOfDetail, int meshPartIndex)
         {
             lock (this)
             {
@@ -173,27 +174,31 @@ namespace Willcraftia.Xna.Blocks.Content
                     InterBlockMesh = interBlockMesh,
                     BlockMesh = blockMesh,
                     LevelOfDetail = levelOfDetail,
-                    MeshPartIndex = meshPartIndex,
-                    Duration = duration
+                    MeshPartIndex = meshPartIndex
                 };
 
                 queue.Enqueue(item);
             }
         }
 
+        /// <summary>
+        /// キューに追加されたロード要求を処理します。
+        /// </summary>
+        /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
             var time = gameTime.TotalGameTime;
             if (time < lastUpdateTime + delay) return;
 
+            // 更新遅延が発生しているならば、待機時間を延長させます。
             if (gameTime.IsRunningSlowly)
             {
                 delay += TimeSpan.FromMilliseconds(100);
                 return;
             }
 
+            // キューからロード要求を取り出します。
             Item item;
-
             lock (this)
             {
                 if (queue.Count == 0) return;
@@ -201,12 +206,17 @@ namespace Willcraftia.Xna.Blocks.Content
                 item = queue.Dequeue();
             }
 
+            // ロード要求を処理します。
             Load(ref item);
 
-            delay = item.Duration;
+            delay = TimeSpan.Zero;
             lastUpdateTime = time;
         }
 
+        /// <summary>
+        /// BlockMeshPart をロードします。
+        /// </summary>
+        /// <param name="item">ロード要求。</param>
         void Load(ref Item item)
         {
             var meshPart = item.BlockMesh.MeshLods[item.LevelOfDetail].MeshParts[item.MeshPartIndex];
@@ -214,6 +224,13 @@ namespace Willcraftia.Xna.Blocks.Content
 
             meshPart.PopulateVertices(interMeshPart.Vertices);
             meshPart.PopulateIndices(interMeshPart.Indices);
+
+            // 最大 LOD ではないならば、上位 LOD のロード要求をキューへ追加します。
+            if (0 < item.LevelOfDetail && item.BlockMesh.MeshLods[item.LevelOfDetail].IsLoaded)
+            {
+                var finerLod = item.LevelOfDetail - 1;
+                Enqueue(item.InterBlockMesh, item.BlockMesh, finerLod);
+            }
         }
     }
 }
