@@ -9,13 +9,6 @@ using Willcraftia.Xna.Blocks.Serialization;
 
 namespace Willcraftia.Xna.Blocks.Content
 {
-    //
-    // TODO
-    //
-    // ThreadPool では WaitCallback の引数が object であることから、
-    // 内部で boxing が行われているはず。
-    //
-
     public delegate void InterBlockMeshLoadQueueCallback(string name, InterBlockMesh result);
 
     public sealed class InterBlockMeshLoadQueue
@@ -58,22 +51,64 @@ namespace Willcraftia.Xna.Blocks.Content
 
         #endregion
 
+        #region TaskInThread
+
+        /// <summary>
+        /// Thread で処理する Task を管理するクラスです。
+        /// </summary>
+        class TaskInThread
+        {
+            /// <summary>
+            /// true (Thread に割り当てられている場合)、false (それ以外の場合)。
+            /// </summary>
+            public bool Busy;
+
+            /// <summary>
+            /// Thread で処理する Task。
+            /// </summary>
+            public Task Task;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 利用できる Thread の上限。
+        /// </summary>
         const int maxThreadCount = 5;
 
+        /// <summary>
+        /// 同期のためのオブジェクト。
+        /// </summary>
         readonly object syncRoot = new object();
 
+        /// <summary>
+        /// 使用する Thread の上限。
+        /// </summary>
         int threadCount;
 
-        int threadUseCount;
-
-        // キューとしては効率が悪いですが、取り消し要求を考慮してリストで管理します。
+        /// <summary>
+        /// Task のリスト。
+        /// キューとしては効率が悪いですが、取り消し要求を考慮してリストで管理します。
+        /// </summary>
         List<Task> tasks;
 
+        /// <summary>
+        /// Thread に割り当てる TaskInThread の配列。
+        /// </summary>
+        TaskInThread[] taskInThreads;
+
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
         public InterBlockMeshLoadQueue()
             : this(maxThreadCount)
         {
         }
 
+        /// <summary>
+        /// インスタンスを生成します。
+        /// </summary>
+        /// <param name="threadCount"></param>
         public InterBlockMeshLoadQueue(int threadCount)
         {
             if (threadCount < 1 || maxThreadCount < threadCount)
@@ -81,6 +116,8 @@ namespace Willcraftia.Xna.Blocks.Content
             this.threadCount = threadCount;
 
             tasks = new List<Task>();
+            taskInThreads = new TaskInThread[threadCount];
+            for (int i = 0; i < threadCount; i++) taskInThreads[i] = new TaskInThread();
         }
 
         public void Load(IBlockLoader loader, InterBlockMeshFactory factory, string name, InterBlockMeshLoadQueueCallback callback)
@@ -88,6 +125,7 @@ namespace Willcraftia.Xna.Blocks.Content
             if (loader == null) throw new ArgumentNullException("loader");
             if (factory == null) throw new ArgumentNullException("factory");
             if (name == null) throw new ArgumentNullException("name");
+            if (callback == null) throw new ArgumentNullException("callback");
 
             var task = new Task
             {
@@ -128,17 +166,26 @@ namespace Willcraftia.Xna.Blocks.Content
             // シンプルに処理するために、
             // 1 つの Task だけを取り出して Thread を割り当てます。
 
+            var task = tasks[0];
+            tasks.RemoveAt(0);
+
+            TaskInThread taskInThread = null;
             lock (syncRoot)
             {
-                if (threadUseCount < threadCount)
+                for (int i = 0; i < threadCount; i++)
                 {
-                    var task = tasks[0];
-                    tasks.RemoveAt(0);
-
-                    threadUseCount++;
-                    ThreadPool.QueueUserWorkItem(WaitCallback, task);
+                    if (!taskInThreads[i].Busy)
+                    {
+                        taskInThread = taskInThreads[i];
+                        taskInThread.Busy = true;
+                        taskInThread.Task = task;
+                        break;
+                    }
                 }
             }
+
+            if (taskInThread == null) return;
+            ThreadPool.QueueUserWorkItem(WaitCallback, taskInThread);
         }
 
         /// <summary>
@@ -147,12 +194,12 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="state">Task。</param>
         void WaitCallback(object state)
         {
-            var task = (Task) state;
-            task.Execute();
+            var taskInThread = (TaskInThread) state;
+            taskInThread.Task.Execute();
 
             lock (syncRoot)
             {
-                threadUseCount--;
+                taskInThread.Busy = false;
             }
         }
     }
