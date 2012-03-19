@@ -58,11 +58,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             DirectionalLightViewModel = new DirectionalLightViewModel(viewer);
         }
 
-        //public void LoadBlockMesh(string name)
-        //{
-        //    viewer.LoadBlockMesh(name);
-        //}
-
         public void MoveView(Vector2 angleSign)
         {
             viewer.MoveView(angleSign);
@@ -73,6 +68,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             viewer.GridVisible = GridVisible;
             viewer.LevelOfDetail = LevelOfDetail;
             viewer.Draw();
+        }
+
+        public void UnloadMesh()
+        {
+            viewer.MeshName = null;
         }
     }
 }

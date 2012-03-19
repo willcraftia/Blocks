@@ -52,6 +52,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
                         else
                         {
                             workspace.CancelLoadBlockMesh(mesh);
+
+                            mesh.Dispose();
+                            mesh = null;
                         }
                     }
 
@@ -59,17 +62,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
                     if (meshName != null)
                     {
-                        if (mesh != null)
-                        {
-                            mesh.Dispose();
-                            mesh = null;
-                        }
-
                         workspace.LoadInterBlockMeshAsync(meshName, 4, InterBlockMeshLoadTaskCallback);
-                    }
-                    else
-                    {
-                        mesh = null;
                     }
                 }
             }

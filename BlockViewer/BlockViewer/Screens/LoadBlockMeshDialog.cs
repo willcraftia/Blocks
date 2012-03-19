@@ -28,14 +28,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 : base(screen)
             {
                 Padding = new Thickness(8);
+                HorizontalAlignment = HorizontalAlignment.Stretch;
 
-                var stackPanel = new StackPanel(screen);
+                var stackPanel = new StackPanel(screen)
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch
+                };
                 Content = stackPanel;
 
                 blockMeshView = new BlockMeshView(screen)
                 {
-                    Width = 48,
-                    Height = 48
+                    Width = 64,
+                    Height = 64
                 };
                 stackPanel.Children.Add(blockMeshView);
 
@@ -67,7 +71,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         TextBlock pageTextBlock;
 
-        FileButton[] fileButtons = new FileButton[5];
+        FileButton[] fileButtons = new FileButton[4];
 
         Button cancelButton;
 
@@ -209,6 +213,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Close()
         {
+            ViewModel.UnloadMeshes();
+
             // Close 処理はまだ呼び出さずに closeAnimation を実行します。
             closeAnimation.Enabled = true;
         }

@@ -55,6 +55,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             InitializeViewerViewModels();
         }
 
+        public void UnloadMeshes()
+        {
+            foreach (var viewerViewModel in viewerViewModels)
+            {
+                viewerViewModel.UnloadMesh();
+            }
+        }
+
         public ViewerViewModel GetViewerViewModel(int indexInPage)
         {
             return viewerViewModels[indexInPage];
