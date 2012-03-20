@@ -25,7 +25,7 @@ Blocks プロジェクト開発で利用するライブラリです。
 
 [Blocks.Graphics.Demo]
 
-Blocks モデルのテストのためのデモ アプリケーションです。
+Blocks モデルの負荷テストのためのデモ アプリケーションです。
 ※Windows XNA アプリケーション。
 
 [Blocks.Serialization.Demo]
