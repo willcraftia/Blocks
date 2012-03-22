@@ -1,43 +1,59 @@
 ===============================================================================
-Blocks �v���W�F�N�g
+Blocks プロジェクト
 ===============================================================================
 
 [Framework]
 
-XNA �S�ʂ̊J���ŗ��p���郉�C�u�����ł��B
+XNA 全般の開発で利用するライブラリです。
 
 [Framework.Content.Pipeline]
 
-XNA �S�ʂ̊J���ŗ��p���� Content Pipile �p���C�u�����ł��B
+XNA 全般の開発で利用する Content Pipile 用ライブラリです。
 
 [Framework.UI]
 
-XNA ��ŉғ����� Window �V�X�e���̃��C�u�����ł��B
+XNA 上で稼働する Window システムのライブラリです。
 
 [Framework.UI.Demo]
 
-Framework.UI �̃e�X�g�̂��߂̃f�� �A�v���P�[�V�����ł��B
-��Windows XNA �A�v���P�[�V�����B
+Framework.UI のテストのためのデモ アプリケーションです。
+※Windows XNA アプリケーション。
 
 [Blocks]
 
-Blocks �v���W�F�N�g�J���ŗ��p���郉�C�u�����ł��B
+Blocks プロジェクト開発で利用するライブラリです。
 
 [Blocks.Graphics.Demo]
 
-Blocks ���f���̕��׃e�X�g�̂��߂̃f�� �A�v���P�[�V�����ł��B
-��Windows XNA �A�v���P�[�V�����B
+Blocks モデルの負荷テストのためのデモ アプリケーションです。
+※Windows XNA アプリケーション。
 
 [Blocks.Serialization.Demo]
 
-Blocks �f�[�^�i�����̃e�X�g�̂��߂̃f�� �A�v���P�[�V�����ł��B
-��Windows �A�v���P�[�V�����B
+Blocks データ永続化のテストのためのデモ アプリケーションです。
+※Windows アプリケーション。
 
 [BlockViewer]
 
-Blocks ���f���̃r���[���ł��B
+Blocks モデルのビューワです。
+※Windows XNA アプリケーション。
 
 [BlockEditor]
 
-Blocks �f�[�^�̃G�f�B�^�ł��B
+Blocks データのエディタです。
+
+[Net.Box]
+
+Box (http://www.box.com) の REST API を用いるためのライブラリです。
+※Windows ライブラリ。
+
+[Net.Box.BuildApiKey]
+
+Box の API Key を埋め込んだ DLL をビルドするコンソール アプリケーションです。
+※Windows アプリケーション。
+
+[Net.Box.Demo]
+
+Net.Box ライブラリのデモ アプリケーションです。
+※Windows アプリケーション。
 
