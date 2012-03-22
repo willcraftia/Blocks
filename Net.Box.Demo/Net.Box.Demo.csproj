@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C56C5ACC-A154-4B5E-9611-A72301681492}</ProjectGuid>
+    <ProjectGuid>{151B3458-16C9-4F7A-A78B-273564E5FC98}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Willcraftia.Xna.Blocks.Serialization.Demo</RootNamespace>
-    <AssemblyName>Willcraftia.Xna.Blocks.Serialization.Demo</AssemblyName>
+    <RootNamespace>Willcraftia.Net.Box.Demo</RootNamespace>
+    <AssemblyName>Willcraftia.Net.Box.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -34,31 +34,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Willcraftia.Net.Box.Demo.ApiKey">
+      <HintPath>..\BuildApiKey\bin\Debug\Willcraftia.Net.Box.Demo.ApiKey.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blocks\Blocks.csproj">
-      <Project>{AF33ACD1-05BE-478C-80E3-3566B0569700}</Project>
-      <Name>Blocks</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Framework\Framework.csproj">
-      <Project>{FA23868B-0454-4B81-B5AA-F270F987ECC7}</Project>
-      <Name>Framework</Name>
+    <ProjectReference Include="..\Net.Box\Net.Box.csproj">
+      <Project>{E53FFAC9-D6EC-46AB-A173-A79085A678F6}</Project>
+      <Name>Net.Box</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
