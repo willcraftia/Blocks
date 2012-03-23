@@ -38,19 +38,37 @@ namespace Willcraftia.Net.Box.Service
             return CreateFolderFunction.Execute(boxManager.ApiKey, boxManager.AuthToken, parentId, name, share);
         }
 
+        public DeleteResult DeleteFolder(long folderId)
+        {
+            EnsureValidSession();
+            return DeleteFunction.Execute(boxManager.ApiKey, boxManager.AuthToken, Target.Folder, folderId);
+        }
+
+        public DeleteResult DeleteFile(long fileId)
+        {
+            EnsureValidSession();
+            return DeleteFunction.Execute(boxManager.ApiKey, boxManager.AuthToken, Target.File, fileId);
+        }
+
         public UploadResult Upload(long folderId, UploadFile[] files, bool share, string message, string[] emails)
         {
             EnsureValidSession();
             return UploadFunction.Execute(boxManager.AuthToken, folderId, files, share, message, emails);
         }
 
-        public InviteCollaboratorsResult InviteCollaborators(Target target, long targetId,
+        public UploadResult Overwrite(long fileId, UploadFile file, bool share, string message, string[] emails)
+        {
+            EnsureValidSession();
+            return OverwriteFunction.Execute(boxManager.AuthToken, fileId, file, share, message, emails);
+        }
+
+        public InviteCollaboratorsResult InviteCollaboratorsToFolder(long folderId,
             long[] userIds, string[] emails, Role itemRole, bool resendInvite, bool noEmail,
             params string[] parameters)
         {
             EnsureValidSession();
             return InviteCollaboratorsFunction.Execute(boxManager.ApiKey, boxManager.AuthToken,
-                target, targetId, userIds, emails, itemRole, resendInvite, noEmail,
+                Target.Folder, folderId, userIds, emails, itemRole, resendInvite, noEmail,
                 parameters);
         }
 

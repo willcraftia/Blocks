@@ -41,12 +41,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functions\CreateFolderFunction.cs" />
+    <Compile Include="Functions\DeleteFunction.cs" />
     <Compile Include="Functions\FunctionResult.cs" />
     <Compile Include="Functions\GetAccountTreeFunction.cs" />
     <Compile Include="Functions\GetUserIdFunction.cs" />
     <Compile Include="Functions\InviteCollaboratorsFunction.cs" />
     <Compile Include="Functions\LogoutFunction.cs" />
+    <Compile Include="Functions\OverwriteFunction.cs" />
     <Compile Include="Functions\UploadFunction.cs" />
+    <Compile Include="Results\DeleteResult.cs" />
+    <Compile Include="Results\DeleteResultStatus.cs" />
     <Compile Include="Results\LogoutResult.cs" />
     <Compile Include="Results\LogoutResultStatus.cs" />
     <Compile Include="Service\BoxManager.cs" />

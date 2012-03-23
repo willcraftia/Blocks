@@ -114,7 +114,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // upload
             //
-            Prompt("Press any key to upload.");
+            Prompt("Press any key to upload files.");
 
             var uploadFiles = new UploadFile[]
             {
@@ -145,18 +145,75 @@ namespace Willcraftia.Net.Box.Demo
 
             //----------------------------------------------------------------
             //
+            // overwrite
+            //
+            Prompt("Press any key to overwrite a file.");
+
+            var overwriteFile = new UploadFile
+            {
+                ContentType = "text/xml;charset=utf-8",
+                Name = "Demo_0.xml",
+                Content = @"<?xml version=""1.0""?><Demo>Demo File 0 Overwritten</Demo>"
+            };
+            var overwriteResult = session.Overwrite(uploadResult.Files[0].Id, overwriteFile, false, "Demo message.", null);
+            Console.WriteLine("Result:");
+            Console.WriteLine(overwriteResult);
+
+            if (!overwriteResult.Succeeded)
+            {
+                Prompt("failed.");
+                Logout(session);
+                return;
+            }
+
+            //----------------------------------------------------------------
+            //
             // invite_collaborators
             //
             Prompt("Press any key to request invite_collaborators.");
 
             string[] emails = { "blockcraftia@gmail.com" };
-            var inviteCollaboratorsResult = session.InviteCollaborators(
-                Target.Folder, demoFolderId, null, emails, Role.Viewer, false, true);
+            var inviteCollaboratorsResult = session.InviteCollaboratorsToFolder(
+                demoFolderId, null, emails, Role.Viewer, false, true);
             Console.WriteLine("Result:");
             Console.WriteLine(inviteCollaboratorsResult);
 
             if (!inviteCollaboratorsResult.Succeeded &&
                 inviteCollaboratorsResult.Status != InviteCollaboratorsResultStatus.UserAlreadyCollaborator)
+            {
+                Prompt("failed.");
+                Logout(session);
+                return;
+            }
+
+            //----------------------------------------------------------------
+            //
+            // delete[file]
+            //
+            Prompt("Press any key to delete a file.");
+
+            var deleteFileResult = session.DeleteFile(uploadResult.Files[0].Id);
+            Console.WriteLine("Result:");
+            Console.WriteLine(deleteFileResult);
+
+            if (!deleteFileResult.Succeeded)
+            {
+                Prompt("failed.");
+                Logout(session);
+                return;
+            }
+
+            //----------------------------------------------------------------
+            //
+            // delete[folder]
+            //
+            Prompt("Press any key to delete a file.");
+
+            var deleteFolderResult = session.DeleteFolder(demoFolderId);
+            Console.WriteLine("Result:");
+            Console.WriteLine(deleteFolderResult);
+
+            if (!deleteFolderResult.Succeeded)
             {
                 Prompt("failed.");
                 Logout(session);

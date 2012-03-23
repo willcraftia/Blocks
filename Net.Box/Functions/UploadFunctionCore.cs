@@ -9,8 +9,37 @@ using System.Text;
 
 namespace Willcraftia.Net.Box.Functions
 {
+    /// <summary>
+    /// Upload/Overwrite/NewCopy の基礎部分を処理するクラスです。
+    /// </summary>
     public static class UploadFunctionCore
     {
+        /// <summary>
+        /// 基礎となる URI。
+        /// </summary>
+        public const string UriBase = "https://upload.box.net/api/1.0/";
+
+        /// <summary>
+        /// POST データを作成してリクエストを送信し、
+        /// レスポンスに含まれる XML をデシリアライズして返します。
+        /// </summary>
+        /// <typeparam name="T">XML の型。</typeparam>
+        /// <param name="uri">API の URI。</param>
+        /// <param name="files">UploadFile の配列。</param>
+        /// <param name="share">
+        /// true (ファイルを共有可とする場合)、false (それ以外の場合)。
+        /// </param>
+        /// <param name="message">通知メールに含めるメッセージ。</param>
+        /// <param name="emails">
+        /// 共有ファイルの情報を通知するユーザのメールアドレスの配列。
+        /// </param>
+        /// <param name="dumpContent">
+        /// true (multipart/form-data を Console へダンプする場合)、false (それ以外の場合)。
+        /// </param>
+        /// <param name="dumpXml">
+        /// true (XML を Console へダンプする場合)、false (それ以外の場合)。
+        /// </param>
+        /// <returns></returns>
         public static T Execute<T>(string uri,
             UploadFile[] files, bool share, string message, string[] emails,
             bool dumpContent, bool dumpXml)
@@ -21,7 +50,7 @@ namespace Willcraftia.Net.Box.Functions
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             request.Method = "POST";
 
-            using (var contentStream = GetContentStream(boundary, files, share, message, emails, dumpContent))
+            using (var contentStream = GetContentStream(boundary,files, share, message, emails, dumpContent))
             {
                 request.ContentLength = contentStream.Length;
 
@@ -41,7 +70,23 @@ namespace Willcraftia.Net.Box.Functions
             return FunctionResult<T>.GetResult(response, dumpXml);
         }
 
-        public static Stream GetContentStream(string boundary,
+        /// <summary>
+        /// multipart/form-data を MemoryStream に作成します。
+        /// </summary>
+        /// <param name="boundary">boundary 値。</param>
+        /// <param name="files">UploadFile の配列。</param>
+        /// <param name="share">
+        /// true (ファイルを共有可とする場合)、false (それ以外の場合)。
+        /// </param>
+        /// <param name="message">通知メールに含めるメッセージ。</param>
+        /// <param name="emails">
+        /// 共有ファイルの情報を通知するユーザのメールアドレスの配列。
+        /// </param>
+        /// <param name="dumpContent">
+        /// true (multipart/form-data を Console へダンプする場合)、false (それ以外の場合)。
+        /// </param>
+        /// <returns>multipart/form-data を含む MemoryStream。</returns>
+        public static MemoryStream GetContentStream(string boundary,
             UploadFile[] files, bool share, string message, string[] emails,
             bool dumpContent)
         {
