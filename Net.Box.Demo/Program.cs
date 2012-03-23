@@ -1,13 +1,16 @@
-﻿using System;
+﻿#region Using
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml.Serialization;
-using Willcraftia.Net.Box.Inputs;
 using Willcraftia.Net.Box.Results;
 using Willcraftia.Net.Box.Service;
+
+#endregion
 
 namespace Willcraftia.Net.Box.Demo
 {
@@ -113,28 +116,23 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to upload.");
 
-            var uploadContent = new UploadContent
+            var uploadFiles = new UploadFile[]
             {
-                Share = false,
-                Message = "Demo message.",
-                Files =
+                new UploadFile
                 {
-                    new UploadContent.File
-                    {
                         ContentType = "text/xml;charset=utf-8",
                         Name = "Demo_0.xml",
                         Content = @"<?xml version=""1.0""?><Demo>Demo File 0</Demo>"
-                    },
-                    new UploadContent.File
-                    {
+                },
+                new UploadFile
+                {
                         ContentType = "text/xml;charset=utf-8",
                         Name = "Demo_1.xml",
                         Content = @"<?xml version=""1.0""?><Demo>Demo File 1</Demo>"
-                    }
-                },
-                Emails = { }
+                }
             };
-            var uploadResult = session.Upload(demoFolderId, uploadContent);
+
+            var uploadResult = session.Upload(demoFolderId, uploadFiles, false, "Demo message.", null);
             Console.WriteLine("Result:");
             Console.WriteLine(uploadResult);
 

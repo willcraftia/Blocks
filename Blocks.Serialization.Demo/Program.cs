@@ -7,7 +7,6 @@ using System.Text;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.Serialization;
-using Willcraftia.Xna.Win.Framework.Serialization;
 
 #endregion
 
@@ -21,15 +20,12 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             var block = CreateOctahedronLikeBlock();
 
             var xmlSerializer = new XmlSerializer<Block>();
-            var jsonSerializer = new JsonSerializer<Block>();
 
             // シリアライズとデシリアライズのテスト
             SerializeAndDeserialize(xmlSerializer, block);
-            SerializeAndDeserialize(jsonSerializer, block);
 
             // 他のアプリケーションで利用するためのデータの作成
             Save(xmlSerializer, Path.Combine(Directory.GetCurrentDirectory(), "Block.xml"), block);
-            Save(jsonSerializer, Path.Combine(Directory.GetCurrentDirectory(), "Block.json"), block);
 
             Console.ReadLine();
         }

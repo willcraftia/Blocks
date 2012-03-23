@@ -2,7 +2,6 @@
 
 using System;
 using Willcraftia.Net.Box.Functions;
-using Willcraftia.Net.Box.Inputs;
 using Willcraftia.Net.Box.Results;
 
 #endregion
@@ -39,10 +38,10 @@ namespace Willcraftia.Net.Box.Service
             return CreateFolderFunction.Execute(boxManager.ApiKey, boxManager.AuthToken, parentId, name, share);
         }
 
-        public UploadResult Upload(long folderId, UploadContent content)
+        public UploadResult Upload(long folderId, UploadFile[] files, bool share, string message, string[] emails)
         {
             EnsureValidSession();
-            return UploadFunction.Execute(boxManager.AuthToken, folderId, content);
+            return UploadFunction.Execute(boxManager.AuthToken, folderId, files, share, message, emails);
         }
 
         public InviteCollaboratorsResult InviteCollaborators(Target target, long targetId,

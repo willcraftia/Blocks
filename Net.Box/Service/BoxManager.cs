@@ -7,7 +7,6 @@ using System.Net;
 using System.Text;
 using System.Xml.Serialization;
 using Willcraftia.Net.Box.Functions;
-using Willcraftia.Net.Box.Inputs;
 using Willcraftia.Net.Box.Results;
 
 #endregion
