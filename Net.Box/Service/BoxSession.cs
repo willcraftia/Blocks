@@ -50,6 +50,12 @@ namespace Willcraftia.Net.Box.Service
             return DeleteFunction.Execute(boxManager.ApiKey, boxManager.AuthToken, Target.File, fileId);
         }
 
+        public GetFileInfoResult GetFileInfo(long fileId)
+        {
+            EnsureValidSession();
+            return GetFileInfoFunction.Execute(boxManager.ApiKey, boxManager.AuthToken, fileId);
+        }
+
         public UploadResult Upload(long folderId, UploadFile[] files, bool share, string message, string[] emails)
         {
             EnsureValidSession();

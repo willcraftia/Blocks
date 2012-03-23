@@ -188,9 +188,45 @@ namespace Willcraftia.Net.Box.Demo
 
             //----------------------------------------------------------------
             //
+            // get_user_id
+            //
+            // ※get_user_id は collaborator として既知でなければ user_id の取得を許可していない模様。
+            //
+            Prompt("Press any key to request get_user_id.");
+
+            var getUserIdResult = session.GetUserId("blockcraftia@gmail.com");
+            Console.WriteLine("Result:");
+            Console.WriteLine(getUserIdResult);
+
+            if (!getUserIdResult.Succeeded)
+            {
+                Prompt("failed.");
+                Logout(session);
+                return;
+            }
+
+            //----------------------------------------------------------------
+            //
+            // get_file_info
+            //
+            Prompt("Press any key to request get_file_info.");
+
+            var getFileInfoResult = session.GetFileInfo(uploadResult.Files[0].Id);
+            Console.WriteLine("Result:");
+            Console.WriteLine(getFileInfoResult);
+
+            if (!getFileInfoResult.Succeeded)
+            {
+                Prompt("failed.");
+                Logout(session);
+                return;
+            }
+
+            //----------------------------------------------------------------
+            //
             // delete[file]
             //
-            Prompt("Press any key to delete a file.");
+            Prompt("Press any key to request delete[file].");
 
             var deleteFileResult = session.DeleteFile(uploadResult.Files[0].Id);
             Console.WriteLine("Result:");
@@ -207,30 +243,13 @@ namespace Willcraftia.Net.Box.Demo
             //
             // delete[folder]
             //
-            Prompt("Press any key to delete a file.");
+            Prompt("Press any key to request delete[folder].");
 
             var deleteFolderResult = session.DeleteFolder(demoFolderId);
             Console.WriteLine("Result:");
             Console.WriteLine(deleteFolderResult);
 
             if (!deleteFolderResult.Succeeded)
-            {
-                Prompt("failed.");
-                Logout(session);
-                return;
-            }
-
-            //----------------------------------------------------------------
-            //
-            // get_user_id
-            //
-            Prompt("Press any key to request get_user_id.");
-
-            var getUserIdResult = session.GetUserId("blockcraftia@gmail.com");
-            Console.WriteLine("Result:");
-            Console.WriteLine(getUserIdResult);
-
-            if (!getUserIdResult.Succeeded)
             {
                 Prompt("failed.");
                 Logout(session);
