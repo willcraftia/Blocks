@@ -88,6 +88,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 button.Content.Opacity = defocusedTextOpacity;
             };
 
+            button.EnabledChanged += (s, e) =>
+            {
+                if (button.Enabled)
+                {
+                    button.Content.ForegroundColor = Color.White;
+                }
+                else
+                {
+                    button.Content.ForegroundColor = Color.Gray;
+                }
+            };
+
             ControlUtil.PopContentFontOnGotFocus(button);
         }
 

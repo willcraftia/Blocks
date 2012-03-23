@@ -153,11 +153,11 @@
   <data name="HideButton" xml:space="preserve">
     <value>Hide</value>
   </data>
-  <data name="InstallDemoModelsButton" xml:space="preserve">
-    <value>Install Demo Models</value>
+  <data name="InstallDemoMeshesButton" xml:space="preserve">
+    <value>Install Demo Meshes</value>
   </data>
-  <data name="InstallDemoModelsConfirmation" xml:space="preserve">
-    <value>Are you sure you want to install demo models to your storage?</value>
+  <data name="InstallDemoMeshesConfirmation" xml:space="preserve">
+    <value>Are you sure you want to install demo meshes to your storage?</value>
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>

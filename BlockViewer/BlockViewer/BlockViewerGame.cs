@@ -19,6 +19,8 @@ using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
+using Willcraftia.Net.Box.BlockViewer;
+using Willcraftia.Net.Box.Service;
 
 #endregion
 
@@ -58,6 +60,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// Draw メソッドを計測するための TimeRulerMarker。
         /// </summary>
         TimeRulerMarker drawMarker;
+
+        BoxManager boxManager;
 
         public StorageModel StorageModel { get; private set; }
 
@@ -104,6 +108,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             drawMarker.Name = "Draw";
             drawMarker.BarIndex = 1;
             drawMarker.Color = Color.Yellow;
+
+            // IBoxService を登録します。
+            boxManager = new BoxManager(ApiKey.Value);
+            Services.AddService(typeof(IBoxService), boxManager);
 
             // マウス カーソルを可視にします。
             IsMouseVisible = true;

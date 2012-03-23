@@ -120,6 +120,9 @@
     <Reference Include="System.Net">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Willcraftia.Net.Box.BlockViewer.ApiKey">
+      <HintPath>..\..\Net.Box.BuildApiKey\bin\Debug\Willcraftia.Net.Box.BlockViewer.ApiKey.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\DirectionalLightModel.cs" />
@@ -137,6 +140,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
+    <Compile Include="Screens\BoxUploadWizardDialog.cs" />
     <Compile Include="Screens\ConfirmationDialog.cs" />
     <Compile Include="Screens\ControlUtil.cs" />
     <Compile Include="Screens\DialogMessageContainer.cs" />
@@ -177,6 +181,10 @@
     <ProjectReference Include="..\..\Framework\Framework.csproj">
       <Project>{FA23868B-0454-4B81-B5AA-F270F987ECC7}</Project>
       <Name>Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net.Box\Net.Box.csproj">
+      <Project>{E53FFAC9-D6EC-46AB-A173-A79085A678F6}</Project>
+      <Name>Net.Box</Name>
     </ProjectReference>
     <ProjectReference Include="..\BlockViewerContent\BlockViewerContent.contentproj">
       <Name>BlockViewerContent</Name>

@@ -31,6 +31,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         InformationDialog informationDialog;
 
+        BoxUploadWizardDialog boxUploadWizardDialog;
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -59,9 +61,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             selectLanguageButton.Click += OnLanguageSettingButtonClick;
             stackPanel.Children.Add(selectLanguageButton);
 
-            var installDemoModelsButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.InstallDemoModelsButton);
-            installDemoModelsButton.Click += OnInstallModelsButtonClick;
-            stackPanel.Children.Add(installDemoModelsButton);
+            var installDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.InstallDemoMeshesButton);
+            installDemoMeshesButton.Click += OnInstallModelsButtonClick;
+            stackPanel.Children.Add(installDemoMeshesButton);
+
+            var uploadDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, "Upload Demo Meshes to Box");
+            uploadDemoMeshesButton.Click += OnUploadDemoMeshesButtonClick;
+            stackPanel.Children.Add(uploadDemoMeshesButton);
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
             changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
@@ -74,8 +80,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             // デフォルト フォーカス。
             startButton.Focus();
         }
-
-        
 
         void SelectStorageIfNeeded()
         {
@@ -109,7 +113,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     Message = new TextBlock(Screen)
                     {
-                        Text = Strings.InstallDemoModelsConfirmation,
+                        Text = Strings.InstallDemoMeshesConfirmation,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black,
@@ -122,6 +126,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             confirmationDialog.Show();
 
             context.Handled = true;
+        }
+
+        void OnUploadDemoMeshesButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            if (boxUploadWizardDialog == null)
+            {
+                boxUploadWizardDialog = new BoxUploadWizardDialog(Screen);
+            }
+            boxUploadWizardDialog.Show();
         }
 
         void OnConfirmationDialogClosed(object sender, EventArgs e)
