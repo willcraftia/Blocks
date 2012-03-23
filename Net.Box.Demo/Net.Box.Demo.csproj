@@ -41,8 +41,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Willcraftia.Net.Box.Demo.ApiKey">
-      <HintPath>..\BuildApiKey\bin\Debug\Willcraftia.Net.Box.Demo.ApiKey.dll</HintPath>
+    <Reference Include="Willcraftia.Net.Box.Demo.ApiKey, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Net.Box.BuildApiKey\bin\Debug\Willcraftia.Net.Box.Demo.ApiKey.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
