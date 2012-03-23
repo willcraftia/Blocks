@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum UploadResultStatus
+    public enum UploadStatus
     {
         [XmlEnum("upload_ok")]
         UploadOk,

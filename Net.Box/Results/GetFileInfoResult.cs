@@ -11,15 +11,10 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetFileInfoResult
     {
         [XmlElement("status")]
-        public GetFileInfoResultStatus Status { get; set; }
+        public GetFileInfoStatus Status { get; set; }
 
         [XmlElement("info")]
         public Info Info { get; set; }
-
-        public bool Succeeded
-        {
-            get { return Status == GetFileInfoResultStatus.SGetFileInfo; }
-        }
 
         public override string ToString()
         {

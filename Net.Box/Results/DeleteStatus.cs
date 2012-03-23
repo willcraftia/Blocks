@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum DeleteResultStatus
+    public enum DeleteStatus
     {
         [XmlEnum("s_delete_node")]
         SDeleteNode,

@@ -11,21 +11,14 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetTicketResult
     {
         [XmlElement("status")]
-        public GetTicketResultStatus Status { get; set; }
+        public GetTicketStatus Status { get; set; }
 
         [XmlElement("ticket")]
         public string Ticket { get; set; }
 
-        public bool Succeeded
-        {
-            get { return Status == GetTicketResultStatus.GetTicketOk; }
-        }
-
         public override string ToString()
         {
-            return "[Status=" + Status +
-                ", Ticket=" + Ticket +
-                "]";
+            return "[Status=" + Status + ", Ticket=" + Ticket + "]";
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum GetUserIdResultStatus
+    public enum GetUserIdStatus
     {
         [XmlEnum("s_get_user_id")]
         SGetUserId,

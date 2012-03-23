@@ -7,15 +7,18 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum GetTicketResultStatus
+    public enum GetAccountTreeStatus
     {
-        [XmlEnum("get_ticket_ok")]
-        GetTicketOk,
+        [XmlEnum("listing_ok")]
+        ListingOk,
 
         [XmlEnum("application_restricted")]
         ApplicationRestricted,
 
-        [XmlEnum("wrong_input")]
-        WrongInput
+        [XmlEnum("not_logged_in")]
+        NotLoggedIn,
+
+        [XmlEnum("e_folder_id")]
+        EFolderId
     }
 }

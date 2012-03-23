@@ -12,35 +12,16 @@ namespace Willcraftia.Net.Box.Results
     [XmlRoot("response")]
     public sealed class InviteCollaboratorsResult
     {
-        public sealed class Item
-        {
-            [XmlText]
-            public string Content { get; set; }
-
-            public override string ToString()
-            {
-                return "[Content=" + Content + "]";
-            }
-        }
-
         [XmlElement("status")]
-        public InviteCollaboratorsResultStatus Status { get; set; }
+        public InviteCollaboratorsStatus Status { get; set; }
 
-        //[XmlArray("collaborations")]
-        //[XmlArrayItem("collaboration")]
-        //public List<Collaboration> Collaborations { get; set; }
         [XmlArray("invited_collaborators")]
         [XmlArrayItem("item")]
-        public List<Item> InvitedCollaborators { get; set; }
+        public List<InvitedCollaborator> InvitedCollaborators { get; set; }
 
         [XmlArray("unsuccessful_invitations")]
         [XmlArrayItem("item")]
-        public List<Item> UnsuccessfulInvitations { get; set; }
-
-        public bool Succeeded
-        {
-            get { return Status == InviteCollaboratorsResultStatus.SInviteCollaborators; }
-        }
+        public List<InvitedCollaborator> UnsuccessfulInvitations { get; set; }
 
         public override string ToString()
         {

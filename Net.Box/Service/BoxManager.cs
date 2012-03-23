@@ -2,10 +2,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Xml.Serialization;
 using Willcraftia.Net.Box.Functions;
 using Willcraftia.Net.Box.Results;
 
@@ -13,35 +9,9 @@ using Willcraftia.Net.Box.Results;
 
 namespace Willcraftia.Net.Box.Service
 {
-    public sealed class BoxManager
+    public sealed class BoxManager : IBoxService
     {
-        BoxSession session;
-
         public string ApiKey { get; private set; }
-
-        public GetTicketResult GetTicketResult { get; private set; }
-
-        public GetAuthTokenResult GetAuthTokenResult { get; private set; }
-
-        public string Ticket
-        {
-            get { return GetTicketSucceeded ? GetTicketResult.Ticket : null; }
-        }
-
-        public string AuthToken
-        {
-            get { return GetAuthTokenSucceeded ? GetAuthTokenResult.AuthToken : null; }
-        }
-
-        public bool GetTicketSucceeded
-        {
-            get { return GetTicketResult != null && GetTicketResult.Succeeded; }
-        }
-
-        public bool GetAuthTokenSucceeded
-        {
-            get { return GetAuthTokenResult != null && GetAuthTokenResult.Succeeded; }
-        }
 
         public BoxManager(string apiKey)
         {
@@ -49,52 +19,45 @@ namespace Willcraftia.Net.Box.Service
             ApiKey = apiKey;
         }
 
-        public bool GetTicket()
+        // I/F
+        public string GetTicket()
         {
-            InvalidateTicket();
-            GetTicketResult = GetTicketFunction.Execute(ApiKey);
-            return GetTicketSucceeded;
+            var result = GetTicketFunction.Execute(ApiKey);
+
+            if (result.Status != GetTicketStatus.GetTicketOk)
+                throw new BoxStatusException<GetTicketStatus>(result.Status);
+
+            return result.Ticket;
         }
 
-        public void RedirectUserAuth()
+        // I/F
+        public void RedirectUserAuth(string ticket)
         {
-            if (!GetTicketSucceeded) throw new InvalidOperationException("No ticket exists.");
+            if (ticket == null) throw new ArgumentNullException("ticket");
 
-            var uri = "https://www.box.net/api/1.0/auth/" + Ticket;
+            var uri = "https://www.box.net/api/1.0/auth/" + ticket;
             Process.Start(uri);
         }
 
-        public bool GetAuthToken()
+        // I/F
+        public BoxSession GetAuthToken(string ticket)
         {
-            if (!GetTicketSucceeded) throw new InvalidOperationException("No ticket exists.");
+            if (ticket == null) throw new ArgumentNullException("ticket");
 
-            GetAuthTokenResult = GetAuthTokenFunction.Execute(ApiKey, Ticket);
-            return GetAuthTokenSucceeded;
+            var result = GetAuthTokenFunction.Execute(ApiKey, ticket);
+
+            if (result.Status != GetAuthTokenStatus.GetAuthTokenOk)
+                throw new BoxStatusException<GetAuthTokenStatus>(result.Status);
+
+            return CreateSession(result.AuthToken);
         }
 
-        public BoxSession CreateSession()
+        // I/F
+        public BoxSession CreateSession(string authToken)
         {
-            if (!GetAuthTokenSucceeded) throw new InvalidOperationException("The ticket is not authorized.");
+            if (authToken == null) throw new ArgumentNullException("authToken");
 
-            if (session == null || !session.Valid) session = new BoxSession(this);
-            return session;
-        }
-
-        internal LogoutResult Logout()
-        {
-            if (session == null || !session.Valid)
-                throw new InvalidOperationException("No session exists.");
-
-            var result = LogoutFunction.Execute(ApiKey, AuthToken);
-            InvalidateTicket();
-            return result;
-        }
-
-        void InvalidateTicket()
-        {
-            GetTicketResult = null;
-            GetAuthTokenResult = null;
-            if (session != null) session.Valid = false;
+            return new BoxSession(ApiKey, authToken);
         }
     }
 }

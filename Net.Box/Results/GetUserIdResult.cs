@@ -11,21 +11,14 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetUserIdResult
     {
         [XmlElement("status")]
-        public GetUserIdResultStatus Status { get; set; }
+        public GetUserIdStatus Status { get; set; }
 
         [XmlElement("id")]
         public long Id { get; set; }
 
-        public bool Succeeded
-        {
-            get { return Status == GetUserIdResultStatus.SGetUserId; }
-        }
-
         public override string ToString()
         {
-            return "[Status=" + Status +
-                ", Id=" + Id +
-                "]";
+            return "[Status=" + Status + ", Id=" + Id + "]";
         }
     }
 }

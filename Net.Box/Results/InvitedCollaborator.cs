@@ -7,15 +7,14 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    [XmlRoot("response")]
-    public sealed class LogoutResult
+    public sealed class InvitedCollaborator
     {
-        [XmlElement("status")]
-        public LogoutStatus Status { get; set; }
+        [XmlText]
+        public string Content { get; set; }
 
         public override string ToString()
         {
-            return "[Status=" + Status + "]";
+            return "[Content=" + Content + "]";
         }
     }
 }

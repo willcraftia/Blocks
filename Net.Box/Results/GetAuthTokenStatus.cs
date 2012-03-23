@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum GetAuthTokenResultStatus
+    public enum GetAuthTokenStatus
     {
         [XmlEnum("get_auth_token_ok")]
         GetAuthTokenOk,

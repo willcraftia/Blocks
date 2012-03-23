@@ -7,15 +7,14 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    [XmlRoot("response")]
-    public sealed class LogoutResult
+    public sealed class AccountTree
     {
-        [XmlElement("status")]
-        public LogoutStatus Status { get; set; }
+        [XmlElement("folder")]
+        public Folder Folder { get; set; }
 
         public override string ToString()
         {
-            return "[Status=" + Status + "]";
+            return "[Folder=" + Folder + "]";
         }
     }
 }

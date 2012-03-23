@@ -26,13 +26,15 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request get_ticket.");
 
-            var getTicketSucceeded = boxManager.GetTicket();
-            Console.WriteLine("Result:");
-            Console.WriteLine(boxManager.GetTicketResult);
-
-            if (!getTicketSucceeded)
+            string ticket;
+            try
             {
-                Prompt("failed.");
+                ticket = boxManager.GetTicket();
+                Console.WriteLine("Ticket: " + ticket);
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
@@ -42,7 +44,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to redirect you to Box Application auth page.");
 
-            boxManager.RedirectUserAuth();
+            boxManager.RedirectUserAuth(ticket);
 
             //----------------------------------------------------------------
             //
@@ -50,17 +52,17 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request get_auth_token.");
 
-            var getAuthTokenSucceeded = boxManager.GetAuthToken();
-            Console.WriteLine("Result:");
-            Console.WriteLine(boxManager.GetAuthTokenResult);
-
-            if (!getAuthTokenSucceeded)
+            BoxSession session;
+            try
             {
-                Prompt("failed.");
+                session = boxManager.GetAuthToken(ticket);
+                Console.WriteLine("AuthToken: " + session.AuthToken);
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
-
-            var session = boxManager.CreateSession();
 
             //----------------------------------------------------------------
             //
@@ -68,42 +70,43 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request get_account_tree[root].");
 
-            var getAccountTreeRootResult = session.GetAccountTreeRoot("onelevel", "nozip");
-            Console.WriteLine("Result:");
-            Console.WriteLine(getAccountTreeRootResult);
-
-            if (!getAccountTreeRootResult.Succeeded)
+            Folder rootFolder;
+            try
             {
-                Prompt("failed.");
-                Logout(session);
+                rootFolder = session.GetAccountTreeRoot("onelevel", "nozip");
+                Console.WriteLine("Root Folder: " + rootFolder);
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
             string demoFolderName = "DemoFolder";
             long demoFolderId = -1;
-            var demoFolder = getAccountTreeRootResult.Tree.Folder.FindFolderByName(demoFolderName);
+            var demoFolder = rootFolder.FindFolderByName(demoFolderName);
             if (demoFolder != null) demoFolderId = demoFolder.Id;
 
+            //----------------------------------------------------------------
+            //
+            // create_folder
+            //
             if (demoFolderId < 0)
             {
-                //----------------------------------------------------------------
-                //
-                // create_folder
-                //
                 Prompt("Press any key to request create_folder.");
 
-                var createFolderResult = session.CreateFolder(0, demoFolderName, true);
-                Console.WriteLine("Result:");
-                Console.WriteLine(createFolderResult);
-
-                if (!createFolderResult.Succeeded)
+                CreatedFolder createdFolder;
+                try
                 {
-                    Prompt("failed.");
-                    Logout(session);
+                    createdFolder = session.CreateFolder(0, demoFolderName, true);
+                }
+                catch (Exception e)
+                {
+                    Prompt(e);
                     return;
                 }
 
-                demoFolderId = createFolderResult.Folder.FolderId;
+                demoFolderId = createdFolder.FolderId;
             }
             else
             {
@@ -132,14 +135,16 @@ namespace Willcraftia.Net.Box.Demo
                 }
             };
 
-            var uploadResult = session.Upload(demoFolderId, uploadFiles, false, "Demo message.", null);
-            Console.WriteLine("Result:");
-            Console.WriteLine(uploadResult);
-
-            if (!uploadResult.Succeeded)
+            List<UploadedFile> uploadedFiles;
+            try
             {
-                Prompt("failed.");
-                Logout(session);
+                uploadedFiles = session.Upload(demoFolderId, uploadFiles, false, "Demo message.", null);
+                Console.WriteLine("Uploaded Files:");
+                foreach (var uploadedFile in uploadedFiles) Console.WriteLine(uploadedFile);
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
@@ -155,14 +160,15 @@ namespace Willcraftia.Net.Box.Demo
                 Name = "Demo_0.xml",
                 Content = @"<?xml version=""1.0""?><Demo>Demo File 0 Overwritten</Demo>"
             };
-            var overwriteResult = session.Overwrite(uploadResult.Files[0].Id, overwriteFile, false, "Demo message.", null);
-            Console.WriteLine("Result:");
-            Console.WriteLine(overwriteResult);
-
-            if (!overwriteResult.Succeeded)
+            try
             {
-                Prompt("failed.");
-                Logout(session);
+                var overwrittenFile = session.Overwrite(uploadedFiles[0].Id, overwriteFile, false, "Demo message.", null);
+                Console.WriteLine("Overwritten File:");
+                Console.WriteLine(overwrittenFile);
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
@@ -173,7 +179,7 @@ namespace Willcraftia.Net.Box.Demo
             Prompt("Press any key to download a file.");
 
             string downloadedFile;
-            using (var downloadStream = session.Download(uploadResult.Files[0].Id))
+            using (var downloadStream = session.Download(uploadedFiles[0].Id))
             {
                 using (var memoryStream = new MemoryStream())
                 {
@@ -201,17 +207,24 @@ namespace Willcraftia.Net.Box.Demo
             Prompt("Press any key to request invite_collaborators.");
 
             string[] emails = { "blockcraftia@gmail.com" };
-            var inviteCollaboratorsResult = session.InviteCollaboratorsToFolder(
-                demoFolderId, null, emails, Role.Viewer, false, true);
-            Console.WriteLine("Result:");
-            Console.WriteLine(inviteCollaboratorsResult);
-
-            if (!inviteCollaboratorsResult.Succeeded &&
-                inviteCollaboratorsResult.Status != InviteCollaboratorsResultStatus.UserAlreadyCollaborator)
+            List<InvitedCollaborator> invitedCollaborators;
+            try
             {
-                Prompt("failed.");
-                Logout(session);
-                return;
+                invitedCollaborators = session.InviteCollaboratorsToFolder(demoFolderId, null, emails, Role.Viewer, false, true);
+                Console.WriteLine("Invited Collaborators:");
+                foreach (var invited in invitedCollaborators) Console.WriteLine(invited);
+            }
+            catch (BoxStatusException<InviteCollaboratorsStatus> e)
+            {
+                if (e.Status == InviteCollaboratorsStatus.UserAlreadyCollaborator)
+                {
+                    Prompt("The specified users were already collaborators.");
+                }
+                else
+                {
+                    Prompt(e);
+                    return;
+                }
             }
 
             //----------------------------------------------------------------
@@ -222,15 +235,15 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request get_user_id.");
 
-            var getUserIdResult = session.GetUserId("blockcraftia@gmail.com");
-            Console.WriteLine("Result:");
-            Console.WriteLine(getUserIdResult);
-
-            if (!getUserIdResult.Succeeded)
+            var userEmail = "blockcraftia@gmail.com";
+            try
             {
-                Prompt("failed.");
-                Logout(session);
-                return;
+                var resolvedUserId = session.GetUserId(userEmail);
+                Console.WriteLine(string.Format("The ID of the user '{0}' is '{1}'.", userEmail, resolvedUserId));
+            }
+            catch (BoxStatusException<GetUserIdStatus> e)
+            {
+                Prompt(string.Format("The user '{0}' could not be resolved.", userEmail));
             }
 
             //----------------------------------------------------------------
@@ -239,14 +252,15 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request get_file_info.");
 
-            var getFileInfoResult = session.GetFileInfo(uploadResult.Files[0].Id);
-            Console.WriteLine("Result:");
-            Console.WriteLine(getFileInfoResult);
-
-            if (!getFileInfoResult.Succeeded)
+            try
             {
-                Prompt("failed.");
-                Logout(session);
+                var fileInfo = session.GetFileInfo(uploadedFiles[0].Id);
+                Console.WriteLine(string.Format("The file '{0}' information: ", uploadedFiles[0].Id));
+                Console.WriteLine(fileInfo);
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
@@ -256,14 +270,14 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request delete[file].");
 
-            var deleteFileResult = session.DeleteFile(uploadResult.Files[0].Id);
-            Console.WriteLine("Result:");
-            Console.WriteLine(deleteFileResult);
-
-            if (!deleteFileResult.Succeeded)
+            try
             {
-                Prompt("failed.");
-                Logout(session);
+                session.DeleteFile(uploadedFiles[0].Id);
+                Console.WriteLine(string.Format("The file '{0}' was deleted.", uploadedFiles[0].Id));
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
@@ -273,39 +287,29 @@ namespace Willcraftia.Net.Box.Demo
             //
             Prompt("Press any key to request delete[folder].");
 
-            var deleteFolderResult = session.DeleteFolder(demoFolderId);
-            Console.WriteLine("Result:");
-            Console.WriteLine(deleteFolderResult);
-
-            if (!deleteFolderResult.Succeeded)
+            try
             {
-                Prompt("failed.");
-                Logout(session);
+                session.DeleteFolder(demoFolderId);
+                Console.WriteLine(string.Format("The folder '{0}' was deleted.", demoFolderId));
+            }
+            catch (Exception e)
+            {
+                Prompt(e);
                 return;
             }
 
-            //----------------------------------------------------------------
-            //
-            // logout
-            //
-            Logout(session);
-        }
-
-        static void Logout(BoxSession session)
-        {
-            Console.WriteLine("Logout.");
-            
-            var result = session.Logout();
-            Console.WriteLine("Result:");
-            Console.WriteLine(result);
-
-            Prompt("Press any key to exit.");
+            Prompt("Press any key to exist this application.");
         }
 
         static void Prompt(string message)
         {
-            Console.WriteLine();
             Console.WriteLine(message);
+            Console.ReadLine();
+        }
+
+        static void Prompt(Exception e)
+        {
+            Console.WriteLine("Failed: " + e.GetType());
             Console.ReadLine();
         }
     }

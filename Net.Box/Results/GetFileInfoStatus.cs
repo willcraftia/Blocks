@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum GetFileInfoResultStatus
+    public enum GetFileInfoStatus
     {
         [XmlEnum("s_get_file_info")]
         SGetFileInfo,

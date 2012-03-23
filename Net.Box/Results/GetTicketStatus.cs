@@ -7,15 +7,15 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum LogoutResultStatus
+    public enum GetTicketStatus
     {
-        [XmlEnum("logout_ok")]
-        LogoutOk,
-
-        [XmlEnum("not_logged_in")]
-        NotLoggedIn,
+        [XmlEnum("get_ticket_ok")]
+        GetTicketOk,
 
         [XmlEnum("application_restricted")]
-        ApplicationRestricted
+        ApplicationRestricted,
+
+        [XmlEnum("wrong_input")]
+        WrongInput
     }
 }

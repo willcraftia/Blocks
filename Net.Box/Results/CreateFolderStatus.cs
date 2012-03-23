@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Willcraftia.Net.Box.Results
 {
-    public enum CreateFolderResultStatus
+    public enum CreateFolderStatus
     {
         [XmlEnum("create_ok")]
         CreateOk,
