@@ -168,6 +168,34 @@ namespace Willcraftia.Net.Box.Demo
 
             //----------------------------------------------------------------
             //
+            // download
+            //
+            Prompt("Press any key to download a file.");
+
+            string downloadedFile;
+            using (var downloadStream = session.Download(uploadResult.Files[0].Id))
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    var bytes = new byte[1024];
+                    int byteCount = 0;
+
+                    while ((byteCount = downloadStream.Read(bytes, 0, bytes.Length)) != 0)
+                    {
+                        memoryStream.Write(bytes, 0, byteCount);
+                    }
+                    
+                    memoryStream.Position = 0;
+                    var reader = new StreamReader(memoryStream);
+                    downloadedFile = reader.ReadToEnd();
+                }
+            }
+
+            Console.WriteLine("Result:");
+            Console.WriteLine(downloadedFile);
+            
+            //----------------------------------------------------------------
+            //
             // invite_collaborators
             //
             Prompt("Press any key to request invite_collaborators.");

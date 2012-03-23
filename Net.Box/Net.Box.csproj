@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Functions\CreateFolderFunction.cs" />
     <Compile Include="Functions\DeleteFunction.cs" />
+    <Compile Include="Functions\DownloadFunction.cs" />
     <Compile Include="Functions\FunctionResult.cs" />
     <Compile Include="Functions\GetAccountTreeFunction.cs" />
     <Compile Include="Functions\GetFileInfoFunction.cs" />

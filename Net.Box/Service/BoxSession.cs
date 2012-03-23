@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.IO;
 using Willcraftia.Net.Box.Functions;
 using Willcraftia.Net.Box.Results;
 
@@ -66,6 +67,12 @@ namespace Willcraftia.Net.Box.Service
         {
             EnsureValidSession();
             return OverwriteFunction.Execute(boxManager.AuthToken, fileId, file, share, message, emails);
+        }
+
+        public Stream Download(long fileId)
+        {
+            EnsureValidSession();
+            return DownloadFunction.Execute(boxManager.AuthToken, fileId);
         }
 
         public InviteCollaboratorsResult InviteCollaboratorsToFolder(long folderId,
