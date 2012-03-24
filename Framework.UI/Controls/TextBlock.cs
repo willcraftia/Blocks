@@ -9,15 +9,11 @@ using Willcraftia.Xna.Framework.Text;
 
 namespace Willcraftia.Xna.Framework.UI.Controls
 {
+    /// <summary>
+    /// 文字列を表示するための Control です。
+    /// </summary>
     public class TextBlock : Control
     {
-        WrappedText wrappedText;
-
-        public WrappedText WrappedText
-        {
-            get { return wrappedText; }
-        }
-
         /// <summary>
         /// 表示文字列を取得または設定します。
         /// </summary>
@@ -37,6 +33,15 @@ namespace Willcraftia.Xna.Framework.UI.Controls
         /// 表示文字列がコンテナの端に達する時の折り返し方法を取得または設定します。
         /// </summary>
         public TextWrapping TextWrapping { get; set; }
+
+        /// <summary>
+        /// WrappedText を取得します。
+        /// このプロパティは、TextWrapping プロパティに Wrap を指定した場合に、
+        /// 最初の Measure() の呼び出しで有効になります。
+        /// 原則として、内部処理および描画処理のためのプロパティであり、
+        /// このプロパティを直接用いて折り返しを制御しようとしてはなりません。
+        /// </summary>
+        public WrappedText WrappedText { get; private set; }
 
         /// <summary>
         /// 表示文字列の輪郭線の太さを取得または設定します。
@@ -128,17 +133,23 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             return font.MeasureString(sampleText) * FontStretch;
         }
 
+        /// <summary>
+        /// TextWrapping プロパティが Wrap に設定されている場合での文字列サイズを測定します。
+        /// また同時に、WrappedText プロパティを利用可能な状態へと設定します。
+        /// </summary>
+        /// <param name="availableWidth">利用可能な幅。</param>
+        /// <returns>折り返しを考慮した文字列のサイズ。</returns>
         Vector2 MeasureWrappedTextSize(float availableWidth)
         {
-            if (wrappedText == null) wrappedText = new WrappedText();
-            wrappedText.Text = Text;
-            wrappedText.Font = Font ?? Screen.Font;
-            wrappedText.FontStretch = FontStretch;
-            wrappedText.ClientWidth = availableWidth;
+            if (WrappedText == null) WrappedText = new WrappedText();
+            WrappedText.Text = Text;
+            WrappedText.Font = Font ?? Screen.Font;
+            WrappedText.FontStretch = FontStretch;
+            WrappedText.ClientWidth = availableWidth;
 
-            wrappedText.Wrap();
+            WrappedText.Wrap();
 
-            return wrappedText.MeasuredSize;
+            return WrappedText.MeasuredSize;
         }
     }
 }

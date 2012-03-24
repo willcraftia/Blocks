@@ -10,135 +10,124 @@ using Willcraftia.Xna.Framework.UI.Controls;
 
 namespace Willcraftia.Xna.Framework.UI.Lafs
 {
+    /// <summary>
+    /// TextBlock の ILookAndFeel です。
+    /// </summary>
     public class TextBlockLookAndFeel : ILookAndFeel
     {
+        /// <summary>
+        /// TextBlock の TextWrapping プロパティが Wrap の場合に使用する作業用 StringBuilder。
+        /// </summary>
+        StringBuilder builder;
+
         public virtual void Draw(Control control, IDrawContext drawContext)
         {
             var textBlock = control as TextBlock;
             if (textBlock == null) return;
             if (string.IsNullOrEmpty(textBlock.Text)) return;
 
-            // TODO
             if (textBlock.TextWrapping == TextWrapping.Wrap)
             {
                 DrawWrappedText(textBlock, drawContext);
-                return;
             }
+            else
+            {
+                DrawText(textBlock, drawContext);
+            }
+        }
 
+        void DrawText(TextBlock textBlock, IDrawContext drawContext)
+        {
             var font = textBlock.Font ?? textBlock.Screen.Font;
             if (font == null) return;
 
-            var clientBounds = new Rect(control.RenderSize);
+            var text = textBlock.Text;
+            var stretch = textBlock.FontStretch;
+            var padding = textBlock.Padding;
+            var fColor = textBlock.ForegroundColor;
+            var bColor = textBlock.BackgroundColor;
+            var bounds = new Rect(textBlock.RenderSize);
             var outlineWidth = textBlock.TextOutlineWidth;
-
             var hAlign = textBlock.TextHorizontalAlignment;
             var vAlign = textBlock.TextVerticalAlignment;
 
+            // 影を描画します。
             var shadowOffset = textBlock.ShadowOffset;
             if (shadowOffset.X != 0 || shadowOffset.Y != 0)
             {
-                drawContext.DrawString(
-                    new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
-                    hAlign, vAlign, control.BackgroundColor, control.Padding, shadowOffset);
+                drawContext.DrawString(bounds, font, text, stretch, hAlign, vAlign, bColor, padding,
+                    shadowOffset);
             }
 
+            // 文字枠を描画します。
             if (0 < outlineWidth)
             {
-                drawContext.DrawString(
-                    clientBounds, font, textBlock.Text, control.FontStretch,
-                    hAlign, vAlign, control.BackgroundColor, control.Padding,
+                drawContext.DrawString(bounds, font, text, stretch, hAlign, vAlign, bColor, padding,
                     new Vector2(-outlineWidth, -outlineWidth));
-                drawContext.DrawString(
-                    clientBounds, font, textBlock.Text, control.FontStretch,
-                    hAlign, vAlign, control.BackgroundColor, control.Padding,
+                drawContext.DrawString(bounds, font, text, stretch, hAlign, vAlign, bColor, padding,
                     new Vector2(-outlineWidth, outlineWidth));
-                drawContext.DrawString(
-                    clientBounds, font, textBlock.Text, control.FontStretch,
-                    hAlign, vAlign, control.BackgroundColor, control.Padding,
+                drawContext.DrawString(bounds, font, text, stretch, hAlign, vAlign, bColor, padding,
                     new Vector2(outlineWidth, -outlineWidth));
-                drawContext.DrawString(
-                    clientBounds, font, textBlock.Text, control.FontStretch,
-                    hAlign, vAlign, control.BackgroundColor, control.Padding,
+                drawContext.DrawString(bounds, font, text, stretch, hAlign, vAlign, bColor, padding,
                     new Vector2(outlineWidth, outlineWidth));
             }
 
-            drawContext.DrawString(
-                new Rect(control.RenderSize), font, textBlock.Text, control.FontStretch,
-                hAlign, vAlign, control.ForegroundColor, control.Padding);
+            // 文字を描画します。
+            drawContext.DrawString(bounds, font, text, stretch, hAlign, vAlign, fColor, padding);
         }
-
-        StringBuilder builder = new StringBuilder();
 
         void DrawWrappedText(TextBlock textBlock, IDrawContext drawContext)
         {
+            if (builder == null) builder = new StringBuilder();
 
             var font = textBlock.Font ?? textBlock.Screen.Font;
             if (font == null) return;
 
-            var clientBounds = new Rect(textBlock.RenderSize);
-            clientBounds.Height = textBlock.WrappedText.MaxMeasuredHeight;
-
-
-
+            var stretch = textBlock.FontStretch;
+            var padding = textBlock.Padding;
+            var fColor = textBlock.ForegroundColor;
+            var bColor = textBlock.BackgroundColor;
             var outlineWidth = textBlock.TextOutlineWidth;
             var hAlign = textBlock.TextHorizontalAlignment;
             var vAlign = textBlock.TextVerticalAlignment;
             var shadowOffset = textBlock.ShadowOffset;
 
-
+            var bounds = new Rect(textBlock.RenderSize);
+            bounds.Height = textBlock.WrappedText.MaxMeasuredHeight;
 
             var wrappedText = textBlock.WrappedText;
             for (int i = 0; i < wrappedText.LineCount; i++)
             {
+                // 行の文字列を取得します。
                 wrappedText.GetLineText(i, builder);
 
-
-
-
-
+                // 影を描画します。
                 if (shadowOffset.X != 0 || shadowOffset.Y != 0)
                 {
-                    drawContext.DrawString(
-                        clientBounds, font, builder, textBlock.FontStretch,
-                        hAlign, vAlign, textBlock.BackgroundColor, textBlock.Padding, shadowOffset);
+                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
+                        shadowOffset);
                 }
 
+                // 文字枠を描画します。
                 if (0 < outlineWidth)
                 {
-                    drawContext.DrawString(
-                        clientBounds, font, builder, textBlock.FontStretch,
-                        hAlign, vAlign, textBlock.BackgroundColor, textBlock.Padding,
+                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
                         new Vector2(-outlineWidth, -outlineWidth));
-                    drawContext.DrawString(
-                        clientBounds, font, builder, textBlock.FontStretch,
-                        hAlign, vAlign, textBlock.BackgroundColor, textBlock.Padding,
+                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
                         new Vector2(-outlineWidth, outlineWidth));
-                    drawContext.DrawString(
-                        clientBounds, font, builder, textBlock.FontStretch,
-                        hAlign, vAlign, textBlock.BackgroundColor, textBlock.Padding,
+                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
                         new Vector2(outlineWidth, -outlineWidth));
-                    drawContext.DrawString(
-                        clientBounds, font, builder, textBlock.FontStretch,
-                        hAlign, vAlign, textBlock.BackgroundColor, textBlock.Padding,
+                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
                         new Vector2(outlineWidth, outlineWidth));
                 }
 
-                drawContext.DrawString(
-                    clientBounds, font, builder, textBlock.FontStretch,
-                    hAlign, vAlign, textBlock.ForegroundColor, textBlock.Padding);
+                // 文字を描画します。
+                drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, fColor, padding);
 
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                clientBounds.Y += textBlock.WrappedText.MaxMeasuredHeight;
-                if (textBlock.RenderSize.Height <= clientBounds.Y) break;
+                // 描画領域を次の行の位置へ進めます。
+                bounds.Y += textBlock.WrappedText.MaxMeasuredHeight;
+                // 描画対象の領域を完全に越える行は描画しません。
+                if (textBlock.RenderSize.Height <= bounds.Y) break;
             }
         }
     }
