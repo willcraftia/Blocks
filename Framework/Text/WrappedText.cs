@@ -227,7 +227,11 @@ namespace Willcraftia.Xna.Framework.Text
 
                 // LF を見つけたら強制折り返しさせます。
                 // LF ではない場合は文字を追加して測定し、改行するかどうかを判定します。
-                if (c != '\n')
+                if (c == '\n')
+                {
+                    lastSpaceIndex = -1;
+                }
+                else
                 {
                     builder.Append(c);
 

@@ -137,6 +137,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
+    <Compile Include="Screens\BoxProgressDialog.cs" />
     <Compile Include="Screens\BoxUploadWizardDialog.cs" />
     <Compile Include="Screens\ConfirmationDialog.cs" />
     <Compile Include="Screens\ControlUtil.cs" />
