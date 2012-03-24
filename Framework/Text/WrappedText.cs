@@ -102,6 +102,8 @@ namespace Willcraftia.Xna.Framework.Text
             {
                 if (value.X <= 0 || value.Y <= 0) throw new ArgumentOutOfRangeException("value");
 
+                if (fontStretch == value) return;
+
                 fontStretch = value;
                 WrappingValid = false;
             }
@@ -177,8 +179,13 @@ namespace Willcraftia.Xna.Framework.Text
         /// <summary>
         /// 文字列の折り返しを行います。
         /// このメソッドの呼び出しにより、WrappingValid プロパティが true に設定されます。
-        /// このメソッドでは、空白文字を基準とした分割を優先的に行います。
-        /// 基準にできる空白文字が見つからない場合は、
+        /// このメソッドでは、LF (\n) を見つけた場合、LF を基準とした分割をまず行います。
+        /// ここで、このメソッドは CR (\r) には対応しておらず、
+        /// Text プロパティへの設定前に CR を取り除いておく必要があります。
+        /// 続いて、このメソッドでは、空白文字を基準とした分割を行います。
+        /// ここで、このメソッドが認識する空白文字は半角空白文字のみであり、
+        /// 全角空白文字には対応しません。
+        /// 最後に、基準にできる空白文字が見つからない場合は、
         /// ClientWidth プロパティが示す幅に収まるように強制的に分割します。
         /// </summary>
         public void Wrap()
@@ -199,10 +206,9 @@ namespace Willcraftia.Xna.Framework.Text
 
             // 文字数 1 ならば折り返せないため、そのまま測定して返します。
             // コンテナ幅が不明な場合も折り返せないため、そのまま測定して返します。
-            if (text.Length == 1 || float.IsNaN(clientWidth))
+            if (text.Length == 1 || clientWidth <= 0 || float.IsNaN(clientWidth))
             {
-                var element = new WrappedTextLine(0, text.Length);
-                lines.Add(element);
+                lines.Add(new WrappedTextLine(0, text.Length));
                 measuredSize = font.MeasureString(text) * fontStretch;
                 WrappingValid = true;
                 return;
@@ -218,37 +224,48 @@ namespace Willcraftia.Xna.Framework.Text
             while (charIndex < charArray.Length)
             {
                 var c = charArray[charIndex];
-                builder.Append(c);
 
-                size = font.MeasureString(builder) * fontStretch;
-                if (size.X <= clientWidth)
+                // LF を見つけたら強制折り返しさせます。
+                // LF ではない場合は文字を追加して測定し、改行するかどうかを判定します。
+                if (c != '\n')
                 {
-                    if (c == ' ') lastSpaceIndex = charIndex;
-                    charIndex++;
-                    continue;
+                    builder.Append(c);
+
+                    size = font.MeasureString(builder) * fontStretch;
+                    // clientWidth 以下ならばその行を継続します。
+                    if (size.X <= clientWidth)
+                    {
+                        if (c == ' ') lastSpaceIndex = charIndex;
+                        charIndex++;
+                        continue;
+                    }
+
+                    if (0 <= lastSpaceIndex)
+                    {
+                        // スペースを見つけていたならば、その最後のスペースの位置まで戻します。
+                        charIndex = lastSpaceIndex + 1;
+                        builder.Length = charIndex - startIndex;
+                        lastSpaceIndex = -1;
+                    }
+                    else
+                    {
+                        // スペースを見つけていないならば、1 文字前に戻します。
+                        charIndex--;
+                    }
                 }
 
-                if (0 <= lastSpaceIndex)
+                // 行を測定します。
+                // 改行のみが行われたなどの空行の場合は測定をスキップします。
+                if (0 < builder.Length)
                 {
-                    // スペースを見つけていたならば、その最後のスペースの位置まで戻します。
-                    charIndex = lastSpaceIndex + 1;
-                    builder.Length = charIndex - startIndex;
-                    lastSpaceIndex = -1;
+                    size = font.MeasureString(builder) * fontStretch;
+                    measuredSize.X = Math.Max(measuredSize.X, size.X);
+                    MaxMeasuredHeight = Math.Max(MaxMeasuredHeight, size.Y);
                 }
-                else
-                {
-                    // スペースを見つけていないならば、1 文字前に戻します。
-                    charIndex--;
-                }
-
-                // 折り返しまでを再測定します。
-                size = font.MeasureString(builder) * fontStretch;
-                measuredSize.X = Math.Max(measuredSize.X, size.X);
-                measuredSize.Y += size.Y;
-                MaxMeasuredHeight = Math.Max(MaxMeasuredHeight, size.Y);
                 // 折り返し範囲を記録します。
-                var element = new WrappedTextLine(startIndex, charIndex - startIndex);
-                lines.Add(element);
+                lines.Add(new WrappedTextLine(startIndex, charIndex - startIndex));
+                // LF で折り返した場合はインデックスを進めます。
+                if (c == '\n') charIndex++;
 
                 builder.Length = 0;
                 startIndex = charIndex;
@@ -256,11 +273,13 @@ namespace Willcraftia.Xna.Framework.Text
             // 最後の 1 行を測定します。
             size = font.MeasureString(builder) * fontStretch;
             measuredSize.X = Math.Max(measuredSize.X, size.X);
-            measuredSize.Y += size.Y;
             MaxMeasuredHeight = Math.Max(MaxMeasuredHeight, size.Y);
             // 折り返し範囲を記録します。
             var lastElement = new WrappedTextLine(startIndex, charIndex - startIndex);
             lines.Add(lastElement);
+
+            // 最大の行の高さから行全体の高さを決定します。
+            measuredSize.Y = lines.Count * MaxMeasuredHeight;
 
             WrappingValid = true;
         }

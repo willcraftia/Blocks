@@ -75,13 +75,31 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 VerticalAlignment = VerticalAlignment.Stretch
             };
 
-            var textBlock = new TextBlock(Screen)
+            var titleTextBlock = new TextBlock(Screen)
             {
                 Text = "Step 1: Confirmation",
+                ForegroundColor = Color.Yellow,
+                BackgroundColor = Color.Black,
+                ShadowOffset = new Vector2(2)
+            };
+            stackPanel.Children.Add(titleTextBlock);
+
+            var messageTextBlock = new TextBlock(Screen)
+            {
+                Text =
+                    "To use this function, you have to get your Box (http://www.box.com) account. " +
+                    "This function requires to access it with REST API provided by Box.\n\n" +
+                    "Select [Next] button if you allow our application to access your Box account, " +
+                    "otherwise select [Cancel].",
+                TextWrapping = TextWrapping.Wrap,
+                TextHorizontalAlignment = HorizontalAlignment.Left,
                 ForegroundColor = Color.White,
                 BackgroundColor = Color.Black
             };
-            stackPanel.Children.Add(textBlock);
+            stackPanel.Children.Add(messageTextBlock);
+
+            var separator = ControlUtil.CreateDefaultSeparator(Screen);
+            stackPanel.Children.Add(separator);
 
             var buttonPanel = new StackPanel(Screen)
             {
