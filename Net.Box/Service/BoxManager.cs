@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using Willcraftia.Net.Box.Functions;
 using Willcraftia.Net.Box.Results;
 
@@ -13,10 +14,19 @@ namespace Willcraftia.Net.Box.Service
     {
         public string ApiKey { get; private set; }
 
-        public BoxManager(string apiKey)
+        public BoxManager(string assemblyFile, string apiKeyClassName)
         {
-            if (apiKey == null) throw new ArgumentNullException("apiKey");
-            ApiKey = apiKey;
+            ApiKey = LoadApiKey(assemblyFile, apiKeyClassName);
+        }
+
+        string LoadApiKey(string assemblyFile, string apiKeyClassName)
+        {
+            var assembly = Assembly.LoadFrom(assemblyFile);
+            var module = assembly.GetModule(assemblyFile);
+            var apiKeyType = module.GetType(apiKeyClassName);
+
+            var fieldInfo = apiKeyType.GetField("Value", BindingFlags.Static | BindingFlags.NonPublic);
+            return fieldInfo.GetValue(null) as string;
         }
 
         // I/F

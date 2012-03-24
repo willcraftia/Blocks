@@ -11,6 +11,7 @@ using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
+using Willcraftia.Net.Box.Service;
 
 #endregion
 
@@ -68,6 +69,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var uploadDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, "Upload Demo Meshes to Box");
             uploadDemoMeshesButton.Click += OnUploadDemoMeshesButtonClick;
             stackPanel.Children.Add(uploadDemoMeshesButton);
+            if (screen.Game.Services.GetService<IBoxService>() == null)
+                uploadDemoMeshesButton.Enabled = false;
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
             changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;

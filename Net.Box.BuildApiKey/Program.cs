@@ -16,7 +16,7 @@ namespace Willcraftia.Net.Box.BuildApiKey
     {
         const string BoxAppSettingsXml = "BoxAppSettings.xml";
 
-        static string Template = "namespace Willcraftia.Net.Box.${Id} { public static class ApiKey { public const string Value = \"${ApiKey}\"; } }";
+        static string Template = "namespace Willcraftia.Net.Box.${Id} { public static class ApiKey { const string Value = \"${ApiKey}\"; } }";
 
         static void Main(string[] args)
         {

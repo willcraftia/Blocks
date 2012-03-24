@@ -16,10 +16,12 @@ namespace Willcraftia.Net.Box.Demo
 {
     class Program
     {
-        static BoxManager boxManager = new BoxManager(ApiKey.Value);
-
         static void Main(string[] args)
         {
+            var assemblyFile = "Willcraftia.Net.Box.Demo.ApiKey.dll";
+            var apiKeyClassName = "Willcraftia.Net.Box.Demo.ApiKey";
+            var boxManager = new BoxManager(assemblyFile, apiKeyClassName);
+
             //----------------------------------------------------------------
             //
             // get_ticket

@@ -19,7 +19,6 @@ using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
-using Willcraftia.Net.Box.BlockViewer;
 using Willcraftia.Net.Box.Service;
 
 #endregion
@@ -110,8 +109,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             drawMarker.Color = Color.Yellow;
 
             // IBoxService を登録します。
-            boxManager = new BoxManager(ApiKey.Value);
-            Services.AddService(typeof(IBoxService), boxManager);
+            var assemblyFile = "Willcraftia.Net.Box.BlockViewer.ApiKey.dll";
+            var apiKeyClassName = "Willcraftia.Net.Box.BlockViewer.ApiKey";
+            try
+            {
+                boxManager = new BoxManager(assemblyFile, apiKeyClassName);
+                Services.AddService(typeof(IBoxService), boxManager);
+            }
+            catch
+            {
+                // IBoxService を無効とします。
+            }
 
             // マウス カーソルを可視にします。
             IsMouseVisible = true;
