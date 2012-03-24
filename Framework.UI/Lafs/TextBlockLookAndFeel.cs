@@ -90,7 +90,7 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
             var wrappedText = textBlock.WrappedText;
             for (int i = 0; i < wrappedText.LineCount; i++)
             {
-                wrappedText.GetLine(i, builder);
+                wrappedText.GetLineText(i, builder);
 
 
 

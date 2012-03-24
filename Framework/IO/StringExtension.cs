@@ -6,7 +6,7 @@ using System.Text;
 
 #endregion
 
-namespace Willcraftia.Xna.Framework
+namespace Willcraftia.Xna.Framework.IO
 {
     /// <summary>
     /// 文字列の拡張です。

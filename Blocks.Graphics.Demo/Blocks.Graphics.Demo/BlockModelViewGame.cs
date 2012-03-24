@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Graphics;
+using Willcraftia.Xna.Framework.IO;
 using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;

@@ -117,8 +117,6 @@
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />
     <Compile Include="Controls\TextButton.cs" />
-    <Compile Include="Controls\WrappedText.cs" />
-    <Compile Include="Controls\WrappedTextElement.cs" />
     <Compile Include="DefaultLookAndFeelSource.cs" />
     <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />

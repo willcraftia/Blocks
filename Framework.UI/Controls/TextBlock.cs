@@ -3,6 +3,7 @@
 using System;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Willcraftia.Xna.Framework.Text;
 
 #endregion
 
@@ -133,7 +134,7 @@ namespace Willcraftia.Xna.Framework.UI.Controls
             wrappedText.Text = Text;
             wrappedText.Font = Font ?? Screen.Font;
             wrappedText.FontStretch = FontStretch;
-            wrappedText.ContainerWidth = availableWidth;
+            wrappedText.ClientWidth = availableWidth;
 
             wrappedText.Wrap();
 
