@@ -447,7 +447,33 @@ namespace Willcraftia.Xna.Framework.UI
             }
 
             // I/F
+            public void DrawString(Rect clientBounds, SpriteFont font, System.Text.StringBuilder text, Vector2 stretch,
+                HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding)
+            {
+                DrawString(clientBounds, font, text, stretch, hAlign, vAlign, color, padding, Vector2.Zero);
+            }
+
+            // I/F
             public void DrawString(Rect clientBounds, SpriteFont font, string text, Vector2 stretch,
+                HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding, Vector2 offset)
+            {
+                // todo
+                var rectangle = new Rectangle()
+                {
+                    X = (int) (location.X + clientBounds.X),
+                    Y = (int) (location.Y + clientBounds.Y),
+                    Width = (int) clientBounds.Width,
+                    Height = (int) clientBounds.Height
+                };
+
+                TextHelper.DrawString(
+                    SpriteBatch, rectangle, font, text, stretch,
+                    hAlign, vAlign,
+                    color * currentOpacity, padding, offset);
+            }
+
+            // I/F
+            public void DrawString(Rect clientBounds, SpriteFont font, System.Text.StringBuilder text, Vector2 stretch,
                 HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding, Vector2 offset)
             {
                 // todo

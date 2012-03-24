@@ -117,6 +117,8 @@
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />
     <Compile Include="Controls\TextButton.cs" />
+    <Compile Include="Controls\WrappedText.cs" />
+    <Compile Include="Controls\WrappedTextElement.cs" />
     <Compile Include="DefaultLookAndFeelSource.cs" />
     <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />
@@ -158,6 +160,7 @@
     <Compile Include="LoadingScreen.cs" />
     <Compile Include="SelectableLookAndFeelSource.cs" />
     <Compile Include="Size.cs" />
+    <Compile Include="TextWrapping.cs" />
     <Compile Include="Thickness.cs" />
     <Compile Include="VerticalAlignment.cs" />
     <Compile Include="Controls\Button.cs" />

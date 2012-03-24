@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -81,7 +82,15 @@ namespace Willcraftia.Xna.Framework.UI
             HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding);
 
         // todo:
+        void DrawString(Rect clientBounds, SpriteFont font, StringBuilder text, Vector2 stretch,
+            HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding);
+
+        // todo:
         void DrawString(Rect clientBounds, SpriteFont font, string text, Vector2 stretch,
+            HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding, Vector2 offset);
+
+        // todo:
+        void DrawString(Rect clientBounds, SpriteFont font, StringBuilder text, Vector2 stretch,
             HorizontalAlignment hAlign, VerticalAlignment vAlign, Color color, Thickness padding, Vector2 offset);
     }
 }

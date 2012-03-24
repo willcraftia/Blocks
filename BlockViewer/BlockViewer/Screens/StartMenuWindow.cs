@@ -113,8 +113,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     Message = new TextBlock(Screen)
                     {
+                        Width = 320,
                         Text = Strings.InstallDemoMeshesConfirmation,
-                        HorizontalAlignment = HorizontalAlignment.Left,
+                        TextWrapping = TextWrapping.Wrap,
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
                         BackgroundColor = Color.Black,
                         ShadowOffset = new Vector2(2)
