@@ -137,8 +137,12 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Screens\BlockMeshView.cs" />
-    <Compile Include="Screens\BoxProgressDialog.cs" />
-    <Compile Include="Screens\BoxUploadWizardDialog.cs" />
+    <Compile Include="Screens\Box\AuthorizationTabItem.cs" />
+    <Compile Include="Screens\Box\BoxProgressDialog.cs" />
+    <Compile Include="Screens\Box\BoxSetupWizardDialog.cs" />
+    <Compile Include="Screens\Box\AttentionTabItem.cs" />
+    <Compile Include="Screens\Box\AccessTabItem.cs" />
+    <Compile Include="Screens\Box\SaveSettingsTabItem.cs" />
     <Compile Include="Screens\ConfirmationDialog.cs" />
     <Compile Include="Screens\ControlUtil.cs" />
     <Compile Include="Screens\DialogMessageContainer.cs" />
@@ -157,6 +161,7 @@
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
+    <Compile Include="ViewModels\Box\BoxSetupViewModel.cs" />
     <Compile Include="ViewModels\LoadBlockMeshViewModel.cs" />
     <Compile Include="ViewModels\OpenStorageViewModel.cs" />
     <Compile Include="ViewModels\ViewerViewModel.cs" />

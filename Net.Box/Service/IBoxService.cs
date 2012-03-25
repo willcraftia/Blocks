@@ -12,6 +12,13 @@ namespace Willcraftia.Net.Box.Service
     public interface IBoxService
     {
         /// <summary>
+        /// 作成されている BoxSession を取得します。
+        /// このプロパティは、GetAuthToken(string) あるいは CreateSession(string)
+        /// の呼び出しが成功するまで null を返します。
+        /// </summary>
+        BoxSession Session { get; }
+
+        /// <summary>
         /// Ticket を取得します。
         /// </summary>
         /// <returns>Ticket。</returns>

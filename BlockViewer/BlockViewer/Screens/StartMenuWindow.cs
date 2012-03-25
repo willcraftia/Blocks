@@ -11,6 +11,7 @@ using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
+using Willcraftia.Xna.Blocks.BlockViewer.Screens.Box;
 using Willcraftia.Net.Box.Service;
 
 #endregion
@@ -32,7 +33,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         InformationDialog informationDialog;
 
-        BoxUploadWizardDialog boxUploadWizardDialog;
+        BoxSetupWizardDialog boxSetupWizardDialog;
 
         /// <summary>
         /// インスタンスを生成します。
@@ -135,11 +136,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnUploadDemoMeshesButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (boxUploadWizardDialog == null)
+            if (boxSetupWizardDialog == null)
             {
-                boxUploadWizardDialog = new BoxUploadWizardDialog(Screen);
+                boxSetupWizardDialog = new BoxSetupWizardDialog(Screen);
             }
-            boxUploadWizardDialog.Show();
+            boxSetupWizardDialog.Show();
         }
 
         void OnConfirmationDialogClosed(object sender, EventArgs e)

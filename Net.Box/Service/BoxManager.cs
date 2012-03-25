@@ -12,6 +12,9 @@ namespace Willcraftia.Net.Box.Service
 {
     public sealed class BoxManager : IBoxService
     {
+        // I/F
+        public BoxSession Session { get; private set; }
+
         public string ApiKey { get; private set; }
 
         public BoxManager(string assemblyFile, string apiKeyClassName)
@@ -67,7 +70,8 @@ namespace Willcraftia.Net.Box.Service
         {
             if (authToken == null) throw new ArgumentNullException("authToken");
 
-            return new BoxSession(ApiKey, authToken);
+            Session = new BoxSession(ApiKey, authToken);
+            return Session;
         }
     }
 }

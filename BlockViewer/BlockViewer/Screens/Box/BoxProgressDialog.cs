@@ -7,7 +7,7 @@ using Willcraftia.Xna.Framework.UI.Controls;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
+namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 {
     public sealed class BoxProgressDialog : OverlayDialogBase
     {
@@ -30,7 +30,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 ForegroundColor = Color.White,
                 BackgroundColor = Color.Black,
                 ShadowOffset = new Vector2(2),
-                Padding = new Thickness(4)
+                Padding = new Thickness(16)
             };
             Content = textBlock;
         }
