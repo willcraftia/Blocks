@@ -35,7 +35,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         {
             viewModel = new BoxSetupViewModel(screen.Game);
             viewModel.GotTicket += OnViewModelGotTicket;
-            viewModel.AccountSucceeded += OnViewModelAccessSucceeded;
+            viewModel.AccessSucceeded += OnViewModelAccessSucceeded;
+            viewModel.SavedSettings += OnViewModelSavedSettings;
             DataContext = viewModel;
 
             // 開く際に openAnimation で Width を設定するので 0 で初期化します。
@@ -109,6 +110,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             ShowSaveSettingsTabItem();
         }
 
+        void OnViewModelSavedSettings(object sender, EventArgs e)
+        {
+            CloseProgressDialog();
+        }
+
         void OnAttentionTabItemCancelSelected(object sender, EventArgs e)
         {
             Close();
@@ -135,7 +141,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnAccessTabItemNextSelected(object sender, EventArgs e)
         {
-            viewModel.AccessAccount();
+            viewModel.AccessAccountAsync();
 
             ShowProgressDialog("Try to access to your Box account...");
         }
@@ -147,6 +153,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnSaveSettingsTabItemYesSelected(object sender, EventArgs e)
         {
+            viewModel.SaveSettingsAsync();
+
+            ShowProgressDialog("Saving your Box settings...");
         }
 
         void OnSaveSettingsTabItemNoSelected(object sender, EventArgs e)

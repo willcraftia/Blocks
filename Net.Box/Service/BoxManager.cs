@@ -2,7 +2,9 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
+using System.Xml.Serialization;
 using Willcraftia.Net.Box.Functions;
 using Willcraftia.Net.Box.Results;
 
@@ -20,16 +22,6 @@ namespace Willcraftia.Net.Box.Service
         public BoxManager(string assemblyFile, string apiKeyClassName)
         {
             ApiKey = LoadApiKey(assemblyFile, apiKeyClassName);
-        }
-
-        string LoadApiKey(string assemblyFile, string apiKeyClassName)
-        {
-            var assembly = Assembly.LoadFrom(assemblyFile);
-            var module = assembly.GetModule(assemblyFile);
-            var apiKeyType = module.GetType(apiKeyClassName);
-
-            var fieldInfo = apiKeyType.GetField("Value", BindingFlags.Static | BindingFlags.NonPublic);
-            return fieldInfo.GetValue(null) as string;
         }
 
         // I/F
@@ -72,6 +64,16 @@ namespace Willcraftia.Net.Box.Service
 
             Session = new BoxSession(ApiKey, authToken);
             return Session;
+        }
+
+        string LoadApiKey(string assemblyFile, string apiKeyClassName)
+        {
+            var assembly = Assembly.LoadFrom(assemblyFile);
+            var module = assembly.GetModule(assemblyFile);
+            var apiKeyType = module.GetType(apiKeyClassName);
+
+            var fieldInfo = apiKeyType.GetField("Value", BindingFlags.Static | BindingFlags.NonPublic);
+            return fieldInfo.GetValue(null) as string;
         }
     }
 }

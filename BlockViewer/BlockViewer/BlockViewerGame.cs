@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Media;
 using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
@@ -61,6 +62,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         TimeRulerMarker drawMarker;
 
         BoxManager boxManager;
+
+        StorageManager storageManager;
 
         public StorageModel StorageModel { get; private set; }
 
@@ -120,6 +123,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             {
                 // IBoxService を無効とします。
             }
+
+            storageManager = new StorageManager();
+            storageManager.Select("BoxTest");
+            Services.AddService(typeof(IStorageService), storageManager);
 
             // マウス カーソルを可視にします。
             IsMouseVisible = true;

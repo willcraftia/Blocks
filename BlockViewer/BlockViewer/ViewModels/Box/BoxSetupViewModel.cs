@@ -1,8 +1,10 @@
 ﻿#region Using
 
 using System;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
+using Willcraftia.Xna.Framework.Storage;
 using Willcraftia.Net.Box.Service;
 
 #endregion
@@ -17,9 +19,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 
         public event EventHandler GotTicket = delegate { };
 
-        public event EventHandler AccountSucceeded = delegate { };
+        public event EventHandler AccessSucceeded = delegate { };
 
         IBoxService boxService;
+
+        BoxSession boxSession;
+
+        IStorageService storageService;
 
         string ticket;
 
@@ -31,11 +37,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 
         bool fireGotTicket;
 
-        bool fireAccountSucceeded;
+        bool fireAccessSucceeded;
 
         public BoxSetupViewModel(Game game)
         {
             boxService = game.Services.GetRequiredService<IBoxService>();
+            storageService = game.Services.GetRequiredService<IStorageService>();
         }
 
         public void Update()
@@ -47,10 +54,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
                     GotTicket(this, EventArgs.Empty);
                     fireGotTicket = false;
                 }
-                if (fireAccountSucceeded)
+                if (fireAccessSucceeded)
                 {
-                    AccountSucceeded(this, EventArgs.Empty);
-                    fireAccountSucceeded = false;
+                    AccessSucceeded(this, EventArgs.Empty);
+                    fireAccessSucceeded = false;
+                }
+                if (fireSavedSettings)
+                {
+                    SavedSettings(this, EventArgs.Empty);
+                    fireSavedSettings = false;
                 }
             }
         }
@@ -67,11 +79,51 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             boxService.RedirectUserAuth(ticket);
         }
 
-        public void AccessAccount()
+        public void AccessAccountAsync()
         {
             if (getAuthTokenDelegate == null)
                 getAuthTokenDelegate = new GetAuthTokenDelegate(boxService.GetAuthToken);
             getAuthTokenDelegate.BeginInvoke(ticket, GetAuthTokenAsyncCallback, null);
+        }
+
+        XmlSerializer settingsSerializer = new XmlSerializer(typeof(BoxSettings));
+
+        public delegate void SaveSettingsDelegate();
+
+        SaveSettingsDelegate saveSettingsDelegate;
+
+        bool fireSavedSettings;
+
+        public event EventHandler SavedSettings = delegate { };
+
+        public void SaveSettingsAsync()
+        {
+            if (saveSettingsDelegate == null)
+                saveSettingsDelegate = new SaveSettingsDelegate(SaveSettings);
+            saveSettingsDelegate.BeginInvoke(SaveSettingsAsyncCallback, null);
+        }
+
+        void SaveSettings()
+        {
+            StorageDirectory settingsDir;
+            if (!storageService.RootDirectory.DirectoryExists("BoxSettings"))
+            {
+                settingsDir = storageService.RootDirectory.CreateDirectory("BoxSettings");
+            }
+            else
+            {
+                settingsDir = storageService.RootDirectory.GetDirectory("BoxSettings");
+            }
+
+            var settings = new BoxSettings
+            {
+                AuthToken = boxSession.AuthToken
+            };
+
+            using (var stream = settingsDir.CreateFile("BoxSettings.xml"))
+            {
+                settingsSerializer.Serialize(stream, settings);
+            }
         }
 
         void GetTicketAsyncCallback(IAsyncResult asyncResult)
@@ -87,8 +139,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
         {
             lock (syncRoot)
             {
-                getAuthTokenDelegate.EndInvoke(asyncResult);
-                fireAccountSucceeded = true;
+                boxSession = getAuthTokenDelegate.EndInvoke(asyncResult);
+                fireAccessSucceeded = true;
+            }
+        }
+
+        void SaveSettingsAsyncCallback(IAsyncResult asyncResult)
+        {
+            lock (syncRoot)
+            {
+                saveSettingsDelegate.EndInvoke(asyncResult);
+                fireSavedSettings = true;
             }
         }
     }

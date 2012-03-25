@@ -106,6 +106,10 @@
     <Compile Include="Projection.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
+    <Compile Include="Storage\IStorageService.cs" />
+    <Compile Include="Storage\StorageDirectoryIndex.cs" />
+    <Compile Include="Storage\StorageDirectory.cs" />
+    <Compile Include="Storage\StorageManager.cs" />
     <Compile Include="View.cs" />
     <Compile Include="Cameras\ChaseView.cs" />
     <Compile Include="Debug\FpsCounter.cs" />
