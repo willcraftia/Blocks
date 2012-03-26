@@ -13,7 +13,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
     {
         Preview preview;
 
-        string[] fileNames = new string[0];
+        List<string> fileNames = new List<string>();
 
         Paging paging = new Paging();
 
@@ -43,8 +43,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             paging.ItemCountPerPage = itemCountPerPage;
 
-            fileNames = preview.StorageModel.GetBlockMeshFileNames();
-            paging.ItemCount = fileNames.Length;
+            fileNames.AddRange(preview.Workspace.StorageBlockService.EnumerateFileNames());
+            paging.ItemCount = fileNames.Count;
 
             while (viewerViewModels.Count < itemCountPerPage)
             {

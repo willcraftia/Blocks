@@ -23,7 +23,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        public StorageModel StorageModel { get; private set; }
+        public IStorageBlockService StorageBlockService { get; private set; }
 
         public Viewer Viewer { get; private set; }
 
@@ -43,7 +43,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
             interBlockMeshLoadQueue = new InterBlockMeshLoadQueue();
             blockMeshLoadQueue = new BlockMeshLoadQueue(100);
 
-            StorageModel = (game as BlockViewerGame).StorageModel;
+            StorageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
 
             Viewer = new Viewer(this);
 
@@ -63,10 +63,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         public void LoadInterBlockMeshAsync(string name, int lodCount, InterBlockMeshLoadQueueCallback callback)
         {
-            if (StorageModel.BlockLoader == null)
-                throw new InvalidOperationException("No block loader exists.");
-
-            interBlockMeshLoadQueue.Load(StorageModel.BlockLoader, name, lodCount, callback);
+            interBlockMeshLoadQueue.Load(StorageBlockService, name, lodCount, callback);
         }
 
         public void CancelLoadInterBlockMeshAsync(string name)

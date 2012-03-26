@@ -279,11 +279,6 @@ namespace Willcraftia.Xna.Framework.Storage
             {
                 index = indexSerializer.Deserialize(stream) as StorageDirectoryIndex;
             }
-
-            // デシリアライズでは要素が空の場合にインスタンスを生成しないため、
-            // ここで生成して設定します。
-            if (index.DirectoryNames == null) index.DirectoryNames = new List<string>();
-            if (index.FileNames == null) index.FileNames = new List<string>();
         }
 
         /// <summary>

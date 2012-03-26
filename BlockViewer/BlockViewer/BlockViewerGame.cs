@@ -18,6 +18,7 @@ using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Blocks.Content;
+using Willcraftia.Xna.Blocks.Storage;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Net.Box.Service;
@@ -65,7 +66,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         StorageManager storageManager;
 
-        public StorageModel StorageModel { get; private set; }
+        StorageBlockManager storageBlockManager;
 
         /// <summary>
         /// インスタンスを生成します。
@@ -81,8 +82,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
             // デフォルトは OS の CultureInfo に従います。
             Strings.Culture = CultureInfo.CurrentCulture;
-
-            StorageModel = new StorageModel();
         }
 
         protected override void Initialize()
@@ -124,9 +123,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
                 // IBoxService を無効とします。
             }
 
-            storageManager = new StorageManager();
-            storageManager.Select("BoxTest");
-            Services.AddService(typeof(IStorageService), storageManager);
+            // StorageManager を登録します。
+            storageManager = new StorageManager(this);
+            Components.Add(storageManager);
+
+            // StorageBlockManager を登録します。
+            storageBlockManager = new StorageBlockManager(this);
 
             // マウス カーソルを可視にします。
             IsMouseVisible = true;
@@ -148,6 +150,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         {
             timeRuler.StartFrame();
             updateMarker.Begin();
+
+            if (storageManager.RootDirectory == null) storageManager.Select("BoxTest");
 
             base.Update(gameTime);
 

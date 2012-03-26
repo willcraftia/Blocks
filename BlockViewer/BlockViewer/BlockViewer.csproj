@@ -124,7 +124,6 @@
   <ItemGroup>
     <Compile Include="Models\DirectionalLightModel.cs" />
     <Compile Include="Models\Preview.cs" />
-    <Compile Include="Models\StorageModel.cs" />
     <Compile Include="Models\ViewMode.cs" />
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Models\Viewer.cs" />
@@ -156,14 +155,12 @@
     <Compile Include="Screens\SelectLanguageDialog.cs" />
     <Compile Include="Screens\LodWindow.cs" />
     <Compile Include="Screens\MainMenuWindow.cs" />
-    <Compile Include="Screens\OpenStorageDialog.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
     <Compile Include="ViewModels\Box\BoxSetupViewModel.cs" />
     <Compile Include="ViewModels\LoadBlockMeshViewModel.cs" />
-    <Compile Include="ViewModels\OpenStorageViewModel.cs" />
     <Compile Include="ViewModels\ViewerViewModel.cs" />
     <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
     <Compile Include="ViewModels\WorkspaceViewModel.cs" />

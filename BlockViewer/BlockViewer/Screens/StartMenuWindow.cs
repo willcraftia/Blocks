@@ -9,6 +9,7 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
+using Willcraftia.Xna.Blocks.Storage;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.Screens.Box;
@@ -23,7 +24,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     /// </summary>
     public sealed class StartMenuWindow : Window
     {
-        StorageModel storageModel;
+        IStorageBlockService storageBlockService;
 
         SelectLanguageDialog selectLanguageDialog;
 
@@ -42,7 +43,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
-            storageModel = (screen.Game as BlockViewerGame).StorageModel;
+            storageBlockService = screen.Game.Services.GetRequiredService<IStorageBlockService>();
 
             Width = 320;
             ShadowOffset = new Vector2(4);
@@ -85,15 +86,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             startButton.Focus();
         }
 
-        void SelectStorageIfNeeded()
-        {
-            if (!storageModel.Selected) storageModel.SelectStorage();
-        }
-
         void OnStartButtonClick(Control sender, ref RoutedEventContext context)
         {
-            SelectStorageIfNeeded();
-
             var overlay = new FadeOverlay(Screen);
             overlay.OpacityAnimation.To = 1;
             overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(0.5d);
@@ -147,28 +141,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (confirmationDialog.Result == MessageBoxResult.OK)
             {
-                SelectStorageIfNeeded();
-
-                InstallDemoModel(
-                    "Content/DemoMeshes/SimpleBlock.blockmesh.xml",
-                    "SimpleBlock.blockmesh.xml",
-                    storageModel.Container);
-                //InstallDemoModel(
-                //    "Content/DemoModels/OctahedronLikeBlock.xml",
-                //    "Model_OctahedronLikeBlock.xml",
-                //    storageModel.Container);
+                InstallDemoModel("Content/DemoMeshes/SimpleBlock.blockmesh.xml", "SimpleBlock.xml");
 
                 for (int i = 0; i < 20; i++)
                 {
-                    var destinationFileName = string.Format("Dummy_{0:d2}.blockmesh.xml", i);
+                    var destinationFileName = string.Format("Dummy_{0:d2}.xml", i);
                     InstallDemoModel(
-                        "Content/DemoMeshes/OctahedronLikeBlock.blockmesh.xml",
-                        destinationFileName,
-                        storageModel.Container);
-                    //InstallDemoModel(
-                    //    "Content/DemoModels/SimpleBlock.xml",
-                    //    destinationFileName,
-                    //    storageModel.Container);
+                        "Content/DemoMeshes/OctahedronLikeBlock.blockmesh.xml", destinationFileName);
                 }
 
                 if (informationDialog == null)
@@ -189,14 +168,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
         }
 
-        void InstallDemoModel(string sourceFileName, string destinationFileName, StorageContainer storageContainer)
+        void InstallDemoModel(string sourceFileName, string destinationFileName)
         {
-            using (var input = TitleContainer.OpenStream(sourceFileName))
+            using (var stream = TitleContainer.OpenStream(sourceFileName))
             {
-                using (var output = storageContainer.CreateFile(destinationFileName))
-                {
-                    input.CopyTo(output);
-                }
+                storageBlockService.SaveBlock(destinationFileName, stream);
             }
         }
 

@@ -121,6 +121,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\Material.cs" />
     <Compile Include="Storage\StorageBlockLoader.cs" />
+    <Compile Include="Storage\StorageBlockManager.cs" />
+    <Compile Include="Storage\IStorageBlockService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
