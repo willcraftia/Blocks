@@ -8,12 +8,25 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Willcraftia.Xna.Framework.Storage
 {
+    /// <summary>
+    /// IStorageService の実装クラスです。
+    /// </summary>
     public sealed class StorageManager : IStorageService
     {
+        /// <summary>
+        /// StorageContainer。
+        /// </summary>
         StorageContainer container;
 
+        /// <summary>
+        /// ルート ディレクトリの StorageDirectory。
+        /// </summary>
+        StorageDirectory rootDirectory;
+
+        // I/F
         public StorageDirectory RootDirectory { get; private set; }
 
+        // I/F
         public void Select(string storageName)
         {
             RootDirectory = null;
@@ -31,11 +44,6 @@ namespace Willcraftia.Xna.Framework.Storage
             openContainerResult.AsyncWaitHandle.Close();
 
             RootDirectory = StorageDirectory.GetRootDirectory(container);
-        }
-
-        void EnsureStorageContainer()
-        {
-            if (container == null) throw new InvalidOperationException("StorageContainer is not selected.");
         }
     }
 }
