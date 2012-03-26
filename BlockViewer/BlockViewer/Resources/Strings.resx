@@ -157,7 +157,7 @@
     <value>Install Demo Meshes</value>
   </data>
   <data name="InstallDemoMeshesConfirmation" xml:space="preserve">
-    <value>Are you sure you want to install demo meshes to your storage?</value>
+    <value>Are you sure you want to install demo meshes to your storage ?</value>
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>

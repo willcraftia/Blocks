@@ -52,6 +52,11 @@ namespace Willcraftia.Xna.Framework.Storage
         const string indexFileName = "index.xml";
 
         /// <summary>
+        /// StorageDirectoryIndex に変更が加えられた時に発生します。
+        /// </summary>
+        public event EventHandler IndexChanged = delegate { };
+
+        /// <summary>
         /// StorageContainer。
         /// </summary>
         StorageContainer container;
@@ -178,6 +183,9 @@ namespace Willcraftia.Xna.Framework.Storage
             index.DirectoryNames.Add(name);
             SaveIndexFile();
 
+            // todo
+            IndexChanged(this, EventArgs.Empty);
+
             return directory;
         }
 
@@ -292,6 +300,8 @@ namespace Willcraftia.Xna.Framework.Storage
             {
                 indexSerializer.Serialize(stream, index);
             }
+
+            IndexChanged(this, EventArgs.Empty);
         }
 
         /// <summary>

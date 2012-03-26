@@ -178,7 +178,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Are you sure you want to install demo meshes to your storage? に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to install demo meshes to your storage ? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string InstallDemoMeshesConfirmation {
             get {

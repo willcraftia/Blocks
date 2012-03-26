@@ -13,39 +13,46 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
 {
     class Program
     {
+        static ContentSerializer<Block> blockSerializer = new ContentSerializer<Block>();
+
+        static ContentSerializer<Description<Block>> descriptionSerializer = new ContentSerializer<Description<Block>>();
+
         static void Main(string[] args)
         {
             //var block = CreateSimpleBlock();
             var block = CreateOctahedronLikeBlock();
 
-            var xmlSerializer = new XmlSerializer(typeof(Block));
-
             // シリアライズとデシリアライズのテスト
-            SerializeAndDeserialize(xmlSerializer, block);
+            SerializeAndDeserialize(block);
 
             // 他のアプリケーションで利用するためのデータの作成
-            Save(xmlSerializer, Path.Combine(Directory.GetCurrentDirectory(), "Block.xml"), block);
+            var description = new Description<Block>
+            {
+                Name = "Demo Block"
+            };
+            Save(Directory.GetCurrentDirectory(), "DemoBlock", description, block);
 
+            Console.WriteLine();
+            Console.WriteLine("Press any key to exit.");
             Console.ReadLine();
         }
 
         /// <summary>
         /// Block をシリアライズし、それをデシリアライズします。
         /// </summary>
-        /// <param name="serializer">ISerializer。</param>
         /// <param name="block">Block。</param>
-        static void SerializeAndDeserialize(XmlSerializer serializer, Block block)
+        static void SerializeAndDeserialize(Block block)
         {
             using (var stream = new MemoryStream())
             {
                 // シリアライズ
-                serializer.Serialize(stream, block);
+                blockSerializer.Serialize(stream, block);
                 var serialized = Encoding.UTF8.GetString(stream.ToArray());
                 Console.WriteLine(serialized);
 
                 // デシリアライズ
                 stream.Seek(0, SeekOrigin.Begin);
-                var deserialized = serializer.Deserialize(stream);
+                var deserialized = blockSerializer.Deserialize(stream);
                 Console.WriteLine(deserialized);
             }
         }
@@ -53,14 +60,18 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// <summary>
         /// Block を指定のパスで保存します。
         /// </summary>
-        /// <param name="serializer"></param>
         /// <param name="filePath"></param>
         /// <param name="block"></param>
-        static void Save(XmlSerializer serializer, string filePath, Block block)
+        static void Save(string directoryPath, string name, Description<Block> description, Block block)
         {
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            using (var stream = new FileStream(Path.Combine(directoryPath, name + ".description"), FileMode.Create))
             {
-                serializer.Serialize(stream, block);
+                descriptionSerializer.Serialize(stream, description);
+            }
+
+            using (var stream = new FileStream(Path.Combine(directoryPath, name + ".block"), FileMode.Create))
+            {
+                blockSerializer.Serialize(stream, block);
             }
         }
 

@@ -19,14 +19,19 @@ namespace Willcraftia.Xna.Blocks.Storage
     public sealed class StorageBlockManager : IStorageBlockService
     {
         /// <summary>
-        /// Block の XmlSerializer。
+        /// Block の ContentSerializer。
         /// </summary>
-        XmlSerializer blockSerializer = new XmlSerializer(typeof(Block));
+        ContentSerializer<Block> blockSerializer = new ContentSerializer<Block>();
 
         /// <summary>
-        /// BlockMeshes ディレクトリ名。
+        /// Description の ContentSerializer。
         /// </summary>
-        const string directoryName = "BlockMeshes";
+        ContentSerializer<Description<Block>> descriptionSerializer = new ContentSerializer<Description<Block>>();
+
+        /// <summary>
+        /// Block ディレクトリ名。
+        /// </summary>
+        const string directoryName = "Blocks";
 
         /// <summary>
         /// IStorageService。
@@ -62,38 +67,45 @@ namespace Willcraftia.Xna.Blocks.Storage
         {
             EnsureDirectory();
 
-            using (var stream = directory.OpenFile(name, FileMode.Open))
+            var blockFileName = Block.ResolveFileName(name);
+            using (var stream = directory.OpenFile(blockFileName, FileMode.Open))
             {
-                return blockSerializer.Deserialize(stream) as Block;
+                return blockSerializer.Deserialize(stream);
             }
         }
 
         // I/F
-        public void SaveBlock(string name, Block block)
+        public void Save(string name, Block block, Description<Block> description)
         {
             EnsureDirectory();
 
-            using (var stream = directory.CreateFile(name))
+            var blockFileName = Block.ResolveFileName(name);
+            var descriptionFileName = Description<Block>.ResolveFileName(name);
+
+            using (var stream = directory.CreateFile(blockFileName))
             {
                 blockSerializer.Serialize(stream, block);
             }
-        }
 
-        // I/F
-        public void SaveBlock(string name, Stream stream)
-        {
-            EnsureDirectory();
-
-            using (var fileStream = directory.CreateFile(name))
+            using (var stream = directory.CreateFile(descriptionFileName))
             {
-                stream.CopyTo(fileStream);
+                descriptionSerializer.Serialize(stream, description);
             }
         }
 
         // I/F
-        public IEnumerable<string> EnumerateFileNames()
+        public List<string> GetBlockNames()
         {
-            return directory.EnumerateFileNames();
+            var blockNames = new List<string>();
+            foreach (var fileName in directory.EnumerateFileNames())
+            {
+                if (fileName.EndsWith(Block.Extension))
+                {
+                    var name = fileName.Substring(0, fileName.LastIndexOf(Block.Extension));
+                    blockNames.Add(name);
+                }
+            }
+            return blockNames;
         }
 
         void OnStorageServiceContainerSelected(object sender, EventArgs e)
@@ -107,6 +119,9 @@ namespace Willcraftia.Xna.Blocks.Storage
         /// </summary>
         void LoadDirectory()
         {
+            if (directory != null)
+                directory.IndexChanged -= OnDirectoryIndexChanged;
+
             var rootDirectory = storageService.RootDirectory;
             if (rootDirectory.DirectoryExists(directoryName))
             {
@@ -116,6 +131,13 @@ namespace Willcraftia.Xna.Blocks.Storage
             {
                 directory = rootDirectory.CreateDirectory(directoryName);
             }
+            directory.IndexChanged += OnDirectoryIndexChanged;
+        }
+
+        void OnDirectoryIndexChanged(object sender, EventArgs e)
+        {
+            // ディレクトリを再ロードします。
+            LoadDirectory();
         }
 
         void EnsureDirectory()

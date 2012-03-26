@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using Willcraftia.Xna.Blocks.Serialization;
 
@@ -14,10 +13,8 @@ namespace Willcraftia.Xna.Blocks.Storage
     /// </summary>
     public interface IStorageBlockService : IBlockLoader
     {
-        void SaveBlock(string name, Block block);
+        void Save(string name, Block block, Description<Block> description);
 
-        void SaveBlock(string name, Stream stream);
-
-        IEnumerable<string> EnumerateFileNames();
+        List<string> GetBlockNames();
     }
 }

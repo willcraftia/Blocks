@@ -14,6 +14,9 @@ using Willcraftia.Net.Box.Service;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
 {
+    /// <summary>
+    /// Box との接続を管理するクラスです。
+    /// </summary>
     public sealed class BoxIntegration
     {
         public const string BlocksFolderName = "Blocks Data";

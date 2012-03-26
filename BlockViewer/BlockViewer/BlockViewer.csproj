@@ -165,6 +165,7 @@
     <Compile Include="Screens\StartScreen.cs" />
     <Compile Include="ViewModels\Box\BoxSetupViewModel.cs" />
     <Compile Include="ViewModels\LoadBlockMeshViewModel.cs" />
+    <Compile Include="ViewModels\StartMenuViewModel.cs" />
     <Compile Include="ViewModels\ViewerViewModel.cs" />
     <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
     <Compile Include="ViewModels\WorkspaceViewModel.cs" />

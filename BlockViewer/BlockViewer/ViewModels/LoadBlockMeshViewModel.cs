@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
+using Willcraftia.Xna.Blocks.Serialization;
 
 #endregion
 
@@ -13,7 +14,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
     {
         Preview preview;
 
-        List<string> fileNames = new List<string>();
+        List<string> fileNames;
 
         Paging paging = new Paging();
 
@@ -43,7 +44,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             paging.ItemCountPerPage = itemCountPerPage;
 
-            fileNames.AddRange(preview.Workspace.StorageBlockService.EnumerateFileNames());
+            fileNames = preview.Workspace.StorageBlockService.GetBlockNames();
             paging.ItemCount = fileNames.Count;
 
             while (viewerViewModels.Count < itemCountPerPage)

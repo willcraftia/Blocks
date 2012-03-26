@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -15,16 +16,19 @@ namespace Willcraftia.Xna.Blocks.Serialization
         /// <summary>
         /// X 座標。
         /// </summary>
+        [XmlAttribute]
         public int X;
 
         /// <summary>
         /// Y 座標。
         /// </summary>
+        [XmlAttribute]
         public int Y;
 
         /// <summary>
         /// Z 座標。
         /// </summary>
+        [XmlAttribute]
         public int Z;
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿#region Using
 
 using System;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 #endregion
 
@@ -26,21 +26,25 @@ namespace Willcraftia.Xna.Blocks.Serialization
         /// <summary>
         /// Diffuse 色。
         /// </summary>
+        [XmlElement("D")]
         public MaterialColor DiffuseColor { get; set; }
 
         /// <summary>
         /// Emissive 色。
         /// </summary>
+        [XmlElement("E")]
         public MaterialColor EmissiveColor { get; set; }
 
         /// <summary>
         /// Specular 色。
         /// </summary>
+        [XmlElement("S")]
         public MaterialColor SpecularColor { get; set; }
 
         /// <summary>
         /// Specular 係数。
         /// </summary>
+        [XmlElement("SP")]
         public float SpecularPower { get; set; }
 
         /// <summary>

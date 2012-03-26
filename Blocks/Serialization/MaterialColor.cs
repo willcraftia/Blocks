@@ -34,6 +34,7 @@ namespace Willcraftia.Xna.Blocks.Serialization
         /// <summary>
         /// パック値を取得または設定します。
         /// </summary>
+        [XmlText]
         public uint PackedValue
         {
             get { return (uint) B + (uint) (G << 8) + (uint) (R << 16); }

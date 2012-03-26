@@ -69,6 +69,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         StorageBlockManager storageBlockManager;
 
+        // todo: 何か他に管理方法がないのだろうか？
         public BoxIntegration BoxIntegration { get; private set; }
 
         /// <summary>

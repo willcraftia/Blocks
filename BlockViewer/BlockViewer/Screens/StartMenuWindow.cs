@@ -6,17 +6,13 @@ using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
-using Willcraftia.Xna.Blocks.Storage;
-using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.Screens.Box;
-using Willcraftia.Net.Box;
-using Willcraftia.Net.Box.Service;
+using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
 
 #endregion
 
@@ -27,8 +23,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
     /// </summary>
     public sealed class StartMenuWindow : Window
     {
-        IStorageBlockService storageBlockService;
-
         SelectLanguageDialog selectLanguageDialog;
 
         Button changeLookAndFeelButton;
@@ -43,6 +37,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         BoxSetupWizardDialog boxSetupWizardDialog;
 
+        BoxProgressDialog boxProgressDialog;
+
+        StartMenuViewModel viewModel;
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -50,7 +48,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         public StartMenuWindow(Screen screen)
             : base(screen)
         {
-            storageBlockService = screen.Game.Services.GetRequiredService<IStorageBlockService>();
+            viewModel = new StartMenuViewModel(screen.Game);
+            viewModel.UploadedDemoContents += new EventHandler(OnViewModelUploadedDemoContents);
+            DataContext = viewModel;
 
             Width = 320;
             ShadowOffset = new Vector2(4);
@@ -76,10 +76,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             stackPanel.Children.Add(installDemoMeshesButton);
 
             var uploadDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, "Upload Demo Meshes to Box");
+            uploadDemoMeshesButton.Enabled = viewModel.BoxServiceEnabled;
             uploadDemoMeshesButton.Click += OnUploadDemoMeshesButtonClick;
             stackPanel.Children.Add(uploadDemoMeshesButton);
-            if (screen.Game.Services.GetService<IBoxService>() == null)
-                uploadDemoMeshesButton.Enabled = false;
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
             changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
@@ -95,15 +94,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         public override void Update(GameTime gameTime)
         {
-            lock (showUploadedDialogSyncRoot)
-            {
-                if (showUploadedDialog)
-                {
-                    boxProgressDialog.Close();
-                    ShowUploadedDialog();
-                    showUploadedDialog = false;
-                }
-            }
+            viewModel.Update();
             
             base.Update(gameTime);
         }
@@ -165,6 +156,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             }
         }
 
+        void OnViewModelUploadedDemoContents(object sender, EventArgs e)
+        {
+            boxProgressDialog.Close();
+            ShowUploadedDialog();
+        }
+
         void ShowConfirmUploadDialog()
         {
             if (confirmUploadDialog == null)
@@ -174,7 +171,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Message = new TextBlock(Screen)
                     {
                         Width = 320,
-                        Text = "Upload ?",
+                        Text = "Are you sure you want to upload demo meshes to your Box ?",
                         TextWrapping = TextWrapping.Wrap,
                         TextHorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
@@ -188,85 +185,16 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             confirmUploadDialog.Show();
         }
 
-        // todo
-
-        public delegate void UploadDelegate(IEnumerable<UploadFile> uploadFiles);
-
-        UploadDelegate uploadDelegate;
-
-        readonly object showUploadedDialogSyncRoot = new object();
-
-        bool showUploadedDialog;
-
-        BoxProgressDialog boxProgressDialog;
-
         void OnConfirmUploadDialogClosed(object sender, EventArgs e)
         {
             if (confirmUploadDialog.Result == MessageBoxResult.OK)
             {
-                // todo
-                var boxIntegration = (Screen.Game as BlockViewerGame).BoxIntegration;
-
-                var memoryStream = new MemoryStream();
-
-                string simpleBlockString;
-                using (var input = TitleContainer.OpenStream("Content/DemoMeshes/SimpleBlock.blockmesh.xml"))
-                {
-                    input.CopyTo(memoryStream);
-                    simpleBlockString = Encoding.ASCII.GetString(memoryStream.ToArray());
-                }
-                memoryStream.Position = 0;
-
-                string octahedronLikeBlockString;
-                using (var input = TitleContainer.OpenStream("Content/DemoMeshes/OctahedronLikeBlock.blockmesh.xml"))
-                {
-                    input.CopyTo(memoryStream);
-                    octahedronLikeBlockString = Encoding.ASCII.GetString(memoryStream.ToArray());
-                }
-
-                memoryStream.Close();
-
-                var uploadFiles = new List<UploadFile>();
-
-                var simpleBlockFile = new UploadFile
-                {
-                    ContentType = "text/xml",
-                    Name = "SimpleBlock.xml",
-                    Content = simpleBlockString
-                };
-                uploadFiles.Add(simpleBlockFile);
-
-                for (int i = 0; i < 20; i++)
-                {
-                    var destinationFileName = string.Format("Dummy_{0:d2}.xml", i);
-
-                    var octahedronLikeBlockFile = new UploadFile
-                    {
-                        ContentType = "text/xml",
-                        Name = destinationFileName,
-                        Content = octahedronLikeBlockString
-                    };
-                    uploadFiles.Add(octahedronLikeBlockFile);
-                }
-
-                if (uploadDelegate == null)
-                    uploadDelegate = new UploadDelegate(boxIntegration.Upload);
-                uploadDelegate.BeginInvoke(uploadFiles, UploadAsyncCallback, null);
+                viewModel.UploadDemoContentsAsync();
 
                 if (boxProgressDialog == null)
                     boxProgressDialog = new BoxProgressDialog(Screen);
                 boxProgressDialog.Message = "Uploading demo mesh files to your Box...";
                 boxProgressDialog.Show();
-            }
-        }
-
-        void UploadAsyncCallback(IAsyncResult asyncResult)
-        {
-            lock (showUploadedDialogSyncRoot)
-            {
-                uploadDelegate.EndInvoke(asyncResult);
-
-                showUploadedDialog = true;
             }
         }
 
@@ -293,14 +221,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (confirmInstallDialog.Result == MessageBoxResult.OK)
             {
-                InstallDemoMeshes("Content/DemoMeshes/SimpleBlock.blockmesh.xml", "SimpleBlock.xml");
-
-                for (int i = 0; i < 20; i++)
-                {
-                    var destinationFileName = string.Format("Dummy_{0:d2}.xml", i);
-                    InstallDemoMeshes(
-                        "Content/DemoMeshes/OctahedronLikeBlock.blockmesh.xml", destinationFileName);
-                }
+                viewModel.InstallDemoContents();
 
                 if (installedDialog == null)
                 {
@@ -317,14 +238,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     };
                 }
                 installedDialog.Show();
-            }
-        }
-
-        void InstallDemoMeshes(string sourceFileName, string destinationFileName)
-        {
-            using (var stream = TitleContainer.OpenStream(sourceFileName))
-            {
-                storageBlockService.SaveBlock(destinationFileName, stream);
             }
         }
 

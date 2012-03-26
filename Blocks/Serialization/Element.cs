@@ -1,7 +1,7 @@
 ﻿#region Using
 
 using System;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 #endregion
 
@@ -15,11 +15,13 @@ namespace Willcraftia.Xna.Blocks.Serialization
         /// <summary>
         /// グリッド内での位置を取得または設定します。
         /// </summary>
+        [XmlElement("P")]
         public Position Position { get; set; }
 
         /// <summary>
         /// 参照する Material のインデックスを取得または設定します。
         /// </summary>
+        [XmlAttribute("M")]
         public int MaterialIndex { get; set; }
 
         #region ToString
