@@ -15,15 +15,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 {
     public sealed class BoxSetupViewModel
     {
-        public delegate string GetTicketDelegate();
+        public delegate void GetTicketDelegate();
 
-        public delegate BoxSession GetAuthTokenDelegate(string ticket);
+        public delegate void GetAuthTokenDelegate();
 
         public delegate void PrepareFolderTreeDelegate();
 
-        public const string BlocksFolderName = "Blocks Data";
-
-        public const string BlockMehsesFolderName = "BlockMehses";
+        public delegate void SaveSettingsDelegate();
 
         public event EventHandler GotTicket = delegate { };
 
@@ -31,23 +29,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 
         public event EventHandler PreparedFolders = delegate { };
 
-        IBoxService boxService;
+        public event EventHandler SavedSettings = delegate { };
 
-        BoxSession boxSession;
-
-        Folder rootFolder;
-
-        IStorageService storageService;
-
-        string ticket;
-
-        BoxSettings boxSettings = new BoxSettings();
+        BoxIntegration boxIntegration;
 
         GetTicketDelegate getTicketDelegate;
 
         GetAuthTokenDelegate getAuthTokenDelegate;
 
         PrepareFolderTreeDelegate prepareFolderTreeDelegate;
+
+        SaveSettingsDelegate saveSettingsDelegate;
 
         readonly object syncRoot = new object();
 
@@ -57,10 +49,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 
         bool firePreparedFolders;
 
-        public BoxSetupViewModel(Game game)
+        bool fireSavedSettings;
+
+        public BoxSetupViewModel(BoxIntegration boxIntegration)
         {
-            boxService = game.Services.GetRequiredService<IBoxService>();
-            storageService = game.Services.GetRequiredService<IStorageService>();
+            this.boxIntegration = boxIntegration;
         }
 
         public void Update()
@@ -93,100 +86,41 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
         public void GetTicketAsync()
         {
             if (getTicketDelegate == null)
-                getTicketDelegate = new GetTicketDelegate(boxService.GetTicket);
+                getTicketDelegate = new GetTicketDelegate(boxIntegration.GetTicket);
             getTicketDelegate.BeginInvoke(GetTicketAsyncCallback, null);
         }
 
         public void LauchAuthorizationPageOnBrowser()
         {
-            boxService.RedirectUserAuth(ticket);
+            boxIntegration.LauchAuthorizationPageOnBrowser();
         }
 
         public void AccessAccountAsync()
         {
             if (getAuthTokenDelegate == null)
-                getAuthTokenDelegate = new GetAuthTokenDelegate(boxService.GetAuthToken);
-            getAuthTokenDelegate.BeginInvoke(ticket, GetAuthTokenAsyncCallback, null);
+                getAuthTokenDelegate = new GetAuthTokenDelegate(boxIntegration.GetAuthToken);
+            getAuthTokenDelegate.BeginInvoke(GetAuthTokenAsyncCallback, null);
         }
 
         public void PrepareFolderTreeAsync()
         {
             if (prepareFolderTreeDelegate == null)
-                prepareFolderTreeDelegate = new PrepareFolderTreeDelegate(PrepareFolderTree);
+                prepareFolderTreeDelegate = new PrepareFolderTreeDelegate(boxIntegration.PrepareFolderTree);
             prepareFolderTreeDelegate.BeginInvoke(PrepareFolderTreeAsyncCallback, null);
         }
-
-        void PrepareFolderTree()
-        {
-            // ルート フォルダの階層を 1 レベルで取得します。
-            var rootFolder = boxSession.GetAccountTreeRoot("onelevel", "nozip");
-
-            var blocksFolder = rootFolder.FindFolderByName(BlocksFolderName);
-            if (blocksFolder == null)
-            {
-                var createdFolder = boxSession.CreateFolder(0, BlocksFolderName, false);
-                boxSettings.BlocksFolderId = createdFolder.FolderId;
-            }
-            else
-            {
-                boxSettings.BlocksFolderId = blocksFolder.Id;
-            }
-
-            // "Blocks Data" フォルダの階層を 1 レベルで取得します。
-            blocksFolder = boxSession.GetAccountTree(boxSettings.BlocksFolderId, "onelevel", "nozip");
-
-            var meshesFolder = blocksFolder.FindFolderByName(BlockMehsesFolderName);
-            if (meshesFolder == null)
-            {
-                var createdFolder = boxSession.CreateFolder(boxSettings.BlocksFolderId, BlockMehsesFolderName, false);
-                boxSettings.MeshesFolderId = createdFolder.FolderId;
-            }
-            else
-            {
-                boxSettings.MeshesFolderId = meshesFolder.Id;
-            }
-        }
-
-        XmlSerializer settingsSerializer = new XmlSerializer(typeof(BoxSettings));
-
-        public delegate void SaveSettingsDelegate();
-
-        SaveSettingsDelegate saveSettingsDelegate;
-
-        bool fireSavedSettings;
-
-        public event EventHandler SavedSettings = delegate { };
 
         public void SaveSettingsAsync()
         {
             if (saveSettingsDelegate == null)
-                saveSettingsDelegate = new SaveSettingsDelegate(SaveSettings);
+                saveSettingsDelegate = new SaveSettingsDelegate(boxIntegration.SaveSettings);
             saveSettingsDelegate.BeginInvoke(SaveSettingsAsyncCallback, null);
-        }
-
-        void SaveSettings()
-        {
-            StorageDirectory settingsDir;
-            if (!storageService.RootDirectory.DirectoryExists("BoxSettings"))
-            {
-                settingsDir = storageService.RootDirectory.CreateDirectory("BoxSettings");
-            }
-            else
-            {
-                settingsDir = storageService.RootDirectory.GetDirectory("BoxSettings");
-            }
-
-            using (var stream = settingsDir.CreateFile("BoxSettings.xml"))
-            {
-                settingsSerializer.Serialize(stream, boxSettings);
-            }
         }
 
         void GetTicketAsyncCallback(IAsyncResult asyncResult)
         {
             lock (syncRoot)
             {
-                ticket = getTicketDelegate.EndInvoke(asyncResult);
+                getTicketDelegate.EndInvoke(asyncResult);
                 fireGotTicket = true;
             }
         }
@@ -195,8 +129,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
         {
             lock (syncRoot)
             {
-                boxSession = getAuthTokenDelegate.EndInvoke(asyncResult);
-                boxSettings.AuthToken = boxSession.AuthToken;
+                getAuthTokenDelegate.EndInvoke(asyncResult);
                 fireAccessSucceeded = true;
             }
         }

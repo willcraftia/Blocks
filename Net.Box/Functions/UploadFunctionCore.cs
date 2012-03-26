@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -25,7 +26,7 @@ namespace Willcraftia.Net.Box.Functions
         /// </summary>
         /// <typeparam name="T">XML の型。</typeparam>
         /// <param name="uri">API の URI。</param>
-        /// <param name="files">UploadFile の配列。</param>
+        /// <param name="files">UploadFile のリスト。</param>
         /// <param name="share">
         /// true (ファイルを共有可とする場合)、false (それ以外の場合)。
         /// </param>
@@ -41,7 +42,7 @@ namespace Willcraftia.Net.Box.Functions
         /// </param>
         /// <returns></returns>
         public static T Execute<T>(string uri,
-            UploadFile[] files, bool share, string message, string[] emails,
+            IEnumerable<UploadFile> files, bool share, string message, string[] emails,
             bool dumpContent, bool dumpXml)
             where T : class
         {
@@ -74,7 +75,7 @@ namespace Willcraftia.Net.Box.Functions
         /// multipart/form-data を MemoryStream に作成します。
         /// </summary>
         /// <param name="boundary">boundary 値。</param>
-        /// <param name="files">UploadFile の配列。</param>
+        /// <param name="files">UploadFile のリスト。</param>
         /// <param name="share">
         /// true (ファイルを共有可とする場合)、false (それ以外の場合)。
         /// </param>
@@ -87,7 +88,7 @@ namespace Willcraftia.Net.Box.Functions
         /// </param>
         /// <returns>multipart/form-data を含む MemoryStream。</returns>
         public static MemoryStream GetContentStream(string boundary,
-            UploadFile[] files, bool share, string message, string[] emails,
+            IEnumerable<UploadFile> files, bool share, string message, string[] emails,
             bool dumpContent)
         {
             var sb = new StringBuilder();

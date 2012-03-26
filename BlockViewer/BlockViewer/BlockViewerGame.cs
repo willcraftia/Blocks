@@ -20,6 +20,7 @@ using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Storage;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
+using Willcraftia.Xna.Blocks.BlockViewer.Models.Box;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Net.Box.Service;
 
@@ -68,6 +69,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         StorageBlockManager storageBlockManager;
 
+        public BoxIntegration BoxIntegration { get; private set; }
+
         /// <summary>
         /// インスタンスを生成します。
         /// </summary>
@@ -110,6 +113,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             drawMarker.BarIndex = 1;
             drawMarker.Color = Color.Yellow;
 
+            // StorageManager を登録します。
+            storageManager = new StorageManager(this);
+            storageManager.ContainerSelected += (s, c) =>
+            {
+                // IBoxService が登録されているならば BoxIntegration を初期化します。
+                if (boxManager != null)
+                    BoxIntegration = new BoxIntegration(this);
+            };
+            Components.Add(storageManager);
+
+            // StorageBlockManager を登録します。
+            storageBlockManager = new StorageBlockManager(this);
+
             // IBoxService を登録します。
             var assemblyFile = "Willcraftia.Net.Box.BlockViewer.ApiKey.dll";
             var apiKeyClassName = "Willcraftia.Net.Box.BlockViewer.ApiKey";
@@ -122,13 +138,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             {
                 // IBoxService を無効とします。
             }
-
-            // StorageManager を登録します。
-            storageManager = new StorageManager(this);
-            Components.Add(storageManager);
-
-            // StorageBlockManager を登録します。
-            storageBlockManager = new StorageBlockManager(this);
 
             // マウス カーソルを可視にします。
             IsMouseVisible = true;

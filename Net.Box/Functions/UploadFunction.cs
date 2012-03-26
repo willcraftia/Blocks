@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using Willcraftia.Net.Box.Results;
 
 #endregion
@@ -46,7 +47,7 @@ namespace Willcraftia.Net.Box.Functions
         /// </summary>
         /// <param name="authToken">Auth-token。</param>
         /// <param name="folderId">アップロード先フォルダの ID。</param>
-        /// <param name="files">UploadFile の配列。</param>
+        /// <param name="files">UploadFile のリスト。</param>
         /// <param name="share">
         /// true (ファイルを共有可とする場合)、false (それ以外の場合)。
         /// </param>
@@ -56,7 +57,7 @@ namespace Willcraftia.Net.Box.Functions
         /// </param>
         /// <returns></returns>
         public static UploadResult Execute(string authToken, long folderId,
-            UploadFile[] files, bool share, string message, string[] emails)
+            IEnumerable<UploadFile> files, bool share, string message, string[] emails)
         {
             var uri = uriBase + authToken + "/" + folderId;
             if (DumpUri) Console.WriteLine("URI: " + uri);

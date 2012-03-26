@@ -1,7 +1,9 @@
 ﻿#region Using
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Storage;
@@ -13,6 +15,7 @@ using Willcraftia.Xna.Blocks.Storage;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.Screens.Box;
+using Willcraftia.Net.Box;
 using Willcraftia.Net.Box.Service;
 
 #endregion
@@ -30,9 +33,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         Button changeLookAndFeelButton;
 
-        ConfirmationDialog confirmationDialog;
+        ConfirmationDialog confirmInstallDialog;
 
-        InformationDialog informationDialog;
+        ConfirmationDialog confirmUploadDialog;
+
+        InformationDialog installedDialog;
+
+        InformationDialog uploadedDialog;
 
         BoxSetupWizardDialog boxSetupWizardDialog;
 
@@ -86,6 +93,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             startButton.Focus();
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            lock (showUploadedDialogSyncRoot)
+            {
+                if (showUploadedDialog)
+                {
+                    boxProgressDialog.Close();
+                    ShowUploadedDialog();
+                    showUploadedDialog = false;
+                }
+            }
+            
+            base.Update(gameTime);
+        }
+
         void OnStartButtonClick(Control sender, ref RoutedEventContext context)
         {
             var overlay = new FadeOverlay(Screen);
@@ -105,9 +127,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnInstallModelsButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (confirmationDialog == null)
+            if (confirmInstallDialog == null)
             {
-                confirmationDialog = new ConfirmationDialog(Screen)
+                confirmInstallDialog = new ConfirmationDialog(Screen)
                 {
                     Message = new TextBlock(Screen)
                     {
@@ -120,39 +142,169 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         ShadowOffset = new Vector2(2)
                     }
                 };
-                confirmationDialog.Closed += OnConfirmationDialogClosed;
+                confirmInstallDialog.Closed += OnConfirmInstallDialogClosed;
             }
 
-            confirmationDialog.Show();
-
-            context.Handled = true;
+            confirmInstallDialog.Show();
         }
 
         void OnUploadDemoMeshesButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (boxSetupWizardDialog == null)
+            if (!(Screen.Game as BlockViewerGame).BoxIntegration.BoxSettingsInitialized)
             {
-                boxSetupWizardDialog = new BoxSetupWizardDialog(Screen);
+                if (boxSetupWizardDialog == null)
+                {
+                    boxSetupWizardDialog = new BoxSetupWizardDialog(Screen);
+                    boxSetupWizardDialog.Closed += (s, c) => ShowConfirmUploadDialog();
+                }
+                boxSetupWizardDialog.Show();
             }
-            boxSetupWizardDialog.Show();
+            else
+            {
+                ShowConfirmUploadDialog();
+            }
         }
 
-        void OnConfirmationDialogClosed(object sender, EventArgs e)
+        void ShowConfirmUploadDialog()
         {
-            if (confirmationDialog.Result == MessageBoxResult.OK)
+            if (confirmUploadDialog == null)
             {
-                InstallDemoModel("Content/DemoMeshes/SimpleBlock.blockmesh.xml", "SimpleBlock.xml");
+                confirmUploadDialog = new ConfirmationDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        Width = 320,
+                        Text = "Upload ?",
+                        TextWrapping = TextWrapping.Wrap,
+                        TextHorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        ShadowOffset = new Vector2(2)
+                    }
+                };
+                confirmUploadDialog.Closed += new EventHandler(OnConfirmUploadDialogClosed);
+            }
+
+            confirmUploadDialog.Show();
+        }
+
+        // todo
+
+        public delegate void UploadDelegate(IEnumerable<UploadFile> uploadFiles);
+
+        UploadDelegate uploadDelegate;
+
+        readonly object showUploadedDialogSyncRoot = new object();
+
+        bool showUploadedDialog;
+
+        BoxProgressDialog boxProgressDialog;
+
+        void OnConfirmUploadDialogClosed(object sender, EventArgs e)
+        {
+            if (confirmUploadDialog.Result == MessageBoxResult.OK)
+            {
+                // todo
+                var boxIntegration = (Screen.Game as BlockViewerGame).BoxIntegration;
+
+                var memoryStream = new MemoryStream();
+
+                string simpleBlockString;
+                using (var input = TitleContainer.OpenStream("Content/DemoMeshes/SimpleBlock.blockmesh.xml"))
+                {
+                    input.CopyTo(memoryStream);
+                    simpleBlockString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                }
+                memoryStream.Position = 0;
+
+                string octahedronLikeBlockString;
+                using (var input = TitleContainer.OpenStream("Content/DemoMeshes/OctahedronLikeBlock.blockmesh.xml"))
+                {
+                    input.CopyTo(memoryStream);
+                    octahedronLikeBlockString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                }
+
+                memoryStream.Close();
+
+                var uploadFiles = new List<UploadFile>();
+
+                var simpleBlockFile = new UploadFile
+                {
+                    ContentType = "text/xml",
+                    Name = "SimpleBlock.xml",
+                    Content = simpleBlockString
+                };
+                uploadFiles.Add(simpleBlockFile);
 
                 for (int i = 0; i < 20; i++)
                 {
                     var destinationFileName = string.Format("Dummy_{0:d2}.xml", i);
-                    InstallDemoModel(
+
+                    var octahedronLikeBlockFile = new UploadFile
+                    {
+                        ContentType = "text/xml",
+                        Name = destinationFileName,
+                        Content = octahedronLikeBlockString
+                    };
+                    uploadFiles.Add(octahedronLikeBlockFile);
+                }
+
+                if (uploadDelegate == null)
+                    uploadDelegate = new UploadDelegate(boxIntegration.Upload);
+                uploadDelegate.BeginInvoke(uploadFiles, UploadAsyncCallback, null);
+
+                if (boxProgressDialog == null)
+                    boxProgressDialog = new BoxProgressDialog(Screen);
+                boxProgressDialog.Message = "Uploading demo mesh files to your Box...";
+                boxProgressDialog.Show();
+            }
+        }
+
+        void UploadAsyncCallback(IAsyncResult asyncResult)
+        {
+            lock (showUploadedDialogSyncRoot)
+            {
+                uploadDelegate.EndInvoke(asyncResult);
+
+                showUploadedDialog = true;
+            }
+        }
+
+        void ShowUploadedDialog()
+        {
+            if (uploadedDialog == null)
+            {
+                uploadedDialog = new InformationDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        Text = "Uploaded.",
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black,
+                        ShadowOffset = new Vector2(2)
+                    }
+                };
+            }
+            uploadedDialog.Show();
+        }
+
+        void OnConfirmInstallDialogClosed(object sender, EventArgs e)
+        {
+            if (confirmInstallDialog.Result == MessageBoxResult.OK)
+            {
+                InstallDemoMeshes("Content/DemoMeshes/SimpleBlock.blockmesh.xml", "SimpleBlock.xml");
+
+                for (int i = 0; i < 20; i++)
+                {
+                    var destinationFileName = string.Format("Dummy_{0:d2}.xml", i);
+                    InstallDemoMeshes(
                         "Content/DemoMeshes/OctahedronLikeBlock.blockmesh.xml", destinationFileName);
                 }
 
-                if (informationDialog == null)
+                if (installedDialog == null)
                 {
-                    informationDialog = new InformationDialog(Screen)
+                    installedDialog = new InformationDialog(Screen)
                     {
                         Message = new TextBlock(Screen)
                         {
@@ -164,11 +316,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                         }
                     };
                 }
-                informationDialog.Show();
+                installedDialog.Show();
             }
         }
 
-        void InstallDemoModel(string sourceFileName, string destinationFileName)
+        void InstallDemoMeshes(string sourceFileName, string destinationFileName)
         {
             using (var stream = TitleContainer.OpenStream(sourceFileName))
             {

@@ -37,7 +37,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public BoxSetupWizardDialog(Screen screen)
             : base(screen)
         {
-            viewModel = new BoxSetupViewModel(screen.Game);
+            viewModel = new BoxSetupViewModel((screen.Game as BlockViewerGame).BoxIntegration);
             viewModel.GotTicket += OnViewModelGotTicket;
             viewModel.AccessSucceeded += OnViewModelAccessSucceeded;
             viewModel.PreparedFolders += OnViewModelPreparedFolders;

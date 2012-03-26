@@ -131,7 +131,7 @@ namespace Willcraftia.Net.Box.Service
         /// <param name="message">通知メールに含めるメッセージ。</param>
         /// <param name="emails">共有ファイルの情報を通知するユーザのメールアドレスの配列。</param>
         /// <returns>アップロードしたファイルの情報。</returns>
-        public List<UploadedFile> Upload(long folderId, UploadFile[] files, bool share, string message, string[] emails)
+        public List<UploadedFile> Upload(long folderId, IEnumerable<UploadFile> files, bool share, string message, string[] emails)
         {
             var result = UploadFunction.Execute(AuthToken, folderId, files, share, message, emails);
 
