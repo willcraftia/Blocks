@@ -5,7 +5,9 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Storage;
+using Willcraftia.Net.Box.Results;
 using Willcraftia.Net.Box.Service;
+using Willcraftia.Xna.Blocks.BlockViewer.Models.Box;
 
 #endregion
 
@@ -17,27 +19,43 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 
         public delegate BoxSession GetAuthTokenDelegate(string ticket);
 
+        public delegate void PrepareFolderTreeDelegate();
+
+        public const string BlocksFolderName = "Blocks Data";
+
+        public const string BlockMehsesFolderName = "BlockMehses";
+
         public event EventHandler GotTicket = delegate { };
 
         public event EventHandler AccessSucceeded = delegate { };
+
+        public event EventHandler PreparedFolders = delegate { };
 
         IBoxService boxService;
 
         BoxSession boxSession;
 
+        Folder rootFolder;
+
         IStorageService storageService;
 
         string ticket;
 
+        BoxSettings boxSettings = new BoxSettings();
+
         GetTicketDelegate getTicketDelegate;
 
         GetAuthTokenDelegate getAuthTokenDelegate;
+
+        PrepareFolderTreeDelegate prepareFolderTreeDelegate;
 
         readonly object syncRoot = new object();
 
         bool fireGotTicket;
 
         bool fireAccessSucceeded;
+
+        bool firePreparedFolders;
 
         public BoxSetupViewModel(Game game)
         {
@@ -58,6 +76,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
                 {
                     AccessSucceeded(this, EventArgs.Empty);
                     fireAccessSucceeded = false;
+                }
+                if (firePreparedFolders)
+                {
+                    PreparedFolders(this, EventArgs.Empty);
+                    firePreparedFolders = false;
                 }
                 if (fireSavedSettings)
                 {
@@ -84,6 +107,44 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             if (getAuthTokenDelegate == null)
                 getAuthTokenDelegate = new GetAuthTokenDelegate(boxService.GetAuthToken);
             getAuthTokenDelegate.BeginInvoke(ticket, GetAuthTokenAsyncCallback, null);
+        }
+
+        public void PrepareFolderTreeAsync()
+        {
+            if (prepareFolderTreeDelegate == null)
+                prepareFolderTreeDelegate = new PrepareFolderTreeDelegate(PrepareFolderTree);
+            prepareFolderTreeDelegate.BeginInvoke(PrepareFolderTreeAsyncCallback, null);
+        }
+
+        void PrepareFolderTree()
+        {
+            // ルート フォルダの階層を 1 レベルで取得します。
+            var rootFolder = boxSession.GetAccountTreeRoot("onelevel", "nozip");
+
+            var blocksFolder = rootFolder.FindFolderByName(BlocksFolderName);
+            if (blocksFolder == null)
+            {
+                var createdFolder = boxSession.CreateFolder(0, BlocksFolderName, false);
+                boxSettings.BlocksFolderId = createdFolder.FolderId;
+            }
+            else
+            {
+                boxSettings.BlocksFolderId = blocksFolder.Id;
+            }
+
+            // "Blocks Data" フォルダの階層を 1 レベルで取得します。
+            blocksFolder = boxSession.GetAccountTree(boxSettings.BlocksFolderId, "onelevel", "nozip");
+
+            var meshesFolder = blocksFolder.FindFolderByName(BlockMehsesFolderName);
+            if (meshesFolder == null)
+            {
+                var createdFolder = boxSession.CreateFolder(boxSettings.BlocksFolderId, BlockMehsesFolderName, false);
+                boxSettings.MeshesFolderId = createdFolder.FolderId;
+            }
+            else
+            {
+                boxSettings.MeshesFolderId = meshesFolder.Id;
+            }
         }
 
         XmlSerializer settingsSerializer = new XmlSerializer(typeof(BoxSettings));
@@ -115,14 +176,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
                 settingsDir = storageService.RootDirectory.GetDirectory("BoxSettings");
             }
 
-            var settings = new BoxSettings
-            {
-                AuthToken = boxSession.AuthToken
-            };
-
             using (var stream = settingsDir.CreateFile("BoxSettings.xml"))
             {
-                settingsSerializer.Serialize(stream, settings);
+                settingsSerializer.Serialize(stream, boxSettings);
             }
         }
 
@@ -140,7 +196,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             lock (syncRoot)
             {
                 boxSession = getAuthTokenDelegate.EndInvoke(asyncResult);
+                boxSettings.AuthToken = boxSession.AuthToken;
                 fireAccessSucceeded = true;
+            }
+        }
+
+        void PrepareFolderTreeAsyncCallback(IAsyncResult asyncResult)
+        {
+            lock (syncRoot)
+            {
+                prepareFolderTreeDelegate.EndInvoke(asyncResult);
+                firePreparedFolders = true;
             }
         }
 

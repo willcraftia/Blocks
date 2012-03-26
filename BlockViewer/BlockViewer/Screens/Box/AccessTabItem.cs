@@ -20,7 +20,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         const string message = "If you authorized this application on Box website, please select [Authorized] button " +
             "that will try to access your Box account from this application.";
 
-        Button backButton;
+        Button defaultFocusedButton;
 
         public AccessTabItem(Screen screen)
             : base(screen)
@@ -63,24 +63,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var nextButton = ControlUtil.CreateDefaultDialogButton(Screen, "Authorized.");
-            nextButton.Click += (Control s, ref RoutedEventContext c) =>
+            var authorizedButton = ControlUtil.CreateDefaultDialogButton(Screen, "Authorized");
+            authorizedButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 NextSelected(this, EventArgs.Empty);
             };
-            buttonPanel.Children.Add(nextButton);
+            buttonPanel.Children.Add(authorizedButton);
 
-            backButton = ControlUtil.CreateDefaultDialogButton(Screen, "Back");
+            var backButton = ControlUtil.CreateDefaultDialogButton(Screen, "Back");
             backButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 BackSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(backButton);
+
+            defaultFocusedButton = authorizedButton;
         }
 
         public void FocusToDefault()
         {
-            backButton.Focus();
+            defaultFocusedButton.Focus();
         }
     }
 }

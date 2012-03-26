@@ -22,7 +22,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             "You will setup every time when use Box integration if don't save it.\n\n" +
             "Please select [Yes] button if you want to save this settings, otherwise [No].";
 
-        Button noButton;
+        Button defaultFocusedButton;
 
         public SaveSettingsTabItem(Screen screen)
             : base(screen)
@@ -72,17 +72,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             buttonPanel.Children.Add(yesButton);
 
-            noButton = ControlUtil.CreateDefaultDialogButton(Screen, "No");
+            var noButton = ControlUtil.CreateDefaultDialogButton(Screen, "No");
             noButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 NoSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(noButton);
+
+            defaultFocusedButton = yesButton;
         }
 
         public void FocusToDefault()
         {
-            noButton.Focus();
+            defaultFocusedButton.Focus();
         }
     }
 }

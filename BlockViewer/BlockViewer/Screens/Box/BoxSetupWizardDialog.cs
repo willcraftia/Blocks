@@ -26,7 +26,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         AccessTabItem accessTabItem;
 
+        PrepareFolderTreeTabItem prepareFolderTreeTabItem;
+
         SaveSettingsTabItem saveSettingsTabItem;
+
+        FinishTabItem finishTabItem;
 
         BoxProgressDialog boxProgressDialog;
 
@@ -36,6 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             viewModel = new BoxSetupViewModel(screen.Game);
             viewModel.GotTicket += OnViewModelGotTicket;
             viewModel.AccessSucceeded += OnViewModelAccessSucceeded;
+            viewModel.PreparedFolders += OnViewModelPreparedFolders;
             viewModel.SavedSettings += OnViewModelSavedSettings;
             DataContext = viewModel;
 
@@ -69,10 +74,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             accessTabItem.BackSelected += OnAccessTabItemBackSelected;
             tabControl.Items.Add(accessTabItem);
 
+            prepareFolderTreeTabItem = new PrepareFolderTreeTabItem(Screen);
+            prepareFolderTreeTabItem.CreateSelected += OnPrepareFolderTreeTabItemCreateSelected;
+            prepareFolderTreeTabItem.CancelSelected += OnPrepareFolderTreeTabItemCancelSelected;
+            tabControl.Items.Add(prepareFolderTreeTabItem);
+
             saveSettingsTabItem = new SaveSettingsTabItem(Screen);
             saveSettingsTabItem.YesSelected += OnSaveSettingsTabItemYesSelected;
             saveSettingsTabItem.NoSelected += OnSaveSettingsTabItemNoSelected;
             tabControl.Items.Add(saveSettingsTabItem);
+
+            finishTabItem = new FinishTabItem(Screen);
+            finishTabItem.UploadSelected += OnFinishTabItemUploadSelected;
+            finishTabItem.CancelSelected += OnFinishTabItemCancelSelected;
+            tabControl.Items.Add(finishTabItem);
 
             openAnimation = new FloatLerpAnimation
             {
@@ -107,12 +122,22 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         {
             CloseProgressDialog();
 
+            ShowCreateFolderTabItem();
+        }
+
+
+        void OnViewModelPreparedFolders(object sender, EventArgs e)
+        {
+            CloseProgressDialog();
+
             ShowSaveSettingsTabItem();
         }
 
         void OnViewModelSavedSettings(object sender, EventArgs e)
         {
             CloseProgressDialog();
+
+            ShowFinishTabItem();
         }
 
         void OnAttentionTabItemCancelSelected(object sender, EventArgs e)
@@ -151,6 +176,18 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             ShowAuthorizationTabItem();
         }
 
+        void OnPrepareFolderTreeTabItemCreateSelected(object sender, EventArgs e)
+        {
+            viewModel.PrepareFolderTreeAsync();
+
+            ShowProgressDialog("Try to prepare folders in your Box...");
+        }
+
+        void OnPrepareFolderTreeTabItemCancelSelected(object sender, EventArgs e)
+        {
+            Close();
+        }
+
         void OnSaveSettingsTabItemYesSelected(object sender, EventArgs e)
         {
             viewModel.SaveSettingsAsync();
@@ -160,6 +197,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnSaveSettingsTabItemNoSelected(object sender, EventArgs e)
         {
+            ShowFinishTabItem();
+        }
+
+        void OnFinishTabItemUploadSelected(object sender, EventArgs e)
+        {
+            Close();
+
+            // todo: upload
+        }
+
+        void OnFinishTabItemCancelSelected(object sender, EventArgs e)
+        {
+            Close();
         }
 
         void ShowAttentionTabItem()
@@ -180,10 +230,22 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             accessTabItem.FocusToDefault();
         }
 
-        void ShowSaveSettingsTabItem()
+        void ShowCreateFolderTabItem()
         {
             tabControl.SelectedIndex = 3;
+            prepareFolderTreeTabItem.FocusToDefault();
+        }
+
+        void ShowSaveSettingsTabItem()
+        {
+            tabControl.SelectedIndex = 4;
             saveSettingsTabItem.FocusToDefault();
+        }
+
+        void ShowFinishTabItem()
+        {
+            tabControl.SelectedIndex = 5;
+            finishTabItem.FocusToDefault();
         }
 
         void ShowProgressDialog(string message)

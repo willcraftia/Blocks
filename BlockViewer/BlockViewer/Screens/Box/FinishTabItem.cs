@@ -9,21 +9,20 @@ using Willcraftia.Xna.Framework.UI.Controls;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 {
-    public sealed class AttentionTabItem : ContentControl
+    public sealed class FinishTabItem : ContentControl
     {
-        public event EventHandler AgreeSelected = delegate { };
+        public event EventHandler UploadSelected = delegate { };
 
         public event EventHandler CancelSelected = delegate { };
 
-        const string title = "Attention";
+        const string title = "Box Setup Finished";
 
-        const string message = "To use this function, you must setup Box integration on this application. " +
-            "This setup will requires to access Box and your account on it via the Internet.\n\n" +
-            "If you allow that, select [Agree] button after signed up for Box, otherwise [Cancel].";
+        const string message = "All settings to use Box integration are finished.\n\n" +
+            "Please select [Upload] button if you want to upload demo Blocks meshes in your Box, otherwise [Cancel].";
 
         Button defaultFocusedButton;
 
-        public AttentionTabItem(Screen screen)
+        public FinishTabItem(Screen screen)
             : base(screen)
         {
             var stackPanel = new StackPanel(Screen)
@@ -64,12 +63,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var agreeButton = ControlUtil.CreateDefaultDialogButton(Screen, "Agree");
-            agreeButton.Click += (Control s, ref RoutedEventContext c) =>
+            var uploadButton = ControlUtil.CreateDefaultDialogButton(Screen, "Upload");
+            uploadButton.Click += (Control s, ref RoutedEventContext c) =>
             {
-                AgreeSelected(this, EventArgs.Empty);
+                UploadSelected(this, EventArgs.Empty);
             };
-            buttonPanel.Children.Add(agreeButton);
+            buttonPanel.Children.Add(uploadButton);
 
             var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, "Cancel");
             cancelButton.Click += (Control s, ref RoutedEventContext c) =>
@@ -78,7 +77,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             buttonPanel.Children.Add(cancelButton);
 
-            defaultFocusedButton = cancelButton;
+            defaultFocusedButton = uploadButton;
         }
 
         public void FocusToDefault()

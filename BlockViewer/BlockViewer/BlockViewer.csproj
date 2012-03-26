@@ -122,6 +122,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Box\BoxSettings.cs" />
     <Compile Include="Models\DirectionalLightModel.cs" />
     <Compile Include="Models\Preview.cs" />
     <Compile Include="Models\ViewMode.cs" />
@@ -141,6 +142,8 @@
     <Compile Include="Screens\Box\BoxSetupWizardDialog.cs" />
     <Compile Include="Screens\Box\AttentionTabItem.cs" />
     <Compile Include="Screens\Box\AccessTabItem.cs" />
+    <Compile Include="Screens\Box\FinishTabItem.cs" />
+    <Compile Include="Screens\Box\PrepareFolderTreeTabItem.cs" />
     <Compile Include="Screens\Box\SaveSettingsTabItem.cs" />
     <Compile Include="Screens\ConfirmationDialog.cs" />
     <Compile Include="Screens\ControlUtil.cs" />

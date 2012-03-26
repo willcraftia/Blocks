@@ -21,7 +21,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             "To do it, this application must be authorized by you on Box website.\n\n" +
             "Please select [Launch web browser] button that will open your web browser and forward the authorization page on Box.";
 
-        Button backButton;
+        Button defaultFocusedButton;
 
         public AuthorizationTabItem(Screen screen)
             : base(screen)
@@ -64,24 +64,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var nextButton = ControlUtil.CreateDefaultDialogButton(Screen, "Launch web browser");
-            nextButton.Click += (Control s, ref RoutedEventContext c) =>
+            var launchWebBrowserButton = ControlUtil.CreateDefaultDialogButton(Screen, "Launch web browser");
+            launchWebBrowserButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 NextSelected(this, EventArgs.Empty);
             };
-            buttonPanel.Children.Add(nextButton);
+            buttonPanel.Children.Add(launchWebBrowserButton);
 
-            backButton = ControlUtil.CreateDefaultDialogButton(Screen, "Back");
+            var backButton = ControlUtil.CreateDefaultDialogButton(Screen, "Back");
             backButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 BackSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(backButton);
+
+            defaultFocusedButton = launchWebBrowserButton;
         }
 
         public void FocusToDefault()
         {
-            backButton.Focus();
+            defaultFocusedButton.Focus();
         }
     }
 }

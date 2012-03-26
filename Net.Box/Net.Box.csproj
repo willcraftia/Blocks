@@ -62,7 +62,6 @@
     <Compile Include="Results\LogoutResult.cs" />
     <Compile Include="Results\LogoutStatus.cs" />
     <Compile Include="Results\UploadedFile.cs" />
-    <Compile Include="Service\BoxSettings.cs" />
     <Compile Include="Service\BoxStatusException.cs" />
     <Compile Include="Service\BoxManager.cs" />
     <Compile Include="Service\BoxSession.cs" />
