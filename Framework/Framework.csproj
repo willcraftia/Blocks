@@ -104,8 +104,6 @@
     <Compile Include="Paging.cs" />
     <Compile Include="PredefinedColor.cs" />
     <Compile Include="Projection.cs" />
-    <Compile Include="Serialization\ISerializer.cs" />
-    <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Storage\IStorageService.cs" />
     <Compile Include="Storage\StorageDirectoryIndex.cs" />
     <Compile Include="Storage\StorageDirectory.cs" />

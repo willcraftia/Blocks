@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
-using Willcraftia.Xna.Framework.Serialization;
 
 #endregion
 
@@ -19,7 +18,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             //var block = CreateSimpleBlock();
             var block = CreateOctahedronLikeBlock();
 
-            var xmlSerializer = new XmlSerializer<Block>();
+            var xmlSerializer = new XmlSerializer(typeof(Block));
 
             // シリアライズとデシリアライズのテスト
             SerializeAndDeserialize(xmlSerializer, block);
@@ -35,7 +34,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// </summary>
         /// <param name="serializer">ISerializer。</param>
         /// <param name="block">Block。</param>
-        static void SerializeAndDeserialize(ISerializer<Block> serializer, Block block)
+        static void SerializeAndDeserialize(XmlSerializer serializer, Block block)
         {
             using (var stream = new MemoryStream())
             {
@@ -57,7 +56,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// <param name="serializer"></param>
         /// <param name="filePath"></param>
         /// <param name="block"></param>
-        static void Save(ISerializer<Block> serializer, string filePath, Block block)
+        static void Save(XmlSerializer serializer, string filePath, Block block)
         {
             using (var stream = new FileStream(filePath, FileMode.Create))
             {

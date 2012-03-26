@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +13,6 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.IO;
-using Willcraftia.Xna.Framework.Serialization;
 using Willcraftia.Xna.Blocks.Content;
 using Willcraftia.Xna.Blocks.Serialization;
 
@@ -104,6 +104,11 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
         /// GameObject が移動できる領域。
         /// </summary>
         public static BoundingBox Sandbox = new BoundingBox();
+
+        /// <summary>
+        /// Block の XmlSerializer。
+        /// </summary>
+        static XmlSerializer blockSerializer = new XmlSerializer(typeof(Block));
 
         /// <summary>
         /// GraphicsDeviceManager。
@@ -278,10 +283,9 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             // テスト用にメモリ上で Block データを作ります。
             //var block = CreateFullFilledBlock();
             var block = CreateOctahedronLikeBlock();
-            var serializer = new XmlSerializer<Block>();
             using (var stream = new MemoryStream())
             {
-                serializer.Serialize(stream, block);
+                blockSerializer.Serialize(stream, block);
                 blockData = Encoding.ASCII.GetString(stream.ToArray());
             }
 
@@ -528,21 +532,22 @@ namespace Willcraftia.Xna.Blocks.Graphics.Demo
             return block;
         }
 
-        class StringBlockLoader : BlockLoaderBase
+        class StringBlockLoader : IBlockLoader
         {
             string blockString;
 
             public StringBlockLoader(string blockString)
-                : base(null)
             {
                 if (blockString == null) throw new ArgumentNullException("blockString");
-
                 this.blockString = blockString;
             }
 
-            protected override Stream OpenStream(string name)
+            public Block LoadBlock(string name)
             {
-                return blockString.ToMemoryStream();
+                using (var stream = blockString.ToMemoryStream())
+                {
+                    return blockSerializer.Deserialize(stream) as Block;
+                }
             }
         }
 
