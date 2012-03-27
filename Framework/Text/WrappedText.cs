@@ -68,7 +68,8 @@ namespace Willcraftia.Xna.Framework.Text
                 if (text == value) return;
 
                 text = value;
-                charArray = (text != null) ? text.ToCharArray() : null;
+
+                charArray = (text != null) ? text.Replace("\r", "").ToCharArray() : null;
                 WrappingValid = false;
             }
         }
@@ -180,8 +181,8 @@ namespace Willcraftia.Xna.Framework.Text
         /// 文字列の折り返しを行います。
         /// このメソッドの呼び出しにより、WrappingValid プロパティが true に設定されます。
         /// このメソッドでは、LF (\n) を見つけた場合、LF を基準とした分割をまず行います。
-        /// ここで、このメソッドは CR (\r) には対応しておらず、
-        /// Text プロパティへの設定前に CR を取り除いておく必要があります。
+        /// なお、このメソッドは CR (\r) には対応しておらず、
+        /// Text プロパティへの設定において CR を除去した文字列を内部で管理しています。
         /// 続いて、このメソッドでは、空白文字を基準とした分割を行います。
         /// ここで、このメソッドが認識する空白文字は半角空白文字のみであり、
         /// 全角空白文字には対応しません。
@@ -236,7 +237,7 @@ namespace Willcraftia.Xna.Framework.Text
                     builder.Append(c);
 
                     size = font.MeasureString(builder) * fontStretch;
-                    // clientWidth 以下ならばその行を継続します。
+                    // clientWidth 未満ならばその行を継続します。
                     if (size.X <= clientWidth)
                     {
                         if (c == ' ') lastSpaceIndex = charIndex;
@@ -255,6 +256,18 @@ namespace Willcraftia.Xna.Framework.Text
                     {
                         // スペースを見つけていないならば、1 文字前に戻します。
                         charIndex--;
+                        
+                        if (charIndex == 0)
+                        {
+                            // 改行できないほどに ClientWidth が小さいならば、
+                            // 改行処理を中断します。
+                            measuredSize = Vector2.Zero;
+                            WrappingValid = true;
+                            return;
+                        }
+
+                        // 対象文字についても 1 文字前に戻します。
+                        builder.Length = builder.Length - 1;
                     }
                 }
 
