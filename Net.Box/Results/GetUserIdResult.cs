@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetUserIdResult
     {
         [XmlElement("status")]
-        public GetUserIdStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlElement("id")]
         public long Id { get; set; }

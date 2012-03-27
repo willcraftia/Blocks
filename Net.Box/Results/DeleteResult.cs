@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class DeleteResult
     {
         [XmlElement("status")]
-        public DeleteStatus Status { get; set; }
+        public string Status { get; set; }
 
         public override string ToString()
         {

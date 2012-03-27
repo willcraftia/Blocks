@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetFileInfoResult
     {
         [XmlElement("status")]
-        public GetFileInfoStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlElement("info")]
         public Info Info { get; set; }

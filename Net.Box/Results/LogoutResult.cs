@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class LogoutResult
     {
         [XmlElement("status")]
-        public LogoutStatus Status { get; set; }
+        public string Status { get; set; }
 
         public override string ToString()
         {

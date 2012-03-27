@@ -13,7 +13,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class InviteCollaboratorsResult
     {
         [XmlElement("status")]
-        public InviteCollaboratorsStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlArray("invited_collaborators")]
         [XmlArrayItem("item")]

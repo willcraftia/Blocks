@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetAccountTreeResult
     {
         [XmlElement("status")]
-        public GetAccountTreeStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlElement("tree")]
         public AccountTree Tree { get; set; }

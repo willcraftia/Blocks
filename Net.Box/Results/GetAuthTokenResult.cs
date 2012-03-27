@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetAuthTokenResult
     {
         [XmlElement("status")]
-        public GetAuthTokenStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlElement("auth_token")]
         public string AuthToken { get; set; }

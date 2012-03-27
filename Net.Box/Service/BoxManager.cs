@@ -14,6 +14,8 @@ namespace Willcraftia.Net.Box.Service
 {
     public sealed class BoxManager : IBoxService
     {
+        const string statusApplicationRestricted = "application_restricted";
+
         // I/F
         public BoxSession Session { get; private set; }
 
@@ -29,8 +31,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = GetTicketFunction.Execute(ApiKey);
 
-            if (result.Status != GetTicketStatus.GetTicketOk)
-                throw new BoxStatusException<GetTicketStatus>(result.Status);
+            if (result.Status != "get_ticket_ok") HandleErrorStatus(result.Status);
 
             return result.Ticket;
         }
@@ -51,8 +52,7 @@ namespace Willcraftia.Net.Box.Service
 
             var result = GetAuthTokenFunction.Execute(ApiKey, ticket);
 
-            if (result.Status != GetAuthTokenStatus.GetAuthTokenOk)
-                throw new BoxStatusException<GetAuthTokenStatus>(result.Status);
+            if (result.Status != "get_auth_token_ok") HandleErrorStatus(result.Status);
 
             return CreateSession(result.AuthToken);
         }
@@ -74,6 +74,14 @@ namespace Willcraftia.Net.Box.Service
 
             var fieldInfo = apiKeyType.GetField("Value", BindingFlags.Static | BindingFlags.NonPublic);
             return fieldInfo.GetValue(null) as string;
+        }
+
+        void HandleErrorStatus(string erroStatus)
+        {
+            if (erroStatus == statusApplicationRestricted)
+                throw new BoxApplicationRestrictedException();
+
+            throw new BoxStatusException(erroStatus);
         }
     }
 }

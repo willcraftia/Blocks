@@ -216,9 +216,9 @@ namespace Willcraftia.Net.Box.Demo
                 Console.WriteLine("Invited Collaborators:");
                 foreach (var invited in invitedCollaborators) Console.WriteLine(invited);
             }
-            catch (BoxStatusException<InviteCollaboratorsStatus> e)
+            catch (BoxStatusException e)
             {
-                if (e.Status == InviteCollaboratorsStatus.UserAlreadyCollaborator)
+                if (e.Status == "user_already_collaborator")
                 {
                     Prompt("The specified users were already collaborators.");
                 }
@@ -243,7 +243,7 @@ namespace Willcraftia.Net.Box.Demo
                 var resolvedUserId = session.GetUserId(userEmail);
                 Console.WriteLine(string.Format("The ID of the user '{0}' is '{1}'.", userEmail, resolvedUserId));
             }
-            catch (BoxStatusException<GetUserIdStatus> e)
+            catch
             {
                 Prompt(string.Format("The user '{0}' could not be resolved.", userEmail));
             }

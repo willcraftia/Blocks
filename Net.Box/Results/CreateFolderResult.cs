@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class CreateFolderResult
     {
         [XmlElement("status")]
-        public CreateFolderStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlElement("folder")]
         public CreatedFolder Folder { get; set; }

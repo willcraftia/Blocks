@@ -11,7 +11,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class GetTicketResult
     {
         [XmlElement("status")]
-        public GetTicketStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlElement("ticket")]
         public string Ticket { get; set; }

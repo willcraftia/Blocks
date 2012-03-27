@@ -19,9 +19,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
     /// </summary>
     public sealed class BoxIntegration
     {
-        public const string BlocksFolderName = "Blocks Data";
+        public const string BlocksHomeFolderName = "Blocks Home";
 
-        const string BlockMehsesFolderName = "BlockMehses";
+        const string BlocksFolderName = "Blocks";
 
         const string IntegrationDirectoryName = "BoxIntegration";
 
@@ -50,7 +50,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
         {
             get
             {
-                return BoxSettings.AuthToken != null && 0 < BoxSettings.BlocksFolderId && 0 < BoxSettings.MeshesFolderId;
+                return BoxSettings.AuthToken != null && 0 < BoxSettings.BlocksHomeFolderId && 0 < BoxSettings.BlocksFolderId;
             }
         }
 
@@ -78,8 +78,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
             }
             else
             {
+                // 存在しなければファイルを作成します。
                 BoxSettings = new BoxSettings();
+                SaveSettings();
             }
+        }
+
+        public bool CheckSettings()
+        {
+            if (string.IsNullOrEmpty(BoxSettings.AuthToken)) return false;
+
+            GetAuthToken();
+
+            // todo
+            return true;
         }
 
         public void GetTicket()
@@ -103,29 +115,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
             // ルート フォルダの階層を 1 レベルで取得します。
             var rootFolder = boxSession.GetAccountTreeRoot("onelevel", "nozip");
 
-            var blocksFolder = rootFolder.FindFolderByName(BlocksFolderName);
+            var blocksFolder = rootFolder.FindFolderByName(BlocksHomeFolderName);
             if (blocksFolder == null)
             {
-                var createdFolder = boxSession.CreateFolder(0, BlocksFolderName, false);
+                var createdFolder = boxSession.CreateFolder(0, BlocksHomeFolderName, false);
+                BoxSettings.BlocksHomeFolderId = createdFolder.FolderId;
+            }
+            else
+            {
+                BoxSettings.BlocksHomeFolderId = blocksFolder.Id;
+            }
+
+            // "Blocks Data" フォルダの階層を 1 レベルで取得します。
+            blocksFolder = boxSession.GetAccountTree(BoxSettings.BlocksHomeFolderId, "onelevel", "nozip");
+
+            var meshesFolder = blocksFolder.FindFolderByName(BlocksFolderName);
+            if (meshesFolder == null)
+            {
+                var createdFolder = boxSession.CreateFolder(BoxSettings.BlocksHomeFolderId, BlocksFolderName, false);
                 BoxSettings.BlocksFolderId = createdFolder.FolderId;
             }
             else
             {
-                BoxSettings.BlocksFolderId = blocksFolder.Id;
-            }
-
-            // "Blocks Data" フォルダの階層を 1 レベルで取得します。
-            blocksFolder = boxSession.GetAccountTree(BoxSettings.BlocksFolderId, "onelevel", "nozip");
-
-            var meshesFolder = blocksFolder.FindFolderByName(BlockMehsesFolderName);
-            if (meshesFolder == null)
-            {
-                var createdFolder = boxSession.CreateFolder(BoxSettings.BlocksFolderId, BlockMehsesFolderName, false);
-                BoxSettings.MeshesFolderId = createdFolder.FolderId;
-            }
-            else
-            {
-                BoxSettings.MeshesFolderId = meshesFolder.Id;
+                BoxSettings.BlocksFolderId = meshesFolder.Id;
             }
         }
 
@@ -139,7 +151,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
 
         public void Upload(IEnumerable<UploadFile> uploadFiles)
         {
-            boxSession.Upload(BoxSettings.MeshesFolderId, uploadFiles, false, "Upload test.", null);
+            boxSession.Upload(BoxSettings.BlocksFolderId, uploadFiles, false, "Upload test.", null);
         }
     }
 }

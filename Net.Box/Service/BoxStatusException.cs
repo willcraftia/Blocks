@@ -6,11 +6,12 @@ using System;
 
 namespace Willcraftia.Net.Box.Service
 {
-    public sealed class BoxStatusException<T> : ApplicationException
+    public sealed class BoxStatusException : ApplicationException
     {
-        public T Status { get; private set; }
+        public string Status { get; private set; }
 
-        public BoxStatusException(T status)
+        public BoxStatusException(string status)
+            : base(string.Format("Box API returned an error code '{0}'.", status))
         {
             Status = status;
         }

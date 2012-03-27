@@ -13,7 +13,7 @@ namespace Willcraftia.Net.Box.Results
     public sealed class UploadResult
     {
         [XmlElement("status")]
-        public UploadStatus Status { get; set; }
+        public string Status { get; set; }
 
         [XmlArray("files")]
         [XmlArrayItem("file")]

@@ -15,6 +15,8 @@ namespace Willcraftia.Net.Box.Service
     /// </summary>
     public sealed class BoxSession
     {
+        const string statusApplicationRestricted = "application_restricted";
+
         /// <summary>
         /// API Key を取得します。
         /// </summary>
@@ -58,8 +60,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = GetAccountTreeFunction.Execute(ApiKey, AuthToken, folderId, parameters);
 
-            if (result.Status != GetAccountTreeStatus.ListingOk)
-                throw new BoxStatusException<GetAccountTreeStatus>(result.Status);
+            if (result.Status != "listing_ok") HandleErrorStatus(result.Status);
 
             return result.Tree.Folder;
         }
@@ -77,8 +78,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = CreateFolderFunction.Execute(ApiKey, AuthToken, parentId, name, share);
 
-            if (result.Status != CreateFolderStatus.CreateOk)
-                throw new BoxStatusException<CreateFolderStatus>(result.Status);
+            if (result.Status != "create_ok") HandleErrorStatus(result.Status);
 
             return result.Folder;
         }
@@ -91,8 +91,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = DeleteFunction.Execute(ApiKey, AuthToken, Target.Folder, folderId);
 
-            if (result.Status != DeleteStatus.SDeleteNode)
-                throw new BoxStatusException<DeleteStatus>(result.Status);
+            if (result.Status != "s_delete_node") HandleErrorStatus(result.Status);
         }
 
         /// <summary>
@@ -103,8 +102,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = DeleteFunction.Execute(ApiKey, AuthToken, Target.File, fileId);
 
-            if (result.Status != DeleteStatus.SDeleteNode)
-                throw new BoxStatusException<DeleteStatus>(result.Status);
+            if (result.Status != "s_delete_node") HandleErrorStatus(result.Status);
         }
 
         /// <summary>
@@ -116,8 +114,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = GetFileInfoFunction.Execute(ApiKey, AuthToken, fileId);
 
-            if (result.Status != GetFileInfoStatus.SGetFileInfo)
-                throw new BoxStatusException<GetFileInfoStatus>(result.Status);
+            if (result.Status != "s_get_file_info") HandleErrorStatus(result.Status);
 
             return result.Info;
         }
@@ -135,8 +132,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = UploadFunction.Execute(AuthToken, folderId, files, share, message, emails);
 
-            if (result.Status != UploadStatus.UploadOk)
-                throw new BoxStatusException<UploadStatus>(result.Status);
+            if (result.Status != "upload_ok") HandleErrorStatus(result.Status);
 
             return result.Files;
         }
@@ -154,8 +150,7 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = OverwriteFunction.Execute(AuthToken, fileId, file, share, message, emails);
 
-            if (result.Status != UploadStatus.UploadOk)
-                throw new BoxStatusException<UploadStatus>(result.Status);
+            if (result.Status != "upload_ok") HandleErrorStatus(result.Status);
 
             return result.Files[0];
         }
@@ -196,8 +191,7 @@ namespace Willcraftia.Net.Box.Service
                 Target.Folder, folderId, userIds, emails, itemRole, resendInvite, noEmail,
                 parameters);
 
-            if (result.Status != InviteCollaboratorsStatus.SInviteCollaborators)
-                throw new BoxStatusException<InviteCollaboratorsStatus>(result.Status);
+            if (result.Status != "s_invite_collaborators") HandleErrorStatus(result.Status);
 
             return result.InvitedCollaborators;
         }
@@ -213,10 +207,17 @@ namespace Willcraftia.Net.Box.Service
         {
             var result = GetUserIdFunction.Execute(ApiKey, AuthToken, email);
 
-            if (result.Status != GetUserIdStatus.SGetUserId)
-                throw new BoxStatusException<GetUserIdStatus>(result.Status);
+            if (result.Status != "s_get_user_id") HandleErrorStatus(result.Status);
 
             return result.Id;
+        }
+
+        void HandleErrorStatus(string erroStatus)
+        {
+            if (erroStatus == statusApplicationRestricted)
+                throw new BoxApplicationRestrictedException();
+
+            throw new BoxStatusException(erroStatus);
         }
     }
 }
