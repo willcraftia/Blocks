@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Storage;
 using Willcraftia.Net.Box;
+using Willcraftia.Net.Box.Results;
 using Willcraftia.Net.Box.Service;
 
 #endregion
@@ -39,26 +40,26 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
 
         string ticket;
 
-        public bool BoxSessionExists
+        BoxSettings boxSettings;
+
+        public bool BoxSessionEnabled
         {
             get { return boxSession != null; }
         }
 
-        public BoxSettings BoxSettings { get; private set; }
-
-        public bool BoxSettingsInitialized
+        public bool HasValidFolderTree
         {
-            get
-            {
-                return BoxSettings.AuthToken != null && 0 < BoxSettings.BlocksHomeFolderId && 0 < BoxSettings.BlocksFolderId;
-            }
+            get { return 0 < boxSettings.HomeFolderId && 0 < boxSettings.BlocksFolderId; }
         }
 
         public BoxIntegration(Game game)
         {
             boxService = game.Services.GetRequiredService<IBoxService>();
             storageService = game.Services.GetRequiredService<IStorageService>();
+        }
 
+        public void Initialize()
+        {
             if (storageService.RootDirectory.DirectoryExists(IntegrationDirectoryName))
             {
                 integrationDirectory = storageService.RootDirectory.GetDirectory(IntegrationDirectoryName);
@@ -70,27 +71,96 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
 
             if (integrationDirectory.FileExists(SettingsFileName))
             {
-                using (var stream = integrationDirectory.OpenFile(SettingsFileName, FileMode.Open))
+                try
                 {
-                    BoxSettings = settingsSerializer.Deserialize(stream) as BoxSettings;
-                    boxSession = boxService.CreateSession(BoxSettings.AuthToken);
+                    using (var stream = integrationDirectory.OpenFile(SettingsFileName, FileMode.Open))
+                    {
+                        boxSettings = settingsSerializer.Deserialize(stream) as BoxSettings;
+                    }
+                }
+                catch
+                {
+                    // デシリアライズに失敗する場合は、保存されている設定を削除します。
+                    integrationDirectory.DeleteFile(SettingsFileName);
                 }
             }
             else
             {
-                // 存在しなければファイルを作成します。
-                BoxSettings = new BoxSettings();
-                SaveSettings();
+                boxSettings = new BoxSettings();
             }
         }
 
-        public bool CheckSettings()
+        public bool RestoreSession()
         {
-            if (string.IsNullOrEmpty(BoxSettings.AuthToken)) return false;
+            if (string.IsNullOrEmpty(boxSettings.AuthToken)) return false;
 
-            GetAuthToken();
+            boxSession = boxService.CreateSession(boxSettings.AuthToken);
 
-            // todo
+            Folder rootFolder;
+            try
+            {
+                rootFolder = boxSession.GetAccountTreeRoot("onelevel", "nozip");
+            }
+            catch (BoxStatusException e)
+            {
+                boxSession = null;
+
+                if (e.Status == "not_logged_in")
+                {
+                    // AuthToken が無効になっています。
+                    boxSettings.AuthToken = null;
+                    boxSettings.HomeFolderId = -1;
+                    boxSettings.BlocksFolderId = -1;
+                    SaveSettings();
+                    return false;
+                }
+                else
+                {
+                    // その他のエラーならば throw します。
+                    throw;
+                }
+            }
+
+            // 保存されている Blocks Home と Blocks フォルダの ID を検査します。
+            // それらが無効であっても、AuthToken は有効であるため、
+            // BoxSession の復元は成功で終わらせます。
+            if (0 < boxSettings.HomeFolderId)
+            {
+                // Blocks Home と Blocks フォルダは同時に作成するので、
+                // どちらかの ID が無効な場合、同時に無効に設定します。
+
+                var homeFolder = rootFolder.FindFolderById(boxSettings.HomeFolderId);
+                if (homeFolder == null)
+                {
+                    // Blocks Home フォルダが存在しません。
+                    boxSettings.HomeFolderId = -1;
+                    boxSettings.BlocksFolderId = -1;
+                    SaveSettings();
+                }
+                else
+                {
+                    var homeFolderTree = boxSession.GetAccountTree(homeFolder.Id, "onelevel", "nozip");
+                    var blockFolder = homeFolderTree.FindFolderById(boxSettings.BlocksFolderId);
+                    if (blockFolder == null)
+                    {
+                        // Blocks フォルダが存在しません。
+                        boxSettings.HomeFolderId = -1;
+                        boxSettings.BlocksFolderId = -1;
+                        SaveSettings();
+                    }
+                }
+            }
+            else
+            {
+                if (0 < boxSettings.BlocksFolderId)
+                {
+                    // フォルダ情報の不整合を起こしているため、初期化して保存します。
+                    boxSettings.HomeFolderId = -1;
+                    boxSettings.BlocksFolderId = -1;
+                    SaveSettings();
+                }
+            }
+
             return true;
         }
 
@@ -107,7 +177,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
         public void GetAuthToken()
         {
             boxSession = boxService.GetAuthToken(ticket);
-            BoxSettings.AuthToken = boxSession.AuthToken;
+            boxSettings.AuthToken = boxSession.AuthToken;
         }
 
         public void PrepareFolderTree()
@@ -119,25 +189,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
             if (blocksFolder == null)
             {
                 var createdFolder = boxSession.CreateFolder(0, BlocksHomeFolderName, false);
-                BoxSettings.BlocksHomeFolderId = createdFolder.FolderId;
+                boxSettings.HomeFolderId = createdFolder.FolderId;
             }
             else
             {
-                BoxSettings.BlocksHomeFolderId = blocksFolder.Id;
+                boxSettings.HomeFolderId = blocksFolder.Id;
             }
 
             // "Blocks Data" フォルダの階層を 1 レベルで取得します。
-            blocksFolder = boxSession.GetAccountTree(BoxSettings.BlocksHomeFolderId, "onelevel", "nozip");
+            blocksFolder = boxSession.GetAccountTree(boxSettings.HomeFolderId, "onelevel", "nozip");
 
             var meshesFolder = blocksFolder.FindFolderByName(BlocksFolderName);
             if (meshesFolder == null)
             {
-                var createdFolder = boxSession.CreateFolder(BoxSettings.BlocksHomeFolderId, BlocksFolderName, false);
-                BoxSettings.BlocksFolderId = createdFolder.FolderId;
+                var createdFolder = boxSession.CreateFolder(boxSettings.HomeFolderId, BlocksFolderName, false);
+                boxSettings.BlocksFolderId = createdFolder.FolderId;
             }
             else
             {
-                BoxSettings.BlocksFolderId = meshesFolder.Id;
+                boxSettings.BlocksFolderId = meshesFolder.Id;
             }
         }
 
@@ -145,13 +215,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
         {
             using (var stream = integrationDirectory.CreateFile(SettingsFileName))
             {
-                settingsSerializer.Serialize(stream, BoxSettings);
+                settingsSerializer.Serialize(stream, boxSettings);
             }
         }
 
         public void Upload(IEnumerable<UploadFile> uploadFiles)
         {
-            boxSession.Upload(BoxSettings.BlocksFolderId, uploadFiles, false, "Upload test.", null);
+            boxSession.Upload(boxSettings.BlocksFolderId, uploadFiles, false, "Upload test.", null);
         }
     }
 }

@@ -17,42 +17,78 @@ using Willcraftia.Net.Box.Service;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 {
+    // todo
+    public sealed class AsyncMethodResult
+    {
+        public bool Succeeded { get; set; }
+
+        public Exception Exception { get; set; }
+    }
+
     public sealed class StartMenuViewModel
     {
+        public event EventHandler RestoreBoxSessionAsyncCompleted = delegate { };
+
         public event EventHandler UploadedDemoContents = delegate { };
 
+        delegate bool RestoreBoxSessionDelegate();
         delegate void UploadDemoContentsDelegate();
 
         Game game;
 
         IStorageBlockService storageBlockService;
 
+        BoxIntegration boxIntegration;
+
         ContentSerializer<Block> blockSerializer = new ContentSerializer<Block>();
 
         ContentSerializer<Description> descriptionSerializer = new ContentSerializer<Description>();
 
+        RestoreBoxSessionDelegate restoreBoxSessionDelegate;
+
         UploadDemoContentsDelegate uploadDemoContentsDelegate;
 
-        readonly object uploadSyncRoot = new object();
+        readonly object syncRoot = new object();
+
+        bool fireRestoreBoxSessionAsyncCompleted;
 
         bool fireUploadedDemoContents;
 
-        public bool BoxServiceEnabled
+        public bool BoxIntegrationEnabled
         {
-            get { return game.Services.GetService<IBoxService>() != null; }
+            get { return boxIntegration != null; }
         }
+
+        public bool BoxSessionEnabled
+        {
+            get { return boxIntegration.BoxSessionEnabled; }
+        }
+
+        public bool HasValidFolderTree
+        {
+            get { return boxIntegration.HasValidFolderTree; }
+        }
+
+        public AsyncMethodResult RestoreBoxSessionAsyncResult { get; private set; }
 
         public StartMenuViewModel(Game game)
         {
             this.game = game;
 
             storageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
+            boxIntegration = (game as BlockViewerGame).BoxIntegration;
+            RestoreBoxSessionAsyncResult = new AsyncMethodResult();
         }
 
         public void Update()
         {
-            lock (uploadSyncRoot)
+            lock (syncRoot)
             {
+                if (fireRestoreBoxSessionAsyncCompleted)
+                {
+                    RestoreBoxSessionAsyncCompleted(this, EventArgs.Empty);
+                    fireRestoreBoxSessionAsyncCompleted = false;
+                }
                 if (fireUploadedDemoContents)
                 {
                     UploadedDemoContents(this, EventArgs.Empty);
@@ -73,6 +109,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 storageBlockService.Save(string.Format("Dummy_{0:d2}", i), block, descrption);
         }
 
+        public void RestoreBoxSettingsAsync()
+        {
+            if (restoreBoxSessionDelegate == null)
+                restoreBoxSessionDelegate = new RestoreBoxSessionDelegate(boxIntegration.RestoreSession);
+            restoreBoxSessionDelegate.BeginInvoke(RestoreBoxSessionCallback, null);
+        }
+
         public void UploadDemoContentsAsync()
         {
             if (uploadDemoContentsDelegate == null)
@@ -80,11 +123,33 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             uploadDemoContentsDelegate.BeginInvoke(UploadDemoContentsAsyncCallback, null);
         }
 
+        void RestoreBoxSessionCallback(IAsyncResult asyncResult)
+        {
+            bool succeeded = true;
+            Exception exception = null;
+            try
+            {
+                restoreBoxSessionDelegate.EndInvoke(asyncResult);
+            }
+            catch (Exception e)
+            {
+                succeeded = false;
+                exception = e;
+            }
+
+            lock (syncRoot)
+            {
+                RestoreBoxSessionAsyncResult.Succeeded = succeeded;
+                RestoreBoxSessionAsyncResult.Exception = exception;
+                fireRestoreBoxSessionAsyncCompleted = true;
+            }
+        }
+
         void UploadDemoContentsAsyncCallback(IAsyncResult asyncResult)
         {
             uploadDemoContentsDelegate.EndInvoke(asyncResult);
 
-            lock (uploadSyncRoot)
+            lock (syncRoot)
             {
                 fireUploadedDemoContents = true;
             }

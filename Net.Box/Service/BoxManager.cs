@@ -62,6 +62,23 @@ namespace Willcraftia.Net.Box.Service
         {
             if (authToken == null) throw new ArgumentNullException("authToken");
 
+            //// AuthToken を検査するために get_account_tree を呼び出します。
+            //var result = GetAccountTreeFunction.Execute(ApiKey, authToken, 0, "onelevel", "nozip");
+            //if (result.Status == "listing_ok")
+            //{
+            //    Session = new BoxSession(ApiKey, authToken);
+            //    return Session;
+            //}
+            //else if (result.Status == "not_logged_in")
+            //{
+            //    // AuthToken が無効になっています。
+            //    return null;
+            //}
+            //else
+            //{
+            //    HandleErrorStatus(result.Status);
+            //    return null;
+            //}
             Session = new BoxSession(ApiKey, authToken);
             return Session;
         }

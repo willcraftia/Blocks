@@ -33,7 +33,7 @@ namespace Willcraftia.Net.Box.Service
 
         /// <summary>
         /// 指定の Ticket に対する Auth-token を取得し、BoxSession を生成します。
-        /// このメソッドは、有効な Auth-token をアプリケーションがまだ管理していない場合に用います。
+        /// このメソッドは、Auth-token をアプリケーションがまだ管理していない場合に用います。
         /// </summary>
         /// <param name="ticket">Ticket。</param>
         /// <returns>BoxSession。</returns>
@@ -41,7 +41,7 @@ namespace Willcraftia.Net.Box.Service
 
         /// <summary>
         /// 指定の Auth-token から BoxSession を生成します。
-        /// このメソッドは、有効な Auth-token をアプリケーションが既に管理している場合に用います。
+        /// このメソッドは、Auth-token をアプリケーションが既に管理している場合に用います。
         /// </summary>
         /// <param name="authToken">Auth-token。</param>
         /// <returns>BoxSession。</returns>

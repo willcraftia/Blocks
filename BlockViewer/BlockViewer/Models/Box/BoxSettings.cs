@@ -20,7 +20,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
         /// Blocks Home フォルダの ID を取得または設定します。
         /// デフォルト値は -1 (未設定) です。
         /// </summary>
-        public long BlocksHomeFolderId { get; set; }
+        public long HomeFolderId { get; set; }
 
         /// <summary>
         /// Blocks フォルダの ID を取得または設定します。
@@ -33,7 +33,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
         /// </summary>
         public BoxSettings()
         {
-            BlocksHomeFolderId = -1;
+            HomeFolderId = -1;
             BlocksFolderId = -1;
         }
     }

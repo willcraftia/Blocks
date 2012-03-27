@@ -119,8 +119,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             storageManager.ContainerSelected += (s, c) =>
             {
                 // IBoxService が登録されているならば BoxIntegration を初期化します。
-                if (boxManager != null)
-                    BoxIntegration = new BoxIntegration(this);
+                if (boxManager != null) BoxIntegration.Initialize();
             };
             Components.Add(storageManager);
 
@@ -134,6 +133,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             {
                 boxManager = new BoxManager(assemblyFile, apiKeyClassName);
                 Services.AddService(typeof(IBoxService), boxManager);
+
+                BoxIntegration = new BoxIntegration(this);
             }
             catch
             {

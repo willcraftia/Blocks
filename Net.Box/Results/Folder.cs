@@ -67,6 +67,19 @@ namespace Willcraftia.Net.Box.Results
             return null;
         }
 
+        public Folder FindFolderById(long id)
+        {
+            if (Id == id) return this;
+
+            foreach (var child in Folders)
+            {
+                var target = child.FindFolderById(id);
+                if (target != null) return target;
+            }
+
+            return null;
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();

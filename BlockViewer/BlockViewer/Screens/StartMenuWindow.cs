@@ -49,7 +49,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             : base(screen)
         {
             viewModel = new StartMenuViewModel(screen.Game);
-            viewModel.UploadedDemoContents += new EventHandler(OnViewModelUploadedDemoContents);
+            viewModel.RestoreBoxSessionAsyncCompleted += OnViewModelRestoreBoxSessionAsyncCompleted;
+            viewModel.UploadedDemoContents += OnViewModelUploadedDemoContents;
             DataContext = viewModel;
 
             Width = 320;
@@ -76,7 +77,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             stackPanel.Children.Add(installDemoMeshesButton);
 
             var uploadDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, "Upload Demo Meshes to Box");
-            uploadDemoMeshesButton.Enabled = viewModel.BoxServiceEnabled;
+            uploadDemoMeshesButton.Enabled = viewModel.BoxIntegrationEnabled;
             uploadDemoMeshesButton.Click += OnUploadDemoMeshesButtonClick;
             stackPanel.Children.Add(uploadDemoMeshesButton);
 
@@ -141,24 +142,49 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void OnUploadDemoMeshesButtonClick(Control sender, ref RoutedEventContext context)
         {
-            if (!(Screen.Game as BlockViewerGame).BoxIntegration.BoxSettingsInitialized)
+            var boxIntegration = (Screen.Game as BlockViewerGame).BoxIntegration;
+            
+            // 保存されている設定からの BoxSession の復元を試みます。
+            viewModel.RestoreBoxSettingsAsync();
+
+            ShowProgressDialog("Checking your Box settings...");
+        }
+
+        void OnViewModelRestoreBoxSessionAsyncCompleted(object sender, EventArgs e)
+        {
+            CloseProgressDialog();
+
+            var result = viewModel.RestoreBoxSessionAsyncResult;
+            if (result.Succeeded)
             {
-                if (boxSetupWizardDialog == null)
+                if (viewModel.BoxSessionEnabled && viewModel.HasValidFolderTree)
                 {
-                    boxSetupWizardDialog = new BoxSetupWizardDialog(Screen);
-                    boxSetupWizardDialog.Closed += (s, c) => ShowConfirmUploadDialog();
+                    // 復元できたならば、その BoxSession を用いて Upload を開始します。
+                    ShowConfirmUploadDialog();
                 }
-                boxSetupWizardDialog.Show();
+                else
+                {
+                    // 設定が存在しない、あるいは、設定にあるフォルダ情報が無効な場合は、
+                    // それらを設定するために BoxSetupWizardDialog を表示します。
+                    if (boxSetupWizardDialog == null)
+                    {
+                        boxSetupWizardDialog = new BoxSetupWizardDialog(Screen);
+                        boxSetupWizardDialog.Closed += (s, c) => ShowConfirmUploadDialog();
+                    }
+                    boxSetupWizardDialog.Show();
+                }
             }
             else
             {
-                ShowConfirmUploadDialog();
+                // todo:
+                Console.WriteLine(result.Exception.Message);
             }
         }
 
         void OnViewModelUploadedDemoContents(object sender, EventArgs e)
         {
-            boxProgressDialog.Close();
+            CloseProgressDialog();
+
             ShowUploadedDialog();
         }
 
@@ -191,10 +217,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 viewModel.UploadDemoContentsAsync();
 
-                if (boxProgressDialog == null)
-                    boxProgressDialog = new BoxProgressDialog(Screen);
-                boxProgressDialog.Message = "Uploading demo mesh files to your Box...";
-                boxProgressDialog.Show();
+                ShowProgressDialog("Uploading demo mesh files to your Box...");
             }
         }
 
@@ -263,6 +286,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             overlay.OpacityAnimation.Duration = TimeSpan.FromSeconds(0.5d);
             overlay.OpacityAnimation.Completed += (s, e) => Screen.Game.Exit();
             overlay.Show();
+        }
+
+        void ShowProgressDialog(string message)
+        {
+            if (boxProgressDialog == null)
+                boxProgressDialog = new BoxProgressDialog(Screen);
+            boxProgressDialog.Message = message;
+            boxProgressDialog.Show();
+        }
+
+        void CloseProgressDialog()
+        {
+            boxProgressDialog.Close();
         }
     }
 }
