@@ -39,6 +39,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         BoxProgressDialog boxProgressDialog;
 
+        ErrorDialog errorDialog;
+
         StartMenuViewModel viewModel;
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             viewModel = new StartMenuViewModel(screen.Game);
             viewModel.RestoreBoxSessionAsyncCompleted += OnViewModelRestoreBoxSessionAsyncCompleted;
-            viewModel.UploadedDemoContents += OnViewModelUploadedDemoContents;
+            viewModel.UploadDemoContentsAsyncCompleted += OnViewModelUploadDemoContentsAsyncCompleted;
             DataContext = viewModel;
 
             Width = 320;
@@ -72,14 +74,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             selectLanguageButton.Click += OnLanguageSettingButtonClick;
             stackPanel.Children.Add(selectLanguageButton);
 
-            var installDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.InstallDemoMeshesButton);
-            installDemoMeshesButton.Click += OnInstallModelsButtonClick;
-            stackPanel.Children.Add(installDemoMeshesButton);
+            var installDemoBlocksButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.InstallDemoBlocksButton);
+            installDemoBlocksButton.Click += OnInstallDemoBlocksButtonClick;
+            stackPanel.Children.Add(installDemoBlocksButton);
 
-            var uploadDemoMeshesButton = ControlUtil.CreateDefaultMenuButton(screen, "Upload Demo Meshes to Box");
-            uploadDemoMeshesButton.Enabled = viewModel.BoxIntegrationEnabled;
-            uploadDemoMeshesButton.Click += OnUploadDemoMeshesButtonClick;
-            stackPanel.Children.Add(uploadDemoMeshesButton);
+            var uploadDemoBlocksButton = ControlUtil.CreateDefaultMenuButton(screen, Strings.UploadDemoBlocksButton);
+            uploadDemoBlocksButton.Enabled = viewModel.BoxIntegrationEnabled;
+            uploadDemoBlocksButton.Click += OnUploadDemoBlocksButtonClick;
+            stackPanel.Children.Add(uploadDemoBlocksButton);
 
             changeLookAndFeelButton = ControlUtil.CreateDefaultMenuButton(screen, "Look & Feel [Debug]");
             changeLookAndFeelButton.Click += OnChangeLookAndFeelButtonClick;
@@ -117,7 +119,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             selectLanguageDialog.Show();
         }
 
-        void OnInstallModelsButtonClick(Control sender, ref RoutedEventContext context)
+        void OnInstallDemoBlocksButtonClick(Control sender, ref RoutedEventContext context)
         {
             if (confirmInstallDialog == null)
             {
@@ -126,12 +128,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Message = new TextBlock(Screen)
                     {
                         Width = 320,
-                        Text = Strings.InstallDemoMeshesConfirmation,
+                        Text = Strings.InstallDemoBlocksConfirmation,
                         TextWrapping = TextWrapping.Wrap,
                         TextHorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black,
-                        ShadowOffset = new Vector2(2)
+                        BackgroundColor = Color.Black
                     }
                 };
                 confirmInstallDialog.Closed += OnConfirmInstallDialogClosed;
@@ -140,14 +141,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             confirmInstallDialog.Show();
         }
 
-        void OnUploadDemoMeshesButtonClick(Control sender, ref RoutedEventContext context)
+        void OnUploadDemoBlocksButtonClick(Control sender, ref RoutedEventContext context)
         {
             var boxIntegration = (Screen.Game as BlockViewerGame).BoxIntegration;
             
             // 保存されている設定からの BoxSession の復元を試みます。
             viewModel.RestoreBoxSettingsAsync();
 
-            ShowProgressDialog("Checking your Box settings...");
+            ShowProgressDialog(Strings.CheckingBoxSettingsMessage);
         }
 
         void OnViewModelRestoreBoxSessionAsyncCompleted(object sender, EventArgs e)
@@ -169,23 +170,40 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     if (boxSetupWizardDialog == null)
                     {
                         boxSetupWizardDialog = new BoxSetupWizardDialog(Screen);
-                        boxSetupWizardDialog.Closed += (s, c) => ShowConfirmUploadDialog();
+                        boxSetupWizardDialog.Closed += OnBoxSetupWizardDialogClosed;
                     }
                     boxSetupWizardDialog.Show();
                 }
             }
             else
             {
-                // todo:
+                ShowErrorDialog(Strings.BoxConnectionFailedMessage);
                 Console.WriteLine(result.Exception.Message);
             }
         }
 
-        void OnViewModelUploadedDemoContents(object sender, EventArgs e)
+        void OnBoxSetupWizardDialogClosed(object sender, EventArgs e)
+        {
+            if (boxSetupWizardDialog.UploadSelected)
+            {
+                ShowConfirmUploadDialog();
+            }
+        }
+
+        void OnViewModelUploadDemoContentsAsyncCompleted(object sender, EventArgs e)
         {
             CloseProgressDialog();
 
-            ShowUploadedDialog();
+            var result = viewModel.UploadDemoContentsAsyncResult;
+            if (result.Succeeded)
+            {
+                ShowUploadedDialog();
+            }
+            else
+            {
+                ShowErrorDialog(Strings.UploadDemoBlocksToBoxFailedMessage);
+                Console.WriteLine(result.Exception.Message);
+            }
         }
 
         void ShowConfirmUploadDialog()
@@ -197,12 +215,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Message = new TextBlock(Screen)
                     {
                         Width = 320,
-                        Text = "Are you sure you want to upload demo meshes to your Box ?",
+                        Text = Strings.UploadDemoBlocksConfirmation,
                         TextWrapping = TextWrapping.Wrap,
                         TextHorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black,
-                        ShadowOffset = new Vector2(2)
+                        BackgroundColor = Color.Black
                     }
                 };
                 confirmUploadDialog.Closed += new EventHandler(OnConfirmUploadDialogClosed);
@@ -217,7 +234,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             {
                 viewModel.UploadDemoContentsAsync();
 
-                ShowProgressDialog("Uploading demo mesh files to your Box...");
+                ShowProgressDialog(Strings.UploadingDemoBlocksMessage);
             }
         }
 
@@ -229,11 +246,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 {
                     Message = new TextBlock(Screen)
                     {
-                        Text = "Uploaded.",
+                        Text = Strings.DemoBlocksUploadedInformation,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         ForegroundColor = Color.White,
-                        BackgroundColor = Color.Black,
-                        ShadowOffset = new Vector2(2)
+                        BackgroundColor = Color.Black
                     }
                 };
             }
@@ -252,11 +268,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     {
                         Message = new TextBlock(Screen)
                         {
-                            Text = Strings.DemoModelsInstalledInformation,
+                            Text = Strings.DemoBlocksInstalledInformation,
                             HorizontalAlignment = HorizontalAlignment.Left,
                             ForegroundColor = Color.White,
-                            BackgroundColor = Color.Black,
-                            ShadowOffset = new Vector2(2)
+                            BackgroundColor = Color.Black
                         }
                     };
                 }
@@ -290,8 +305,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void ShowProgressDialog(string message)
         {
-            if (boxProgressDialog == null)
-                boxProgressDialog = new BoxProgressDialog(Screen);
+            if (boxProgressDialog == null) boxProgressDialog = new BoxProgressDialog(Screen);
             boxProgressDialog.Message = message;
             boxProgressDialog.Show();
         }
@@ -299,6 +313,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         void CloseProgressDialog()
         {
             boxProgressDialog.Close();
+        }
+
+        void ShowErrorDialog(string message)
+        {
+            if (errorDialog == null)
+            {
+                errorDialog = new ErrorDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
+                    }
+                };
+            }
+            (errorDialog.Message as TextBlock).Text = message;
+            errorDialog.Show();
         }
     }
 }
