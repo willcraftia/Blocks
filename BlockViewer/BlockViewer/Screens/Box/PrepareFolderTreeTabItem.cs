@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -14,12 +15,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public event EventHandler CreateSelected = delegate { };
 
         public event EventHandler CancelSelected = delegate { };
-
-        const string title = "Prepare Folders for Blocks";
-
-        const string message = "This application accessed your Box account successfully.\n\n" +
-            "Next, the folder named 'Blocks Data' to upload Blocks's data is needed on your Box.\n\n" +
-            "Please select [Create] button if you allow to create this folder on you Box, otherwise [Cancel].";
 
         Button defaultFocusedButton;
 
@@ -36,7 +31,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var titleTextBlock = new TextBlock(Screen)
             {
-                Text = title,
+                Text = Strings.BoxWizPrepareFolderTreeTitle,
                 ForegroundColor = Color.Yellow,
                 BackgroundColor = Color.Black,
                 ShadowOffset = new Vector2(2)
@@ -45,7 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var messageTextBlock = new TextBlock(Screen)
             {
-                Text = message,
+                Text = Strings.BoxWizPrepareFolderTreeMessage,
                 TextWrapping = TextWrapping.Wrap,
                 TextHorizontalAlignment = HorizontalAlignment.Left,
                 ForegroundColor = Color.White,
@@ -64,14 +59,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var createButton = ControlUtil.CreateDefaultDialogButton(Screen, "Create");
+            var createButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.CreateButton);
             createButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 CreateSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(createButton);
 
-            var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, "Cancel");
+            var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.CancelButton);
             cancelButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 CancelSelected(this, EventArgs.Empty);

@@ -101,28 +101,32 @@ namespace Willcraftia.Xna.Framework.UI.Lafs
                 // 行の文字列を取得します。
                 wrappedText.GetLineText(i, builder);
 
-                // 影を描画します。
-                if (shadowOffset.X != 0 || shadowOffset.Y != 0)
+                // 空行は文字列描画をスキップします。
+                if (builder.Length != 0)
                 {
-                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
-                        shadowOffset);
-                }
+                    // 影を描画します。
+                    if (shadowOffset.X != 0 || shadowOffset.Y != 0)
+                    {
+                        drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
+                            shadowOffset);
+                    }
 
-                // 文字枠を描画します。
-                if (0 < outlineWidth)
-                {
-                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
-                        new Vector2(-outlineWidth, -outlineWidth));
-                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
-                        new Vector2(-outlineWidth, outlineWidth));
-                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
-                        new Vector2(outlineWidth, -outlineWidth));
-                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
-                        new Vector2(outlineWidth, outlineWidth));
-                }
+                    // 文字枠を描画します。
+                    if (0 < outlineWidth)
+                    {
+                        drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
+                            new Vector2(-outlineWidth, -outlineWidth));
+                        drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
+                            new Vector2(-outlineWidth, outlineWidth));
+                        drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
+                            new Vector2(outlineWidth, -outlineWidth));
+                        drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, bColor, padding,
+                            new Vector2(outlineWidth, outlineWidth));
+                    }
 
-                // 文字を描画します。
-                drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, fColor, padding);
+                    // 文字を描画します。
+                    drawContext.DrawString(bounds, font, builder, stretch, hAlign, vAlign, fColor, padding);
+                }
 
                 // 描画領域を次の行の位置へ進めます。
                 bounds.Y += textBlock.WrappedText.MaxMeasuredHeight;

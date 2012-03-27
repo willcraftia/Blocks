@@ -61,6 +61,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Agree に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AgreeButton {
+            get {
+                return ResourceManager.GetString("AgreeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Authorized に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AuthorizedButton {
+            get {
+                return ResourceManager.GetString("AuthorizedButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Back に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string BackButton {
@@ -75,6 +93,164 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string BoxConnectionFailedMessage {
             get {
                 return ResourceManager.GetString("BoxConnectionFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   If you authorized this application on Box website, please select [Authorized] button that will try to access your Box account from this application. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizAccessAccountMessage {
+            get {
+                return ResourceManager.GetString("BoxWizAccessAccountMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Access Your Box Account に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizAccessAccountTitle {
+            get {
+                return ResourceManager.GetString("BoxWizAccessAccountTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   To use this function, you must setup Box (http://www.box.com) integration on this application. This setup will requires to access Box and your account on it via the Internet.
+        ///
+        ///If you allow that, select [Agree] button after signed up for Box, otherwise [Cancel]. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizAttentionMessage {
+            get {
+                return ResourceManager.GetString("BoxWizAttentionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Attention に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizAttentionTitle {
+            get {
+                return ResourceManager.GetString("BoxWizAttentionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Now, this application obtained permission to use Box, but can not access your Box account yet.  To do it, this application must be authorized by you on Box website.
+        ///
+        ///Please select [Launch web browser] button that will open your web browser and forward the authorization page on Box. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizAuthorizationMessage {
+            get {
+                return ResourceManager.GetString("BoxWizAuthorizationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Authorization に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizAuthorizationTitle {
+            get {
+                return ResourceManager.GetString("BoxWizAuthorizationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Connecting to Box... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizConnectingMessage {
+            get {
+                return ResourceManager.GetString("BoxWizConnectingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   All settings to use Box integration are finished.
+        ///
+        ///Please select [Upload] button if you want to upload demo Blocks meshes in your Box, otherwise [Cancel]. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizFinishMessage {
+            get {
+                return ResourceManager.GetString("BoxWizFinishMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Box Setup Finished に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizFinishTitle {
+            get {
+                return ResourceManager.GetString("BoxWizFinishTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   This application could access your Box account successfully !
+        ///
+        ///Next, the folder named &apos;Blocks Home&apos; to upload Blocks&apos;s data is needed on your Box.
+        ///
+        ///Please select [Create] button if you allow to create this folder on you Box, otherwise [Cancel]. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizPrepareFolderTreeMessage {
+            get {
+                return ResourceManager.GetString("BoxWizPrepareFolderTreeMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Prepare Folders for Blocks に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizPrepareFolderTreeTitle {
+            get {
+                return ResourceManager.GetString("BoxWizPrepareFolderTreeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   This application created &apos;Blocks Home&apos; folder in your Box.
+        ///
+        ///You can save this settings on your storage. If you don&apos;t save it, you will lost it after this application exit.
+        ///
+        ///Please select [Yes] button if you want to save this settings, otherwise [No]. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizSaveSettingsMessage {
+            get {
+                return ResourceManager.GetString("BoxWizSaveSettingsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Save Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizSaveSettingsTitle {
+            get {
+                return ResourceManager.GetString("BoxWizSaveSettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Saving your Box settings... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizSavingSettingsMessage {
+            get {
+                return ResourceManager.GetString("BoxWizSavingSettingsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Try to access to your Box account... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizTryAccessAccountMessage {
+            get {
+                return ResourceManager.GetString("BoxWizTryAccessAccountMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Try to prepare folders in your Box... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxWizTryPrepareFoldersMessage {
+            get {
+                return ResourceManager.GetString("BoxWizTryPrepareFoldersMessage", resourceCulture);
             }
         }
         
@@ -111,6 +287,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string CloseButton {
             get {
                 return ResourceManager.GetString("CloseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Create に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CreateButton {
+            get {
+                return ResourceManager.GetString("CreateButton", resourceCulture);
             }
         }
         
@@ -219,6 +404,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string JaButton {
             get {
                 return ResourceManager.GetString("JaButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Launch web browser に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LaunchWebBrowserButton {
+            get {
+                return ResourceManager.GetString("LaunchWebBrowserButton", resourceCulture);
             }
         }
         
@@ -358,6 +552,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   No に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string NoButton {
+            get {
+                return ResourceManager.GetString("NoButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   OK に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string OKButton {
@@ -457,6 +660,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Upload に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UploadButton {
+            get {
+                return ResourceManager.GetString("UploadButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Upload Demo Blocks に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string UploadDemoBlocksButton {
@@ -489,6 +701,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string UploadingDemoBlocksMessage {
             get {
                 return ResourceManager.GetString("UploadingDemoBlocksMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Yes に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string YesButton {
+            get {
+                return ResourceManager.GetString("YesButton", resourceCulture);
             }
         }
     }

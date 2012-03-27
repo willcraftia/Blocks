@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -14,11 +15,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public event EventHandler NextSelected = delegate { };
 
         public event EventHandler BackSelected = delegate { };
-
-        const string title = "Access Your Box Account";
-
-        const string message = "If you authorized this application on Box website, please select [Authorized] button " +
-            "that will try to access your Box account from this application.";
 
         Button defaultFocusedButton;
 
@@ -35,7 +31,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var titleTextBlock = new TextBlock(Screen)
             {
-                Text = title,
+                Text = Strings.BoxWizAccessAccountTitle,
                 ForegroundColor = Color.Yellow,
                 BackgroundColor = Color.Black,
                 ShadowOffset = new Vector2(2)
@@ -44,7 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var messageTextBlock = new TextBlock(Screen)
             {
-                Text = message,
+                Text = Strings.BoxWizAccessAccountMessage,
                 TextWrapping = TextWrapping.Wrap,
                 TextHorizontalAlignment = HorizontalAlignment.Left,
                 ForegroundColor = Color.White,
@@ -63,14 +59,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var authorizedButton = ControlUtil.CreateDefaultDialogButton(Screen, "Authorized");
+            var authorizedButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.AuthorizedButton);
             authorizedButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 NextSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(authorizedButton);
 
-            var backButton = ControlUtil.CreateDefaultDialogButton(Screen, "Back");
+            var backButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.BackButton);
             backButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 BackSelected(this, EventArgs.Empty);

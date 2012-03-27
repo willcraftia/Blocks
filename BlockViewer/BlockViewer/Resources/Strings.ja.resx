@@ -117,11 +117,79 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AgreeButton" xml:space="preserve">
+    <value>どういする</value>
+  </data>
+  <data name="AuthorizedButton" xml:space="preserve">
+    <value>しょうにんしました</value>
+  </data>
   <data name="BackButton" xml:space="preserve">
     <value>もどる</value>
   </data>
   <data name="BoxConnectionFailedMessage" xml:space="preserve">
     <value>Boxへのせつぞくにしっぱいしました。</value>
+  </data>
+  <data name="BoxWizAccessAccountMessage" xml:space="preserve">
+    <value>ブラウザでこのアプリケーションをにんしょうしたならば、「しょうにんしました」ボタンをせんたくしてください。このボタンをせんたくすると、あなたのBoxアカウントにアクセスします。</value>
+  </data>
+  <data name="BoxWizAccessAccountTitle" xml:space="preserve">
+    <value>あなたのBoxアカウントにアクセスします</value>
+  </data>
+  <data name="BoxWizAttentionMessage" xml:space="preserve">
+    <value>このきのうをつかうには、Box（http://www.box.com）へつなぐためのせっていがひつようです。このせっていでは、インターネットをけいゆして、あなたのBoxアカウントにアクセスします。
+
+せっていをおこなうならば、「どういする」ボタンをえらんでください。おこなわないならば、「やめる」ボタンをえらんでください。</value>
+  </data>
+  <data name="BoxWizAttentionTitle" xml:space="preserve">
+    <value>ちゅうい</value>
+  </data>
+  <data name="BoxWizAuthorizationMessage" xml:space="preserve">
+    <value>このアプリケーションは、Boxからせつぞくをきょかされました。しかし、まだあなたのBoxアカウントにはせつぞくできません。あなたのBoxアカウントにせつぞくするには、ブラウザでBoxサイトをひらき、あなたにこのアプリケーションをにんしょうしてもらうひつようがあります。
+
+ブラウザをひらいてよければ「ブラウザをひらく」ボタンをせんたくしてください。</value>
+  </data>
+  <data name="BoxWizAuthorizationTitle" xml:space="preserve">
+    <value>しょうにんしてください</value>
+  </data>
+  <data name="BoxWizConnectingMessage" xml:space="preserve">
+    <value>Boxにせつぞくしています...</value>
+  </data>
+  <data name="BoxWizFinishMessage" xml:space="preserve">
+    <value>すべてのBoxのせっていがおわりました。
+
+デモブロックをあなたのBoxへアップロードするならば、「アップロードする」ボタンをせんたくしてください。アップロードしないならば、「やめる」ボタンをせんたくしてください。</value>
+  </data>
+  <data name="BoxWizFinishTitle" xml:space="preserve">
+    <value>せっていがおわりました</value>
+  </data>
+  <data name="BoxWizPrepareFolderTreeMessage" xml:space="preserve">
+    <value>あなたのBoxアカウントにせつぞくできました！
+
+つづいて、あなたのBoxに、デモブロックをアップロードするための「Blocks Home」フォルダをじゅんびするひつようがあります。
+
+このフォルダをさくせいしてもよければ「さくせいする」ボタンをせんたくしてください。</value>
+  </data>
+  <data name="BoxWizPrepareFolderTreeTitle" xml:space="preserve">
+    <value>Blocksようのフォルダをじゅんびします</value>
+  </data>
+  <data name="BoxWizSaveSettingsMessage" xml:space="preserve">
+    <value>あなたのBoxに「Blocks Home」フォルダをさくせいしました。
+
+ここまでのせっていをストレージにほぞんすることができます。ほぞんしないばあいは、このアプリケーションのしゅうりょうでせっていがうしなわれます。
+
+せっていをほぞんするならば、「はい」ボタンをせんたくしてください。ほぞんしないならば、「いいえ」ボタンをせんたくしてください。</value>
+  </data>
+  <data name="BoxWizSaveSettingsTitle" xml:space="preserve">
+    <value>せっていをほぞんする</value>
+  </data>
+  <data name="BoxWizSavingSettingsMessage" xml:space="preserve">
+    <value>Boxせっていをほぞんしています...</value>
+  </data>
+  <data name="BoxWizTryAccessAccountMessage" xml:space="preserve">
+    <value>あなたのBoxアカウントにせつぞくしています...</value>
+  </data>
+  <data name="BoxWizTryPrepareFoldersMessage" xml:space="preserve">
+    <value>あなたのBoxでフォルダをじゅんびしています...</value>
   </data>
   <data name="CameraModeButton" xml:space="preserve">
     <value>カメラ</value>
@@ -134,6 +202,9 @@
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>とじる</value>
+  </data>
+  <data name="CreateButton" xml:space="preserve">
+    <value>さくせいする</value>
   </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
@@ -170,6 +241,9 @@
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
+  </data>
+  <data name="LaunchWebBrowserButton" xml:space="preserve">
+    <value>ブラウザをひらく</value>
   </data>
   <data name="Light0ModeButton" xml:space="preserve">
     <value>ライト #0</value>
@@ -213,6 +287,9 @@
   <data name="ModeMenuTitle" xml:space="preserve">
     <value>モード</value>
   </data>
+  <data name="NoButton" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
   <data name="OKButton" xml:space="preserve">
     <value>OK</value>
   </data>
@@ -246,6 +323,9 @@
   <data name="TurnOnLightButton" xml:space="preserve">
     <value>ライトをつける</value>
   </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>アップロードする</value>
+  </data>
   <data name="UploadDemoBlocksButton" xml:space="preserve">
     <value>デモブロックをアップロード</value>
   </data>
@@ -257,5 +337,8 @@
   </data>
   <data name="UploadingDemoBlocksMessage" xml:space="preserve">
     <value>Boxへデモブロックをアップロードしています...</value>
+  </data>
+  <data name="YesButton" xml:space="preserve">
+    <value>はい</value>
   </data>
 </root>

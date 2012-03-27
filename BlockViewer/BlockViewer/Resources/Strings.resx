@@ -117,11 +117,79 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AgreeButton" xml:space="preserve">
+    <value>Agree</value>
+  </data>
+  <data name="AuthorizedButton" xml:space="preserve">
+    <value>Authorized</value>
+  </data>
   <data name="BackButton" xml:space="preserve">
     <value>Back</value>
   </data>
   <data name="BoxConnectionFailedMessage" xml:space="preserve">
     <value>Box connection failed.</value>
+  </data>
+  <data name="BoxWizAccessAccountMessage" xml:space="preserve">
+    <value>If you authorized this application on Box website, please select [Authorized] button that will try to access your Box account from this application.</value>
+  </data>
+  <data name="BoxWizAccessAccountTitle" xml:space="preserve">
+    <value>Access Your Box Account</value>
+  </data>
+  <data name="BoxWizAttentionMessage" xml:space="preserve">
+    <value>To use this function, you must setup Box (http://www.box.com) integration on this application. This setup will requires to access Box and your account on it via the Internet.
+
+If you allow that, select [Agree] button after signed up for Box, otherwise [Cancel].</value>
+  </data>
+  <data name="BoxWizAttentionTitle" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="BoxWizAuthorizationMessage" xml:space="preserve">
+    <value>Now, this application obtained permission to use Box, but can not access your Box account yet.  To do it, this application must be authorized by you on Box website.
+
+Please select [Launch web browser] button that will open your web browser and forward the authorization page on Box.</value>
+  </data>
+  <data name="BoxWizAuthorizationTitle" xml:space="preserve">
+    <value>Authorization</value>
+  </data>
+  <data name="BoxWizConnectingMessage" xml:space="preserve">
+    <value>Connecting to Box...</value>
+  </data>
+  <data name="BoxWizFinishMessage" xml:space="preserve">
+    <value>All settings to use Box integration are finished.
+
+Please select [Upload] button if you want to upload demo Blocks meshes in your Box, otherwise [Cancel].</value>
+  </data>
+  <data name="BoxWizFinishTitle" xml:space="preserve">
+    <value>Box Setup Finished</value>
+  </data>
+  <data name="BoxWizPrepareFolderTreeMessage" xml:space="preserve">
+    <value>This application could access your Box account successfully !
+
+Next, the folder named 'Blocks Home' to upload Blocks's data is needed on your Box.
+
+Please select [Create] button if you allow to create this folder on you Box, otherwise [Cancel].</value>
+  </data>
+  <data name="BoxWizPrepareFolderTreeTitle" xml:space="preserve">
+    <value>Prepare Folders for Blocks</value>
+  </data>
+  <data name="BoxWizSaveSettingsMessage" xml:space="preserve">
+    <value>This application created 'Blocks Home' folder in your Box.
+
+You can save this settings on your storage. If you don't save it, you will lost it after this application exit.
+
+Please select [Yes] button if you want to save this settings, otherwise [No].</value>
+  </data>
+  <data name="BoxWizSaveSettingsTitle" xml:space="preserve">
+    <value>Save Settings</value>
+  </data>
+  <data name="BoxWizSavingSettingsMessage" xml:space="preserve">
+    <value>Saving your Box settings...</value>
+  </data>
+  <data name="BoxWizTryAccessAccountMessage" xml:space="preserve">
+    <value>Try to access to your Box account...</value>
+  </data>
+  <data name="BoxWizTryPrepareFoldersMessage" xml:space="preserve">
+    <value>Try to prepare folders in your Box...</value>
   </data>
   <data name="CameraModeButton" xml:space="preserve">
     <value>Camera</value>
@@ -134,6 +202,9 @@
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>Close</value>
+  </data>
+  <data name="CreateButton" xml:space="preserve">
+    <value>Create</value>
   </data>
   <data name="DefaultButton" xml:space="preserve">
     <value>Default</value>
@@ -170,6 +241,9 @@
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
+  </data>
+  <data name="LaunchWebBrowserButton" xml:space="preserve">
+    <value>Launch web browser</value>
   </data>
   <data name="LevelOfDetailLabel" xml:space="preserve">
     <value>LoD: {0}</value>
@@ -216,6 +290,9 @@
   <data name="ModeMenuTitle" xml:space="preserve">
     <value>Mode</value>
   </data>
+  <data name="NoButton" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="OKButton" xml:space="preserve">
     <value>OK</value>
   </data>
@@ -249,6 +326,9 @@
   <data name="TurnOnLightButton" xml:space="preserve">
     <value>Turn on a light</value>
   </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Upload</value>
+  </data>
   <data name="UploadDemoBlocksButton" xml:space="preserve">
     <value>Upload Demo Blocks</value>
   </data>
@@ -260,5 +340,8 @@
   </data>
   <data name="UploadingDemoBlocksMessage" xml:space="preserve">
     <value>Uploading demo mesh files to your Box...</value>
+  </data>
+  <data name="YesButton" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

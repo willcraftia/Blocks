@@ -166,6 +166,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models.Box
 
         public void GetTicket()
         {
+            // Ticket 取得済みならばスキップします。
+            if (ticket != null) return;
+
             ticket = boxService.GetTicket();
         }
 

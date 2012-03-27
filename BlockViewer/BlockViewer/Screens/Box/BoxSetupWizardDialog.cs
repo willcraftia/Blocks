@@ -6,6 +6,7 @@ using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box;
 
 #endregion
@@ -152,7 +153,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         {
             viewModel.GetTicketAsync();
 
-            ShowProgressDialog("Connecting to Box...");
+            ShowProgressDialog(Strings.BoxWizConnectingMessage);
         }
 
         void OnAuthorizationTabItemNextSelected(object sender, EventArgs e)
@@ -171,7 +172,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         {
             viewModel.AccessAccountAsync();
 
-            ShowProgressDialog("Try to access to your Box account...");
+            ShowProgressDialog(Strings.BoxWizTryAccessAccountMessage);
         }
 
         void OnAccessTabItemBackSelected(object sender, EventArgs e)
@@ -183,7 +184,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         {
             viewModel.PrepareFolderTreeAsync();
 
-            ShowProgressDialog("Try to prepare folders in your Box...");
+            ShowProgressDialog(Strings.BoxWizTryPrepareFoldersMessage);
         }
 
         void OnPrepareFolderTreeTabItemCancelSelected(object sender, EventArgs e)
@@ -195,7 +196,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         {
             viewModel.SaveSettingsAsync();
 
-            ShowProgressDialog("Saving your Box settings...");
+            ShowProgressDialog(Strings.BoxWizSavingSettingsMessage);
         }
 
         void OnSaveSettingsTabItemNoSelected(object sender, EventArgs e)

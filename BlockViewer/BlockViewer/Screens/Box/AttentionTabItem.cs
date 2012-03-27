@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -14,12 +15,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public event EventHandler AgreeSelected = delegate { };
 
         public event EventHandler CancelSelected = delegate { };
-
-        const string title = "Attention";
-
-        const string message = "To use this function, you must setup Box integration on this application. " +
-            "This setup will requires to access Box and your account on it via the Internet.\n\n" +
-            "If you allow that, select [Agree] button after signed up for Box, otherwise [Cancel].";
 
         Button defaultFocusedButton;
 
@@ -36,7 +31,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var titleTextBlock = new TextBlock(Screen)
             {
-                Text = title,
+                Text = Strings.BoxWizAttentionTitle,
                 ForegroundColor = Color.Yellow,
                 BackgroundColor = Color.Black,
                 ShadowOffset = new Vector2(2)
@@ -45,7 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var messageTextBlock = new TextBlock(Screen)
             {
-                Text = message,
+                Text = Strings.BoxWizAttentionMessage,
                 TextWrapping = TextWrapping.Wrap,
                 TextHorizontalAlignment = HorizontalAlignment.Left,
                 ForegroundColor = Color.White,
@@ -64,14 +59,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var agreeButton = ControlUtil.CreateDefaultDialogButton(Screen, "Agree");
+            var agreeButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.AgreeButton);
             agreeButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 AgreeSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(agreeButton);
 
-            var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, "Cancel");
+            var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.CancelButton);
             cancelButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 CancelSelected(this, EventArgs.Empty);

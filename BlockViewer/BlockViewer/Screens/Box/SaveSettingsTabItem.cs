@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -14,13 +15,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public event EventHandler YesSelected = delegate { };
 
         public event EventHandler NoSelected = delegate { };
-
-        const string title = "Access Succeeded";
-
-        const string message = "This application accessed your Box account successfully.\n\n" +
-            "You can save this settings on your storage. " +
-            "You will setup every time when use Box integration if don't save it.\n\n" +
-            "Please select [Yes] button if you want to save this settings, otherwise [No].";
 
         Button defaultFocusedButton;
 
@@ -37,7 +31,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var titleTextBlock = new TextBlock(Screen)
             {
-                Text = title,
+                Text = Strings.BoxWizSaveSettingsTitle,
                 ForegroundColor = Color.Yellow,
                 BackgroundColor = Color.Black,
                 ShadowOffset = new Vector2(2)
@@ -46,7 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var messageTextBlock = new TextBlock(Screen)
             {
-                Text = message,
+                Text = Strings.BoxWizSaveSettingsMessage,
                 TextWrapping = TextWrapping.Wrap,
                 TextHorizontalAlignment = HorizontalAlignment.Left,
                 ForegroundColor = Color.White,
@@ -65,14 +59,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var yesButton = ControlUtil.CreateDefaultDialogButton(Screen, "Yes");
+            var yesButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.YesButton);
             yesButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 YesSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(yesButton);
 
-            var noButton = ControlUtil.CreateDefaultDialogButton(Screen, "No");
+            var noButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.NoButton);
             noButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 NoSelected(this, EventArgs.Empty);

@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 
 #endregion
 
@@ -14,11 +15,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public event EventHandler UploadSelected = delegate { };
 
         public event EventHandler CancelSelected = delegate { };
-
-        const string title = "Box Setup Finished";
-
-        const string message = "All settings to use Box integration are finished.\n\n" +
-            "Please select [Upload] button if you want to upload demo Blocks meshes in your Box, otherwise [Cancel].";
 
         Button defaultFocusedButton;
 
@@ -35,7 +31,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var titleTextBlock = new TextBlock(Screen)
             {
-                Text = title,
+                Text = Strings.BoxWizFinishTitle,
                 ForegroundColor = Color.Yellow,
                 BackgroundColor = Color.Black,
                 ShadowOffset = new Vector2(2)
@@ -44,7 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             var messageTextBlock = new TextBlock(Screen)
             {
-                Text = message,
+                Text = Strings.BoxWizFinishMessage,
                 TextWrapping = TextWrapping.Wrap,
                 TextHorizontalAlignment = HorizontalAlignment.Left,
                 ForegroundColor = Color.White,
@@ -63,14 +59,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             };
             stackPanel.Children.Add(buttonPanel);
 
-            var uploadButton = ControlUtil.CreateDefaultDialogButton(Screen, "Upload");
+            var uploadButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.UploadButton);
             uploadButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 UploadSelected(this, EventArgs.Empty);
             };
             buttonPanel.Children.Add(uploadButton);
 
-            var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, "Cancel");
+            var cancelButton = ControlUtil.CreateDefaultDialogButton(Screen, Strings.CancelButton);
             cancelButton.Click += (Control s, ref RoutedEventContext c) =>
             {
                 CancelSelected(this, EventArgs.Empty);
