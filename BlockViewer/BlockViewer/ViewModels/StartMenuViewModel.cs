@@ -29,9 +29,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
     {
         public event EventHandler RestoreBoxSessionAsyncCompleted = delegate { };
 
-        public event EventHandler UploadedDemoContents = delegate { };
+        public event EventHandler UploadDemoContentsAsyncCompleted = delegate { };
 
         delegate bool RestoreBoxSessionDelegate();
+
         delegate void UploadDemoContentsDelegate();
 
         Game game;
@@ -52,7 +53,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         bool fireRestoreBoxSessionAsyncCompleted;
 
-        bool fireUploadedDemoContents;
+        bool fireUploadDemoContentsAsyncCompleted;
 
         public bool BoxIntegrationEnabled
         {
@@ -71,6 +72,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public AsyncMethodResult RestoreBoxSessionAsyncResult { get; private set; }
 
+        public AsyncMethodResult UploadDemoContentsAsyncResult { get; private set; }
+
         public StartMenuViewModel(Game game)
         {
             this.game = game;
@@ -78,6 +81,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             storageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
             boxIntegration = (game as BlockViewerGame).BoxIntegration;
             RestoreBoxSessionAsyncResult = new AsyncMethodResult();
+            UploadDemoContentsAsyncResult = new AsyncMethodResult();
         }
 
         public void Update()
@@ -89,10 +93,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                     RestoreBoxSessionAsyncCompleted(this, EventArgs.Empty);
                     fireRestoreBoxSessionAsyncCompleted = false;
                 }
-                if (fireUploadedDemoContents)
+                if (fireUploadDemoContentsAsyncCompleted)
                 {
-                    UploadedDemoContents(this, EventArgs.Empty);
-                    fireUploadedDemoContents = false;
+                    UploadDemoContentsAsyncCompleted(this, EventArgs.Empty);
+                    fireUploadDemoContentsAsyncCompleted = false;
                 }
             }
         }
@@ -147,11 +151,23 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         void UploadDemoContentsAsyncCallback(IAsyncResult asyncResult)
         {
-            uploadDemoContentsDelegate.EndInvoke(asyncResult);
+            bool succeeded = true;
+            Exception exception = null;
+            try
+            {
+                uploadDemoContentsDelegate.EndInvoke(asyncResult);
+            }
+            catch (Exception e)
+            {
+                succeeded = false;
+                exception = e;
+            }
 
             lock (syncRoot)
             {
-                fireUploadedDemoContents = true;
+                UploadDemoContentsAsyncResult.Succeeded = succeeded;
+                UploadDemoContentsAsyncResult.Exception = exception;
+                fireUploadDemoContentsAsyncCompleted = true;
             }
         }
 

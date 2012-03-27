@@ -120,11 +120,17 @@
   <data name="BackButton" xml:space="preserve">
     <value>Back</value>
   </data>
+  <data name="BoxConnectionFailedMessage" xml:space="preserve">
+    <value>Box connection failed.</value>
+  </data>
   <data name="CameraModeButton" xml:space="preserve">
     <value>Camera</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="CheckingBoxSettingsMessage" xml:space="preserve">
+    <value>Checking your Box settings...</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>Close</value>
@@ -132,8 +138,11 @@
   <data name="DefaultButton" xml:space="preserve">
     <value>Default</value>
   </data>
-  <data name="DemoModelsInstalledInformation" xml:space="preserve">
-    <value>Demo models have been installed.</value>
+  <data name="DemoBlocksInstalledInformation" xml:space="preserve">
+    <value>Demo blocks have been installed.</value>
+  </data>
+  <data name="DemoBlocksUploadedInformation" xml:space="preserve">
+    <value>Demo blocks have been uploaded to your Box.</value>
   </data>
   <data name="DiffuseColorLabel" xml:space="preserve">
     <value>Diffuse</value>
@@ -153,11 +162,11 @@
   <data name="HideButton" xml:space="preserve">
     <value>Hide</value>
   </data>
-  <data name="InstallDemoMeshesButton" xml:space="preserve">
-    <value>Install Demo Meshes</value>
+  <data name="InstallDemoBlocksButton" xml:space="preserve">
+    <value>Install Demo Blocks</value>
   </data>
-  <data name="InstallDemoMeshesConfirmation" xml:space="preserve">
-    <value>Are you sure you want to install demo meshes to your storage ?</value>
+  <data name="InstallDemoBlocksConfirmation" xml:space="preserve">
+    <value>Are you sure you want to install demo blocks to your storage ?</value>
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
@@ -239,5 +248,17 @@
   </data>
   <data name="TurnOnLightButton" xml:space="preserve">
     <value>Turn on a light</value>
+  </data>
+  <data name="UploadDemoBlocksButton" xml:space="preserve">
+    <value>Upload Demo Blocks</value>
+  </data>
+  <data name="UploadDemoBlocksConfirmation" xml:space="preserve">
+    <value>Are you sure you want to upload demo meshes to your Box ?</value>
+  </data>
+  <data name="UploadDemoBlocksToBoxFailedMessage" xml:space="preserve">
+    <value>Upload demo blocks to your Box failed.</value>
+  </data>
+  <data name="UploadingDemoBlocksMessage" xml:space="preserve">
+    <value>Uploading demo mesh files to your Box...</value>
   </data>
 </root>

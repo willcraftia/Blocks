@@ -70,6 +70,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
+        ///   Box connection failed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string BoxConnectionFailedMessage {
+            get {
+                return ResourceManager.GetString("BoxConnectionFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Camera に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CameraModeButton {
@@ -84,6 +93,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string CancelButton {
             get {
                 return ResourceManager.GetString("CancelButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Checking your Box settings... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CheckingBoxSettingsMessage {
+            get {
+                return ResourceManager.GetString("CheckingBoxSettingsMessage", resourceCulture);
             }
         }
         
@@ -106,11 +124,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Demo models have been installed. に類似しているローカライズされた文字列を検索します。
+        ///   Demo blocks have been installed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string DemoModelsInstalledInformation {
+        internal static string DemoBlocksInstalledInformation {
             get {
-                return ResourceManager.GetString("DemoModelsInstalledInformation", resourceCulture);
+                return ResourceManager.GetString("DemoBlocksInstalledInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Demo blocks have been uploaded to your Box. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DemoBlocksUploadedInformation {
+            get {
+                return ResourceManager.GetString("DemoBlocksUploadedInformation", resourceCulture);
             }
         }
         
@@ -169,20 +196,20 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         }
         
         /// <summary>
-        ///   Install Demo Meshes に類似しているローカライズされた文字列を検索します。
+        ///   Install Demo Blocks に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string InstallDemoMeshesButton {
+        internal static string InstallDemoBlocksButton {
             get {
-                return ResourceManager.GetString("InstallDemoMeshesButton", resourceCulture);
+                return ResourceManager.GetString("InstallDemoBlocksButton", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Are you sure you want to install demo meshes to your storage ? に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to install demo blocks to your storage ? に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string InstallDemoMeshesConfirmation {
+        internal static string InstallDemoBlocksConfirmation {
             get {
-                return ResourceManager.GetString("InstallDemoMeshesConfirmation", resourceCulture);
+                return ResourceManager.GetString("InstallDemoBlocksConfirmation", resourceCulture);
             }
         }
         
@@ -426,6 +453,42 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Resources {
         internal static string TurnOnLightButton {
             get {
                 return ResourceManager.GetString("TurnOnLightButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Upload Demo Blocks に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UploadDemoBlocksButton {
+            get {
+                return ResourceManager.GetString("UploadDemoBlocksButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to upload demo meshes to your Box ? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UploadDemoBlocksConfirmation {
+            get {
+                return ResourceManager.GetString("UploadDemoBlocksConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Upload demo blocks to your Box failed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UploadDemoBlocksToBoxFailedMessage {
+            get {
+                return ResourceManager.GetString("UploadDemoBlocksToBoxFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Uploading demo mesh files to your Box... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UploadingDemoBlocksMessage {
+            get {
+                return ResourceManager.GetString("UploadingDemoBlocksMessage", resourceCulture);
             }
         }
     }

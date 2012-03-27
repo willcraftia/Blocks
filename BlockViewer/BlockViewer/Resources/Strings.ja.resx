@@ -120,11 +120,17 @@
   <data name="BackButton" xml:space="preserve">
     <value>もどる</value>
   </data>
+  <data name="BoxConnectionFailedMessage" xml:space="preserve">
+    <value>Boxへのせつぞくにしっぱいしました。</value>
+  </data>
   <data name="CameraModeButton" xml:space="preserve">
     <value>カメラ</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>やめる</value>
+  </data>
+  <data name="CheckingBoxSettingsMessage" xml:space="preserve">
+    <value>Boxせっていをチェックしています...</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>とじる</value>
@@ -132,8 +138,11 @@
   <data name="DefaultButton" xml:space="preserve">
     <value>デフォルト</value>
   </data>
-  <data name="DemoModelsInstalledInformation" xml:space="preserve">
-    <value>デモ モデル が インストール されました。</value>
+  <data name="DemoBlocksInstalledInformation" xml:space="preserve">
+    <value>デモブロックがインストールされました。</value>
+  </data>
+  <data name="DemoBlocksUploadedInformation" xml:space="preserve">
+    <value>デモブロックがBoxにアップロードされました。</value>
   </data>
   <data name="DiffuseColorLabel" xml:space="preserve">
     <value>ディフューズ</value>
@@ -148,16 +157,16 @@
     <value>やめる</value>
   </data>
   <data name="GridViewModeButton" xml:space="preserve">
-    <value>グリッド で ひょうじ</value>
+    <value>グリッドでひょうじ</value>
   </data>
   <data name="HideButton" xml:space="preserve">
     <value>ひょうじしない</value>
   </data>
-  <data name="InstallDemoMeshesButton" xml:space="preserve">
-    <value>デモ メッシュ を インストール</value>
+  <data name="InstallDemoBlocksButton" xml:space="preserve">
+    <value>デモブロックをインストール</value>
   </data>
-  <data name="InstallDemoMeshesConfirmation" xml:space="preserve">
-    <value>ストレージ へ デモ メッシュ を インストール しても よろしいですか？</value>
+  <data name="InstallDemoBlocksConfirmation" xml:space="preserve">
+    <value>ストレージへデモブロックをインストールしてもよろしいですか？</value>
   </data>
   <data name="JaButton" xml:space="preserve">
     <value>にほんご</value>
@@ -181,7 +190,7 @@
     <value>ライト #2</value>
   </data>
   <data name="ListViewModeButton" xml:space="preserve">
-    <value>リスト で ひょうじ</value>
+    <value>リストでひょうじ</value>
   </data>
   <data name="LoadButton" xml:space="preserve">
     <value>ロード</value>
@@ -193,10 +202,10 @@
     <value>LoD</value>
   </data>
   <data name="MainMenuButton" xml:space="preserve">
-    <value>メイン メニュー ([Y] キー)</value>
+    <value>メインメニュー ([Y] キー)</value>
   </data>
   <data name="MainMenuTitle" xml:space="preserve">
-    <value>メイン メニュー</value>
+    <value>メインメニュー</value>
   </data>
   <data name="ModeButton" xml:space="preserve">
     <value>モード</value>
@@ -208,22 +217,22 @@
     <value>OK</value>
   </data>
   <data name="OpenFileConfirmation" xml:space="preserve">
-    <value>この ファイル を ひらきますか？</value>
+    <value>このファイルをひらきますか？</value>
   </data>
   <data name="SelectLanguageButton" xml:space="preserve">
-    <value>げんご を せんたく</value>
+    <value>げんごをせんたく</value>
   </data>
   <data name="SelectLanguageTitle" xml:space="preserve">
-    <value>げんご を せんたく</value>
+    <value>げんごをせんたく</value>
   </data>
   <data name="ShowButton" xml:space="preserve">
     <value>ひょうじする</value>
   </data>
   <data name="SortByColorButton" xml:space="preserve">
-    <value>いろ で ならべる</value>
+    <value>いろでならべる</value>
   </data>
   <data name="SortByNameButton" xml:space="preserve">
-    <value>なまえ で ならべる</value>
+    <value>なまえでならべる</value>
   </data>
   <data name="SpecularColorLabel" xml:space="preserve">
     <value>スペキュラー</value>
@@ -232,9 +241,21 @@
     <value>はじめる</value>
   </data>
   <data name="TurnOffLightButton" xml:space="preserve">
-    <value>ライト を けす</value>
+    <value>ライトをけす</value>
   </data>
   <data name="TurnOnLightButton" xml:space="preserve">
-    <value>ライト を つける</value>
+    <value>ライトをつける</value>
+  </data>
+  <data name="UploadDemoBlocksButton" xml:space="preserve">
+    <value>デモブロックをアップロード</value>
+  </data>
+  <data name="UploadDemoBlocksConfirmation" xml:space="preserve">
+    <value>Boxへデモブロックをアップロードしてもよろしいですか？</value>
+  </data>
+  <data name="UploadDemoBlocksToBoxFailedMessage" xml:space="preserve">
+    <value>Boxへのアップロードにしっぱいしました。</value>
+  </data>
+  <data name="UploadingDemoBlocksMessage" xml:space="preserve">
+    <value>Boxへデモブロックをアップロードしています...</value>
   </data>
 </root>

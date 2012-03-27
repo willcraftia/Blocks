@@ -29,7 +29,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             {
                 ForegroundColor = Color.White,
                 BackgroundColor = Color.Black,
-                ShadowOffset = new Vector2(2),
                 Padding = new Thickness(16)
             };
             Content = textBlock;

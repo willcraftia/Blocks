@@ -34,6 +34,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         BoxProgressDialog boxProgressDialog;
 
+        public bool UploadSelected { get; private set; }
+
         public BoxSetupWizardDialog(Screen screen)
             : base(screen)
         {
@@ -101,6 +103,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         public override void Show()
         {
+            UploadSelected = false;
             openAnimation.Enabled = true;
             base.Show();
         }
@@ -202,9 +205,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnFinishTabItemUploadSelected(object sender, EventArgs e)
         {
-            Close();
+            UploadSelected = true;
 
-            // todo: upload
+            Close();
         }
 
         void OnFinishTabItemCancelSelected(object sender, EventArgs e)
