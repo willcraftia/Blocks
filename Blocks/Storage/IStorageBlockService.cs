@@ -13,7 +13,7 @@ namespace Willcraftia.Xna.Blocks.Storage
     /// </summary>
     public interface IStorageBlockService : IBlockLoader
     {
-        void Save(string name, Block block, Description<Block> description);
+        void Save(string name, Block block, Description description);
 
         List<string> GetBlockNames();
     }

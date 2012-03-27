@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 namespace Willcraftia.Xna.Blocks.Serialization
 {
     [XmlRoot("D")]
-    public sealed class Description<T> : IEquatable<Description<T>>
+    public sealed class Description : IEquatable<Description>
     {
         //
         // MEMO
@@ -29,6 +29,9 @@ namespace Willcraftia.Xna.Blocks.Serialization
         // Description の拡張子は .description であり、
         // Content の拡張子はその型に依存します (例えば Block ならば .block)。
         // そして、それらは必ず対で管理します。
+        // また、フォルダの単位で Content を必ず分類し、
+        // フォルダが定まる場合には Content の型が定まるものとします。
+        // そして、Description の一意性はフォルダ内で定めるものとします。
         //
 
 
@@ -88,12 +91,12 @@ namespace Willcraftia.Xna.Blocks.Serialization
 
         #region Equatable
 
-        public static bool operator ==(Description<T> o1, Description<T> o2)
+        public static bool operator ==(Description o1, Description o2)
         {
             return o1.Equals(o2);
         }
 
-        public static bool operator !=(Description<T> o1, Description<T> o2)
+        public static bool operator !=(Description o1, Description o2)
         {
             return !o1.Equals(o2);
         }
@@ -102,10 +105,10 @@ namespace Willcraftia.Xna.Blocks.Serialization
         {
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            return Equals((Description<T>) obj);
+            return Equals((Description) obj);
         }
 
-        public bool Equals(Description<T> other)
+        public bool Equals(Description other)
         {
             return Name == other.Name;
         }

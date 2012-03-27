@@ -15,7 +15,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
     {
         static ContentSerializer<Block> blockSerializer = new ContentSerializer<Block>();
 
-        static ContentSerializer<Description<Block>> descriptionSerializer = new ContentSerializer<Description<Block>>();
+        static ContentSerializer<Description> descriptionSerializer = new ContentSerializer<Description>();
 
         static void Main(string[] args)
         {
@@ -26,7 +26,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             SerializeAndDeserialize(block);
 
             // 他のアプリケーションで利用するためのデータの作成
-            var description = new Description<Block>
+            var description = new Description
             {
                 Name = "Demo Block"
             };
@@ -62,14 +62,16 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="block"></param>
-        static void Save(string directoryPath, string name, Description<Block> description, Block block)
+        static void Save(string directoryPath, string name, Description description, Block block)
         {
-            using (var stream = new FileStream(Path.Combine(directoryPath, name + ".description"), FileMode.Create))
+            var descriptionPath = Description.ResolveFileName(Path.Combine(directoryPath, name));
+            using (var stream = new FileStream(descriptionPath, FileMode.Create))
             {
                 descriptionSerializer.Serialize(stream, description);
             }
 
-            using (var stream = new FileStream(Path.Combine(directoryPath, name + ".block"), FileMode.Create))
+            var blockPath = Block.ResolveFileName(Path.Combine(directoryPath, name));
+            using (var stream = new FileStream(blockPath, FileMode.Create))
             {
                 blockSerializer.Serialize(stream, block);
             }

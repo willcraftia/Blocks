@@ -29,7 +29,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         ContentSerializer<Block> blockSerializer = new ContentSerializer<Block>();
 
-        ContentSerializer<Description<Block>> descriptionSerializer = new ContentSerializer<Description<Block>>();
+        ContentSerializer<Description> descriptionSerializer = new ContentSerializer<Description>();
 
         UploadDemoContentsDelegate uploadDemoContentsDelegate;
 
@@ -123,9 +123,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             }
         }
 
-        Description<Block> LoadDemoDescription(string name)
+        Description LoadDemoDescription(string name)
         {
-            var fileName = Description<Block>.ResolveFileName(name);
+            var fileName = Description.ResolveFileName(name);
             var path = Path.Combine("Content/DemoBlocks", fileName);
 
             using (var stream = TitleContainer.OpenStream(path))
@@ -149,7 +149,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             }
         }
 
-        UploadFile CreateUploadDescription(string name, Description<Block> description)
+        UploadFile CreateUploadDescription(string name, Description description)
         {
             using (var stream = new MemoryStream())
             {
@@ -158,7 +158,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 return new UploadFile
                 {
                     ContentType = "text/xml",
-                    Name = Description<Block>.ResolveFileName(name),
+                    Name = Description.ResolveFileName(name),
                     Content = Encoding.UTF8.GetString(stream.ToArray())
                 };
             }

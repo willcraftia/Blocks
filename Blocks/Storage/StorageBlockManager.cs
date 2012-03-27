@@ -26,7 +26,7 @@ namespace Willcraftia.Xna.Blocks.Storage
         /// <summary>
         /// Description の ContentSerializer。
         /// </summary>
-        ContentSerializer<Description<Block>> descriptionSerializer = new ContentSerializer<Description<Block>>();
+        ContentSerializer<Description> descriptionSerializer = new ContentSerializer<Description>();
 
         /// <summary>
         /// Block ディレクトリ名。
@@ -75,12 +75,12 @@ namespace Willcraftia.Xna.Blocks.Storage
         }
 
         // I/F
-        public void Save(string name, Block block, Description<Block> description)
+        public void Save(string name, Block block, Description description)
         {
             EnsureDirectory();
 
             var blockFileName = Block.ResolveFileName(name);
-            var descriptionFileName = Description<Block>.ResolveFileName(name);
+            var descriptionFileName = Description.ResolveFileName(name);
 
             using (var stream = directory.CreateFile(blockFileName))
             {
@@ -119,9 +119,6 @@ namespace Willcraftia.Xna.Blocks.Storage
         /// </summary>
         void LoadDirectory()
         {
-            if (directory != null)
-                directory.IndexChanged -= OnDirectoryIndexChanged;
-
             var rootDirectory = storageService.RootDirectory;
             if (rootDirectory.DirectoryExists(directoryName))
             {
@@ -131,13 +128,6 @@ namespace Willcraftia.Xna.Blocks.Storage
             {
                 directory = rootDirectory.CreateDirectory(directoryName);
             }
-            directory.IndexChanged += OnDirectoryIndexChanged;
-        }
-
-        void OnDirectoryIndexChanged(object sender, EventArgs e)
-        {
-            // ディレクトリを再ロードします。
-            LoadDirectory();
         }
 
         void EnsureDirectory()
