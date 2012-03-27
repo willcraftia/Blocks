@@ -33,7 +33,7 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             Save(Directory.GetCurrentDirectory(), "DemoBlock", description, block);
 
             Console.WriteLine();
-            Console.WriteLine("Press any key to exit.");
+            Console.WriteLine("Press enter key to exit.");
             Console.ReadLine();
         }
 

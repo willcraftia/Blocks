@@ -26,7 +26,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // get_ticket
             //
-            Prompt("Press any key to request get_ticket.");
+            Prompt("Press enter key to request get_ticket.");
 
             string ticket;
             try
@@ -44,7 +44,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // redirect
             //
-            Prompt("Press any key to redirect you to Box Application auth page.");
+            Prompt("Press enter key to redirect you to Box Application auth page.");
 
             boxManager.RedirectUserAuth(ticket);
 
@@ -52,7 +52,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // get_auth_token
             //
-            Prompt("Press any key to request get_auth_token.");
+            Prompt("Press enter key to request get_auth_token.");
 
             BoxSession session;
             try
@@ -70,7 +70,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // get_account_tree[root]
             //
-            Prompt("Press any key to request get_account_tree[root].");
+            Prompt("Press enter key to request get_account_tree[root].");
 
             Folder rootFolder;
             try
@@ -95,7 +95,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             if (demoFolderId < 0)
             {
-                Prompt("Press any key to request create_folder.");
+                Prompt("Press enter key to request create_folder.");
 
                 CreatedFolder createdFolder;
                 try
@@ -112,14 +112,14 @@ namespace Willcraftia.Net.Box.Demo
             }
             else
             {
-                Prompt("Press any key to skip create_folder.");
+                Prompt("Press enter key to skip create_folder.");
             }
 
             //----------------------------------------------------------------
             //
             // upload
             //
-            Prompt("Press any key to upload files.");
+            Prompt("Press enter key to upload files.");
 
             var uploadFiles = new UploadFile[]
             {
@@ -154,7 +154,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // overwrite
             //
-            Prompt("Press any key to overwrite a file.");
+            Prompt("Press enter key to overwrite a file.");
 
             var overwriteFile = new UploadFile
             {
@@ -178,7 +178,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // download
             //
-            Prompt("Press any key to download a file.");
+            Prompt("Press enter key to download a file.");
 
             string downloadedFile;
             using (var downloadStream = session.Download(uploadedFiles[0].Id))
@@ -206,7 +206,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // invite_collaborators
             //
-            Prompt("Press any key to request invite_collaborators.");
+            Prompt("Press enter key to request invite_collaborators.");
 
             string[] emails = { "blockcraftia@gmail.com" };
             List<InvitedCollaborator> invitedCollaborators;
@@ -235,7 +235,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // ※get_user_id は collaborator として既知でなければ user_id の取得を許可していない模様。
             //
-            Prompt("Press any key to request get_user_id.");
+            Prompt("Press enter key to request get_user_id.");
 
             var userEmail = "blockcraftia@gmail.com";
             try
@@ -252,7 +252,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // get_file_info
             //
-            Prompt("Press any key to request get_file_info.");
+            Prompt("Press enter key to request get_file_info.");
 
             try
             {
@@ -270,7 +270,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // delete[file]
             //
-            Prompt("Press any key to request delete[file].");
+            Prompt("Press enter key to request delete[file].");
 
             try
             {
@@ -287,7 +287,7 @@ namespace Willcraftia.Net.Box.Demo
             //
             // delete[folder]
             //
-            Prompt("Press any key to request delete[folder].");
+            Prompt("Press enter key to request delete[folder].");
 
             try
             {
@@ -300,7 +300,7 @@ namespace Willcraftia.Net.Box.Demo
                 return;
             }
 
-            Prompt("Press any key to exist this application.");
+            Prompt("Press enter key to exist this application.");
         }
 
         static void Prompt(string message)
