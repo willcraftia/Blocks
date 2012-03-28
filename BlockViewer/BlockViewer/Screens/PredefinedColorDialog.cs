@@ -168,7 +168,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     var itemButton = itemButtons[i];
 
                     int colorIndex = paging.GetItemIndex(i);
-                    if (colorIndex < owner.PredefinedColors.Count)
+                    if (0 <= colorIndex && colorIndex < owner.PredefinedColors.Count)
                     {
                         var predefinedColor = owner.PredefinedColors[colorIndex];
                         itemButton.DataContext = predefinedColor;

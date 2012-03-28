@@ -35,6 +35,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         BoxProgressDialog boxProgressDialog;
 
+        ErrorDialog errorDialog;
+
         public bool UploadSelected { get; private set; }
 
         public BoxSetupWizardDialog(Screen screen)
@@ -123,7 +125,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             {
                 CloseProgressDialog();
 
-                ShowAuthorizationTabItem();
+                if (succeeded)
+                {
+                    ShowAuthorizationTabItem();
+                }
+                else
+                {
+                    HandleWebException(exception);
+                }
             });
         }
 
@@ -152,7 +161,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             {
                 CloseProgressDialog();
 
-                ShowCreateFolderTabItem();
+                if (succeeded)
+                {
+                    ShowCreateFolderTabItem();
+                }
+                else
+                {
+                    HandleWebException(exception);
+                }
             });
         }
 
@@ -174,7 +190,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             {
                 CloseProgressDialog();
 
-                ShowSaveSettingsTabItem();
+                if (succeeded)
+                {
+                    ShowSaveSettingsTabItem();
+                }
+                else
+                {
+                    HandleWebException(exception);
+                }
             });
         }
 
@@ -196,7 +219,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             {
                 CloseProgressDialog();
 
-                ShowFinishTabItem();
+                if (succeeded)
+                {
+                    ShowFinishTabItem();
+                }
+                else
+                {
+                    HandleWebException(exception);
+                }
             });
         }
 
@@ -264,6 +294,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         void CloseProgressDialog()
         {
             boxProgressDialog.Close();
+        }
+
+        void ShowErrorDialog(string message)
+        {
+            if (errorDialog == null)
+            {
+                errorDialog = new ErrorDialog(Screen)
+                {
+                    Message = new TextBlock(Screen)
+                    {
+                        ForegroundColor = Color.White,
+                        BackgroundColor = Color.Black
+                    }
+                };
+            }
+            (errorDialog.Message as TextBlock).Text = message;
+            errorDialog.Show();
+        }
+
+        void HandleWebException(Exception exception)
+        {
+            ShowErrorDialog(Strings.BoxConnectionFailedMessage);
+            Console.WriteLine(exception.Message);
         }
     }
 }

@@ -56,6 +56,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             storageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
             boxIntegration = (game as BlockViewerGame).BoxIntegration;
+
+            restoreSessionDelegate = new AsyncDelegate(RestoreSession);
+            uploadDemoContentsDelegate = new AsyncDelegate(UploadDemoContents);
         }
 
         public void InstallDemoContents()
@@ -70,23 +73,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 storageBlockService.Save(string.Format("Dummy_{0:d2}", i), block, descrption);
         }
 
-        public void RestoreSessionAsync(AsyncWebRequestCallback callback)
+        public void RestoreSessionAsync(AsyncWebCallback callback)
         {
-            if (restoreSessionDelegate == null)
-                restoreSessionDelegate = new AsyncDelegate(RestoreSession);
             restoreSessionDelegate.BeginInvoke(RestoreSessionAsyncCallback, callback);
-        }
-
-        public void UploadDemoContentsAsync(AsyncWebRequestCallback callback)
-        {
-            if (uploadDemoContentsDelegate == null)
-                uploadDemoContentsDelegate = new AsyncDelegate(UploadDemoContents);
-            uploadDemoContentsDelegate.BeginInvoke(UploadDemoContentsAsyncCallback, callback);
         }
 
         void RestoreSessionAsyncCallback(IAsyncResult asyncResult)
         {
             HandleAsyncDelegate(restoreSessionDelegate, asyncResult);
+        }
+
+        public void UploadDemoContentsAsync(AsyncWebCallback callback)
+        {
+            uploadDemoContentsDelegate.BeginInvoke(UploadDemoContentsAsyncCallback, callback);
         }
 
         void UploadDemoContentsAsyncCallback(IAsyncResult asyncResult)
@@ -135,7 +134,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 exception = e;
             }
 
-            var callback = asyncResult.AsyncState as AsyncWebRequestCallback;
+            var callback = asyncResult.AsyncState as AsyncWebCallback;
             callback(succeeded, exception);
         }
 
