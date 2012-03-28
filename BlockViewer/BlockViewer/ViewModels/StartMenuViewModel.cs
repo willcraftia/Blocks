@@ -88,6 +88,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             descrption = LoadDemoDescription(name);
             storageBlockService.Save(name, block, descrption);
 
+            name = "MarioLeft";
+            block = LoadDemoBlock(name);
+            descrption = LoadDemoDescription(name);
+            storageBlockService.Save(name, block, descrption);
+
             name = "OctahedronLikeBlock";
             block = LoadDemoBlock(name);
             descrption = LoadDemoDescription(name);

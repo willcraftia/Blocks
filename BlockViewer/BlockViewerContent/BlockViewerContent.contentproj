@@ -133,6 +133,10 @@
       <Name>ChocoboLeft</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="DemoBlocks\MarioLeft.block">
+      <Name>MarioLeft</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="DemoBlocks\MoogleFront.block">
       <Name>MoogleFront</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -176,6 +180,10 @@
     <None Include="DemoBlocks\Roto.description">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Roto</Name>
+    </None>
+    <None Include="DemoBlocks\MarioLeft.description">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MarioLeft</Name>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
