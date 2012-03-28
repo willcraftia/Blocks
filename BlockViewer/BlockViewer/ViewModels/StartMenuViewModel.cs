@@ -17,23 +17,9 @@ using Willcraftia.Net.Box.Service;
 
 namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 {
-    // todo
-    public sealed class AsyncMethodResult
-    {
-        public bool Succeeded { get; set; }
-
-        public Exception Exception { get; set; }
-    }
-
     public sealed class StartMenuViewModel
     {
-        public event EventHandler RestoreBoxSessionAsyncCompleted = delegate { };
-
-        public event EventHandler UploadDemoContentsAsyncCompleted = delegate { };
-
-        delegate bool RestoreBoxSessionDelegate();
-
-        delegate void UploadDemoContentsDelegate();
+        delegate void AsyncDelegate();
 
         Game game;
 
@@ -45,15 +31,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         ContentSerializer<Description> descriptionSerializer = new ContentSerializer<Description>();
 
-        RestoreBoxSessionDelegate restoreBoxSessionDelegate;
+        AsyncDelegate restoreSessionDelegate;
 
-        UploadDemoContentsDelegate uploadDemoContentsDelegate;
-
-        readonly object syncRoot = new object();
-
-        bool fireRestoreBoxSessionAsyncCompleted;
-
-        bool fireUploadDemoContentsAsyncCompleted;
+        AsyncDelegate uploadDemoContentsDelegate;
 
         public bool BoxIntegrationEnabled
         {
@@ -70,35 +50,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             get { return boxIntegration.HasValidFolderTree; }
         }
 
-        public AsyncMethodResult RestoreBoxSessionAsyncResult { get; private set; }
-
-        public AsyncMethodResult UploadDemoContentsAsyncResult { get; private set; }
-
         public StartMenuViewModel(Game game)
         {
             this.game = game;
 
             storageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
             boxIntegration = (game as BlockViewerGame).BoxIntegration;
-            RestoreBoxSessionAsyncResult = new AsyncMethodResult();
-            UploadDemoContentsAsyncResult = new AsyncMethodResult();
-        }
-
-        public void Update()
-        {
-            lock (syncRoot)
-            {
-                if (fireRestoreBoxSessionAsyncCompleted)
-                {
-                    RestoreBoxSessionAsyncCompleted(this, EventArgs.Empty);
-                    fireRestoreBoxSessionAsyncCompleted = false;
-                }
-                if (fireUploadDemoContentsAsyncCompleted)
-                {
-                    UploadDemoContentsAsyncCompleted(this, EventArgs.Empty);
-                    fireUploadDemoContentsAsyncCompleted = false;
-                }
-            }
         }
 
         public void InstallDemoContents()
@@ -113,62 +70,33 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 storageBlockService.Save(string.Format("Dummy_{0:d2}", i), block, descrption);
         }
 
-        public void RestoreBoxSettingsAsync()
+        public void RestoreSessionAsync(AsyncWebRequestCallback callback)
         {
-            if (restoreBoxSessionDelegate == null)
-                restoreBoxSessionDelegate = new RestoreBoxSessionDelegate(boxIntegration.RestoreSession);
-            restoreBoxSessionDelegate.BeginInvoke(RestoreBoxSessionCallback, null);
+            if (restoreSessionDelegate == null)
+                restoreSessionDelegate = new AsyncDelegate(RestoreSession);
+            restoreSessionDelegate.BeginInvoke(RestoreSessionAsyncCallback, callback);
         }
 
-        public void UploadDemoContentsAsync()
+        public void UploadDemoContentsAsync(AsyncWebRequestCallback callback)
         {
             if (uploadDemoContentsDelegate == null)
-                uploadDemoContentsDelegate = new UploadDemoContentsDelegate(UploadDemoContents);
-            uploadDemoContentsDelegate.BeginInvoke(UploadDemoContentsAsyncCallback, null);
+                uploadDemoContentsDelegate = new AsyncDelegate(UploadDemoContents);
+            uploadDemoContentsDelegate.BeginInvoke(UploadDemoContentsAsyncCallback, callback);
         }
 
-        void RestoreBoxSessionCallback(IAsyncResult asyncResult)
+        void RestoreSessionAsyncCallback(IAsyncResult asyncResult)
         {
-            bool succeeded = true;
-            Exception exception = null;
-            try
-            {
-                restoreBoxSessionDelegate.EndInvoke(asyncResult);
-            }
-            catch (Exception e)
-            {
-                succeeded = false;
-                exception = e;
-            }
-
-            lock (syncRoot)
-            {
-                RestoreBoxSessionAsyncResult.Succeeded = succeeded;
-                RestoreBoxSessionAsyncResult.Exception = exception;
-                fireRestoreBoxSessionAsyncCompleted = true;
-            }
+            HandleAsyncDelegate(restoreSessionDelegate, asyncResult);
         }
 
         void UploadDemoContentsAsyncCallback(IAsyncResult asyncResult)
         {
-            bool succeeded = true;
-            Exception exception = null;
-            try
-            {
-                uploadDemoContentsDelegate.EndInvoke(asyncResult);
-            }
-            catch (Exception e)
-            {
-                succeeded = false;
-                exception = e;
-            }
+            HandleAsyncDelegate(uploadDemoContentsDelegate, asyncResult);
+        }
 
-            lock (syncRoot)
-            {
-                UploadDemoContentsAsyncResult.Succeeded = succeeded;
-                UploadDemoContentsAsyncResult.Exception = exception;
-                fireUploadDemoContentsAsyncCompleted = true;
-            }
+        void RestoreSession()
+        {
+            boxIntegration.RestoreSession();
         }
 
         void UploadDemoContents()
@@ -191,6 +119,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             var boxIntegration = (game as BlockViewerGame).BoxIntegration;
             boxIntegration.Upload(uploadFiles);
+        }
+
+        void HandleAsyncDelegate(AsyncDelegate d, IAsyncResult asyncResult)
+        {
+            bool succeeded = true;
+            Exception exception = null;
+            try
+            {
+                d.EndInvoke(asyncResult);
+            }
+            catch (Exception e)
+            {
+                succeeded = false;
+                exception = e;
+            }
+
+            var callback = asyncResult.AsyncState as AsyncWebRequestCallback;
+            callback(succeeded, exception);
         }
 
         Block LoadDemoBlock(string name)

@@ -41,10 +41,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             : base(screen)
         {
             viewModel = new BoxSetupViewModel((screen.Game as BlockViewerGame).BoxIntegration);
-            viewModel.GotTicket += OnViewModelGotTicket;
-            viewModel.AccessSucceeded += OnViewModelAccessSucceeded;
-            viewModel.PreparedFolders += OnViewModelPreparedFolders;
-            viewModel.SavedSettings += OnViewModelSavedSettings;
             DataContext = viewModel;
 
             // 開く際に openAnimation で Width を設定するので 0 で初期化します。
@@ -109,41 +105,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
             base.Show();
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            viewModel.Update();
-            base.Update(gameTime);
-        }
-
-        void OnViewModelGotTicket(object sender, EventArgs e)
-        {
-            CloseProgressDialog();
-
-            ShowAuthorizationTabItem();
-        }
-
-        void OnViewModelAccessSucceeded(object sender, EventArgs e)
-        {
-            CloseProgressDialog();
-
-            ShowCreateFolderTabItem();
-        }
-
-
-        void OnViewModelPreparedFolders(object sender, EventArgs e)
-        {
-            CloseProgressDialog();
-
-            ShowSaveSettingsTabItem();
-        }
-
-        void OnViewModelSavedSettings(object sender, EventArgs e)
-        {
-            CloseProgressDialog();
-
-            ShowFinishTabItem();
-        }
-
         void OnAttentionTabItemCancelSelected(object sender, EventArgs e)
         {
             Close();
@@ -151,9 +112,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnAttentionTabItemAgreeSelected(object sender, EventArgs e)
         {
-            viewModel.GetTicketAsync();
+            viewModel.GetTicketAsync(GetTicketCompleted);
 
             ShowProgressDialog(Strings.BoxWizConnectingMessage);
+        }
+
+        void GetTicketCompleted(bool succeeded, Exception exception)
+        {
+            Invoke((MethodInvoker) delegate()
+            {
+                CloseProgressDialog();
+
+                ShowAuthorizationTabItem();
+            });
         }
 
         void OnAuthorizationTabItemNextSelected(object sender, EventArgs e)
@@ -170,9 +141,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnAccessTabItemNextSelected(object sender, EventArgs e)
         {
-            viewModel.AccessAccountAsync();
+            viewModel.AccessAccountAsync(AccessAccountCompleted);
 
             ShowProgressDialog(Strings.BoxWizTryAccessAccountMessage);
+        }
+
+        void AccessAccountCompleted(bool succeeded, Exception exception)
+        {
+            Invoke((MethodInvoker) delegate()
+            {
+                CloseProgressDialog();
+
+                ShowCreateFolderTabItem();
+            });
         }
 
         void OnAccessTabItemBackSelected(object sender, EventArgs e)
@@ -182,9 +163,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnPrepareFolderTreeTabItemCreateSelected(object sender, EventArgs e)
         {
-            viewModel.PrepareFolderTreeAsync();
+            viewModel.PrepareFolderTreeAsync(PrepareFolderTreeCompleted);
 
             ShowProgressDialog(Strings.BoxWizTryPrepareFoldersMessage);
+        }
+
+        void PrepareFolderTreeCompleted(bool succeeded, Exception exception)
+        {
+            Invoke((MethodInvoker) delegate()
+            {
+                CloseProgressDialog();
+
+                ShowSaveSettingsTabItem();
+            });
         }
 
         void OnPrepareFolderTreeTabItemCancelSelected(object sender, EventArgs e)
@@ -194,9 +185,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnSaveSettingsTabItemYesSelected(object sender, EventArgs e)
         {
-            viewModel.SaveSettingsAsync();
+            viewModel.SaveSettingsAsync(SaveSettingsCompleted);
 
             ShowProgressDialog(Strings.BoxWizSavingSettingsMessage);
+        }
+
+        void SaveSettingsCompleted(bool succeeded, Exception exception)
+        {
+            Invoke((MethodInvoker) delegate()
+            {
+                CloseProgressDialog();
+
+                ShowFinishTabItem();
+            });
         }
 
         void OnSaveSettingsTabItemNoSelected(object sender, EventArgs e)

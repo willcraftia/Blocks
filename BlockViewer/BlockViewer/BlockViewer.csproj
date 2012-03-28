@@ -163,6 +163,7 @@
     <Compile Include="Screens\StartMenuWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\StartScreen.cs" />
+    <Compile Include="ViewModels\AsyncWebRequestCallback.cs" />
     <Compile Include="ViewModels\Box\BoxSetupViewModel.cs" />
     <Compile Include="ViewModels\LoadBlockMeshViewModel.cs" />
     <Compile Include="ViewModels\StartMenuViewModel.cs" />

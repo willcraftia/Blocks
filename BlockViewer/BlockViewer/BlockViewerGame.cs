@@ -77,6 +77,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// </summary>
         public BlockViewerGame()
         {
+            var syncContext = System.Threading.SynchronizationContext.Current;
+            Console.WriteLine("syncContext=" + syncContext);
+
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 720;
             graphics.PreferredBackBufferHeight = 480;
@@ -90,6 +93,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
         protected override void Initialize()
         {
+            var syncContext = System.Threading.SynchronizationContext.Current;
+            Console.WriteLine("syncContext=" + syncContext);
+
             // UIManager を初期化して登録します。
             uiManager = new UIManager(this);
             uiManager.ScreenFactory = CreateScreenFactory();
@@ -162,7 +168,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             timeRuler.StartFrame();
             updateMarker.Begin();
 
-            if (storageManager.RootDirectory == null) storageManager.Select("BoxTest");
+            if (storageManager.RootDirectory == null) storageManager.Select("BlockViewer");
 
             base.Update(gameTime);
 

@@ -28,6 +28,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         Root root;
 
+        ControlUpdateQueue controlUpdateQueue = new ControlUpdateQueue();
+
         /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
         /// </summary>
@@ -197,6 +199,8 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         protected internal virtual void Update(GameTime gameTime)
         {
+            controlUpdateQueue.Update(gameTime);
+
             // Control を更新します。
             root.Update(gameTime);
             // Screen のレイアウトを更新します。
@@ -325,6 +329,16 @@ namespace Willcraftia.Xna.Framework.UI
         internal void CloseWindow(Window window)
         {
             root.CloseWindow(window);
+        }
+
+        /// <summary>
+        /// Control を更新するメソッドを Control の Thread で実行させます。
+        /// </summary>
+        /// <param name="d">Control を更新するメソッド。</param>
+        /// <param name="parameters">Delegate のパラメータ。</param>
+        internal void Invoke(Delegate d, params object[] parameters)
+        {
+            controlUpdateQueue.Enqueue(d, parameters);
         }
 
         #region IDisposable

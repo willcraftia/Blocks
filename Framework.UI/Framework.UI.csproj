@@ -117,6 +117,7 @@
     <Compile Include="Controls\TextBlock.cs" />
     <Compile Include="Controls\TextBox.cs" />
     <Compile Include="Controls\TextButton.cs" />
+    <Compile Include="ControlUpdateQueue.cs" />
     <Compile Include="DefaultLookAndFeelSource.cs" />
     <Compile Include="FocusNavigationDirection.cs" />
     <Compile Include="FocusNavigationMode.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Lafs\TextBlockLookAndFeel.cs" />
     <Compile Include="Lafs\TextureBackgroundLookAndFeel.cs" />
     <Compile Include="Lafs\WindowSpriteSheetTemplate.cs" />
+    <Compile Include="MethodInvoker.cs" />
     <Compile Include="Resources\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

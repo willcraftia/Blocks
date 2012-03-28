@@ -1294,6 +1294,16 @@ namespace Willcraftia.Xna.Framework.UI
         }
 
         /// <summary>
+        /// Control を更新するメソッドを Control の Thread で実行させます。
+        /// </summary>
+        /// <param name="d">Control を更新するメソッド。</param>
+        /// <param name="parameters">Delegate のパラメータ。</param>
+        protected void Invoke(Delegate d, params object[] parameters)
+        {
+            Screen.Invoke(d, parameters);
+        }
+
+        /// <summary>
         /// 指定の方向にあるフォーカス設定可能な Control を取得します。
         /// そのような Control が存在しない場合には null を返します。
         /// </summary>

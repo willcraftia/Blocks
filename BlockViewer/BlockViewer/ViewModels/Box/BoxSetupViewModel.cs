@@ -1,12 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.Xml.Serialization;
-using Microsoft.Xna.Framework;
-using Willcraftia.Xna.Framework;
-using Willcraftia.Xna.Framework.Storage;
-using Willcraftia.Net.Box.Results;
-using Willcraftia.Net.Box.Service;
 using Willcraftia.Xna.Blocks.BlockViewer.Models.Box;
 
 #endregion
@@ -15,79 +9,28 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 {
     public sealed class BoxSetupViewModel
     {
-        public delegate void GetTicketDelegate();
-
-        public delegate void GetAuthTokenDelegate();
-
-        public delegate void PrepareFolderTreeDelegate();
-
-        public delegate void SaveSettingsDelegate();
-
-        public event EventHandler GotTicket = delegate { };
-
-        public event EventHandler AccessSucceeded = delegate { };
-
-        public event EventHandler PreparedFolders = delegate { };
-
-        public event EventHandler SavedSettings = delegate { };
+        delegate void AsyncDelegate();
 
         BoxIntegration boxIntegration;
 
-        GetTicketDelegate getTicketDelegate;
+        AsyncDelegate getTicketDelegate;
 
-        GetAuthTokenDelegate getAuthTokenDelegate;
+        AsyncDelegate getAuthTokenDelegate;
 
-        PrepareFolderTreeDelegate prepareFolderTreeDelegate;
+        AsyncDelegate prepareFolderTreeDelegate;
 
-        SaveSettingsDelegate saveSettingsDelegate;
-
-        readonly object syncRoot = new object();
-
-        bool fireGotTicket;
-
-        bool fireAccessSucceeded;
-
-        bool firePreparedFolders;
-
-        bool fireSavedSettings;
+        AsyncDelegate saveSettingsDelegate;
 
         public BoxSetupViewModel(BoxIntegration boxIntegration)
         {
             this.boxIntegration = boxIntegration;
         }
 
-        public void Update()
-        {
-            lock (syncRoot)
-            {
-                if (fireGotTicket)
-                {
-                    GotTicket(this, EventArgs.Empty);
-                    fireGotTicket = false;
-                }
-                if (fireAccessSucceeded)
-                {
-                    AccessSucceeded(this, EventArgs.Empty);
-                    fireAccessSucceeded = false;
-                }
-                if (firePreparedFolders)
-                {
-                    PreparedFolders(this, EventArgs.Empty);
-                    firePreparedFolders = false;
-                }
-                if (fireSavedSettings)
-                {
-                    SavedSettings(this, EventArgs.Empty);
-                    fireSavedSettings = false;
-                }
-            }
-        }
-
-        public void GetTicketAsync()
+        public void GetTicketAsync(AsyncWebRequestCallback callback)
         {
             if (getTicketDelegate == null)
-                getTicketDelegate = new GetTicketDelegate(boxIntegration.GetTicket);
-            getTicketDelegate.BeginInvoke(GetTicketAsyncCallback, null);
+                getTicketDelegate = new AsyncDelegate(boxIntegration.GetTicket);
+            getTicketDelegate.BeginInvoke(GetTicketAsyncCallback, callback);
         }
 
         public void LauchAuthorizationPageOnBrowser()
@@ -95,61 +38,63 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             boxIntegration.LauchAuthorizationPageOnBrowser();
         }
 
-        public void AccessAccountAsync()
+        public void AccessAccountAsync(AsyncWebRequestCallback callback)
         {
             if (getAuthTokenDelegate == null)
-                getAuthTokenDelegate = new GetAuthTokenDelegate(boxIntegration.GetAuthToken);
-            getAuthTokenDelegate.BeginInvoke(GetAuthTokenAsyncCallback, null);
+                getAuthTokenDelegate = new AsyncDelegate(boxIntegration.GetAuthToken);
+            getAuthTokenDelegate.BeginInvoke(GetAuthTokenAsyncCallback, callback);
         }
 
-        public void PrepareFolderTreeAsync()
+        public void PrepareFolderTreeAsync(AsyncWebRequestCallback callback)
         {
             if (prepareFolderTreeDelegate == null)
-                prepareFolderTreeDelegate = new PrepareFolderTreeDelegate(boxIntegration.PrepareFolderTree);
-            prepareFolderTreeDelegate.BeginInvoke(PrepareFolderTreeAsyncCallback, null);
+                prepareFolderTreeDelegate = new AsyncDelegate(boxIntegration.PrepareFolderTree);
+            prepareFolderTreeDelegate.BeginInvoke(PrepareFolderTreeAsyncCallback, callback);
         }
 
-        public void SaveSettingsAsync()
+        public void SaveSettingsAsync(AsyncWebRequestCallback callback)
         {
             if (saveSettingsDelegate == null)
-                saveSettingsDelegate = new SaveSettingsDelegate(boxIntegration.SaveSettings);
-            saveSettingsDelegate.BeginInvoke(SaveSettingsAsyncCallback, null);
+                saveSettingsDelegate = new AsyncDelegate(boxIntegration.SaveSettings);
+            saveSettingsDelegate.BeginInvoke(SaveSettingsAsyncCallback, callback);
         }
 
         void GetTicketAsyncCallback(IAsyncResult asyncResult)
         {
-            lock (syncRoot)
-            {
-                getTicketDelegate.EndInvoke(asyncResult);
-                fireGotTicket = true;
-            }
+            HandleAsyncDelegate(getTicketDelegate, asyncResult);
         }
 
         void GetAuthTokenAsyncCallback(IAsyncResult asyncResult)
         {
-            lock (syncRoot)
-            {
-                getAuthTokenDelegate.EndInvoke(asyncResult);
-                fireAccessSucceeded = true;
-            }
+            HandleAsyncDelegate(getAuthTokenDelegate, asyncResult);
         }
 
         void PrepareFolderTreeAsyncCallback(IAsyncResult asyncResult)
         {
-            lock (syncRoot)
-            {
-                prepareFolderTreeDelegate.EndInvoke(asyncResult);
-                firePreparedFolders = true;
-            }
+            HandleAsyncDelegate(prepareFolderTreeDelegate, asyncResult);
         }
 
         void SaveSettingsAsyncCallback(IAsyncResult asyncResult)
         {
-            lock (syncRoot)
+            HandleAsyncDelegate(saveSettingsDelegate, asyncResult);
+        }
+
+        void HandleAsyncDelegate(AsyncDelegate d, IAsyncResult asyncResult)
+        {
+            bool succeeded = true;
+            Exception exception = null;
+            try
             {
-                saveSettingsDelegate.EndInvoke(asyncResult);
-                fireSavedSettings = true;
+                d.EndInvoke(asyncResult);
             }
+            catch (Exception e)
+            {
+                succeeded = false;
+                exception = e;
+            }
+
+            var callback = asyncResult.AsyncState as AsyncWebRequestCallback;
+            callback(succeeded, exception);
         }
     }
 }
