@@ -63,16 +63,34 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         public void InstallDemoContents()
         {
-            var block = LoadDemoBlock("SimpleBlock");
-            var descrption = LoadDemoDescription("SimpleBlock");
-            storageBlockService.Save("SimpleBlock", block, descrption);
+            var name = "SimpleBlock";
+            var block = LoadDemoBlock(name);
+            var descrption = LoadDemoDescription(name);
+            storageBlockService.Save(name, block, descrption);
 
-            block = LoadDemoBlock("TamanegiRed");
-            descrption = LoadDemoDescription("TamanegiRed");
-            storageBlockService.Save("TamanegiRed", block, descrption);
+            name = "TamanegiRed";
+            block = LoadDemoBlock(name);
+            descrption = LoadDemoDescription(name);
+            storageBlockService.Save(name, block, descrption);
 
-            block = LoadDemoBlock("OctahedronLikeBlock");
-            descrption = LoadDemoDescription("OctahedronLikeBlock");
+            name = "ChocoboLeft";
+            block = LoadDemoBlock(name);
+            descrption = LoadDemoDescription(name);
+            storageBlockService.Save(name, block, descrption);
+
+            name = "MoogleFront";
+            block = LoadDemoBlock(name);
+            descrption = LoadDemoDescription(name);
+            storageBlockService.Save(name, block, descrption);
+
+            name = "Roto";
+            block = LoadDemoBlock(name);
+            descrption = LoadDemoDescription(name);
+            storageBlockService.Save(name, block, descrption);
+
+            name = "OctahedronLikeBlock";
+            block = LoadDemoBlock(name);
+            descrption = LoadDemoDescription(name);
             for (int i = 0; i < 20; i++)
                 storageBlockService.Save(string.Format("Dummy_{0:d2}", i), block, descrption);
         }

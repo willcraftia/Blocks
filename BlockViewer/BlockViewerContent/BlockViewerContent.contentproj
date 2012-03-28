@@ -129,6 +129,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="DemoBlocks\ChocoboLeft.block">
+      <Name>ChocoboLeft</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DemoBlocks\MoogleFront.block">
+      <Name>MoogleFront</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DemoBlocks\Roto.block">
+      <Name>Roto</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="DemoBlocks\SimpleBlock.block">
       <Name>SimpleBlock</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -152,6 +164,18 @@
     <None Include="DemoBlocks\TamanegiRed.description">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>TamanegiRed</Name>
+    </None>
+    <None Include="DemoBlocks\ChocoboLeft.description">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ChocoboLeft</Name>
+    </None>
+    <None Include="DemoBlocks\MoogleFront.description">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MoogleFront</Name>
+    </None>
+    <None Include="DemoBlocks\Roto.description">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Roto</Name>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
