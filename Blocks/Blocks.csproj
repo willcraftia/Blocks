@@ -98,6 +98,8 @@
     <Compile Include="Content\InterBlockMeshLoadQueue.cs" />
     <Compile Include="Content\InterBlockMeshLod.cs" />
     <Compile Include="Content\InterBlockMeshPart.cs" />
+    <Compile Include="Content\Processing\BlockSprite.cs" />
+    <Compile Include="Content\Processing\BlockSpriteProcessor.cs" />
     <Compile Include="Graphics\BlockMeshLod.cs" />
     <Compile Include="Graphics\BlockMeshMaterial.cs" />
     <Compile Include="Content\BlockMeshManager.cs" />

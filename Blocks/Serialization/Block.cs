@@ -31,6 +31,12 @@ namespace Willcraftia.Xna.Blocks.Serialization
         [XmlArrayItem("E")]
         public List<Element> Elements { get; set; }
 
+        public Block()
+        {
+            Materials = new List<Material>();
+            Elements = new List<Element>();
+        }
+
         public static string ResolveFileName(string name)
         {
             return name + Extension;

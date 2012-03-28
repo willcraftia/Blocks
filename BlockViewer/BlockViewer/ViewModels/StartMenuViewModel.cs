@@ -67,6 +67,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             var descrption = LoadDemoDescription("SimpleBlock");
             storageBlockService.Save("SimpleBlock", block, descrption);
 
+            block = LoadDemoBlock("TamanegiRed");
+            descrption = LoadDemoDescription("TamanegiRed");
+            storageBlockService.Save("TamanegiRed", block, descrption);
+
             block = LoadDemoBlock("OctahedronLikeBlock");
             descrption = LoadDemoDescription("OctahedronLikeBlock");
             for (int i = 0; i < 20; i++)

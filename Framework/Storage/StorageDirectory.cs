@@ -226,7 +226,7 @@ namespace Willcraftia.Xna.Framework.Storage
         /// <returns>作成したファイルへの Stream。</returns>
         public Stream CreateFile(string name)
         {
-            return OpenFile(name, FileMode.OpenOrCreate);
+            return OpenFile(name, FileMode.Create);
         }
 
         /// <summary>
