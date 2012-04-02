@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
+using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Blocks.BlockViewer.Resources;
 using Willcraftia.Xna.Blocks.BlockViewer.ViewModels;
@@ -50,6 +51,30 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                     Margin = new Thickness(4)
                 };
                 stackPanel.Children.Add(ColorCanvas);
+
+                // ControlUtil では対応できないので固有で設定します。
+                PopupFontOnGotFocus();
+            }
+
+            void PopupFontOnGotFocus()
+            {
+                var animation = new Vector2LerpAnimation
+                {
+                    Action = (current) => { NameTextBlock.FontStretch = current; },
+                    From = Vector2.One,
+                    To = new Vector2(1.2f),
+                    Duration = TimeSpan.FromSeconds(0.1f),
+                    AutoReversed = true
+                };
+                Animations.Add(animation);
+                GotFocus += (Control s, ref RoutedEventContext c) =>
+                {
+                    animation.Enabled = true;
+                };
+                LostFocus += (Control s, ref RoutedEventContext c) =>
+                {
+                    animation.Enabled = false;
+                };
             }
         }
 

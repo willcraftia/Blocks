@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
@@ -258,11 +259,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Left))
             {
+                var sound = Screen.GetSound(SoundKey.FocusNavigation);
+                if (sound != null)
+                {
+                    if (sound.State != SoundState.Stopped) sound.Stop();
+                    sound.Play();
+                }
+
                 ViewModel.BackPage();
                 context.Handled = true;
             }
             else if (Screen.KeyboardDevice.IsKeyPressed(Keys.Right))
             {
+                var sound = Screen.GetSound(SoundKey.FocusNavigation);
+                if (sound != null)
+                {
+                    if (sound.State != SoundState.Stopped) sound.Stop();
+                    sound.Play();
+                }
+
                 ViewModel.ForwardPage();
                 context.Handled = true;
             }

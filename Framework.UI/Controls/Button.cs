@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Input;
@@ -144,7 +145,17 @@ namespace Willcraftia.Xna.Framework.UI.Controls
                 Screen.KeyboardDevice.IsKeyReleased(Keys.Space))
             {
                 pressedByKey = false;
-                if (Enabled && !Pressed) RaiseEvent(null, ClickEvent);
+                if (Enabled && !Pressed)
+                {
+                    var sound = Screen.GetSound(SoundKey.Click);
+                    if (sound != null)
+                    {
+                        if (sound.State != SoundState.Stopped) sound.Stop();
+                        sound.Play();
+                    }
+
+                    RaiseEvent(null, ClickEvent);
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework.Audio;
 
 #endregion
 
@@ -93,7 +94,19 @@ namespace Willcraftia.Xna.Framework.UI
             var next = owner.GetFocusableControl(direction, FocusNavigationMode);
             if (next == null) return false;
 
-            return MoveFocusTo(next);
+            var result = MoveFocusTo(next);
+            
+            if (result)
+            {
+                var sound = owner.Screen.GetSound(SoundKey.FocusNavigation);
+                if (sound != null)
+                {
+                    if (sound.State != SoundState.Stopped) sound.Stop();
+                    sound.Play();
+                }
+            }
+
+            return result;
         }
     }
 }

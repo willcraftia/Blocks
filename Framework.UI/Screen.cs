@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -28,7 +29,12 @@ namespace Willcraftia.Xna.Framework.UI
         /// </summary>
         Root root;
 
+        /// <summary>
+        /// ControlUpdateQueue。
+        /// </summary>
         ControlUpdateQueue controlUpdateQueue = new ControlUpdateQueue();
+
+        Dictionary<SoundKey, SoundEffectInstance> soundMap = new Dictionary<SoundKey, SoundEffectInstance>();
 
         /// <summary>
         /// Screen が初期化されているかどうかを示す値を取得します。
@@ -176,6 +182,13 @@ namespace Willcraftia.Xna.Framework.UI
             uiService.Show(screenName);
         }
 
+        public SoundEffectInstance GetSound(SoundKey key)
+        {
+            SoundEffectInstance sound = null;
+            soundMap.TryGetValue(key, out sound);
+            return sound;
+        }
+
         /// <summary>
         /// コンテンツをロードします。
         /// </summary>
@@ -263,6 +276,33 @@ namespace Willcraftia.Xna.Framework.UI
 
             // キーが離されたことを Control へ通知します。
             FocusedControl.ProcessKeyUp();
+        }
+
+        protected void RegisterSound(SoundKey key, SoundEffectInstance sound)
+        {
+            if (sound == null) throw new ArgumentNullException("sound");
+
+            soundMap[key] = sound;
+        }
+
+        protected void RegisterSound(SoundKey key, string asset)
+        {
+            if (asset == null) throw new ArgumentNullException("asset");
+
+            try
+            {
+                var soundEffect = Content.Load<SoundEffect>(asset);
+                soundMap[key] = soundEffect.CreateInstance();
+            }
+            catch (ContentLoadException) { }
+        }
+
+        protected void DeregisterSound(SoundKey key)
+        {
+            SoundEffectInstance sound;
+            if (soundMap.TryGetValue(key, out sound)) sound.Dispose();
+
+            soundMap.Remove(key);
         }
 
         /// <summary>
@@ -365,6 +405,8 @@ namespace Willcraftia.Xna.Framework.UI
                 UnloadContent();
 
                 if (BasicEffect != null) BasicEffect.Dispose();
+
+                foreach (var sound in soundMap.Values) sound.Dispose();
             }
 
             disposed = true;

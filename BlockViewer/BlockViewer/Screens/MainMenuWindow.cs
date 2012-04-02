@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
@@ -61,11 +62,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         #endregion
 
-        //OpenStorageDialog openStorageDialog;
-
         DirectionalLightWindow directionalLightWindow;
 
         LodWindow lodWindow;
+
+        LoadBlockMeshDialog loadBlockMeshDialog;
 
         #endregion
 
@@ -179,26 +180,21 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             if (Screen.KeyboardDevice.IsKeyPressed(Keys.Escape))
             {
+                var sound = Screen.GetSound(SoundKey.Click);
+                if (sound != null)
+                {
+                    if (sound.State != SoundState.Stopped) sound.Stop();
+                    sound.Play();
+                }
+
                 Close();
 
                 context.Handled = true;
             }
         }
 
-        LoadBlockMeshDialog loadBlockMeshDialog;
-
         void OnLoadButtonClick(Control sender, ref RoutedEventContext context)
         {
-            //if (openStorageDialog == null)
-            //{
-            //    openStorageDialog = new OpenStorageDialog(Screen)
-            //    {
-            //        DataContext = ViewModel.OpenStorageViewModel
-            //    };
-            //    openStorageDialog.Closed += OnOpenStorageDialogClosed;
-            //}
-            //openStorageDialog.Show();
-
             if (loadBlockMeshDialog == null)
             {
                 loadBlockMeshDialog = new LoadBlockMeshDialog(Screen)
@@ -218,18 +214,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Close();
 
             ViewModel.ViewerViewModel.MeshName = selectedFileName;
-            //ViewModel.ViewerViewModel.LoadBlockMesh(selectedFileName);
         }
-
-        //void OnOpenStorageDialogClosed(object sender, EventArgs e)
-        //{
-        //    var selectedFileName = ViewModel.OpenStorageViewModel.SelectedFileName;
-        //    if (string.IsNullOrEmpty(selectedFileName)) return;
-
-        //    Close();
-
-        //    ViewModel.ViewerViewModel.LoadBlockMesh(selectedFileName);
-        //}
 
         void OnModeButtonClick(Control sender, ref RoutedEventContext context)
         {

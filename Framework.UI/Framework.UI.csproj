@@ -162,6 +162,7 @@
     <Compile Include="Size.cs" />
     <Compile Include="TextWrapping.cs" />
     <Compile Include="Thickness.cs" />
+    <Compile Include="SoundKey.cs" />
     <Compile Include="VerticalAlignment.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="UIManager.cs" />

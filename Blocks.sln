@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Box.Demo", "Net.Box.Dem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.BuildBlockSprite", "Blocks.BuildBlockSprite\Blocks.BuildBlockSprite.csproj", "{2C88A305-72CB-4A3A-81F4-481016427EA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockViewerSounds", "..\Blocks Sounds\BlockViewerSounds\BlockViewerSounds\BlockViewerSounds.contentproj", "{911F77C9-38E8-4069-9E58-8C70502D4E3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +233,12 @@ Global
 		{2C88A305-72CB-4A3A-81F4-481016427EA3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{2C88A305-72CB-4A3A-81F4-481016427EA3}.Release|x86.ActiveCfg = Release|x86
 		{2C88A305-72CB-4A3A-81F4-481016427EA3}.Release|x86.Build.0 = Release|x86
+		{911F77C9-38E8-4069-9E58-8C70502D4E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{911F77C9-38E8-4069-9E58-8C70502D4E3D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{911F77C9-38E8-4069-9E58-8C70502D4E3D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{911F77C9-38E8-4069-9E58-8C70502D4E3D}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{911F77C9-38E8-4069-9E58-8C70502D4E3D}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{911F77C9-38E8-4069-9E58-8C70502D4E3D}.Release|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

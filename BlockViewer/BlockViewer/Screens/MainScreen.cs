@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Graphics;
@@ -43,6 +45,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         bool canHandleKey;
 
+        SoundEffectInstance bgmSound;
+
         public int SelectedLookAndFeelSourceIndex
         {
             get { return selectableLookAndFeelSource.SelectedIndex; }
@@ -65,11 +69,17 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             workspace.Update(gameTime);
 
+            if (canHandleKey && bgmSound != null)
+            {
+                if (bgmSound.State == SoundState.Stopped) bgmSound.Play();
+            }
+
             base.Update(gameTime);
         }
 
         protected override void LoadContent()
         {
+            InitializeSounds();
             InitializeSpriteSheetSource();
             InitializeLookAndFeelSource();
             InitializeControls();
@@ -81,7 +91,28 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             workspace.Dispose();
 
+            if (bgmSound != null)
+            {
+                if (bgmSound.State != SoundState.Stopped) bgmSound.Stop();
+                bgmSound.Dispose();
+            }
+
             base.UnloadContent();
+        }
+
+        void InitializeSounds()
+        {
+            RegisterSound(SoundKey.FocusNavigation, "UI/Sounds/FocusNavigation");
+            RegisterSound(SoundKey.Click, "UI/Sounds/Click");
+
+            try
+            {
+                var bgmSoundEffect = Content.Load<SoundEffect>("BGM/Main");
+                bgmSound = bgmSoundEffect.CreateInstance();
+                bgmSound.Volume = 0.3f;
+                bgmSound.IsLooped = true;
+            }
+            catch (ContentLoadException) { }
         }
 
         void InitializeSpriteSheetSource()
@@ -139,9 +170,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         void InitializeControls()
         {
-            // TODO: テスト コード。
-            //mainViewModel.StoreSampleBlockMesh();
-
             var canvas = new Canvas(this);
             canvas.BackgroundColor = Color.CornflowerBlue;
             canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -200,7 +228,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             };
             overlay.Show();
 
-            Root.KeyDown += OnKeyDown;
+            Root.KeyDown += OnRootKeyDown;
 
             // BlockMeshView にフォーカスを設定しておきます。
             blockMeshView.Focus();
@@ -209,14 +237,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             Desktop.Activate();
         }
 
-        void OnKeyDown(Control sender, ref RoutedEventContext context)
+        void OnRootKeyDown(Control sender, ref RoutedEventContext context)
         {
             // フェード効果が終わるまでキー操作は無効になります。
             if (!canHandleKey) return;
 
             if (KeyboardDevice.IsKeyPressed(Keys.Y))
             {
-                if (!mainMenuWindow.Visible) mainMenuWindow.Show();
+                if (!mainMenuWindow.Visible)
+                {
+                    var sound = GetSound(SoundKey.Click);
+                    if (sound != null)
+                    {
+                        if (sound.State != SoundState.Stopped) sound.Stop();
+                        sound.Play();
+                    }
+
+                    mainMenuWindow.Show();
+                }
             }
         }
     }

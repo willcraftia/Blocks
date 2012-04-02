@@ -2,6 +2,8 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI;
@@ -24,6 +26,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         DefaultSpriteSheetSource spriteSheetSource;
 
+        SoundEffectInstance bgmSound;
+
         public int SelectedLookAndFeelSourceIndex
         {
             get { return selectableLookAndFeelSource.SelectedIndex; }
@@ -38,11 +42,48 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
         protected override void LoadContent()
         {
+            InitializeSounds();
             InitializeSpriteSheetSource();
             InitializeLookAndFeelSource();
             InitializeControls();
 
             base.LoadContent();
+        }
+
+        protected override void UnloadContent()
+        {
+            if (bgmSound != null)
+            {
+                if (bgmSound.State != SoundState.Stopped) bgmSound.Stop();
+                bgmSound.Dispose();
+            }
+
+            base.UnloadContent();
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (bgmSound != null)
+            {
+                if (bgmSound.State == SoundState.Stopped) bgmSound.Play();
+            }
+
+            base.Update(gameTime);
+        }
+
+        void InitializeSounds()
+        {
+            RegisterSound(SoundKey.FocusNavigation, "UI/Sounds/FocusNavigation");
+            RegisterSound(SoundKey.Click, "UI/Sounds/Click");
+
+            try
+            {
+                var bgmSoundEffect = Content.Load<SoundEffect>("BGM/Start");
+                bgmSound = bgmSoundEffect.CreateInstance();
+                bgmSound.Volume = 0.3f;
+                bgmSound.IsLooped = true;
+            }
+            catch (ContentLoadException) { }
         }
 
         void InitializeSpriteSheetSource()

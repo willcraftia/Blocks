@@ -176,6 +176,11 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Blocks Sounds\BlockViewerSounds\BlockViewerSounds\BlockViewerSounds.contentproj">
+      <Project>{911F77C9-38E8-4069-9E58-8C70502D4E3D}</Project>
+      <Name>BlockViewerSounds</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
     <ProjectReference Include="..\..\Blocks\Blocks.csproj">
       <Project>{AF33ACD1-05BE-478C-80E3-3566B0569700}</Project>
       <Name>Blocks</Name>

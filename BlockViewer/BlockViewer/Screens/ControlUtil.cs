@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
@@ -100,10 +101,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
                 }
             };
 
-            ControlUtil.PopContentFontOnGotFocus(button);
+            PopupFontOnGotFocus(button);
         }
 
-        static void PopContentFontOnGotFocus(Button button)
+        static void PopupFontOnGotFocus(Button button)
         {
             var animation = new Vector2LerpAnimation
             {
