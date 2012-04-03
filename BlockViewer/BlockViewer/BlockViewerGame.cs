@@ -83,6 +83,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 720;
             graphics.PreferredBackBufferHeight = 480;
+            // for recording settings
+            //graphics.PreferredBackBufferWidth = 640;
+            //graphics.PreferredBackBufferHeight = 480;
             graphics.PreferMultiSampling = true;
 
             Content.RootDirectory = "Content";
