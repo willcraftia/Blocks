@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -21,7 +22,8 @@ namespace Willcraftia.Xna.Blocks.Serialization
         {
             WriterSettings = new XmlWriterSettings
             {
-                Indent = false
+                Indent = false,
+                Encoding = Encoding.UTF8,
             };
             ReaderSettings = new XmlReaderSettings
             {
@@ -31,15 +33,25 @@ namespace Willcraftia.Xna.Blocks.Serialization
             };
         }
 
+        public XmlWriter CreateXmlWriter(Stream stream)
+        {
+            return XmlWriter.Create(stream, WriterSettings);
+        }
+
+        public XmlReader CreateXmlReader(Stream stream)
+        {
+            return XmlReader.Create(stream, ReaderSettings);
+        }
+
         public void Serialize(Stream stream, T content)
         {
-            var writer = XmlWriter.Create(stream, WriterSettings);
+            var writer = CreateXmlWriter(stream);
             xmlSerializer.Serialize(writer, content);
         }
 
         public T Deserialize(Stream stream)
         {
-            var reader = XmlReader.Create(stream, ReaderSettings);
+            var reader = CreateXmlReader(stream);
             return (T) xmlSerializer.Deserialize(reader);
         }
     }
