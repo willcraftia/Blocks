@@ -23,11 +23,6 @@ namespace Willcraftia.Xna.Framework.Storage
         StorageContainer container;
 
         /// <summary>
-        /// ルート ディレクトリの StorageDirectory。
-        /// </summary>
-        StorageDirectory rootDirectory;
-
-        /// <summary>
         /// Select(string) を非同期に呼び出す場合のための同期オブジェクト。
         /// </summary>
         readonly object syncRoot = new object();

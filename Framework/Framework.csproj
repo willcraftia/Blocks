@@ -108,6 +108,11 @@
     <Compile Include="Storage\StorageDirectoryIndex.cs" />
     <Compile Include="Storage\StorageDirectory.cs" />
     <Compile Include="Storage\StorageManager.cs" />
+    <Compile Include="Threading\AsyncTaskManager.cs" />
+    <Compile Include="Threading\AsyncTaskResult.cs" />
+    <Compile Include="Threading\AsyncTask.cs" />
+    <Compile Include="Threading\AsyncTaskCallback.cs" />
+    <Compile Include="Threading\IAsyncTaskService.cs" />
     <Compile Include="View.cs" />
     <Compile Include="Cameras\ChaseView.cs" />
     <Compile Include="Debug\FpsCounter.cs" />

@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
+using Willcraftia.Xna.Framework.Threading;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Animations;
 using Willcraftia.Xna.Framework.UI.Controls;
@@ -42,7 +43,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
         public BoxSetupWizardDialog(Screen screen)
             : base(screen)
         {
-            viewModel = new BoxSetupViewModel((screen.Game as BlockViewerGame).BoxIntegration);
+            viewModel = new BoxSetupViewModel(screen.Game);
             DataContext = viewModel;
 
             // 開く際に openAnimation で Width を設定するので 0 で初期化します。
@@ -114,26 +115,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnAttentionTabItemAgreeSelected(object sender, EventArgs e)
         {
-            viewModel.GetTicketAsync(GetTicketCompleted);
+            viewModel.GetTicketAsync(GetTicketCallback);
 
             ShowProgressDialog(Strings.BoxWizConnectingMessage);
         }
 
-        void GetTicketCompleted(bool succeeded, Exception exception)
+        void GetTicketCallback(AsyncTaskResult result)
         {
-            Invoke((MethodInvoker) delegate()
-            {
-                CloseProgressDialog();
+            CloseProgressDialog();
 
-                if (succeeded)
-                {
-                    ShowAuthorizationTabItem();
-                }
-                else
-                {
-                    HandleWebException(exception);
-                }
-            });
+            try
+            {
+                result.Check();
+
+                ShowAuthorizationTabItem();
+            }
+            catch (Exception e)
+            {
+                HandleWebException(e);
+            }
         }
 
         void OnAuthorizationTabItemNextSelected(object sender, EventArgs e)
@@ -150,26 +150,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnAccessTabItemNextSelected(object sender, EventArgs e)
         {
-            viewModel.AccessAccountAsync(AccessAccountCompleted);
+            viewModel.AccessAccountAsync(AccessAccountCallback);
 
             ShowProgressDialog(Strings.BoxWizTryAccessAccountMessage);
         }
 
-        void AccessAccountCompleted(bool succeeded, Exception exception)
+        void AccessAccountCallback(AsyncTaskResult result)
         {
-            Invoke((MethodInvoker) delegate()
-            {
-                CloseProgressDialog();
+            CloseProgressDialog();
 
-                if (succeeded)
-                {
-                    ShowCreateFolderTabItem();
-                }
-                else
-                {
-                    HandleWebException(exception);
-                }
-            });
+            try
+            {
+                result.Check();
+
+                ShowCreateFolderTabItem();
+            }
+            catch (Exception e)
+            {
+                HandleWebException(e);
+            }
         }
 
         void OnAccessTabItemBackSelected(object sender, EventArgs e)
@@ -179,26 +178,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnPrepareFolderTreeTabItemCreateSelected(object sender, EventArgs e)
         {
-            viewModel.PrepareFolderTreeAsync(PrepareFolderTreeCompleted);
+            viewModel.PrepareFolderTreeAsync(PrepareFolderTreeCallback);
 
             ShowProgressDialog(Strings.BoxWizTryPrepareFoldersMessage);
         }
 
-        void PrepareFolderTreeCompleted(bool succeeded, Exception exception)
+        void PrepareFolderTreeCallback(AsyncTaskResult result)
         {
-            Invoke((MethodInvoker) delegate()
-            {
-                CloseProgressDialog();
+            CloseProgressDialog();
 
-                if (succeeded)
-                {
-                    ShowSaveSettingsTabItem();
-                }
-                else
-                {
-                    HandleWebException(exception);
-                }
-            });
+            try
+            {
+                result.Check();
+
+                ShowSaveSettingsTabItem();
+            }
+            catch (Exception e)
+            {
+                HandleWebException(e);
+            }
         }
 
         void OnPrepareFolderTreeTabItemCancelSelected(object sender, EventArgs e)
@@ -208,26 +206,25 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
         void OnSaveSettingsTabItemYesSelected(object sender, EventArgs e)
         {
-            viewModel.SaveSettingsAsync(SaveSettingsCompleted);
+            viewModel.SaveSettingsAsync(SaveSettingsCallback);
 
             ShowProgressDialog(Strings.BoxWizSavingSettingsMessage);
         }
 
-        void SaveSettingsCompleted(bool succeeded, Exception exception)
+        void SaveSettingsCallback(AsyncTaskResult result)
         {
-            Invoke((MethodInvoker) delegate()
-            {
-                CloseProgressDialog();
+            CloseProgressDialog();
 
-                if (succeeded)
-                {
-                    ShowFinishTabItem();
-                }
-                else
-                {
-                    HandleWebException(exception);
-                }
-            });
+            try
+            {
+                result.Check();
+
+                ShowFinishTabItem();
+            }
+            catch (Exception e)
+            {
+                HandleWebException(e);
+            }
         }
 
         void OnSaveSettingsTabItemNoSelected(object sender, EventArgs e)

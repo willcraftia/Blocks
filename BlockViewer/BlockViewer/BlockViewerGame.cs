@@ -14,6 +14,7 @@ using Willcraftia.Xna.Framework.Debug;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.Storage;
+using Willcraftia.Xna.Framework.Threading;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
@@ -68,6 +69,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         StorageManager storageManager;
 
         StorageBlockManager storageBlockManager;
+
+        AsyncTaskManager asyncTaskManager;
 
         // todo: 何か他に管理方法がないのだろうか？
         public BoxIntegration BoxIntegration { get; private set; }
@@ -134,6 +137,10 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
 
             // StorageBlockManager を登録します。
             storageBlockManager = new StorageBlockManager(this);
+
+            // AsyncTaskManager を登録します。
+            asyncTaskManager = new AsyncTaskManager(this);
+            Components.Add(asyncTaskManager);
 
             // IBoxService を登録します。
             var assemblyFile = "Willcraftia.Net.Box.BlockViewer.ApiKey.dll";

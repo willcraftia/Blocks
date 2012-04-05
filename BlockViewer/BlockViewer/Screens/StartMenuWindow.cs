@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework;
+using Willcraftia.Xna.Framework.Threading;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Animations;
@@ -137,37 +138,36 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
             var boxIntegration = (Screen.Game as BlockViewerGame).BoxIntegration;
             
             // 保存されている設定からの BoxSession の復元を試みます。
-            viewModel.RestoreSessionAsync(RestoreSessionCompleted);
+            viewModel.RestoreSessionAsync(RestoreSessionCallback);
 
             ShowProgressDialog(Strings.CheckingBoxSettingsMessage);
         }
 
-        void RestoreSessionCompleted(bool succeeded, Exception exception)
+        void RestoreSessionCallback(AsyncTaskResult result)
         {
-            Invoke((MethodInvoker) delegate()
-            {
-                CloseProgressDialog();
+            CloseProgressDialog();
 
-                if (succeeded)
+            try
+            {
+                result.Check();
+
+                if (viewModel.BoxSessionEnabled && viewModel.HasValidFolderTree)
                 {
-                    if (viewModel.BoxSessionEnabled && viewModel.HasValidFolderTree)
-                    {
-                        // 復元できたならば、その BoxSession を用いて Upload を開始します。
-                        ShowConfirmUploadDialog();
-                    }
-                    else
-                    {
-                        // 設定が存在しない、あるいは、設定にあるフォルダ情報が無効な場合は、
-                        // それらを設定するために BoxSetupWizardDialog を表示します。
-                        ShowBoxSetupWizardDialog();
-                    }
+                    // 復元できたならば、その BoxSession を用いて Upload を開始します。
+                    ShowConfirmUploadDialog();
                 }
                 else
                 {
-                    ShowErrorDialog(Strings.BoxConnectionFailedMessage);
-                    Console.WriteLine(exception.Message);
+                    // 設定が存在しない、あるいは、設定にあるフォルダ情報が無効な場合は、
+                    // それらを設定するために BoxSetupWizardDialog を表示します。
+                    ShowBoxSetupWizardDialog();
                 }
-            });
+            }
+            catch (Exception e)
+            {
+                ShowErrorDialog(Strings.BoxConnectionFailedMessage);
+                Console.WriteLine(e.Message);
+            }
         }
 
         void OnBoxSetupWizardDialogClosed(object sender, EventArgs e)
@@ -214,28 +214,27 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
         {
             if (confirmUploadDialog.Result == MessageBoxResult.OK)
             {
-                viewModel.UploadDemoContentsAsync(UploadDemoContentsCompleted);
+                viewModel.UploadDemoContentsAsync(UploadDemoContentsCallback);
 
                 ShowProgressDialog(Strings.UploadingDemoBlocksMessage);
             }
         }
 
-        void UploadDemoContentsCompleted(bool succeeded, Exception exception)
+        void UploadDemoContentsCallback(AsyncTaskResult result)
         {
-            Invoke((MethodInvoker) delegate()
-            {
-                CloseProgressDialog();
+            CloseProgressDialog();
 
-                if (succeeded)
-                {
-                    ShowUploadedDialog();
-                }
-                else
-                {
-                    ShowErrorDialog(Strings.UploadDemoBlocksToBoxFailedMessage);
-                    Console.WriteLine(exception.Message);
-                }
-            });
+            try
+            {
+                result.Check();
+
+                ShowUploadedDialog();
+            }
+            catch (Exception e)
+            {
+                ShowErrorDialog(Strings.UploadDemoBlocksToBoxFailedMessage);
+                Console.WriteLine(e.Message);
+            }
         }
 
         void ShowUploadedDialog()

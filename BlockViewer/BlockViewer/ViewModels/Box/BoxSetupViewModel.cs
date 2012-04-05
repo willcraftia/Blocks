@@ -1,6 +1,9 @@
 ﻿#region Using
 
 using System;
+using Microsoft.Xna.Framework;
+using Willcraftia.Xna.Framework;
+using Willcraftia.Xna.Framework.Threading;
 using Willcraftia.Xna.Blocks.BlockViewer.Models.Box;
 
 #endregion
@@ -9,31 +12,34 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 {
     public sealed class BoxSetupViewModel
     {
-        delegate void AsyncDelegate();
+        IAsyncTaskService asyncTaskService;
 
         BoxIntegration boxIntegration;
 
-        AsyncDelegate getTicketDelegate;
+        Action getTicketAction;
 
-        AsyncDelegate getAuthTokenDelegate;
+        Action getAuthTokenAction;
 
-        AsyncDelegate prepareFolderTreeDelegate;
+        Action prepareFolderTreeAction;
 
-        AsyncDelegate saveSettingsDelegate;
+        Action saveSettingsAction;
 
-        public BoxSetupViewModel(BoxIntegration boxIntegration)
+        public BoxSetupViewModel(Game game)
         {
-            this.boxIntegration = boxIntegration;
+            if (game == null) throw new ArgumentNullException("game");
 
-            getTicketDelegate = new AsyncDelegate(boxIntegration.GetTicket);
-            getAuthTokenDelegate = new AsyncDelegate(boxIntegration.GetAuthToken);
-            prepareFolderTreeDelegate = new AsyncDelegate(boxIntegration.PrepareFolderTree);
-            saveSettingsDelegate = new AsyncDelegate(boxIntegration.SaveSettings);
+            asyncTaskService = game.Services.GetRequiredService<IAsyncTaskService>();
+            boxIntegration = (game as BlockViewerGame).BoxIntegration;
+
+            getTicketAction = new Action(boxIntegration.GetTicket);
+            getAuthTokenAction = new Action(boxIntegration.GetAuthToken);
+            prepareFolderTreeAction = new Action(boxIntegration.PrepareFolderTree);
+            saveSettingsAction = new Action(boxIntegration.SaveSettings);
         }
 
-        public void GetTicketAsync(AsyncWebCallback callback)
+        public void GetTicketAsync(AsyncTaskCallback callback)
         {
-            getTicketDelegate.BeginInvoke(GetTicketAsyncCallback, callback);
+            EnqueueAsyncTask(getTicketAction, callback);
         }
 
         public void LauchAuthorizationPageOnBrowser()
@@ -41,57 +47,29 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             boxIntegration.LauchAuthorizationPageOnBrowser();
         }
 
-        public void AccessAccountAsync(AsyncWebCallback callback)
+        public void AccessAccountAsync(AsyncTaskCallback callback)
         {
-            getAuthTokenDelegate.BeginInvoke(GetAuthTokenAsyncCallback, callback);
+            EnqueueAsyncTask(getAuthTokenAction, callback);
         }
 
-        public void PrepareFolderTreeAsync(AsyncWebCallback callback)
+        public void PrepareFolderTreeAsync(AsyncTaskCallback callback)
         {
-            prepareFolderTreeDelegate.BeginInvoke(PrepareFolderTreeAsyncCallback, callback);
+            EnqueueAsyncTask(prepareFolderTreeAction, callback);
         }
 
-        public void SaveSettingsAsync(AsyncWebCallback callback)
+        public void SaveSettingsAsync(AsyncTaskCallback callback)
         {
-            saveSettingsDelegate.BeginInvoke(SaveSettingsAsyncCallback, callback);
+            EnqueueAsyncTask(saveSettingsAction, callback);
         }
 
-        void GetTicketAsyncCallback(IAsyncResult asyncResult)
+        void EnqueueAsyncTask(Action action, AsyncTaskCallback callback)
         {
-            HandleAsyncDelegate(getTicketDelegate, asyncResult);
-        }
-
-        void GetAuthTokenAsyncCallback(IAsyncResult asyncResult)
-        {
-            HandleAsyncDelegate(getAuthTokenDelegate, asyncResult);
-        }
-
-        void PrepareFolderTreeAsyncCallback(IAsyncResult asyncResult)
-        {
-            HandleAsyncDelegate(prepareFolderTreeDelegate, asyncResult);
-        }
-
-        void SaveSettingsAsyncCallback(IAsyncResult asyncResult)
-        {
-            HandleAsyncDelegate(saveSettingsDelegate, asyncResult);
-        }
-
-        void HandleAsyncDelegate(AsyncDelegate d, IAsyncResult asyncResult)
-        {
-            bool succeeded = true;
-            Exception exception = null;
-            try
+            var task = new AsyncTask
             {
-                d.EndInvoke(asyncResult);
-            }
-            catch (Exception e)
-            {
-                succeeded = false;
-                exception = e;
-            }
-
-            var callback = asyncResult.AsyncState as AsyncWebCallback;
-            callback(succeeded, exception);
+                Action = action,
+                Callback = callback
+            };
+            asyncTaskService.Enqueue(task);
         }
     }
 }

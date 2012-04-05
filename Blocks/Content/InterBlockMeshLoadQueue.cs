@@ -208,7 +208,12 @@ namespace Willcraftia.Xna.Blocks.Content
                 }
             }
 
-            if (itemInThread == null) return;
+            if (itemInThread == null)
+            {
+                queue.Insert(0, item);
+                return;
+            }
+
             ThreadPool.QueueUserWorkItem(WaitCallback, itemInThread);
         }
 

@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
+using Willcraftia.Xna.Framework.Threading;
 using Willcraftia.Xna.Blocks.Serialization;
 using Willcraftia.Xna.Blocks.Storage;
 using Willcraftia.Xna.Blocks.BlockViewer.Models;
@@ -19,8 +20,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 {
     public sealed class StartMenuViewModel
     {
-        delegate void AsyncDelegate();
-
         Game game;
 
         IStorageBlockService storageBlockService;
@@ -31,9 +30,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         ContentSerializer<Description> descriptionSerializer = new ContentSerializer<Description>();
 
-        AsyncDelegate restoreSessionDelegate;
+        IAsyncTaskService asyncTaskService;
 
-        AsyncDelegate uploadDemoContentsDelegate;
+        Action restoreSessionAction;
+
+        Action uploadDemoContentsAction;
 
         public bool BoxIntegrationEnabled
         {
@@ -55,10 +56,11 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             this.game = game;
 
             storageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
+            asyncTaskService = game.Services.GetRequiredService<IAsyncTaskService>();
             boxIntegration = (game as BlockViewerGame).BoxIntegration;
 
-            restoreSessionDelegate = new AsyncDelegate(RestoreSession);
-            uploadDemoContentsDelegate = new AsyncDelegate(UploadDemoContents);
+            restoreSessionAction = new Action(RestoreSession);
+            uploadDemoContentsAction = new Action(UploadDemoContents);
         }
 
         public void InstallDemoContents()
@@ -100,24 +102,24 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 storageBlockService.Save(string.Format("Dummy_{0:d2}", i), block, descrption);
         }
 
-        public void RestoreSessionAsync(AsyncWebCallback callback)
+        public void RestoreSessionAsync(AsyncTaskCallback callback)
         {
-            restoreSessionDelegate.BeginInvoke(RestoreSessionAsyncCallback, callback);
+            EnqueueAsyncTask(restoreSessionAction, callback);
         }
 
-        void RestoreSessionAsyncCallback(IAsyncResult asyncResult)
+        public void UploadDemoContentsAsync(AsyncTaskCallback callback)
         {
-            HandleAsyncDelegate(restoreSessionDelegate, asyncResult);
+            EnqueueAsyncTask(uploadDemoContentsAction, callback);
         }
 
-        public void UploadDemoContentsAsync(AsyncWebCallback callback)
+        void EnqueueAsyncTask(Action action, AsyncTaskCallback callback)
         {
-            uploadDemoContentsDelegate.BeginInvoke(UploadDemoContentsAsyncCallback, callback);
-        }
-
-        void UploadDemoContentsAsyncCallback(IAsyncResult asyncResult)
-        {
-            HandleAsyncDelegate(uploadDemoContentsDelegate, asyncResult);
+            var task = new AsyncTask
+            {
+                Action = action,
+                Callback = callback
+            };
+            asyncTaskService.Enqueue(task);
         }
 
         void RestoreSession()
@@ -145,24 +147,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
             var boxIntegration = (game as BlockViewerGame).BoxIntegration;
             boxIntegration.Upload(uploadFiles);
-        }
-
-        void HandleAsyncDelegate(AsyncDelegate d, IAsyncResult asyncResult)
-        {
-            bool succeeded = true;
-            Exception exception = null;
-            try
-            {
-                d.EndInvoke(asyncResult);
-            }
-            catch (Exception e)
-            {
-                succeeded = false;
-                exception = e;
-            }
-
-            var callback = asyncResult.AsyncState as AsyncWebCallback;
-            callback(succeeded, exception);
         }
 
         Block LoadDemoBlock(string name)
