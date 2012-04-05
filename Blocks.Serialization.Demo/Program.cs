@@ -7,7 +7,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using Willcraftia.Xna.Framework.Text;
 
 #endregion
@@ -22,8 +22,8 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
 
         static void Main(string[] args)
         {
-            var block = CreateSimpleBlock();
-            //var block = CreateOctahedronLikeBlock();
+            //var block = CreateSimpleBlock();
+            var block = CreateOctahedronLikeBlock();
 
             // シリアライズとデシリアライズのテスト
             SerializeAndDeserialize(block);
@@ -35,56 +35,56 @@ namespace Willcraftia.Xna.Blocks.Serialization.Demo
             };
             Save(Directory.GetCurrentDirectory(), "DemoBlock", description, block);
 
-            DoJsonDemo(block);
+            //DoJsonDemo(block);
 
             Console.WriteLine();
             Console.WriteLine("Press enter key to exit.");
             Console.ReadLine();
         }
 
-        static void DoJsonDemo(Block block)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Convert between json and xml:");
+        //static void DoJsonDemo(Block block)
+        //{
+        //    Console.WriteLine();
+        //    Console.WriteLine("Convert between json and xml:");
 
-            using (var stream = new MemoryStream())
-            {
-                // シリアライズ
-                blockSerializer.Serialize(stream, block);
-                var xml = Encoding.UTF8.GetString(stream.ToArray());
-                Console.WriteLine("XML:");
-                Console.WriteLine(xml);
+        //    using (var stream = new MemoryStream())
+        //    {
+        //        // シリアライズ
+        //        blockSerializer.Serialize(stream, block);
+        //        var xml = Encoding.UTF8.GetString(stream.ToArray());
+        //        Console.WriteLine("XML:");
+        //        Console.WriteLine(xml);
 
-                // XML -> JSON 変換
-                stream.Position = 0;
-                var doc = new XmlDocument();
-                var xmlReader = blockSerializer.CreateXmlReader(stream);
-                doc.Load(xmlReader);
-                var json = JsonConvert.SerializeXmlNode(doc);
-                Console.WriteLine("JSON:");
-                Console.WriteLine(json);
+        //        // XML -> JSON 変換
+        //        stream.Position = 0;
+        //        var doc = new XmlDocument();
+        //        var xmlReader = blockSerializer.CreateXmlReader(stream);
+        //        doc.Load(xmlReader);
+        //        var json = JsonConvert.SerializeXmlNode(doc);
+        //        Console.WriteLine("JSON:");
+        //        Console.WriteLine(json);
 
-                // JSON -> XML 変換
-                stream.Position = 0;
-                doc = JsonConvert.DeserializeXmlNode(json);
-                var writerSettings = new XmlWriterSettings
-                {
-                    Indent = false,
-                    Encoding = Encoding.UTF8,
-                };
-                var writer = XmlWriter.Create(stream, writerSettings);
-                doc.Save(writer);
-                xml = Encoding.UTF8.GetString(stream.ToArray());
-                Console.WriteLine("XML:");
-                Console.WriteLine(xml);
+        //        // JSON -> XML 変換
+        //        stream.Position = 0;
+        //        doc = JsonConvert.DeserializeXmlNode(json);
+        //        var writerSettings = new XmlWriterSettings
+        //        {
+        //            Indent = false,
+        //            Encoding = Encoding.UTF8,
+        //        };
+        //        var writer = XmlWriter.Create(stream, writerSettings);
+        //        doc.Save(writer);
+        //        xml = Encoding.UTF8.GetString(stream.ToArray());
+        //        Console.WriteLine("XML:");
+        //        Console.WriteLine(xml);
 
-                // デシリアライズ
-                stream.Position = 0;
-                var deserialized = blockSerializer.Deserialize(stream);
-                Console.WriteLine("Block:");
-                Console.WriteLine(deserialized);
-            }
-        }
+        //        // デシリアライズ
+        //        stream.Position = 0;
+        //        var deserialized = blockSerializer.Deserialize(stream);
+        //        Console.WriteLine("Block:");
+        //        Console.WriteLine(deserialized);
+        //    }
+        //}
 
         /// <summary>
         /// Block をシリアライズし、それをデシリアライズします。

@@ -32,7 +32,6 @@ Blocks モデルの負荷テストのためのデモ アプリケーションで
 
 Blocks データ永続化のテストのためのデモ アプリケーションです。
 ※Windows アプリケーション。
-※要 Json.NET (http://json.codeplex.com/)。
 
 [BlockViewer]
 
