@@ -14,6 +14,32 @@ namespace Willcraftia.Xna.Framework.Threading
     /// </summary>
     public sealed class AsyncTaskManager : GameComponent, IAsyncTaskService
     {
+        #region Task
+
+        /// <summary>
+        /// キューに入れられる非同期処理と結果のコールバック処理の一式を表します。
+        /// </summary>
+        struct Task
+        {
+            /// <summary>
+            /// 非同期に処理するメソッド。
+            /// </summary>
+            public WaitCallback WaitCallback;
+
+            /// <summary>
+            /// WaitCallback 渡され、
+            /// AsyncTaskResultCallback が受け取る AsyncTaskResult に設定されるオブジェクト。
+            /// </summary>
+            public object State;
+
+            /// <summary>
+            /// WaitCallback の処理完了を受け取るコールバック メソッド。
+            /// </summary>
+            public AsyncTaskResultCallback ResultCallback;
+        }
+
+        #endregion
+
         #region TaskInThread
 
         /// <summary>
@@ -22,14 +48,9 @@ namespace Willcraftia.Xna.Framework.Threading
         class TaskInThread
         {
             /// <summary>
-            /// true (Thread に割り当てられている場合)、false (それ以外の場合)。
-            /// </summary>
-            public bool Busy;
-
-            /// <summary>
             /// Thread で処理する AsyncTask。
             /// </summary>
-            public AsyncTask Task;
+            public Task Task;
         }
 
         #endregion
@@ -38,7 +59,9 @@ namespace Willcraftia.Xna.Framework.Threading
 
         struct ResultInQueue
         {
-            public AsyncTaskCallback Callback;
+            public AsyncTaskResultCallback ResultCallback;
+
+            public object State;
 
             public Exception Exception;
         }
@@ -56,19 +79,19 @@ namespace Willcraftia.Xna.Framework.Threading
         int threadCount;
 
         /// <summary>
-        /// Thread に割り当てる TaskInThread の配列。
-        /// </summary>
-        TaskInThread[] taskInThreads;
-
-        /// <summary>
         /// AsyncTask の Queue。
         /// </summary>
-        Queue<AsyncTask> taskQueue = new Queue<AsyncTask>();
+        Queue<Task> taskQueue = new Queue<Task>();
 
         /// <summary>
         /// ResultInQueue の Queue。
         /// </summary>
         Queue<ResultInQueue> resultQueue = new Queue<ResultInQueue>();
+
+        /// <summary>
+        /// 空き Thread の Queue。
+        /// </summary>
+        Queue<TaskInThread> freeThread;
 
         /// <summary>
         /// インスタンスを生成します。
@@ -88,16 +111,22 @@ namespace Willcraftia.Xna.Framework.Threading
                 throw new ArgumentOutOfRangeException("threadCount");
             this.threadCount = threadCount;
 
-            taskInThreads = new TaskInThread[threadCount];
-            for (int i = 0; i < threadCount; i++) taskInThreads[i] = new TaskInThread();
+            freeThread = new Queue<TaskInThread>(threadCount);
+            for (int i = 0; i < threadCount; i++) freeThread.Enqueue(new TaskInThread());
 
             // サービスとして登録します。
             game.Services.AddService(typeof(IAsyncTaskService), this);
         }
 
         // I/F
-        public void Enqueue(AsyncTask task)
+        public void Enqueue(WaitCallback waitCallback, object state, AsyncTaskResultCallback resultCallback)
         {
+            var task = new Task
+            {
+                WaitCallback = waitCallback,
+                State = state,
+                ResultCallback = resultCallback
+            };
             lock (taskQueue) taskQueue.Enqueue(task);
         }
 
@@ -114,42 +143,28 @@ namespace Willcraftia.Xna.Framework.Threading
         /// </summary>
         void ProcessTask()
         {
-            AsyncTask task;
+            // 空き Thread を探して割り当てます。
+            TaskInThread taskInThread;
             lock (taskQueue)
             {
-                // キューが空ならば何もしません。
+                // Task がないなら処理を終えます。
                 if (taskQueue.Count == 0) return;
 
-                // まだ Thread を確保できるかどうかわからないので、
-                // Peek で取得します。
-                task = taskQueue.Peek();
-            }
-
-            // 空き Thread を探して割り当てます。
-            TaskInThread taskInThread = null;
-            lock (taskInThreads)
-            {
-                for (int i = 0; i < threadCount; i++)
+                lock (freeThread)
                 {
-                    if (!taskInThreads[i].Busy)
-                    {
-                        // 空き Thread が見つかったので割り当てます。
-                        taskInThread = taskInThreads[i];
-                        taskInThread.Busy = true;
-                        taskInThread.Task = task;
-                        break;
-                    }
+                    // 空き Thread がないなら処理を終えます。
+                    if (freeThread.Count == 0) return;
+
+                    // 空き Thread を確保します。
+                    taskInThread = freeThread.Dequeue();
                 }
+
+                // 確保した Thread に Task を割り当てます。
+                taskInThread.Task = taskQueue.Dequeue();
             }
 
-            if (taskInThread != null)
-            {
-                // Thread に割り当てられたのでキューから取り除きます。
-                lock (taskQueue) taskQueue.Dequeue();
-
-                // ThreadPool で実際の Thread 割り当てを行ってもらいます。
-                ThreadPool.QueueUserWorkItem(WaitCallback, taskInThread);
-            }
+            // ThreadPool で実際の Thread を割り当ててもらいます。
+            ThreadPool.QueueUserWorkItem(WaitCallback, taskInThread);
         }
 
         /// <summary>
@@ -167,10 +182,11 @@ namespace Willcraftia.Xna.Framework.Threading
 
             var result = new AsyncTaskResult
             {
+                State = resultInQueue.State,
                 Exception = resultInQueue.Exception
             };
 
-            resultInQueue.Callback(result);
+            resultInQueue.ResultCallback(result);
         }
 
         void WaitCallback(object state)
@@ -180,7 +196,7 @@ namespace Willcraftia.Xna.Framework.Threading
             Exception exception = null;
             try
             {
-                taskInThread.Task.Action();
+                taskInThread.Task.WaitCallback(taskInThread.Task.State);
             }
             catch (Exception e)
             {
@@ -189,14 +205,16 @@ namespace Willcraftia.Xna.Framework.Threading
 
             var result = new ResultInQueue
             {
-                Callback = taskInThread.Task.Callback,
+                ResultCallback = taskInThread.Task.ResultCallback,
+                State = taskInThread.Task.State,
                 Exception = exception
             };
 
+            // 処理結果をキューへ入れます。
             lock (resultQueue) resultQueue.Enqueue(result);
 
-            // Atomic だから lock いらないよね？
-            taskInThread.Busy = false;
+            // 空き Thread としてマークします。
+            lock (freeThread) freeThread.Enqueue(taskInThread);
         }
     }
 }

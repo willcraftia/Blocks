@@ -1,25 +1,28 @@
 ﻿#region Using
 
 using System;
+using System.Threading;
 
 #endregion
 
 namespace Willcraftia.Xna.Framework.Threading
 {
     /// <summary>
-    /// AsyncTask で表すことのできる簡単な処理を、
-    /// 非同期に呼び出すサービスへのインタフェースです。
-    /// AsyncTask.Callback に設定されたコールバック メソッドは、
-    /// Game Thread で呼び出されます。
+    /// 非同期に処理を呼び出し、処理結果の完了を Game Thread で受け取るサービスへのインタフェースです。
     /// </summary>
     public interface IAsyncTaskService
     {
         /// <summary>
-        /// AsyncTask をキューへ入れます。
-        /// キューに入れられた AsyncTask は即座に非同期に処理されるとは限らず、
-        /// Thread へ割り当てられるまで待機させられる可能性があります。
+        /// 非同期に処理したいメソッドをキューへ入れます。
         /// </summary>
-        /// <param name="task">AsyncTask。</param>
-        void Enqueue(AsyncTask task);
+        /// <param name="waitCallback">非同期に処理するメソッド。</param>
+        /// <param name="state">
+        /// WaitCallback 渡され、
+        /// AsyncTaskResultCallback が受け取る AsyncTaskResult に設定されるオブジェクト。
+        /// </param>
+        /// <param name="resultCallback">
+        /// WaitCallback の処理完了を受け取るコールバック メソッド。
+        /// </param>
+        void Enqueue(WaitCallback waitCallback, object state, AsyncTaskResultCallback resultCallback);
     }
 }
