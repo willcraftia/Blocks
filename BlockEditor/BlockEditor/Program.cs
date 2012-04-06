@@ -1,6 +1,6 @@
 using System;
 
-namespace BlockEditor
+namespace Willcraftia.Xna.Blocks.BlockEditor
 {
 #if WINDOWS || XBOX
     static class Program
@@ -10,7 +10,7 @@ namespace BlockEditor
         /// </summary>
         static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
+            using (BlockEditorGame game = new BlockEditorGame())
             {
                 game.Run();
             }

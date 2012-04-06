@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Threading;
@@ -32,9 +33,9 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
 
         IAsyncTaskService asyncTaskService;
 
-        Action restoreSessionAction;
+        WaitCallback restoreSessionAction;
 
-        Action uploadDemoContentsAction;
+        WaitCallback uploadDemoContentsAction;
 
         public bool BoxIntegrationEnabled
         {
@@ -59,8 +60,8 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
             asyncTaskService = game.Services.GetRequiredService<IAsyncTaskService>();
             boxIntegration = (game as BlockViewerGame).BoxIntegration;
 
-            restoreSessionAction = new Action(RestoreSession);
-            uploadDemoContentsAction = new Action(UploadDemoContents);
+            restoreSessionAction = (state) => boxIntegration.RestoreSession();
+            uploadDemoContentsAction = (state) => UploadDemoContents();
         }
 
         public void InstallDemoContents()
@@ -102,29 +103,14 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels
                 storageBlockService.Save(string.Format("Dummy_{0:d2}", i), block, descrption);
         }
 
-        public void RestoreSessionAsync(AsyncTaskCallback callback)
+        public void RestoreSessionAsync(AsyncTaskResultCallback callback)
         {
-            EnqueueAsyncTask(restoreSessionAction, callback);
+            asyncTaskService.Enqueue(restoreSessionAction, null, callback);
         }
 
-        public void UploadDemoContentsAsync(AsyncTaskCallback callback)
+        public void UploadDemoContentsAsync(AsyncTaskResultCallback callback)
         {
-            EnqueueAsyncTask(uploadDemoContentsAction, callback);
-        }
-
-        void EnqueueAsyncTask(Action action, AsyncTaskCallback callback)
-        {
-            var task = new AsyncTask
-            {
-                Action = action,
-                Callback = callback
-            };
-            asyncTaskService.Enqueue(task);
-        }
-
-        void RestoreSession()
-        {
-            boxIntegration.RestoreSession();
+            asyncTaskService.Enqueue(uploadDemoContentsAction, null, callback);
         }
 
         void UploadDemoContents()

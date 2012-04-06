@@ -149,7 +149,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             try
             {
-                result.Check();
+                result.CheckException();
 
                 if (viewModel.BoxSessionEnabled && viewModel.HasValidFolderTree)
                 {
@@ -226,7 +226,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens
 
             try
             {
-                result.Check();
+                result.CheckException();
 
                 ShowUploadedDialog();
             }

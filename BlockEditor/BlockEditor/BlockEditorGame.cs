@@ -1,8 +1,6 @@
-﻿#region Using
+#region Using
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -11,37 +9,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Willcraftia.Xna.Framework.Debug;
-using Willcraftia.Xna.Framework.Graphics;
-using Willcraftia.Xna.Framework.Input;
-using Willcraftia.Xna.Framework.Storage;
-using Willcraftia.Xna.Framework.Threading;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Framework.UI.Controls;
-using Willcraftia.Xna.Framework.UI.Lafs;
-using Willcraftia.Xna.Blocks.Content;
-using Willcraftia.Xna.Blocks.Storage;
-using Willcraftia.Xna.Blocks.BlockViewer.Models;
-using Willcraftia.Xna.Blocks.BlockViewer.Models.Box;
-using Willcraftia.Xna.Blocks.BlockViewer.Resources;
-using Willcraftia.Net.Box.Service;
+using Willcraftia.Xna.Blocks.BlockEditor.Screens;
 
 #endregion
 
-namespace Willcraftia.Xna.Blocks.BlockViewer
+namespace Willcraftia.Xna.Blocks.BlockEditor
 {
-    /// <summary>
-    /// BlockViewer の Game クラスです。
-    /// </summary>
-    public class BlockViewerGame : Game
+    public class BlockEditorGame : Game
     {
-        /// <summary>
-        /// SpriteSheet で扱うスプライト イメージのサイズ。
-        /// </summary>
-        public const int SpriteSize = 32;
-
-        /// <summary>
-        /// GraphicsDeviceManager。
-        /// </summary>
         GraphicsDeviceManager graphics;
 
         /// <summary>
@@ -64,21 +40,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// </summary>
         TimeRulerMarker drawMarker;
 
-        BoxManager boxManager;
-
-        StorageManager storageManager;
-
-        StorageBlockManager storageBlockManager;
-
-        AsyncTaskManager asyncTaskManager;
-
-        // todo: 何か他に管理方法がないのだろうか？
-        public BoxIntegration BoxIntegration { get; private set; }
-
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
-        public BlockViewerGame()
+        public BlockEditorGame()
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 720;
@@ -89,9 +51,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             graphics.PreferMultiSampling = true;
 
             Content.RootDirectory = "Content";
-
-            // デフォルトは OS の CultureInfo に従います。
-            Strings.Culture = CultureInfo.CurrentCulture;
         }
 
         protected override void Initialize()
@@ -120,47 +79,12 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
             drawMarker.BarIndex = 1;
             drawMarker.Color = Color.Yellow;
 
-            // StorageManager を登録します。
-            storageManager = new StorageManager(this);
-            storageManager.ContainerSelected += (s, c) =>
-            {
-                // IBoxService が登録されているならば BoxIntegration を初期化します。
-                if (boxManager != null) BoxIntegration.Initialize();
-            };
-            Components.Add(storageManager);
-
-            // StorageBlockManager を登録します。
-            storageBlockManager = new StorageBlockManager(this);
-
-            // AsyncTaskManager を登録します。
-            asyncTaskManager = new AsyncTaskManager(this);
-            Components.Add(asyncTaskManager);
-
-            // IBoxService を登録します。
-            var assemblyFile = "Willcraftia.Net.Box.BlockViewer.ApiKey.dll";
-            var apiKeyClassName = "Willcraftia.Net.Box.BlockViewer.ApiKey";
-            try
-            {
-                boxManager = new BoxManager(assemblyFile, apiKeyClassName);
-                Services.AddService(typeof(IBoxService), boxManager);
-
-                BoxIntegration = new BoxIntegration(this);
-            }
-            catch
-            {
-                // IBoxService を無効とします。
-            }
-
-            // マウス カーソルを可視にします。
-            IsMouseVisible = true;
-
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            // StartScreen の表示から開始します。
-            uiManager.Show(Screens.ScreenNames.Start);
+            uiManager.Show(Screens.ScreenNames.Main);
         }
 
         protected override void UnloadContent()
@@ -171,8 +95,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         {
             timeRuler.StartFrame();
             updateMarker.Begin();
-
-            if (storageManager.RootDirectory == null) storageManager.Select("BlockViewer");
 
             base.Update(gameTime);
 
@@ -207,7 +129,6 @@ namespace Willcraftia.Xna.Blocks.BlockViewer
         /// <param name="screenFactory">DefaultScreenFactory。</param>
         void InitializeScreenDefinitions(DefaultScreenFactory screenFactory)
         {
-            screenFactory.Definitions.Add(new ScreenDefinition(Screens.ScreenNames.Start, typeof(Screens.StartScreen)));
             screenFactory.Definitions.Add(new ScreenDefinition(Screens.ScreenNames.Main, typeof(Screens.MainScreen)));
         }
     }

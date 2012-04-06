@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Threading;
@@ -16,13 +17,13 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
 
         BoxIntegration boxIntegration;
 
-        Action getTicketAction;
+        WaitCallback getTicketAsync;
 
-        Action getAuthTokenAction;
+        WaitCallback getAuthTokenAsync;
 
-        Action prepareFolderTreeAction;
+        WaitCallback prepareFolderTreeAsync;
 
-        Action saveSettingsAction;
+        WaitCallback saveSettingsAsync;
 
         public BoxSetupViewModel(Game game)
         {
@@ -31,15 +32,15 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             asyncTaskService = game.Services.GetRequiredService<IAsyncTaskService>();
             boxIntegration = (game as BlockViewerGame).BoxIntegration;
 
-            getTicketAction = new Action(boxIntegration.GetTicket);
-            getAuthTokenAction = new Action(boxIntegration.GetAuthToken);
-            prepareFolderTreeAction = new Action(boxIntegration.PrepareFolderTree);
-            saveSettingsAction = new Action(boxIntegration.SaveSettings);
+            getTicketAsync = (state) => boxIntegration.GetTicket();
+            getAuthTokenAsync = (state) => boxIntegration.GetAuthToken();
+            prepareFolderTreeAsync = (state) => boxIntegration.PrepareFolderTree();
+            saveSettingsAsync = (state) => boxIntegration.SaveSettings();
         }
 
-        public void GetTicketAsync(AsyncTaskCallback callback)
+        public void GetTicketAsync(AsyncTaskResultCallback callback)
         {
-            EnqueueAsyncTask(getTicketAction, callback);
+            asyncTaskService.Enqueue(getTicketAsync, null, callback);
         }
 
         public void LauchAuthorizationPageOnBrowser()
@@ -47,29 +48,19 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.ViewModels.Box
             boxIntegration.LauchAuthorizationPageOnBrowser();
         }
 
-        public void AccessAccountAsync(AsyncTaskCallback callback)
+        public void AccessAccountAsync(AsyncTaskResultCallback callback)
         {
-            EnqueueAsyncTask(getAuthTokenAction, callback);
+            asyncTaskService.Enqueue(getAuthTokenAsync, null, callback);
         }
 
-        public void PrepareFolderTreeAsync(AsyncTaskCallback callback)
+        public void PrepareFolderTreeAsync(AsyncTaskResultCallback callback)
         {
-            EnqueueAsyncTask(prepareFolderTreeAction, callback);
+            asyncTaskService.Enqueue(prepareFolderTreeAsync, null, callback);
         }
 
-        public void SaveSettingsAsync(AsyncTaskCallback callback)
+        public void SaveSettingsAsync(AsyncTaskResultCallback callback)
         {
-            EnqueueAsyncTask(saveSettingsAction, callback);
-        }
-
-        void EnqueueAsyncTask(Action action, AsyncTaskCallback callback)
-        {
-            var task = new AsyncTask
-            {
-                Action = action,
-                Callback = callback
-            };
-            asyncTaskService.Enqueue(task);
+            asyncTaskService.Enqueue(saveSettingsAsync, null, callback);
         }
     }
 }

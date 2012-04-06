@@ -126,7 +126,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             try
             {
-                result.Check();
+                result.CheckException();
 
                 ShowAuthorizationTabItem();
             }
@@ -161,7 +161,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             try
             {
-                result.Check();
+                result.CheckException();
 
                 ShowCreateFolderTabItem();
             }
@@ -189,7 +189,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             try
             {
-                result.Check();
+                result.CheckException();
 
                 ShowSaveSettingsTabItem();
             }
@@ -217,7 +217,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Screens.Box
 
             try
             {
-                result.Check();
+                result.CheckException();
 
                 ShowFinishTabItem();
             }
