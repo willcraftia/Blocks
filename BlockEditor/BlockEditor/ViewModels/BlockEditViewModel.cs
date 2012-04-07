@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework.Cameras;
 using Willcraftia.Xna.Framework.Graphics;
 using Willcraftia.Xna.Blocks.Serialization;
+using Willcraftia.Xna.Blocks.BlockEditor.Models;
 
 #endregion
 
@@ -21,9 +22,9 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
 
         Block block;
 
-        public ChaseView CameraView { get; private set; }
+        GridView gridView;
 
-        public PerspectiveFov Projection { get; private set; }
+        PerspectiveFov projection;
 
         public BlockEditViewModel(GraphicsDevice graphicsDevice)
         {
@@ -36,17 +37,46 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
 
             block = CreateOctahedronLikeBlock();
 
-            CameraView = new ChaseView
+            gridView = new GridView
             {
-                Distance = 23.5f,
-                Angle = new Vector2(-MathHelper.PiOver4 * 0.5f, MathHelper.PiOver4)
+                Distance = 23.5f
             };
 
-            Projection = new PerspectiveFov
+            projection = new PerspectiveFov
             {
                 NearPlaneDistance = 0.01f,
                 FarPlaneDistance = 100
             };
+        }
+
+        public void MoveLeft()
+        {
+            gridView.MoveLeft();
+        }
+
+        public void MoveRight()
+        {
+            gridView.MoveRight();
+        }
+
+        public void MoveUp()
+        {
+            gridView.MoveUp();
+        }
+
+        public void MoveDown()
+        {
+            gridView.MoveDown();
+        }
+
+        public void MoveForward()
+        {
+            gridView.MoveForward();
+        }
+
+        public void MoveBackward()
+        {
+            gridView.MoveBackward();
         }
 
         public void Draw()
@@ -55,11 +85,11 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             // Projection を更新します。
-            Projection.AspectRatio = graphicsDevice.Viewport.AspectRatio;
-            Projection.Update();
+            projection.AspectRatio = graphicsDevice.Viewport.AspectRatio;
+            projection.Update();
 
             // CameraView を更新します。
-            CameraView.Update();
+            gridView.Update();
 
             foreach (var element in block.Elements)
             {
@@ -75,8 +105,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
                 var material = block.Materials[element.MaterialIndex];
 
                 basicEffect.World = translation;
-                basicEffect.View = CameraView.Matrix;
-                basicEffect.Projection = Projection.Matrix;
+                basicEffect.View = gridView.Matrix;
+                basicEffect.Projection = projection.Matrix;
                 basicEffect.DiffuseColor = material.DiffuseColor.ToColor().ToVector3();
                 basicEffect.EmissiveColor = material.EmissiveColor.ToColor().ToVector3();
                 basicEffect.SpecularColor = material.SpecularColor.ToColor().ToVector3();

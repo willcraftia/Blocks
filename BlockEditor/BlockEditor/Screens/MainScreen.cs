@@ -22,7 +22,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
         SelectableLookAndFeelSource selectableLookAndFeelSource = new SelectableLookAndFeelSource();
 
-        DefaultSpriteSheetSource spriteSheetSource;
+        //DefaultSpriteSheetSource spriteSheetSource;
 
         BlockEditControl blockEditControl;
 
@@ -127,6 +127,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
                 DataContext = new BlockEditViewModel(GraphicsDevice)
             };
             canvas.Children.Add(blockEditControl);
+
+            blockEditControl.Focus();
         }
     }
 }

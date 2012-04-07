@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
 
@@ -19,6 +20,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         public BlockEditControl(Screen screen)
             : base(screen)
         {
+            Focusable = true;
         }
 
         public override void Draw(GameTime gameTime, IDrawContext drawContext)
@@ -36,6 +38,30 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
                     }
                 }
             }
+        }
+
+        protected override void OnKeyDown(ref RoutedEventContext context)
+        {
+            var keyboard = Screen.KeyboardDevice;
+
+            if (keyboard.IsKeyPressed(Keys.W))
+            {
+                ViewModel.MoveForward();
+            }
+            else if (keyboard.IsKeyPressed(Keys.S))
+            {
+                ViewModel.MoveBackward();
+            }
+            else if (keyboard.IsKeyPressed(Keys.A))
+            {
+                ViewModel.MoveLeft();
+            }
+            else if (keyboard.IsKeyPressed(Keys.D))
+            {
+                ViewModel.MoveRight();
+            }
+
+            base.OnKeyDown(ref context);
         }
     }
 }
