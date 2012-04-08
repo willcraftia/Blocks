@@ -22,48 +22,37 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         ViewMode viewMode;
 
-        readonly object loadSyncRoot = new object();
-
         string meshName;
 
         BlockMesh mesh;
 
         public string MeshName
         {
-            get
-            {
-                lock (loadSyncRoot)
-                {
-                    return meshName;
-                }
-            }
+            get { return meshName; }
             set
             {
-                lock (loadSyncRoot)
+                if (meshName == value) return;
+
+                if (meshName != null)
                 {
-                    if (meshName == value) return;
-
-                    if (meshName != null)
+                    if (mesh == null)
                     {
-                        if (mesh == null)
-                        {
-                            workspace.CancelLoadInterBlockMeshAsync(meshName);
-                        }
-                        else
-                        {
-                            workspace.CancelLoadBlockMesh(mesh);
-
-                            mesh.Dispose();
-                            mesh = null;
-                        }
+                        workspace.CancelLoadInterBlockMeshAsync(meshName);
                     }
-
-                    meshName = value;
-
-                    if (meshName != null)
+                    else
                     {
-                        workspace.LoadInterBlockMeshAsync(meshName, 4, InterBlockMeshLoadTaskCallback);
+                        workspace.CancelLoadBlockMesh(mesh);
+
+                        mesh.Dispose();
+                        mesh = null;
                     }
+                }
+
+                meshName = value;
+
+                if (meshName != null)
+                {
+                    workspace.LoadInterBlockMeshAsync(meshName, 4, InterBlockMeshLoadTaskCallback);
                 }
             }
         }
@@ -154,13 +143,7 @@ namespace Willcraftia.Xna.Blocks.BlockViewer.Models
 
         void InterBlockMeshLoadTaskCallback(string name, InterBlockMesh result)
         {
-            lock (loadSyncRoot)
-            {
-                if (meshName == name)
-                {
-                    mesh = workspace.LoadBlockMesh(result);
-                }
-            }
+            if (meshName == name) mesh = workspace.LoadBlockMesh(result);
         }
 
         public void MoveView(Vector2 angleSign)

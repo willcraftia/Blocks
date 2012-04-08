@@ -96,6 +96,7 @@
     <Compile Include="Content\InterBlockMesh.cs" />
     <Compile Include="Content\InterBlockMeshFactory.cs" />
     <Compile Include="Content\InterBlockMeshLoadQueue.cs" />
+    <Compile Include="Content\InterBlockMeshLoadQueueCallback.cs" />
     <Compile Include="Content\InterBlockMeshLod.cs" />
     <Compile Include="Content\InterBlockMeshPart.cs" />
     <Compile Include="Content\Processing\BlockSprite.cs" />

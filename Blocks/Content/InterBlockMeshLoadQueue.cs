@@ -10,24 +10,17 @@ using Willcraftia.Xna.Blocks.Serialization;
 namespace Willcraftia.Xna.Blocks.Content
 {
     /// <summary>
-    /// InterBlockMesh のロード完了で呼び出されるコールバック メソッドを定義します。
-    /// </summary>
-    /// <param name="name">ロードされた Block の名前。</param>
-    /// <param name="result">ロードされた InterBlockMesh。</param>
-    public delegate void InterBlockMeshLoadQueueCallback(string name, InterBlockMesh result);
-
-    /// <summary>
     /// InterBlockMesh のロード要求をキューで管理し、
     /// それらに Thread を割り当てて並列処理するクラスです。
     /// </summary>
     public sealed class InterBlockMeshLoadQueue
     {
-        #region Item
+        #region Task
 
         /// <summary>
         /// Block のロードから InterBlockMesh の生成までの処理を表す構造体です。
         /// </summary>
-        struct Item
+        struct Task
         {
             /// <summary>
             /// Block のロードに使用する IBlockLoader。
@@ -53,32 +46,41 @@ namespace Willcraftia.Xna.Blocks.Content
             /// InterBlockMesh をロードします。
             /// </summary>
             /// <returns>ロードされた InterBlockMesh。</returns>
-            public void Execute()
+            public InterBlockMesh Execute()
             {
                 var block = Loader.LoadBlock(Name);
-                var interBlockMesh = InterBlockMeshFactory.InterBlockMesh(block, LodCount);
-                Callback(Name, interBlockMesh);
+                return InterBlockMeshFactory.InterBlockMesh(block, LodCount);
             }
         }
 
         #endregion
 
-        #region ItemInThread
+        #region TaskInThread
 
         /// <summary>
-        /// Thread で処理する Item を管理するクラスです。
+        /// Thread で処理する Task を管理するクラスです。
         /// </summary>
-        class ItemInThread
+        class TaskInThread
         {
             /// <summary>
-            /// true (Thread に割り当てられている場合)、false (それ以外の場合)。
+            /// Thread で処理する Task。
             /// </summary>
-            public bool Busy;
+            public Task Task;
+        }
 
-            /// <summary>
-            /// Thread で処理する Item。
-            /// </summary>
-            public Item Item;
+        #endregion
+
+        #region ResultInQueue
+
+        struct ResultInQueue
+        {
+            public InterBlockMeshLoadQueueCallback ResultCallback;
+
+            public string Name;
+
+            public InterBlockMesh InterBlockMesh;
+
+            public Exception Exception;
         }
 
         #endregion
@@ -102,12 +104,17 @@ namespace Willcraftia.Xna.Blocks.Content
         /// Item のリスト。
         /// キューとしては効率が悪いですが、取り消し要求を考慮してリストで管理します。
         /// </summary>
-        List<Item> queue;
+        List<Task> queue;
 
         /// <summary>
-        /// Thread に割り当てる ItemInThread の配列。
+        /// ResultInQueue の Queue。
         /// </summary>
-        ItemInThread[] itemInThreads;
+        Queue<ResultInQueue> resultQueue = new Queue<ResultInQueue>();
+
+        /// <summary>
+        /// 空き Thread の Queue。
+        /// </summary>
+        Queue<TaskInThread> freeThread;
 
         /// <summary>
         /// インスタンスを生成します。
@@ -124,9 +131,9 @@ namespace Willcraftia.Xna.Blocks.Content
                 throw new ArgumentOutOfRangeException("threadCount");
             this.threadCount = threadCount;
 
-            queue = new List<Item>();
-            itemInThreads = new ItemInThread[threadCount];
-            for (int i = 0; i < threadCount; i++) itemInThreads[i] = new ItemInThread();
+            queue = new List<Task>();
+            freeThread = new Queue<TaskInThread>(threadCount);
+            for (int i = 0; i < threadCount; i++) freeThread.Enqueue(new TaskInThread());
         }
 
         /// <summary>
@@ -142,7 +149,7 @@ namespace Willcraftia.Xna.Blocks.Content
             if (name == null) throw new ArgumentNullException("name");
             if (callback == null) throw new ArgumentNullException("callback");
 
-            var item = new Item
+            var item = new Task
             {
                 Loader = loader,
                 Name = name,
@@ -188,33 +195,51 @@ namespace Willcraftia.Xna.Blocks.Content
         /// </summary>
         public void Update()
         {
-            if (queue.Count == 0) return;
+            ProcessTask();
+            ProcessResult();
+        }
 
-            var item = queue[0];
-            queue.RemoveAt(0);
-
-            ItemInThread itemInThread = null;
-            lock (syncRoot)
+        void ProcessTask()
+        {
+            // 空き Thread を探して割り当てます。
+            TaskInThread taskInThread;
+            lock (queue)
             {
-                for (int i = 0; i < threadCount; i++)
+                // Task がないなら処理を終えます。
+                if (queue.Count == 0) return;
+
+                lock (freeThread)
                 {
-                    if (!itemInThreads[i].Busy)
-                    {
-                        itemInThread = itemInThreads[i];
-                        itemInThread.Busy = true;
-                        itemInThread.Item = item;
-                        break;
-                    }
+                    // 空き Thread がないなら処理を終えます。
+                    if (freeThread.Count == 0) return;
+
+                    // 空き Thread を確保します。
+                    taskInThread = freeThread.Dequeue();
                 }
+
+                // 確保した Thread に Task を割り当てます。
+                taskInThread.Task = queue[0];
+                queue.RemoveAt(0);
             }
 
-            if (itemInThread == null)
+            // ThreadPool で実際の Thread を割り当ててもらいます。
+            ThreadPool.QueueUserWorkItem(WaitCallback, taskInThread);
+        }
+
+        /// <summary>
+        /// キューにある ResultInQueue を取り出し、コールバックします。
+        /// </summary>
+        void ProcessResult()
+        {
+            ResultInQueue resultInQueue;
+            lock (resultQueue)
             {
-                queue.Insert(0, item);
-                return;
+                if (resultQueue.Count == 0) return;
+
+                resultInQueue = resultQueue.Dequeue();
             }
 
-            ThreadPool.QueueUserWorkItem(WaitCallback, itemInThread);
+            resultInQueue.ResultCallback(resultInQueue.Name, resultInQueue.InterBlockMesh);
         }
 
         /// <summary>
@@ -223,13 +248,32 @@ namespace Willcraftia.Xna.Blocks.Content
         /// <param name="state">Task。</param>
         void WaitCallback(object state)
         {
-            var itemInThread = (ItemInThread) state;
-            itemInThread.Item.Execute();
+            var taskInThread = state as TaskInThread;
 
-            lock (syncRoot)
+            InterBlockMesh interBlockMesh = null;
+            Exception exception = null;
+            try
             {
-                itemInThread.Busy = false;
+                interBlockMesh = taskInThread.Task.Execute();
             }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+
+            var result = new ResultInQueue
+            {
+                ResultCallback = taskInThread.Task.Callback,
+                Name = taskInThread.Task.Name,
+                InterBlockMesh = interBlockMesh,
+                Exception = exception
+            };
+
+            // 処理結果をキューへ入れます。
+            lock (resultQueue) resultQueue.Enqueue(result);
+
+            // 空き Thread としてマークします。
+            lock (freeThread) freeThread.Enqueue(taskInThread);
         }
     }
 }
