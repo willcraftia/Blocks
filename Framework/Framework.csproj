@@ -109,6 +109,7 @@
     <Compile Include="Storage\StorageDirectory.cs" />
     <Compile Include="Storage\StorageManager.cs" />
     <Compile Include="Threading\AsyncTaskManager.cs" />
+    <Compile Include="Threading\AsyncTaskQueue.cs" />
     <Compile Include="Threading\AsyncTaskResult.cs" />
     <Compile Include="Threading\AsyncTaskResultCallback.cs" />
     <Compile Include="Threading\IAsyncTaskService.cs" />
