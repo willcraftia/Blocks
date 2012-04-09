@@ -107,15 +107,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\DirectionalLightModel.cs" />
     <Compile Include="Models\GridView.cs" />
     <Compile Include="Models\GridViewDirection.cs" />
+    <Compile Include="Models\Viewer.cs" />
+    <Compile Include="Models\ViewMode.cs" />
+    <Compile Include="Models\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="BlockEditorGame.cs" />
     <Compile Include="Screens\BlockEditControl.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
-    <Compile Include="ViewModels\BlockEditViewModel.cs" />
+    <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
+    <Compile Include="ViewModels\ViewerViewModel.cs" />
+    <Compile Include="ViewModels\WorkspaceViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

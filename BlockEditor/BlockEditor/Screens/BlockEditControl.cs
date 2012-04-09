@@ -12,9 +12,9 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 {
     public sealed class BlockEditControl : Control
     {
-        BlockEditViewModel ViewModel
+        ViewerViewModel ViewModel
         {
-            get { return DataContext as BlockEditViewModel; }
+            get { return DataContext as ViewerViewModel; }
         }
 
         public BlockEditControl(Screen screen)
@@ -38,30 +38,6 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
                     }
                 }
             }
-        }
-
-        protected override void OnKeyDown(ref RoutedEventContext context)
-        {
-            var keyboard = Screen.KeyboardDevice;
-
-            if (keyboard.IsKeyPressed(Keys.W))
-            {
-                ViewModel.MoveForward();
-            }
-            else if (keyboard.IsKeyPressed(Keys.S))
-            {
-                ViewModel.MoveBackward();
-            }
-            else if (keyboard.IsKeyPressed(Keys.A))
-            {
-                ViewModel.MoveLeft();
-            }
-            else if (keyboard.IsKeyPressed(Keys.D))
-            {
-                ViewModel.MoveRight();
-            }
-
-            base.OnKeyDown(ref context);
         }
     }
 }

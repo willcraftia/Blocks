@@ -8,6 +8,7 @@ using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
+using Willcraftia.Xna.Blocks.BlockEditor.Models;
 using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
 
 #endregion
@@ -26,6 +27,10 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
         BlockEditControl blockEditControl;
 
+        Workspace workspace;
+
+        WorkspaceViewModel viewModel;
+
         public int SelectedLookAndFeelSourceIndex
         {
             get { return selectableLookAndFeelSource.SelectedIndex; }
@@ -35,6 +40,12 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         public MainScreen(Game game)
             : base(game)
         {
+            Content.RootDirectory = "Content";
+
+            workspace = new Workspace(game);
+
+            viewModel = new WorkspaceViewModel(workspace);
+            DataContext = viewModel;
         }
 
         protected override void LoadContent()
@@ -124,7 +135,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
                 Width = Desktop.Width,
                 Height = Desktop.Height,
                 Focusable = true,
-                DataContext = new BlockEditViewModel(GraphicsDevice)
+                DataContext = viewModel.ViewerViewModel
             };
             canvas.Children.Add(blockEditControl);
 

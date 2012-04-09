@@ -1,6 +1,7 @@
 #region Using
 
 using System;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -9,7 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Willcraftia.Xna.Framework.Debug;
+using Willcraftia.Xna.Framework.Storage;
 using Willcraftia.Xna.Framework.UI;
+using Willcraftia.Xna.Blocks.Storage;
 using Willcraftia.Xna.Blocks.BlockEditor.Screens;
 
 #endregion
@@ -24,6 +27,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor
         /// UI を管理する UIManager。
         /// </summary>
         UIManager uiManager;
+
+        #region Debug
 
         /// <summary>
         /// TimeRuler。
@@ -40,6 +45,12 @@ namespace Willcraftia.Xna.Blocks.BlockEditor
         /// </summary>
         TimeRulerMarker drawMarker;
 
+        #endregion
+
+        StorageManager storageManager;
+
+        StorageBlockManager storageBlockManager;
+
         public BlockEditorGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -51,14 +62,29 @@ namespace Willcraftia.Xna.Blocks.BlockEditor
             graphics.PreferMultiSampling = true;
 
             Content.RootDirectory = "Content";
+
+            // デフォルトは OS の CultureInfo に従います。
+            //Strings.Culture = CultureInfo.CurrentCulture;
         }
 
         protected override void Initialize()
         {
+            // マウス カーソルを可視にします。
+            IsMouseVisible = true;
+
             // UIManager を初期化して登録します。
             uiManager = new UIManager(this);
             uiManager.ScreenFactory = CreateScreenFactory();
             Components.Add(uiManager);
+
+            // StorageManager を登録します。
+            storageManager = new StorageManager(this);
+            Components.Add(storageManager);
+
+            // StorageBlockManager を登録します。
+            storageBlockManager = new StorageBlockManager(this);
+
+            #region Debug
 
             var fpsCounter = new FpsCounter(this);
             fpsCounter.Content.RootDirectory = "Content";
@@ -78,6 +104,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor
             drawMarker.Name = "Draw";
             drawMarker.BarIndex = 1;
             drawMarker.Color = Color.Yellow;
+
+            #endregion
 
             base.Initialize();
         }
