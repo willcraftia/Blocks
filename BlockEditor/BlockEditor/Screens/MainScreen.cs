@@ -25,11 +25,13 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
         //DefaultSpriteSheetSource spriteSheetSource;
 
-        BlockEditControl blockEditControl;
-
         Workspace workspace;
 
         WorkspaceViewModel viewModel;
+
+        BlockViewControl blockViewControl;
+
+        BlockEditWindow blockEditWindow;
 
         public int SelectedLookAndFeelSourceIndex
         {
@@ -130,16 +132,22 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
             canvas.VerticalAlignment = VerticalAlignment.Stretch;
             Desktop.Content = canvas;
 
-            blockEditControl = new BlockEditControl(this)
+            blockViewControl = new BlockViewControl(this)
             {
                 Width = Desktop.Width,
                 Height = Desktop.Height,
                 Focusable = true,
                 DataContext = viewModel.ViewerViewModel
             };
-            canvas.Children.Add(blockEditControl);
+            canvas.Children.Add(blockViewControl);
 
-            blockEditControl.Focus();
+            blockEditWindow = new BlockEditWindow(this)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                DataContext = viewModel.EditorViewModel
+            };
+            blockEditWindow.Show();
         }
     }
 }

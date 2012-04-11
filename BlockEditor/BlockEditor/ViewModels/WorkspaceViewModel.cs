@@ -11,6 +11,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
     {
         Workspace workspace;
 
+        public EditorViewModel EditorViewModel { get; private set; }
+
         public ViewerViewModel ViewerViewModel { get; private set; }
 
         public WorkspaceViewModel(Workspace workspace)
@@ -18,18 +20,12 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
             if (workspace == null) throw new ArgumentNullException("workspace");
             this.workspace = workspace;
 
+            EditorViewModel = new EditorViewModel(workspace.Editor);
+
             ViewerViewModel = new ViewerViewModel(workspace.Viewer)
             {
                 ViewMovable = true,
                 GridVisible = true
-            };
-        }
-
-        public ViewerViewModel CreateLodViewerViewModel(int levelOfDetail)
-        {
-            return new ViewerViewModel(workspace.Viewer)
-            {
-                LevelOfDetail = levelOfDetail
             };
         }
     }

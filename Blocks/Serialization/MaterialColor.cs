@@ -11,7 +11,7 @@ namespace Willcraftia.Xna.Blocks.Serialization
     /// <summary>
     /// Material の色を表すための構造体です。
     /// </summary>
-    public struct MaterialColor
+    public struct MaterialColor : IEquatable<MaterialColor>
     {
         /// <summary>
         /// R 値。
@@ -67,6 +67,37 @@ namespace Willcraftia.Xna.Blocks.Serialization
         {
             return new Color(R, G, B);
         }
+
+        #region Equatable
+
+        public static bool operator ==(MaterialColor o1, MaterialColor o2)
+        {
+            return o1.Equals(o2);
+        }
+
+        public static bool operator !=(MaterialColor o1, MaterialColor o2)
+        {
+            return !o1.Equals(o2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            return Equals((MaterialColor) obj);
+        }
+
+        public bool Equals(MaterialColor other)
+        {
+            return R == other.R && G == other.G && B == other.B;
+        }
+
+        public override int GetHashCode()
+        {
+            return R.GetHashCode() ^ G.GetHashCode() ^ B.GetHashCode();
+        }
+
+        #endregion
 
         #region ToString
 

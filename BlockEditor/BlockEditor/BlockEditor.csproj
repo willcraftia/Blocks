@@ -108,18 +108,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\DirectionalLightModel.cs" />
+    <Compile Include="Models\Editor.cs" />
     <Compile Include="Models\GridView.cs" />
     <Compile Include="Models\GridViewDirection.cs" />
+    <Compile Include="Models\SectionOrientation.cs" />
     <Compile Include="Models\Viewer.cs" />
     <Compile Include="Models\ViewMode.cs" />
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="BlockEditorGame.cs" />
-    <Compile Include="Screens\BlockEditControl.cs" />
+    <Compile Include="Screens\BlockViewControl.cs" />
+    <Compile Include="Screens\BlockEditWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
+    <Compile Include="Screens\MaterialPalletControl.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
+    <Compile Include="Screens\SectionEditControl.cs" />
     <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
+    <Compile Include="ViewModels\EditorViewModel.cs" />
+    <Compile Include="ViewModels\MaterialPalletViewModel.cs" />
+    <Compile Include="ViewModels\SectionViewModel.cs" />
     <Compile Include="ViewModels\ViewerViewModel.cs" />
     <Compile Include="ViewModels\WorkspaceViewModel.cs" />
   </ItemGroup>

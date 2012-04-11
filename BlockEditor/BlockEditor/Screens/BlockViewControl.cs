@@ -10,14 +10,14 @@ using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
 
 namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 {
-    public sealed class BlockEditControl : Control
+    public sealed class BlockViewControl : Control
     {
         ViewerViewModel ViewModel
         {
             get { return DataContext as ViewerViewModel; }
         }
 
-        public BlockEditControl(Screen screen)
+        public BlockViewControl(Screen screen)
             : base(screen)
         {
             Focusable = true;

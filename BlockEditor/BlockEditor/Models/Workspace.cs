@@ -16,6 +16,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 {
     public sealed class Workspace : IDisposable
     {
+        public event EventHandler BlockChanged = delegate { };
+
         public Game Game { get; private set; }
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -25,6 +27,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
         public Block Block { get; private set; }
 
         public GridBlockMesh GridBlockMesh { get; private set; }
+
+        public Editor Editor { get; private set; }
 
         public Viewer Viewer { get; private set; }
 
@@ -37,12 +41,14 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
             StorageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
 
-            GridBlockMesh = new GridBlockMesh(GraphicsDevice, 16, 0.1f, Color.White);
-
-            Viewer = new Viewer(this);
-
             // todo: code for demo
             Block = CreateOctahedronLikeBlock();
+
+            GridBlockMesh = new GridBlockMesh(GraphicsDevice, 16, 0.1f, Color.White);
+
+            Editor = new Editor(this);
+
+            Viewer = new Viewer(this);
         }
 
         public void Update(GameTime gameTime)

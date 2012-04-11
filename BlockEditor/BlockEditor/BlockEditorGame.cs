@@ -88,7 +88,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor
 
             var fpsCounter = new FpsCounter(this);
             fpsCounter.Content.RootDirectory = "Content";
-            fpsCounter.HorizontalAlignment = DebugHorizontalAlignment.Right;
+            fpsCounter.HorizontalAlignment = DebugHorizontalAlignment.Left;
             fpsCounter.SampleSpan = TimeSpan.FromSeconds(2);
             Components.Add(fpsCounter);
 
