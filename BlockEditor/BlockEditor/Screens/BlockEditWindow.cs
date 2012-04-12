@@ -12,7 +12,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 {
     public sealed class BlockEditWindow : Window
     {
-        SectionEditControl sectionEditControl;
+        SectionControl sectionControl;
 
         EditorViewModel ViewModel
         {
@@ -29,15 +29,12 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
             };
             Content = stackPanel;
 
-            sectionEditControl = new SectionEditControl(screen)
+            sectionControl = new SectionControl(screen)
             {
-                CellSize = 12,
-                ForegroundColor = Color.White,
-                BackgroundColor = Color.Black
             };
-            stackPanel.Children.Add(sectionEditControl);
+            stackPanel.Children.Add(sectionControl);
 
-            sectionEditControl.Focus();
+            sectionControl.Focus();
         }
 
         protected override void OnDataContextChanged()
@@ -46,11 +43,11 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
             if (editorViewModel != null)
             {
-                sectionEditControl.DataContext = editorViewModel.SectionViewModel;
+                sectionControl.DataContext = editorViewModel.SectionViewModel;
             }
             else
             {
-                sectionEditControl.DataContext = null;
+                sectionControl.DataContext = null;
             }
 
             base.OnDataContextChanged();

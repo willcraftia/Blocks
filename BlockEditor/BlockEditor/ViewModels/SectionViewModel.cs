@@ -12,6 +12,18 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
     {
         Editor editor;
 
+        public SectionOrientation Orientation
+        {
+            get { return editor.Orientation; }
+            set { editor.Orientation = value; }
+        }
+
+        public int SectionIndex
+        {
+            get { return editor.SectionIndex; }
+            set { editor.SectionIndex = value; }
+        }
+
         public SectionViewModel(Editor editor)
         {
             if (editor == null) throw new ArgumentNullException("editor");
@@ -20,20 +32,20 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.ViewModels
             editor.SectionIndex = 8;
         }
 
-        public void SetElement(int x, int y, int materialIndex)
-        {
-            editor.SetElement(x, y, materialIndex);
-        }
+        //public void SetElement(int x, int y, int materialIndex)
+        //{
+        //    editor.SetElement(x, y, materialIndex);
+        //}
 
-        public Element GetElement(int x, int y)
-        {
-            return editor.GetElement(x, y);
-        }
+        //public Element GetElement(int x, int y)
+        //{
+        //    return editor.GetElement(x, y);
+        //}
 
-        public void RemoveElement(int x, int y)
-        {
-            editor.RemoveElement(x, y);
-        }
+        //public void RemoveElement(int x, int y)
+        //{
+        //    editor.RemoveElement(x, y);
+        //}
 
         public Material GetMaterial(int x, int y)
         {

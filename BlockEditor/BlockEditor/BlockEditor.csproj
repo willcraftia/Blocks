@@ -124,6 +124,9 @@
     <Compile Include="Screens\MaterialPalletControl.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
     <Compile Include="Screens\SectionEditControl.cs" />
+    <Compile Include="Screens\SectionIndexControl.cs" />
+    <Compile Include="Screens\SectionOrientationControl.cs" />
+    <Compile Include="Screens\SectionControl.cs" />
     <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
     <Compile Include="ViewModels\EditorViewModel.cs" />
     <Compile Include="ViewModels\MaterialPalletViewModel.cs" />

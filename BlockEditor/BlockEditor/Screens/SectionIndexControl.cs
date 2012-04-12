@@ -3,16 +3,17 @@
 using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Blocks.Serialization;
 using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
 
 #endregion
 
 namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 {
-    public sealed class SectionEditControl : Control
+    public sealed class SectionIndexControl : Control
     {
         public Color GridColor { get; set; }
+
+        public Color CursorColor { get; set; }
 
         public float CellSize { get; set; }
 
@@ -21,17 +22,18 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
             get { return DataContext as SectionViewModel; }
         }
 
-        public SectionEditControl(Screen screen)
+        public SectionIndexControl(Screen screen)
             : base(screen)
         {
             GridColor = Color.White;
+            CursorColor = Color.Blue;
             CellSize = 12;
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
             var w = CellSize * 16 + 1;
-            var h = CellSize * 16 + 1;
+            var h = CellSize + 1;
             var m = Margin;
 
             return new Size
@@ -45,55 +47,44 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         {
             base.Draw(gameTime, drawContext);
 
-            DrawGrid(drawContext);
-            DrawElements(drawContext);
-        }
-
-        void DrawGrid(IDrawContext drawContext)
-        {
             var rect = new Rect();
-
-            rect.X = 0;
             rect.Width = RenderSize.Width;
             rect.Height = 1;
-            for (int y = 0; y <= 16; y++)
-            {
-                rect.Y = CellSize * y;
-                drawContext.DrawRectangle(rect, GridColor);
-            }
+            drawContext.DrawRectangle(rect, GridColor);
+
+            rect.Y = RenderSize.Height - 1;
+            drawContext.DrawRectangle(rect, GridColor);
 
             rect.Y = 0;
             rect.Width = 1;
             rect.Height = RenderSize.Height;
-            for (int x = 0; x <= 16; x++)
+            for (int i = 0; i <= 16; i++)
             {
-                rect.X = CellSize * x;
+                rect.X = CellSize * i;
                 drawContext.DrawRectangle(rect, GridColor);
             }
+
+            rect.Width = CellSize - 1;
+            rect.Height = CellSize - 1;
+            rect.X = CellSize * ViewModel.SectionIndex + 1;
+            rect.Y = 1;
+            drawContext.DrawRectangle(rect, CursorColor);
         }
 
-        void DrawElements(IDrawContext drawContext)
+        protected override void OnPreviewMouseDown(ref RoutedEventContext context)
         {
-            var rect = new Rect
+            var state = Screen.MouseDevice.MouseState;
+            var point = new Vector2
             {
-                Width = CellSize - 1,
-                Height = CellSize - 1
+                X = state.X,
+                Y = state.Y
             };
+            point = PointFromScreen(point);
 
-            for (int y = 0; y < 16; y++)
-            {
-                rect.Y = CellSize * y + 1;
-                for (int x = 0; x < 16; x++)
-                {
-                    var material = ViewModel.GetMaterial(x, y);
-                    if (material == null) continue;
+            ViewModel.SectionIndex = (int) (point.X / CellSize);
+            context.Handled = true;
 
-                    rect.X = CellSize * x + 1;
-                    var color = material.DiffuseColor.ToColor();
-
-                    drawContext.DrawRectangle(rect, color);
-                }
-            }
+            base.OnMouseDown(ref context);
         }
     }
 }
