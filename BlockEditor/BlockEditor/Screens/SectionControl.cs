@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Framework.UI.Controls;
+using Willcraftia.Xna.Blocks.BlockEditor.Models;
 
 #endregion
 
@@ -24,16 +25,18 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
             var selectorPanel = new StackPanel(screen)
             {
-                Margin = new Thickness(8)
+                //Margin = new Thickness(8)
             };
             stackPanel.Children.Add(selectorPanel);
 
-            var orientationControl = new SectionOrientationControl(screen)
+            var changeOrientationButton = new Button(screen)
             {
                 Width = cellSize,
-                Height = cellSize
+                Height = cellSize,
+                Margin = new Thickness(0, 0, 8, 0)
             };
-            selectorPanel.Children.Add(orientationControl);
+            changeOrientationButton.Click += OnChangeOrientationButtonClick;
+            selectorPanel.Children.Add(changeOrientationButton);
 
             var indexControl = new SectionIndexControl(screen)
             {
@@ -45,9 +48,14 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
             {
                 CellSize = cellSize,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(8, 0, 8, 8)
+                Margin = new Thickness(0, 8, 0, 0)
             };
             stackPanel.Children.Add(editControl);
+        }
+
+        void OnChangeOrientationButtonClick(Control sender, ref RoutedEventContext context)
+        {
+            (DataContext as Section).ChangeOrientation();
         }
     }
 }

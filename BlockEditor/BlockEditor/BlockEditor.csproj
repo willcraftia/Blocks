@@ -107,12 +107,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\CubeMesh.cs" />
     <Compile Include="Models\DirectionalLightModel.cs" />
-    <Compile Include="Models\Editor.cs" />
-    <Compile Include="Models\GridView.cs" />
-    <Compile Include="Models\GridViewDirection.cs" />
+    <Compile Include="Models\Section.cs" />
     <Compile Include="Models\SectionOrientation.cs" />
-    <Compile Include="Models\Viewer.cs" />
+    <Compile Include="Models\Scene.cs" />
     <Compile Include="Models\ViewMode.cs" />
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -122,17 +121,12 @@
     <Compile Include="Screens\BlockEditWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\MaterialPalletControl.cs" />
+    <Compile Include="Screens\MaterialViewControl.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
     <Compile Include="Screens\SectionEditControl.cs" />
     <Compile Include="Screens\SectionIndexControl.cs" />
-    <Compile Include="Screens\SectionOrientationControl.cs" />
     <Compile Include="Screens\SectionControl.cs" />
-    <Compile Include="ViewModels\DirectionalLightViewModel.cs" />
-    <Compile Include="ViewModels\EditorViewModel.cs" />
-    <Compile Include="ViewModels\MaterialPalletViewModel.cs" />
-    <Compile Include="ViewModels\SectionViewModel.cs" />
-    <Compile Include="ViewModels\ViewerViewModel.cs" />
-    <Compile Include="ViewModels\WorkspaceViewModel.cs" />
+    <Compile Include="Screens\MaterialWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

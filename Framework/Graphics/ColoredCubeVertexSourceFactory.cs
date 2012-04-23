@@ -10,6 +10,7 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// <summary>
     /// 頂点色を持つ立方体の VertexSource を生成するクラスです。
     /// </summary>
+    [Obsolete("", true)]
     public sealed class ColoredCubeVertexSourceFactory : IVertexSourceFactory<VertexPositionNormalColor, ushort>
     {
         /// <summary>
@@ -65,7 +66,7 @@ namespace Willcraftia.Xna.Framework.Graphics
         public VertexSource<VertexPositionNormalColor, ushort> CreateVertexSource()
         {
             var source = new VertexSource<VertexPositionNormalColor, ushort>();
-            var maker = new ColoredQuadrangleMaker();
+            var maker = new ColoredQuadrangle();
             float s = Size * 0.5f;
 
             // REFERENCE: 立方体頂点計算アルゴリズムは XNA の Primitive3D サンプル コードより。

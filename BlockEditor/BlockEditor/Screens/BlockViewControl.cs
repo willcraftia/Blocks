@@ -4,7 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
+using Willcraftia.Xna.Blocks.BlockEditor.Models;
 
 #endregion
 
@@ -12,9 +12,9 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 {
     public sealed class BlockViewControl : Control
     {
-        ViewerViewModel ViewModel
+        Scene Scene
         {
-            get { return DataContext as ViewerViewModel; }
+            get { return DataContext as Scene; }
         }
 
         public BlockViewControl(Screen screen)
@@ -34,7 +34,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
                 {
                     using (var localClipping = drawContext.BeginNewClip(bounds))
                     {
-                        ViewModel.Draw();
+                        Scene.Draw();
                     }
                 }
             }

@@ -16,7 +16,13 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 {
     public sealed class Workspace : IDisposable
     {
+        public const int GridSize = 16;
+
+        public const float CellSize = 0.1f;
+
         public event EventHandler BlockChanged = delegate { };
+
+        int selectedMaterialIndex;
 
         public Game Game { get; private set; }
 
@@ -26,11 +32,24 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
         public Block Block { get; private set; }
 
-        public GridBlockMesh GridBlockMesh { get; private set; }
+        public Scene Scene { get; private set; }
 
-        public Editor Editor { get; private set; }
+        public CubeMesh CubeMesh { get; private set; }
 
-        public Viewer Viewer { get; private set; }
+        public Section Section { get; private set; }
+
+        public int SelectedMaterialIndex
+        {
+            get { return selectedMaterialIndex; }
+            set
+            {
+                if (selectedMaterialIndex == value) return;
+                if (value < 0 || Block.Materials.Count <= value)
+                    throw new ArgumentOutOfRangeException("value");
+
+                selectedMaterialIndex = value;
+            }
+        }
 
         public Workspace(Game game)
         {
@@ -41,14 +60,47 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
             StorageBlockService = game.Services.GetRequiredService<IStorageBlockService>();
 
+            Scene = new Scene(this);
+
+            CubeMesh = new CubeMesh(GraphicsDevice, CellSize);
+            CubeMesh.Effect.EnableDefaultLighting();
+
+            Section = new Section(this);
+
             // todo: code for demo
             Block = CreateOctahedronLikeBlock();
+            Section.FetchElements();
+        }
 
-            GridBlockMesh = new GridBlockMesh(GraphicsDevice, 16, 0.1f, Color.White);
+        // todo: Block にメソッドを作る？
+        public int CreateMaterial(
+            MaterialColor diffuseColor,
+            MaterialColor emissiveColor,
+            MaterialColor specularColor, float specularPower)
+        {
+            var materials = Block.Materials;
 
-            Editor = new Editor(this);
+            for (int i = 0; i < materials.Count; i++)
+            {
+                var m = materials[i];
+                if (m.DiffuseColor == diffuseColor &&
+                    m.EmissiveColor == emissiveColor &&
+                    m.SpecularColor == specularColor && m.SpecularPower == specularPower)
+                {
+                    return i;
+                }
+            }
 
-            Viewer = new Viewer(this);
+            var material = new Material
+            {
+                DiffuseColor = diffuseColor,
+                EmissiveColor = emissiveColor,
+                SpecularColor = specularColor,
+                SpecularPower = specularPower
+            };
+            materials.Add(material);
+
+            return materials.Count - 1;
         }
 
         public void Update(GameTime gameTime)
@@ -141,7 +193,6 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
             if (disposing)
             {
-                GridBlockMesh.Dispose();
             }
 
             disposed = true;

@@ -9,7 +9,6 @@ using Willcraftia.Xna.Framework.UI.Controls;
 using Willcraftia.Xna.Framework.UI.Lafs;
 using Willcraftia.Xna.Framework.UI.Lafs.Debug;
 using Willcraftia.Xna.Blocks.BlockEditor.Models;
-using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
 
 #endregion
 
@@ -25,13 +24,11 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
         //DefaultSpriteSheetSource spriteSheetSource;
 
-        Workspace workspace;
-
-        WorkspaceViewModel viewModel;
-
         BlockViewControl blockViewControl;
 
         BlockEditWindow blockEditWindow;
+
+        public Workspace Workspace { get; private set; }
 
         public int SelectedLookAndFeelSourceIndex
         {
@@ -44,10 +41,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         {
             Content.RootDirectory = "Content";
 
-            workspace = new Workspace(game);
-
-            viewModel = new WorkspaceViewModel(workspace);
-            DataContext = viewModel;
+            Workspace = new Workspace(game);
+            DataContext = Workspace;
         }
 
         protected override void LoadContent()
@@ -89,7 +84,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         {
             selectableLookAndFeelSource.Items.Add(CreateDefaultLookAndFeelSource());
             selectableLookAndFeelSource.Items.Add(DebugLooAndFeelUtil.CreateLookAndFeelSource(Game));
-            selectableLookAndFeelSource.SelectedIndex = 0;
+            selectableLookAndFeelSource.SelectedIndex = DebugLookAndFeelIndex;
 
             LookAndFeelSource = selectableLookAndFeelSource;
         }
@@ -126,26 +121,31 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
         void InitializeControls()
         {
-            var canvas = new Canvas(this);
-            canvas.BackgroundColor = Color.CornflowerBlue;
-            canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
-            canvas.VerticalAlignment = VerticalAlignment.Stretch;
+            var canvas = new Canvas(this)
+            {
+                BackgroundColor = Color.CornflowerBlue,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
             Desktop.Content = canvas;
 
             blockViewControl = new BlockViewControl(this)
             {
-                Width = Desktop.Width,
-                Height = Desktop.Height,
+                //Width = Desktop.Width,
+                //Height = Desktop.Height,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Width = Desktop.Width * 0.5f,
+                Height = Desktop.Height * 0.5f,
                 Focusable = true,
-                DataContext = viewModel.ViewerViewModel
+                DataContext = (DataContext as Workspace).Scene
             };
             canvas.Children.Add(blockViewControl);
 
             blockEditWindow = new BlockEditWindow(this)
             {
                 HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Top,
-                DataContext = viewModel.EditorViewModel
+                VerticalAlignment = VerticalAlignment.Top
             };
             blockEditWindow.Show();
         }

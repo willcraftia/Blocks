@@ -212,6 +212,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         protected internal virtual void Update(GameTime gameTime)
         {
+            var updateableDataContext = DataContext as IUpdateableDataContext;
+            if (updateableDataContext != null) updateableDataContext.Update(gameTime);
+
             controlUpdateQueue.Update(gameTime);
 
             // Control を更新します。

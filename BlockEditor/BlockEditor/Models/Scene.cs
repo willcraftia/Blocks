@@ -1,26 +1,26 @@
 ﻿#region Using
 
 using System;
-using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Willcraftia.Xna.Framework;
 using Willcraftia.Xna.Framework.Cameras;
 using Willcraftia.Xna.Framework.Graphics;
+using Willcraftia.Xna.Blocks.Graphics;
 
 #endregion
 
 namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 {
-    public sealed class Viewer : IDisposable
+    public sealed class Scene : IDisposable
     {
+        const int gridSize = Workspace.GridSize;
+
+        const float cellSize = Workspace.CellSize;
+
         Workspace workspace;
 
         GraphicsDevice graphicsDevice;
-
-        BasicEffect basicEffect;
-
-        GeometricPrimitive cube;
 
         PerspectiveFov projection;
 
@@ -73,7 +73,9 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
             }
         }
 
-        public Viewer(Workspace workspace)
+        public GridBlockMesh GridBlockMesh { get; private set; }
+
+        public Scene(Workspace workspace)
         {
             if (workspace == null) throw new ArgumentNullException("workspace");
             this.workspace = workspace;
@@ -90,7 +92,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
             CameraView = new ChaseView
             {
-                Distance = 23.5f,
+                Distance = 3.5f,
                 Angle = new Vector2(-MathHelper.PiOver4 * 0.5f, MathHelper.PiOver4)
             };
             CurrentView = CameraView;
@@ -105,10 +107,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
             AmbientLightColor = new Vector3(0.05333332f, 0.09882354f, 0.1819608f);
 
-            basicEffect = new BasicEffect(workspace.GraphicsDevice);
-            basicEffect.EnableDefaultLighting();
-
-            cube = CreateCubePrimitive();
+            GridBlockMesh = new GridBlockMesh(graphicsDevice, gridSize, cellSize, Color.White);
         }
 
         public void MoveView(Vector2 angleSign)
@@ -149,15 +148,13 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
         void DrawGridBlockMesh()
         {
             // GridBlockMesh の面の描画の有無を決定します。
-            var grid = workspace.GridBlockMesh;
+            GridBlockMesh.SetVisibilities(CurrentView.Position);
 
-            grid.SetVisibilities(CurrentView.Position);
-
-            var effect = grid.Effect;
+            var effect = GridBlockMesh.Effect;
             effect.View = CurrentView.Matrix;
             effect.Projection = projection.Matrix;
 
-            grid.Draw();
+            GridBlockMesh.Draw();
         }
 
         void DrawBlock()
@@ -169,36 +166,28 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
             {
                 var position = new Vector3
                 {
-                    X = element.Position.X,
-                    Y = element.Position.Y,
-                    Z = element.Position.Z
+                    X = element.Position.X * cellSize,
+                    Y = element.Position.Y * cellSize,
+                    Z = element.Position.Z * cellSize
                 };
                 Matrix translation;
                 Matrix.CreateTranslation(ref position, out translation);
 
                 var material = block.Materials[element.MaterialIndex];
 
-                basicEffect.World = translation;
-                basicEffect.View = CurrentView.Matrix;
-                basicEffect.Projection = projection.Matrix;
-                basicEffect.DiffuseColor = material.DiffuseColor.ToColor().ToVector3();
-                basicEffect.EmissiveColor = material.EmissiveColor.ToColor().ToVector3();
-                basicEffect.SpecularColor = material.SpecularColor.ToColor().ToVector3();
-                basicEffect.SpecularPower = material.SpecularPower;
+                var cubeMesh = workspace.CubeMesh;
 
-                cube.Draw(basicEffect);
+                var effect = cubeMesh.Effect;
+                effect.World = translation;
+                effect.View = CurrentView.Matrix;
+                effect.Projection = projection.Matrix;
+                effect.DiffuseColor = material.DiffuseColor.ToVector3();
+                effect.EmissiveColor = material.EmissiveColor.ToVector3();
+                effect.SpecularColor = material.SpecularColor.ToVector3();
+                effect.SpecularPower = material.SpecularPower;
+
+                cubeMesh.Draw();
             }
-        }
-
-        /// <summary>
-        /// 立方体の GeometricPrimitive を生成します。
-        /// </summary>
-        /// <returns>生成された立方体の GeometricPrimitive。</returns>
-        GeometricPrimitive CreateCubePrimitive()
-        {
-            var sourceFactory = new CubeVertexSourceFactory();
-            var source = sourceFactory.CreateVertexSource();
-            return GeometricPrimitive.Create(graphicsDevice, source);
         }
 
         #region IDisposable
@@ -211,7 +200,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
         bool disposed;
 
-        ~Viewer()
+        ~Scene()
         {
             Dispose(false);
         }
@@ -222,8 +211,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
             if (disposing)
             {
-                basicEffect.Dispose();
-                cube.Dispose();
+                GridBlockMesh.Dispose();
             }
 
             disposed = true;

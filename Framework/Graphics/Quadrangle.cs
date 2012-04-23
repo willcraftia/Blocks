@@ -38,10 +38,40 @@ namespace Willcraftia.Xna.Framework.Graphics
         public Vector3 Normal;
 
         /// <summary>
+        /// 色。
+        /// </summary>
+        public Color Color;
+
+        /// <summary>
         /// VertexSource へ頂点データを設定します。
         /// </summary>
         /// <param name="source">頂点データが設定される VertexSource。</param>
         public void Make(VertexSource<VertexPositionNormal, ushort> source)
+        {
+            MakeIndices(source);
+
+            source.AddVertex(new VertexPositionNormal(Position0, Normal));
+            source.AddVertex(new VertexPositionNormal(Position1, Normal));
+            source.AddVertex(new VertexPositionNormal(Position2, Normal));
+            source.AddVertex(new VertexPositionNormal(Position3, Normal));
+        }
+
+        /// <summary>
+        /// VertexSource へ頂点データを設定します。
+        /// </summary>
+        /// <param name="source">頂点データが設定される VertexSource。</param>
+        public void Make(VertexSource<VertexPositionNormalColor, ushort> source)
+        {
+            MakeIndices(source);
+
+            source.AddVertex(new VertexPositionNormalColor(Position0, Normal, Color));
+            source.AddVertex(new VertexPositionNormalColor(Position1, Normal, Color));
+            source.AddVertex(new VertexPositionNormalColor(Position2, Normal, Color));
+            source.AddVertex(new VertexPositionNormalColor(Position3, Normal, Color));
+        }
+
+        void MakeIndices<TVertex>(VertexSource<TVertex, ushort> source)
+            where TVertex : struct
         {
             source.AddIndex((ushort) (source.CurrentVertex + 0));
             source.AddIndex((ushort) (source.CurrentVertex + 1));
@@ -49,11 +79,6 @@ namespace Willcraftia.Xna.Framework.Graphics
             source.AddIndex((ushort) (source.CurrentVertex + 0));
             source.AddIndex((ushort) (source.CurrentVertex + 2));
             source.AddIndex((ushort) (source.CurrentVertex + 3));
-
-            source.AddVertex(new VertexPositionNormal(Position0, Normal));
-            source.AddVertex(new VertexPositionNormal(Position1, Normal));
-            source.AddVertex(new VertexPositionNormal(Position2, Normal));
-            source.AddVertex(new VertexPositionNormal(Position3, Normal));
         }
     }
 }

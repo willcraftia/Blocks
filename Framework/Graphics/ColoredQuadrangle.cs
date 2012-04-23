@@ -10,7 +10,8 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// <summary>
     /// 頂点色を含む四角形の頂点データを表し、VertexSource への追加を行う構造体です。
     /// </summary>
-    public struct ColoredQuadrangleMaker
+    [Obsolete("", true)]
+    public struct ColoredQuadrangle
     {
         /// <summary>
         /// 位置 0。

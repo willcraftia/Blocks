@@ -123,6 +123,7 @@
     <Compile Include="FocusNavigationMode.cs" />
     <Compile Include="FocusScope.cs" />
     <Compile Include="IFocusScopeControl.cs" />
+    <Compile Include="IUpdateableDataContext.cs" />
     <Compile Include="Lafs\ButtonLookAndFeel.cs" />
     <Compile Include="Lafs\CanvasLookAndFeel.cs" />
     <Compile Include="Lafs\Debug\DebugLooAndFeelUtil.cs" />

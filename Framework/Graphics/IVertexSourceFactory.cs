@@ -11,6 +11,7 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// </summary>
     /// <typeparam name="TVertex">頂点構造体の型。</typeparam>
     /// <typeparam name="TIndex">インデックスの型。</typeparam>
+    [Obsolete("", true)]
     public interface IVertexSourceFactory<TVertex, TIndex>
         where TVertex : struct
         where TIndex : struct

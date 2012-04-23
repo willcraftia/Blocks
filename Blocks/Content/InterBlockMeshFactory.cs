@@ -291,9 +291,9 @@ namespace Willcraftia.Xna.Blocks.Content
 
                 mesh.MeshMaterials[i] = new BlockMeshMaterial
                 {
-                    DiffuseColor = block.Materials[i].DiffuseColor.ToColor().ToVector3(),
-                    EmissiveColor = block.Materials[i].EmissiveColor.ToColor().ToVector3(),
-                    SpecularColor = block.Materials[i].SpecularColor.ToColor().ToVector3(),
+                    DiffuseColor = block.Materials[i].DiffuseColor.ToVector3(),
+                    EmissiveColor = block.Materials[i].EmissiveColor.ToVector3(),
+                    SpecularColor = block.Materials[i].SpecularColor.ToVector3(),
                     SpecularPower = block.Materials[i].SpecularPower
                 };
             }

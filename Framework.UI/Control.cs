@@ -719,6 +719,9 @@ namespace Willcraftia.Xna.Framework.UI
         /// <param name="gameTime"></param>
         public virtual void Update(GameTime gameTime)
         {
+            var updateableDataContext = dataContext as IUpdateableDataContext;
+            if (updateableDataContext != null) updateableDataContext.Update(gameTime);
+
             // Animation を更新します。
             foreach (var animation in Animations)
             {

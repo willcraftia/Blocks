@@ -397,18 +397,20 @@ namespace Willcraftia.Xna.Framework.UI.Demo.Screens
             /// 立方体の GeometricPrimitive を生成します。
             /// </summary>
             /// <returns>生成された立方体の GeometricPrimitive。</returns>
-            Graphics.GeometricPrimitive CreateCubePrimitive()
+            GeometricPrimitive CreateCubePrimitive()
             {
-                //var cubeVertexSourceFactory = new Graphics.CubeVertexSourceFactory();
-                var cubeVertexSourceFactory = new Graphics.ColoredCubeVertexSourceFactory();
-                cubeVertexSourceFactory.TopSurfaceColor = Color.Green;
-                cubeVertexSourceFactory.BottomSurfaceColor = Color.GreenYellow;
-                cubeVertexSourceFactory.NorthSurfaceColor = Color.Blue;
-                cubeVertexSourceFactory.SouthSurfaceColor = Color.BlueViolet;
-                cubeVertexSourceFactory.EastSurfaceColor = Color.Red;
-                cubeVertexSourceFactory.WestSurfaceColor = Color.OrangeRed;
-
-                var source = cubeVertexSourceFactory.CreateVertexSource();
+                var cube = new Cube
+                {
+                    Size = 1,
+                    BackwardColor = Color.Blue,
+                    ForwardColor = Color.BlueViolet,
+                    RightColor = Color.OrangeRed,
+                    LeftColor = Color.Red,
+                    UpColor = Color.Green,
+                    DownColor = Color.GreenYellow
+                };
+                var source = new VertexSource<VertexPositionNormalColor, ushort>();
+                cube.Make(source);
                 return Graphics.GeometricPrimitive.Create(Screen.GraphicsDevice, source);
             }
         }

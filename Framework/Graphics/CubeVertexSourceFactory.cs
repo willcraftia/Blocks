@@ -10,6 +10,7 @@ namespace Willcraftia.Xna.Framework.Graphics
     /// <summary>
     /// 立方体の VertexSource を生成するクラスです。
     /// </summary>
+    [Obsolete("", true)]
     public sealed class CubeVertexSourceFactory : IVertexSourceFactory<VertexPositionNormal, ushort>
     {
         /// <summary>

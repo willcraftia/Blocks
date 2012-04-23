@@ -11,12 +11,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
 {
     public sealed class GridBlockMesh : IDisposable
     {
-        public GridPlane Top { get; private set; }
-        public GridPlane Bottom { get; private set; }
-        public GridPlane North { get; private set; }
-        public GridPlane South { get; private set; }
-        public GridPlane West { get; private set; }
-        public GridPlane East { get; private set; }
+        public GridPlane Up { get; private set; }
+        public GridPlane Down { get; private set; }
+        public GridPlane Forward { get; private set; }
+        public GridPlane Backward { get; private set; }
+        public GridPlane Left { get; private set; }
+        public GridPlane Right { get; private set; }
 
         // MEMO
         //
@@ -26,21 +26,21 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
         public BasicEffect Effect { get; private set; }
 
-        public bool TopVisible { get; set; }
-        public bool BottomVisible { get; set; }
-        public bool NorthVisible { get; set; }
-        public bool SouthVisible { get; set; }
-        public bool WestVisible { get; set; }
-        public bool EastVisible { get; set; }
+        public bool UpVisible { get; set; }
+        public bool DownVisible { get; set; }
+        public bool ForwardVisible { get; set; }
+        public bool BackwardVisible { get; set; }
+        public bool LeftVisible { get; set; }
+        public bool RightVisible { get; set; }
 
         public GridBlockMesh(GraphicsDevice graphicsDevice, int gridSize, float cellSize, Color color)
         {
-            TopVisible = true;
-            BottomVisible = true;
-            NorthVisible = true;
-            SouthVisible = true;
-            WestVisible = true;
-            EastVisible = true;
+            UpVisible = true;
+            DownVisible = true;
+            ForwardVisible = true;
+            BackwardVisible = true;
+            LeftVisible = true;
+            RightVisible = true;
 
             Effect = new BasicEffect(graphicsDevice);
             Effect.VertexColorEnabled = true;
@@ -50,21 +50,21 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
         public void SetVisibilities(Vector3 cameraPosition)
         {
-            TopVisible = true;
-            BottomVisible = true;
-            NorthVisible = true;
-            SouthVisible = true;
-            WestVisible = true;
-            EastVisible = true;
+            UpVisible = true;
+            DownVisible = true;
+            ForwardVisible = true;
+            BackwardVisible = true;
+            LeftVisible = true;
+            RightVisible = true;
 
-            if (0 < cameraPosition.Y) TopVisible = false;
-            if (cameraPosition.Y < 0) BottomVisible = false;
+            if (0 < cameraPosition.Y) UpVisible = false;
+            if (cameraPosition.Y < 0) DownVisible = false;
 
-            if (0 < cameraPosition.Z) SouthVisible = false;
-            if (cameraPosition.Z < 0) NorthVisible = false;
+            if (0 < cameraPosition.Z) BackwardVisible = false;
+            if (cameraPosition.Z < 0) ForwardVisible = false;
 
-            if (0 < cameraPosition.X) EastVisible = false;
-            if (cameraPosition.X < 0) WestVisible = false;
+            if (0 < cameraPosition.X) RightVisible = false;
+            if (cameraPosition.X < 0) LeftVisible = false;
         }
 
         public void Draw()
@@ -74,12 +74,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
 
         public void Draw(Effect effect)
         {
-            if (TopVisible) Top.Draw(effect);
-            if (BottomVisible) Bottom.Draw(effect);
-            if (NorthVisible) North.Draw(effect);
-            if (SouthVisible) South.Draw(effect);
-            if (WestVisible) West.Draw(effect);
-            if (EastVisible) East.Draw(effect);
+            if (UpVisible) Up.Draw(effect);
+            if (DownVisible) Down.Draw(effect);
+            if (ForwardVisible) Forward.Draw(effect);
+            if (BackwardVisible) Backward.Draw(effect);
+            if (LeftVisible) Left.Draw(effect);
+            if (RightVisible) Right.Draw(effect);
         }
 
         void InitializePlanes(GraphicsDevice graphicsDevice, int gridSize, float cellSize, Color color)
@@ -87,23 +87,23 @@ namespace Willcraftia.Xna.Blocks.Graphics
             int halfGridSize = gridSize / 2;
             float offset = halfGridSize * cellSize;
 
-            var topTransform = Matrix.CreateTranslation(new Vector3(0, offset, 0));
-            Top = GridPlane.CreatePlaneXZ(graphicsDevice, gridSize, gridSize, cellSize, color, topTransform);
+            var upTransform = Matrix.CreateTranslation(new Vector3(0, offset, 0));
+            Up = GridPlane.CreatePlaneXZ(graphicsDevice, gridSize, gridSize, cellSize, color, upTransform);
 
-            var bottomTransform = Matrix.CreateTranslation(new Vector3(0, -offset, 0));
-            Bottom = GridPlane.CreatePlaneXZ(graphicsDevice, gridSize, gridSize, cellSize, color, bottomTransform);
+            var downTransform = Matrix.CreateTranslation(new Vector3(0, -offset, 0));
+            Down = GridPlane.CreatePlaneXZ(graphicsDevice, gridSize, gridSize, cellSize, color, downTransform);
 
-            var northTransform = Matrix.CreateTranslation(new Vector3(0, 0, -offset));
-            North = GridPlane.CreatePlaneXY(graphicsDevice, gridSize, gridSize, cellSize, color, northTransform);
+            var forwardTransform = Matrix.CreateTranslation(new Vector3(0, 0, -offset));
+            Forward = GridPlane.CreatePlaneXY(graphicsDevice, gridSize, gridSize, cellSize, color, forwardTransform);
 
-            var southTransform = Matrix.CreateTranslation(new Vector3(0, 0, offset));
-            South = GridPlane.CreatePlaneXY(graphicsDevice, gridSize, gridSize, cellSize, color, southTransform);
+            var backwardTransform = Matrix.CreateTranslation(new Vector3(0, 0, offset));
+            Backward = GridPlane.CreatePlaneXY(graphicsDevice, gridSize, gridSize, cellSize, color, backwardTransform);
 
-            var westTransform = Matrix.CreateTranslation(new Vector3(-offset, 0, 0));
-            West = GridPlane.CreatePlaneZY(graphicsDevice, gridSize, gridSize, cellSize, color, westTransform);
+            var leftTransform = Matrix.CreateTranslation(new Vector3(-offset, 0, 0));
+            Left = GridPlane.CreatePlaneZY(graphicsDevice, gridSize, gridSize, cellSize, color, leftTransform);
 
-            var eastTransform = Matrix.CreateTranslation(new Vector3(offset, 0, 0));
-            East = GridPlane.CreatePlaneZY(graphicsDevice, gridSize, gridSize, cellSize, color, eastTransform);
+            var rightTransform = Matrix.CreateTranslation(new Vector3(offset, 0, 0));
+            Right = GridPlane.CreatePlaneZY(graphicsDevice, gridSize, gridSize, cellSize, color, rightTransform);
         }
 
         #region IDisposable
@@ -129,12 +129,12 @@ namespace Willcraftia.Xna.Blocks.Graphics
             {
                 Effect.Dispose();
 
-                Top.Dispose();
-                Bottom.Dispose();
-                North.Dispose();
-                South.Dispose();
-                West.Dispose();
-                East.Dispose();
+                Up.Dispose();
+                Down.Dispose();
+                Forward.Dispose();
+                Backward.Dispose();
+                Left.Dispose();
+                Right.Dispose();
             }
 
             disposed = true;

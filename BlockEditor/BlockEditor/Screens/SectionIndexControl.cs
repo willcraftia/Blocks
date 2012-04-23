@@ -3,7 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Willcraftia.Xna.Framework.UI;
-using Willcraftia.Xna.Blocks.BlockEditor.ViewModels;
+using Willcraftia.Xna.Blocks.BlockEditor.Models;
 
 #endregion
 
@@ -17,9 +17,9 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
         public float CellSize { get; set; }
 
-        SectionViewModel ViewModel
+        Section Section
         {
-            get { return DataContext as SectionViewModel; }
+            get { return DataContext as Section; }
         }
 
         public SectionIndexControl(Screen screen)
@@ -27,7 +27,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         {
             GridColor = Color.White;
             CursorColor = Color.Blue;
-            CellSize = 12;
+            CellSize = 16;
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -66,7 +66,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
 
             rect.Width = CellSize - 1;
             rect.Height = CellSize - 1;
-            rect.X = CellSize * ViewModel.SectionIndex + 1;
+            rect.X = CellSize * Section.Index + 1;
             rect.Y = 1;
             drawContext.DrawRectangle(rect, CursorColor);
         }
@@ -81,7 +81,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
             };
             point = PointFromScreen(point);
 
-            ViewModel.SectionIndex = (int) (point.X / CellSize);
+            Section.Index = (int) (point.X / CellSize);
             context.Handled = true;
 
             base.OnMouseDown(ref context);

@@ -101,6 +101,7 @@
     <Compile Include="Cameras\PerspectiveFov.cs" />
     <Compile Include="Cameras\ProjectionBase.cs" />
     <Compile Include="Cameras\ViewBase.cs" />
+    <Compile Include="Graphics\Cube.cs" />
     <Compile Include="Paging.cs" />
     <Compile Include="PredefinedColor.cs" />
     <Compile Include="Projection.cs" />
@@ -124,7 +125,7 @@
     <Compile Include="Debug\TimeRulerMarker.cs" />
     <Compile Include="GameServiceContainerExtension.cs" />
     <Compile Include="Graphics\BackBuffer.cs" />
-    <Compile Include="Graphics\ColoredQuadrangleMaker.cs" />
+    <Compile Include="Graphics\ColoredQuadrangle.cs" />
     <Compile Include="Graphics\ColoredCubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\CubeVertexSourceFactory.cs" />
     <Compile Include="Graphics\DefaultSpriteSheetSource.cs" />

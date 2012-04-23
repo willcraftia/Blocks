@@ -68,6 +68,15 @@ namespace Willcraftia.Xna.Blocks.Serialization
             return new Color(R, G, B);
         }
 
+        /// <summary>
+        /// Vector3 へ変換します。
+        /// </summary>
+        /// <returns>Vector3。</returns>
+        public Vector3 ToVector3()
+        {
+            return new Vector3(R / 255.0f, G / 255.0f, B / 255.0f);
+        }
+
         #region Equatable
 
         public static bool operator ==(MaterialColor o1, MaterialColor o2)
