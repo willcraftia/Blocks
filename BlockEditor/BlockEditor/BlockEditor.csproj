@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Models\CubeMesh.cs" />
     <Compile Include="Models\DirectionalLightModel.cs" />
+    <Compile Include="Models\MaterialEdit.cs" />
     <Compile Include="Models\Section.cs" />
     <Compile Include="Models\SectionOrientation.cs" />
     <Compile Include="Models\Scene.cs" />
@@ -119,8 +120,11 @@
     <Compile Include="BlockEditorGame.cs" />
     <Compile Include="Screens\BlockViewControl.cs" />
     <Compile Include="Screens\BlockEditWindow.cs" />
+    <Compile Include="Screens\ControlUtil.cs" />
     <Compile Include="Screens\MainScreen.cs" />
+    <Compile Include="Screens\MaterialEditWindow.cs" />
     <Compile Include="Screens\MaterialPalletControl.cs" />
+    <Compile Include="Screens\PredefinedColorDialog.cs" />
     <Compile Include="Screens\SelectedMaterialControl.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
     <Compile Include="Screens\SectionEditControl.cs" />

@@ -14,6 +14,8 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
     {
         SectionControl sectionControl;
 
+        MaterialEditWindow materialEditWindow;
+
         public BlockEditWindow(Screen screen)
             : base(screen)
         {
