@@ -44,10 +44,18 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
             set
             {
                 if (selectedMaterialIndex == value) return;
-                if (value < 0 || Block.Materials.Count <= value)
-                    throw new ArgumentOutOfRangeException("value");
+                if (Block.Materials.Count <= value) throw new ArgumentOutOfRangeException("value");
 
                 selectedMaterialIndex = value;
+            }
+        }
+
+        public Material SelectedMaterial
+        {
+            get
+            {
+                if (selectedMaterialIndex < 0) return null;
+                return Block.Materials[selectedMaterialIndex];
             }
         }
 

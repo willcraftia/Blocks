@@ -30,6 +30,13 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
             };
             stackPanel.Children.Add(sectionControl);
 
+            var selectedMaterialControl = new SelectedMaterialControl(screen)
+            {
+                Width = 64,
+                Height = 64
+            };
+            stackPanel.Children.Add(selectedMaterialControl);
+
             sectionControl.Focus();
         }
     }

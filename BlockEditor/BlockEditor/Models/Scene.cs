@@ -159,10 +159,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
 
         void DrawBlock()
         {
-            var block = workspace.Block;
-            if (block == null) return;
-
-            foreach (var element in block.Elements)
+            foreach (var element in workspace.Block.Elements)
             {
                 var position = new Vector3
                 {
@@ -173,7 +170,7 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Models
                 Matrix translation;
                 Matrix.CreateTranslation(ref position, out translation);
 
-                var material = block.Materials[element.MaterialIndex];
+                var material = workspace.Block.Materials[element.MaterialIndex];
 
                 var cubeMesh = workspace.CubeMesh;
 

@@ -2,6 +2,8 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Willcraftia.Xna.Framework.Input;
 using Willcraftia.Xna.Framework.UI;
 using Willcraftia.Xna.Blocks.Serialization;
 using Willcraftia.Xna.Blocks.BlockEditor.Models;
@@ -55,14 +57,32 @@ namespace Willcraftia.Xna.Blocks.BlockEditor.Screens
         {
             base.OnMouseDown(ref context);
 
+            if (Screen.MouseDevice.IsButtonPressed(MouseButtons.Left))
+            {
+                SetMaterial();
+            }
+        }
+
+        protected override void OnMouseMove(ref RoutedEventContext context)
+        {
+            base.OnMouseMove(ref context);
+
+            if (Screen.MouseDevice.MouseState.LeftButton == ButtonState.Pressed)
+            {
+                SetMaterial();
+            }
+        }
+
+        void SetMaterial()
+        {
             var mouseState = Screen.MouseDevice.MouseState;
             var location = PointFromScreen(new Vector2(mouseState.X, mouseState.Y));
 
             int x = (int) (location.X / CellSize);
-            if (gridSize < x) x = gridSize;
+            if (gridSize <= x) x = gridSize - 1;
 
             int y = (int) (location.Y / CellSize);
-            if (gridSize < y) y = gridSize;
+            if (gridSize <= y) y = gridSize - 1;
 
             Section.SetMaterial(x, y);
         }

@@ -121,7 +121,7 @@
     <Compile Include="Screens\BlockEditWindow.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\MaterialPalletControl.cs" />
-    <Compile Include="Screens\MaterialViewControl.cs" />
+    <Compile Include="Screens\SelectedMaterialControl.cs" />
     <Compile Include="Screens\ScreenNames.cs" />
     <Compile Include="Screens\SectionEditControl.cs" />
     <Compile Include="Screens\SectionIndexControl.cs" />
