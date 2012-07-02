@@ -30,19 +30,10 @@ namespace Willcraftia.Xna.Framework.Cameras
         Vector3 target = Vector3.Zero;
 
         /// <summary>
-        /// 位置算出のための拡大縮小行列。
+        /// カメラの位置。
+        /// Update() メソッドの呼出で更新されます。
         /// </summary>
-        Matrix scale = Matrix.Identity;
-
-        /// <summary>
-        /// 位置算出のための回転行列。
-        /// </summary>
-        Matrix rotation = Matrix.Identity;
-
-        /// <summary>
-        /// 位置算出のための移動行列。
-        /// </summary>
-        Matrix translation = Matrix.Identity;
+        Vector3 position;
 
         /// <summary>
         /// 注視点からカメラまでの距離 (球面の半径) を取得または設定します。
@@ -55,7 +46,6 @@ namespace Willcraftia.Xna.Framework.Cameras
                 if (distance == value) return;
 
                 distance = value;
-                Matrix.CreateScale(distance, out scale);
                 MatrixDirty = true;
             }
         }
@@ -73,7 +63,6 @@ namespace Willcraftia.Xna.Framework.Cameras
                 if (angle == value) return;
 
                 angle = value;
-                Matrix.CreateFromYawPitchRoll(angle.Y, angle.X, 0, out rotation);
                 MatrixDirty = true;
             }
         }
@@ -89,13 +78,36 @@ namespace Willcraftia.Xna.Framework.Cameras
                 if (target == value) return;
 
                 target = value;
-                Matrix.CreateTranslation(ref target, out translation);
                 MatrixDirty = true;
             }
         }
 
+        /// <summary>
+        /// カメラの位置を取得します。
+        /// </summary>
+        /// <remarks>
+        /// カメラの位置は Update() メソッドの呼出で更新されます。
+        /// </remarks>
+        public Vector3 Position
+        {
+            get { return position; }
+        }
+
+        public ChaseView()
+        {
+            Update();
+        }
+
         protected override void UpdateOverride()
         {
+            Matrix scale;
+            Matrix rotation;
+            Matrix translation;
+
+            Matrix.CreateTranslation(ref target, out translation);
+            Matrix.CreateFromYawPitchRoll(angle.Y, angle.X, 0, out rotation);
+            Matrix.CreateScale(distance, out scale);
+
             // 変換行列を算出します。
             Matrix transform;
             Matrix.Multiply(ref scale, ref rotation, out transform);
@@ -103,7 +115,7 @@ namespace Willcraftia.Xna.Framework.Cameras
 
             // 座標を算出します。
             Vector3 baseDirection = Vector3.Backward;
-            Vector3 position;
+            //Vector3 position;
             Vector3.Transform(ref baseDirection, ref transform, out position);
 
             // UP を算出します。

@@ -81,9 +81,11 @@ namespace Willcraftia.Xna.Framework.Cameras
         }
 
         /// <summary>
-        /// Matrix プロパティを更新します。
+        /// MatrixDirty プロパティが true の場合は、
+        /// UpdateOverride() メソッドを呼び出して Matrix プロパティを更新します。
+        /// MatrixDirty プロパティが false の場合は何もしません。
         /// </summary>
-        public void Update()
+        public sealed override void Update()
         {
             if (MatrixDirty) UpdateOverride();
         }
